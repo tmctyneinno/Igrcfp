@@ -31,7 +31,7 @@
                                 <ul class="widget-nav">
                                     <li><a href="{{ route('about-us') }}">About</a></li>
                                     <li><a href="{{ route('services') }}">Services</a></li>
-                                    <li><a href="{{ route('our-structure') }}">Our Structure</a></li>
+                                    <li><a href="{{ route('structure') }}">Our Structure</a></li>
 
                                     <li><a href="{{ route('certification') }}">Cerification</a></li>
                                     <li><a href="{{ route('contact') }}">Contact</a></li>

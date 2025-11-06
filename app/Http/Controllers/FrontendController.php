@@ -22,4 +22,8 @@ class FrontendController extends Controller
     {
         return view('frontend.aboutus');
     }
+
+    public function igrcfp(){
+        return view('frontend.igrcfp');
+    }
 }
