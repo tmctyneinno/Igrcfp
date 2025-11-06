@@ -83,7 +83,7 @@
             <div class="col-md-6">
                 <!--=== Copyright Text ===-->
                 <div class="copyright-text text-md-start text-center">
-                    <p>&copy; All copyright 2025 by Bizzen</p>
+                    <p>&copy; {{ date('Y') }} IGRCFP. All rights reserved.</p>
                 </div>
             </div>
             <div class="col-md-6">
