@@ -89,8 +89,8 @@
             <div class="col-md-6">
                 <!--=== Copyright link ===-->
                 <div class="copyright-link text-md-end text-center">
-                    <a href="index.html">Terms & Conditions</a>
-                    <a href="index.html">Privacy Policy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Privacy Policy</a>
                 </div>
             </div>
         </div>
