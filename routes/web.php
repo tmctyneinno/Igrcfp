@@ -22,6 +22,7 @@ Route::get('/certification', [FrontendController::class, 'certification'])->name
 Route::get('/about-us', [FrontendController::class, 'aboutus'])->name('about-us');
 Route::get('/event', [FrontendController::class, 'event'])->name('event');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/services', [FrontendController::class, 'services'])->name('services');
 
 
 Auth::routes();

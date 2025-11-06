@@ -171,7 +171,7 @@
                                 </div>
                                 <div class="content">
                                     <h4 class="text-black">Integrity </h4>
-                                    <p>The current investment landscape requires a robust approach to the investments</p>
+                                    <p>We uphold the highest ethical standards in governance, compliance, and financial crime prevention. Integrity guides every action we take and every partnership we build.</p>
                                 </div>
                             </div>
                         </div>
@@ -182,8 +182,8 @@
                                     <img src="{{ asset('assets/images/home-three/icon/cube.svg')}}" alt="check">
                                 </div>
                                 <div class="content">
-                                    <h4 class="text-black">>Global Reach</h4>
-                                    <p>The current investment landscape requires a robust approach to the investments</p>
+                                    <h4 class="text-black">Innovation</h4>
+                                    <p>We embrace new ideas, technologies, and approaches — from RegTech to ESG frameworks — to prepare professionals for the challenges of tomorrow.</p>
                                 </div>
                             </div>
                         </div>
@@ -194,8 +194,8 @@
                                     <img src="{{ asset('assets/images/home-three/icon/cube.svg')}}" alt="check">
                                 </div>
                                 <div class="content">
-                                    <h4>Advantage</h4>
-                                    <p>The current investment landscape requires a robust approach to the investments</p>
+                                    <h4 class="text-black">Collaboration</h4>
+                                    <p>We believe progress comes from working together. IGRCFP connects regulators, institutions, and practitioners across continents to drive global impact.</p>
                                 </div>
                             </div>
                         </div>
@@ -206,8 +206,8 @@
                                     <img src="{{ asset('assets/images/home-three/icon/cube.svg')}}" alt="check">
                                 </div>
                                 <div class="content">
-                                    <h4>Strategy</h4>
-                                    <p>The current investment landscape requires a robust approach to the investments</p>
+                                    <h4 class="text-black">Excellence</h4>
+                                    <p>We are committed to delivering world-class training, certifications, research, and events that set the benchmark for professional standards worldwide.</p>
                                 </div>
                             </div>
                         </div>
@@ -215,17 +215,152 @@
                 </div>
             </div>
              <div class="col-xl-6 col-lg-10">
-                <div class="play-bg bg_cover mr-2" style="background-image: url({{ asset('assets/images/innerpage/bg/about-bg.png')}});">
-                    <!--=== Play Button ===-->
-                    <div class="play-button" data-aos="fade-up" data-aos-duration="1000">
-                        <a href="https://www.youtube.com/watch?v=H7jpB4WnAH8" class="video-popup"><i class="fas fa-play"></i></a>
-                    </div>
+                <div 
+                    class="play-bg bg_cover mr-2" 
+                    style="background-image: url('{{ asset('assets/images/innerpage/bg/about-bg.png') }}');"
+                    >
+                    <!--=== Local Video ===-->
+                    <video 
+                        width="100%" 
+                        height="auto" 
+                        controls 
+                        data-aos="fade-up" 
+                        data-aos-duration="1000"
+                        poster="{{ asset('assets/images/innerpage/bg/about-bg.png') }}" 
+                    >
+                        <source src="{{ asset('assets/videos/about-video.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
+
             </div>
         </div>
     </div>
 </section>
 <!--======  End Growth Section  ======-->
+
+ <!--======  Start Blog Grid Section  ======-->
+<section class="bizzen-blog-grid-sec pt-20 pb-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-12 col-lg-8">
+                <!--=== Section Title ===-->
+                <div class="section-title text-center mb-20">
+                    <h3 class="text-anm mb-20" data-aos="fade-down" data-aos-duration="1000">Our Core Services</h3>
+                    <p>At IGRCFP, we empower professionals and institutions through education, membership, research, and global events. 
+                        Our core services are designed to strengthen governance, compliance, and financial crime 
+                        prevention worldwide<p>
+                        
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1000">
+                    <div class="post-thumbnail">
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-1.png')}}" alt="Blog Grid">
+                    </div>
+                    <div class="post-content text-center">
+                        <h4 class="title"><a href="{{  route('services') }}">Education & Cerification</a></h4>
+                        <p>
+                            We deliver CPD-accredited certifications, diplomas, and specialised training programmes that equip professionals and institutions with the skills to meet global compliance and financial crime prevention standards.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1200">
+                    <div class="post-thumbnail">
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-2.png')}}" alt="Blog Grid">
+                    </div>
+                    <div class="post-content text-center">
+                        <h4 class="title"><a href="{{  route('services') }}"> Membership Community</a></h4>
+                        <p>
+                            We provide a professional network that connects students, practitioners, and organisations worldwide, offering 
+                            exclusive benefits, recognition, and career development opportunities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1400">
+                    <div class="post-thumbnail">
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-3.png')}}" alt="Blog Grid">
+                    </div>
+                    <div class="post-content text-center" >
+                        <h4 class="title"><a href="{{  route('services') }}">Advocacy & Research</a></h4>
+                        <p>Through policy engagement, research collaborations, and publications, we shape industry standards and provide thought leadership on governance, compliance, and financial crime prevention. </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1600">
+                    <div class="post-thumbnail">
+                        <img class="img-fluid w-50 mx-auto d-block" src="assets/images/innerpage/blog/blog-grid4.jpg" alt="Blog Grid">
+                     </div>
+                    <div class="post-content">
+                        <h4 class="title"><a href="blog-details.html">What consultants should know about working with nonprofits</a></h4>
+                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
+                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1800">
+                    <div class="post-thumbnail">
+                        <img src="assets/images/innerpage/blog/blog-grid5.jpg" alt="Blog Grid">
+                        <div class="date">21 <span>july</span></div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
+                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
+                        </div>
+                        <h4 class="title"><a href="blog-details.html">Innovative solutions for business success dynamic from today</a></h4>
+                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
+                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 col-sm-12">
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2000">
+                    <div class="post-thumbnail">
+                        <img src="assets/images/innerpage/blog/blog-grid6.jpg" alt="Blog Grid">
+                        <div class="date">21 <span>july</span></div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
+                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
+                        </div>
+                        <h4 class="title"><a href="blog-details.html">Spending Habits, 13 Tips for grow Your Money.</a></h4>
+                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
+                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="theme-pagination text-center mt-30" data-aos="fade-up" data-aos-duration="2200">
+                    <ul>
+                        <li><a href="#"><i class="far fa-arrow-left"></i></a></li>
+                        <li><a href="#">01</a></li>
+                        <li><a href="#">02</a></li>
+                        <li><a href="#">03</a></li>
+                        <li><a href="#"><i class="far fa-arrow-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 @endsection

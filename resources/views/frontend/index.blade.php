@@ -5,19 +5,26 @@
 <!--======  Start Hero Section  ======-->
 <section class="bizzen-hero">
     <!--=== Bizzen Hero ===-->
-    <div class="bizzen-hero_three">
-        <div class="container">
+    <div class="bizzen-hero_three ">
+        <div class="shape d-block d-lg-none" >
+            <img class=""   src="{{ asset('assets/images/home-three/hero/hero-img1.png')}}" alt="shape">
+        </div>
+        {{-- <div class="shape shape-two">
+            <img class="rotate360" src="{{ asset('assets/images/home-three/hero/shape2.png')}}" alt="shape">
+        </div> --}}
+                           
+        <div class="container sider">
             <div class="row align-items-center justify-content-center">
                 <div class="col-xl-7 col-lg-10">
                     <!--=== Hero Content ===-->
                     <div class="hero-content">
                         {{-- <span class="sub-title" data-aos="fade-down" data-aos-duration="1200">Growth your Brand with Marketing</span> --}}
-                        <h2 class="text-anm">Empower Professionals, Strengthning Goverance, Preventing Financial Crime </h2>
+                        <h3 class="text-anm">Empower Professionals, Strengthning Goverance, Preventing Financial Crime </h3>
                         <p data-aos="fade-up" data-aos-duration="1200">
                             The Institute of GRC & Financial Crime Prevention (IGRCFP) is a global professional  body dedicated to advancing excellence in governance, risk management,  compliance, and financial crime prevention.
                         </p>
                         <div class="hero-button " data-aos="fade-down" data-aos-duration="1400">
-                        <a href="{{ route('register') }}" class="theme-btn style-one me-3" style="border-radius: 8px;">
+                        <a href="{{ route('register') }}" class="theme-btn style-one me-3 mb-10" style="border-radius: 8px;">
                             Join the Institute<i class="far fa-arrow-right"></i>
                         </a>
                         <a href="{{ route('certification') }}" class="theme-btn style-two">
@@ -27,7 +34,7 @@
                     </div>
                 </div>
                 <div class="col-xl-5 co-lg-8">
-                    <!--=== Hero Image Box ===-->
+                    <!--=== Hero Image Box ===-->                                            
                     <div class="hero-image-box">
                         <div class="bizzen-image text-center" data-aos="fade-down" data-aos-duration="1200">
                             <img src="{{ asset('assets/images/home-three/hero/hero-img1.png')}}" alt="hero image">

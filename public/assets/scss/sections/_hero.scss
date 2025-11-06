@@ -301,7 +301,7 @@
 .bizzen-hero_three{
     position: relative;
     z-index: 1;
-    padding: 120px 40px 0;
+    // padding: 120px 40px 0;
     background-color: $gray-color;
     @include respond(xl){
         padding: 220px 40px 0;
