@@ -300,12 +300,13 @@
                 <!--=== Bizzen Blog Post ===-->
                 <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1600">
                     <div class="post-thumbnail">
-                        <img class="img-fluid w-50 mx-auto d-block" src="assets/images/innerpage/blog/blog-grid4.jpg" alt="Blog Grid">
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-4.png')}}" alt="Blog Grid">
                      </div>
-                    <div class="post-content">
-                        <h4 class="title"><a href="blog-details.html">What consultants should know about working with nonprofits</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    <div class="post-content  text-center">
+                        <h4 class="title"><a href="{{ route('services') }}">Global Events & Summits</a></h4>
+                        <p>
+                            We organise international conferences, workshops, webinars, and forums that bring together regulators, professionals, and innovators to exchange knowledge, network, and set future directions.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -313,17 +314,13 @@
                 <!--=== Bizzen Blog Post ===-->
                 <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1800">
                     <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid5.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-5.png')}}" alt="Blog Grid">
                     </div>
-                    <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">Innovative solutions for business success dynamic from today</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    <div class="post-content text-center">
+                        <h4 class="title"><a href="{{ route('services') }}">Regulation & Enforcement Support</a></h4>
+                        <p>
+                            Working closely with regulatory bodies, law enforcement agencies, and financial institutions to support the development and enforcement of anti-fraud measures.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -331,34 +328,19 @@
                 <!--=== Bizzen Blog Post ===-->
                 <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2000">
                     <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid6.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
+                        <img class="img-fluid w-50 mx-auto d-block" src="{{ asset('assets/images/innerpage/service/service-6.png')}}" alt="Blog Grid">
                     </div>
-                    <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">Spending Habits, 13 Tips for grow Your Money.</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                    <div class="post-content text-center">
+                        <h4 class="title">
+                            <a href="{{ route('services') }}">Consultancy Services</a></h4>
+                        <p>
+                            Offering expert consultancy in financial crime prevention strategies, compliance frameworks, and risk assessment to organizations seeking to enhance their security and regulatory measures.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="theme-pagination text-center mt-30" data-aos="fade-up" data-aos-duration="2200">
-                    <ul>
-                        <li><a href="#"><i class="far fa-arrow-left"></i></a></li>
-                        <li><a href="#">01</a></li>
-                        <li><a href="#">02</a></li>
-                        <li><a href="#">03</a></li>
-                        <li><a href="#"><i class="far fa-arrow-right"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+       
     </div>
 </section>
 

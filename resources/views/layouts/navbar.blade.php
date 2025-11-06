@@ -27,8 +27,8 @@
                             <li class="menu-item has-children">
                                 <a href="{{ route('about-us') }}">About Us +</a>
                                 <ul class="sub-menu">
-                                    <li><a href="index.html">Welcome to IGRCFP</a></li>
-                                    <li><a href="index-2.html">Our Structure</a></li>
+                                    <li><a href="{{ route('igrcfp') }}">Welcome to IGRCFP</a></li>
+                                    <li><a href="{{ route('structure') }}">Our Structure</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item"><a href="{{ route('membership') }}">Membership</a></li>

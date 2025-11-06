@@ -23,6 +23,9 @@ Route::get('/about-us', [FrontendController::class, 'aboutus'])->name('about-us'
 Route::get('/event', [FrontendController::class, 'event'])->name('event');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
 Route::get('/services', [FrontendController::class, 'services'])->name('services');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
+Route::get('/our-structure', [FrontendController::class, 'structure'])->name('structure');
+Route::get('/igrcfp', [FrontendController::class, 'igrcfp'])->name('igrcfp');
 
 
 Auth::routes();

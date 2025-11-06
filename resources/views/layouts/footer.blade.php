@@ -9,7 +9,7 @@
                 <div class="footer-widget footer-about-widget mb-40" data-aos="fade-up" data-aos-duration="800">
                     <div class="widget-content">
                         <div class="footer-logo mb-30">
-                            <img src="assets/images/home-two/logo/logo-white.png" alt="Logo White">
+                            <img class="img-fluid w-25 d-block"  src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="Logo White">
                         </div>
                         <p>Welcome to our best Business Consulting Agency, because it is pain, but occasionally circumstances.</p>
                         <div class="social-box">
@@ -29,11 +29,12 @@
                             <div class="widget-content">
                                 <h4 class="widget-title">Explore</h4>
                                 <ul class="widget-nav">
-                                    <li><a href="about.html">About Company</a></li>
-                                    <li><a href="services.html">Services</a></li>
-                                    <li><a href="project.html">Recent work</a></li>
-                                    <li><a href="blog-standard.html">News & media</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="{{ route('about-us') }}">About</a></li>
+                                    <li><a href="{{ route('services') }}">Services</a></li>
+                                    <li><a href="{{ route('our-structure') }}">Our Structure</a></li>
+
+                                    <li><a href="{{ route('certification') }}">Cerification</a></li>
+                                    <li><a href="{{ route('contact') }}">Contact</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -45,11 +46,11 @@
                                 <h4 class="widget-title">Contact</h4>
                                 <ul>
                                     <li>
-                                        90 Washington. mg Manchester, Kentucky USA
+                                        85, Great Portland Street First Floor W1W 7LT, London, United Kingdom
                                     </li>
                                     <li>
-                                        <a href="mailto:company@gmail.com">company@gmail.com</a>
-                                        <a href="tel:+68(9800)-63020">+68 (9800) - 63020</a>
+                                        <a href="mailto:info@igrcfp.org">info@igrcfp.org</a>
+                                        <a href="tel:+353877123968">+353877123968, +442078560149</a>
                                     </li>
                                 </ul>
                             </div>
@@ -98,25 +99,25 @@
 </footer>
 
 <!--====== Jquery js ======-->
-<script src="assets/js/plugins/jquery-3.7.1.min.js"></script>
+<script src="{{ asset('assets/js/plugins/jquery-3.7.1.min.js')}}"></script>
 <!--====== Bootstrap js ======-->
-<script src="assets/js/plugins/popper.min.js"></script>
+<script src="{{ asset('assets/js/plugins/popper.min.js')}}"></script>
 <!--====== Bootstrap js ======-->
-<script src="assets/js/plugins/bootstrap.min.js"></script>
+<script src="{{ asset('assets/js/plugins/bootstrap.min.js')}}"></script>
 <!--====== Gsap Js ======-->
-<script src="assets/js/plugins/gsap/gsap.min.js"></script>
-<script src="assets/js/plugins/gsap/SplitText.min.js"></script>
-<script src="assets/js/plugins/gsap/ScrollSmoother.min.js"></script>
-<script src="assets/js/plugins/gsap/ScrollTrigger.min.js"></script>
+<script src="{{ asset('assets/js/plugins/gsap/gsap.min.js')}}"></script>
+<script src="{{ asset('assets/js/plugins/gsap/SplitText.min.js')}}"></script>
+<script src="{{ asset('assets/js/plugins/gsap/ScrollSmoother.min.js')}}"></script>
+<script src="{{ asset('assets/js/plugins/gsap/ScrollTrigger.min.js')}}"></script>
 <!--====== Slick js ======-->
-<script src="assets/js/plugins/slick.min.js"></script>
+<script src="{{ asset('assets/js/plugins/slick.min.js')}}"></script>
 <!--====== Magnific js ======-->
-<script src="assets/js/plugins/jquery.magnific-popup.min.js"></script>
+<script src="{{ asset('assets/js/plugins/jquery.magnific-popup.min.js')}}"></script>
 <!--====== Waypoint js ======-->
-<script src="assets/js/plugins/jquery.waypoints.js"></script>
+<script src="{{ asset('assets/js/plugins/jquery.waypoints.js')}}"></script>
 <!--====== CounterUp js ======-->
-<script src="assets/js/plugins/jquery.counterup.min.js"></script>
+<script src="{{ asset('assets/js/plugins/jquery.counterup.min.js')}}"></script>
 <!--====== Aos js ======-->
-<script src="assets/js/plugins/aos.js"></script>
+<script src="{{ asset('assets/js/plugins/aos.js')}}"></script>
 <!--====== Common js ======-->
-<script src="assets/js/theme.js"></script>
+<script src="{{ asset('assets/js/theme.js')}}"></script>
