@@ -220,7 +220,7 @@
 </section>
 <!--======  End Event & summit  ======-->
 
- <!--======  Start Membership ======-->
+<!--======  Start Membership ======-->
 <section class="bizzen-we_two pt-120 pb-120">
     <div class="container pb-120">
         <div class="row justify-content-center">
@@ -281,7 +281,7 @@
 </section>
 <!--======  End Membership  ======-->
 
- <!--======  Start Become Our Membership ======-->
+<!--======  Start Become Our Membership ======-->
 <section class="bizzen-service_one pt-115  bg_cover pb-50" style="background-image: url(assets/images/home-one/bg/service-bg.png);">
     <div class="container">
         <div class="row ">
@@ -355,7 +355,7 @@
 </section>
 <!--======  End Become Our Membership ======-->
 
- <!--======  Start Why Join  ======-->
+<!--======  Start Why Join  ======-->
     <section class="bizzen-we_two pt-120 pb-120">
         <div class="container pb-50">
             <div class="row justify-content-center">
@@ -472,7 +472,7 @@
             </div>
         </div>
     </section>
-    <!--======  End Why Join  ======-->
+<!--======  End Why Join  ======-->
 
 <!--======  Start Faq Section  ======-->
 <section class="bizzen-faq-sec pt-115 pb-0">

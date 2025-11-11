@@ -11,289 +11,396 @@
                 <!--=== Bizzen Content Box ===-->
                 <div class="bizzen-content-box text-justify-content">
                     <div class="section-title">
+                        <br/> <br/>
                         <h2 class="text-anm">Knowledgeable And Trustworthy Experts</h2>
                     </div>
                     <p class="mb-30" data-aos="fade-up" data-aos-duration="1200">
                         Join a trusted professional community advancing excellence in governance, compliance, and financial crime prevention. Membership at IGRCFP connects you with peers across the world, gives you access to exclusive resources, and provides professional recognition that sets you apart.
                     </p>
                     <div class="bizzen-button">
-                        <a href="{{  route('login') }}" class="theme-btn style-one">Become a Member Today </a>
+                        <a style="border-radius: 8px" href="{{  route('login') }}" class="theme-btn style-one">Become a Member Today </a>
                     </div>
                 </div>
             </div>
              <div class="col-xl-6">
                 <!--=== Bizzen Image ===-->
                 <div class="bizzen-image mb-5 mb-xl-0" data-aos="fade-up" data-aos-duration="1200">
-                    <img src="assets/images/home-two/gallery/who-we.jpg" alt="who we">
+                    <img src="assets/images/home-three/gallery/membership.png" alt="who we">
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!--======  End Who We Section  ======-->
-
-<!--======  Start Page Hero Section  ======-->
-<section 
-    class="page-hero bg_cover p-r z-1" 
-    style="background-image: url('{{ asset('assets/images/innerpage/bg/page-bg.png') }}');"
->
+ <!--======  Start Who We Section  ======-->
+<section class="bizzen-we_two pt-120 pb-20">
     <div class="container">
+        
         <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="page-content text-center">
-                    <h1 style="color: black;">Membership</h1>
-                        <ul >
-                            <li class="text-black"><a href="{{ route('index') }}">Home</a></li>
-                            <li class="text-black"> Membership</li>
-                        </ul>
+            <div class="col-xl-5 col-lg-10">
+                <!--=== Bizzen Content Box ===-->
+                <div class="bizzen-content-box">
+                    <!--=== Section Title ===-->
+                    <div class="section-title mb-30">
+                        <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Why Join?</span>
+                        <h2 class="text-anm">Why Join IGRCFP?</h2>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-10">
+                <!--=== Bizzen Image Box ===-->
+                <div class="bizzen-image-box mb-5 mb-xl-0 " >
+                    <p class="mb-3 " data-aos="fade-up" data-aos-duration="1200">
+                        At IGRCFP, we go beyond certification—we build careers and shape leaders. By joining us, you become part of a global network of governance, risk, compliance, and financial crime professionals who are driving change across industries. Membership gives you access to exclusive insights, research, and training, alongside opportunities for professional recognition, CPD credits, and the use of respected post-nominals. Whether you are in banking, fintech, insurance, or regulation, IGRCFP equips you with the knowledge, tools, and connections to stay ahead, stay compliant, and stand out as a trusted expert.
+                    </p>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+<!--======  End Who We Section  ======-->
+
+
+<!--======  Start Why Join  ======-->
+<section class="bizzen-we_two pt-120 pb-120">
+    
+    <div class="container ">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5">
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style=" padding: 0px 0px 0px 0px">
+                <div class="service-inner-content" >
+                <div class="icon text-center" >
+                    <img src="{{ asset('assets/images/home-three/icon/icon3.png')}}" alt="icon" style="width:50px"></div>
+                <div class="text-center">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Network Opportunities</a>
+                    </p>
+                    <p style="color: #666666;" class="mt-10">
+                        Connect with a global network of compliance professionals.
+                    </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style=" padding: 0px 0px 0px 0px">
+                <div class="service-inner-content" >
+                <div class="icon text-center" >
+                    <img src="{{ asset('assets/images/home-three/icon/icon4.png')}}" alt="icon" style="width:50px"></div>
+                <div class="text-center">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Get Relevant Updates</a>
+                    </p>
+                    <p style="color: #666666;" class="mt-10">
+                        Access exclusive research, insights, and regulatory updates.
+                    </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style=" padding: 0px 0px 0px 0px">
+                <div class="service-inner-content" >
+                <div class="icon text-center" >
+                    <img src="{{ asset('assets/images/home-three/icon/icon5.png')}}" alt="icon" style="width:50px"></div>
+                <div class="text-center">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">
+                        Member Benefits
+                        </a>
+                    </p>
+                    <p style="color: #666666;" class="mt-10">
+                        Gain access to IGRCFP’s mentor–mentee programme, connecting experienced ..
+                    </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style=" padding: 0px 0px 0px 0px">
+                <div class="service-inner-content" >
+                <div class="icon text-center" >
+                    <img src="{{ asset('assets/images/home-three/icon/icon6.png')}}" alt="icon" style="width:50px"></div>
+                <div class="text-center">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Exclusive Discount</a>
+                    </p>
+                    <p style="color: #666666;" class="mt-10">
+                        Receive discounts on certifications, events, and publications.
+                    </p>
+                    <br/>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style=" padding: 0px 0px 0px 0px">
+                <div class="service-inner-content" >
+                <div class="icon text-center" >
+                    <img src="{{ asset('assets/images/home-three/icon/icon7.png')}}" alt="icon" style="width:50px"></div>
+                <div class="text-center">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Recognition</a>
+                    </p>
+                    <p style="color: #666666;" class="mt-10">
+                        Gain recognition with post-nominals (e.g., A.IGRCFP, F.IGRCFP).      
+                    </p>
+                    <br/>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--======  End Why Join  ======-->
+
+<!--======  Start Project Section  ======-->
+<section class="bizzen-service_one pt-80  bg_cover pb-50">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <!--=== Section Title ===-->
+                <div class="section-title text-center text-xl-start mb-50">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000">Become our Membership</span>
+                    <h2 class="text-anm">Our Membership Categories</h2>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <!--=== Bizzen Button ===-->
+                <div class="bizzen-button mb-60 text-center text-lg-end" data-aos="fade-up" data-aos-duration="1000">
+                    <a href="{{  route('login') }}" class="theme-btn style-one">Become a Member Today<i class="far fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!--=== Project Slide ===-->
+    </div>
+
+     <div class="container">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5">
+            <div class="col" >
+            <div class="bizzen-service-item style-one mb-30" style="background-color: #0A1F44 !important;">
+                <div class="service-inner-content" >
+                <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
+                <div class="">
+                    <p class="title">
+                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400; color: #F0F0F0;">Student Member</a>
+                    </p>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="bizzen-service-item style-one mb-30" style="background-color: #F4F4F4;">
+                <div class="service-inner-content">
+                <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon2.png')}}" alt="icon" style="width:50px"></div>
+                <div class=""><p class="title">
+                    <a href="service-details.html"  style="font-size: 18px; font-weight: 400; color: #000000;">Associate Member</a></p></div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="bizzen-service-item style-one mb-30" style="background-color: #007B6E;">
+                <div class="service-inner-content">
+                <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
+                <div class=""><h4 class="title">
+                    <a href="service-details.html" style="font-size: 18px; font-weight: 400; color: #F0F0F0;">Invest Process</a></h4></div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="bizzen-service-item style-one mb-30" style="background-color: #0097A7;">
+                <div class="service-inner-content" style="padding-bottom: 0px;">
+                <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
+                <div class=""><h4 class="title">
+                    <a href="service-details.html" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
+                    Fellow (Senior Executive & Experts)
+                    </a></h4></div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="bizzen-service-item style-one mb-30" style="background-color: #13346D;">
+                <div class="service-inner-content" style="padding-bottom: 0px;">
+                <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
+                <div class=""><h4 class="title">
+                    <a href="service-details.html" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
+                    Cooperate Member (for Organizations)
+                </a></h4></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="features-wrapper" >
+            <div class="row "> 
+                <div class="col-xl-4 col-md-6 col-sm-12 item-column ">
+                    <!--=== Bizzen Features Item ===-->
+                    <div style="text-align: left"  class=" bizzen-features-item style-one" data-aos="fade-up" data-aos-duration="1200">
+                        <div class="content" >
+                            <h6>Category</h6>
+                            <div class="mt-50">
+                            </div>
+                            <p>Student Affiliate</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>Associate Member (A.IGRCFP)</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>Professional Member</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>Fellow (F.IGRCFP)</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>Corporate Membership</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 col-sm-12 item-column">
+                    <!--=== Bizzen Features Item ===-->
+                    <div style="text-align: left"  class="bizzen-features-item style-one" data-aos="fade-up" data-aos-duration="1400">
+                        <div class="content">
+                            <h4>Annual Fee</h4>
+                            <div class="mt-50">
+                            </div>
+                            <p>$50</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>$150</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>$250</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>$350</p>
+                            <div class="mt-50">
+                            </div>
+                            <p>$1500</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-md-6 col-sm-12 item-column">
+                    <!--=== Bizzen Features Item ===-->
+                    <div style="text-align: left" class="bizzen-features-item style-one" data-aos="fade-up" data-aos-duration="1600">
+                        <div class="content">
+                            <h4>Benefits</h4>
+                            <div class="mt-50">
+                            </div>
+                            <p>Access to online community, selected resources, and discounts on training.</p>
+                            <div class="mt-20">
+                            </div>
+                            <p>Full access to resources, participation in events, and certification discounts.</p>
+                            <div class="mt-20">
+                            </div>
+                            <p>Full access to resources, participation in events, and certification discounts.</p>
+                            <div class="mt-20">
+                            </div>
+                            <p>Leadership recognition, eligibility for governance roles, and priority speaker slots.</p>
+                            <div class="mt-20">
+                            </div>
+                            <p>Multi-user access for teams, brand recognition, advisory engagement, and event sponsorship discounts.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!--======  End Page Hero Section  ======-->
+<!--======  End Project Section  ======-->
 
-<!--======  Start Blog Grid Section  ======-->
-<section class="bizzen-blog-standard-sec pt-120 pb-120">
+
+<!--======  Start Service Details Section  ======-->
+<section class="service-details-sec pt-80 pb-95">
     <div class="container">
-        <div class="row">
-            <div class="col-xl-8">
-                <div class="blog-details-wrapper" style="border: 0 !important; border-width: 0 !important; border-style: none !important; border-color: transparent !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin: 0 !important;">
-                    <!--=== Blog Post Main ===-->
-                    <div class="blog-post-main mb-70" data-aos="fade-up" data-aos-duration="1000">
-                        <div class="blog-post-item">
-                            
-                            <div class="post-content" data-aos="fade-up" data-aos-duration="800">
-                               
-                                <h4 class="title">Our Board of Trustees</h4>
-                                <p>
-                                    The Board of Trustees serves as the strategic oversight body of IFPN and is responsible for guiding the long-term direction of the Institute. The board ensures that the IFPN remains aligned with its mission and vision while upholding ethical standards. 
-                                </p>
-                                <p class="mb-15">Key Responsibilities:</p>
-                                <ul class="check-list style-two mb-40" >
-                                    <li>Establishing the strategic vision and mission of IGFCP.</li>
-                                    <li>Overseeing governance policies and ensuring the Institute's sustainability.</li>
-                                    <li>Approving the annual budget and financial reports.</li>
-                                    <li>Appointing the members of the Council and ensuring proper leadership succession.</li>
-                                    <li>Ensuring compliance with Nigerian laws and international standards.</li>
-                                </ul>
-                               
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-1.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">Chairperson</p>
-                                            <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">Deputy Chairperson</p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center ">Legal professionals</p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <h4 class="title">The Governing Council</h4>
-                                <p>
-                                    The Governing Council is responsible for the formulation and implementation of the Institute's policies, providing direction for the activities of the Executive Management, and overseeing the Institute's core functions, including membership, education, certification, and research.  
-                                </p>
-                                <p class="mb-15">Key Responsibilities:</p>
-                                <ul class="check-list style-two mb-40" >
-                                    <li>Developing and reviewing policies to ensure alignment with the Institute’s objectives.</li>
-                                    <li>Approving the Institute’s code of conduct, certification requirements, and membership policies.</li>
-                                    <li>Advising on matters related to education, certification, and professional development.</li>
-                                    <li>Overseeing disciplinary matters and upholding ethical standards</li>
-                                    <li>Providing guidance on partnerships and collaboration with regulatory bodies and global organizations.</li>
-                                </ul>
-
-                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-1.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">President</p>
-                                            <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">Vice President</p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center ">Secretary General</p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <h4 class="title">Advisory Committes</h4>
-                                <p>
-                                    Specialised working groups focused on Education, Research, Policy, and Ethics, fostering collaboration among professionals to shape standards, influence regulatory frameworks, and promote ethical excellence within the industry.  
-                                </p>
-
-                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-1.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">Professor in Financial Crime</p>
-                                            <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center">Professor in Financial Crime </p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="bizzen-image">
-                                            <img src="{{ asset('assets/images/innerpage/trustees/trustees-2.jpg')}}" class="img-fluid mx-auto d-block w-75 rounded-circle" alt="Single blog">
-                                            <h6 class="text-center mt-10">Wade Warren</h6>
-                                            <p class="text-center ">Professor in Financial Crime</p>
-                                             <div style="margin-top: -20px" class="entry-footer pt-0 text-center" data-aos="fade-up" data-aos-duration="1000">
-                                                <div class="social-share ">
-                                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+        <div class="row justify-content-left">
+            <div class="col-xl-12">
+                <!--=== Section Title ===-->
+                <div class="section-title text-left mb-60">
+                    <span class="sub-title" data-aos="fade-up" data-aos-duration="1000">Mentorship programmme</span>
+                    <h2 class="text-anm">Know More About Us</h2>
+                    <div class="content-wrap">
+                        <p data-aos="fade-up" data-aos-duration="1200">
+                            At IGRCFP, we believe learning goes beyond the classroom. Our mentorship programme pairs senior professionals with aspiring practitioners to provide guidance, career support, and industry insights. Whether you are a mentor sharing your expertise or a mentee growing your skills, this programme helps you build meaningful professional relationships.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--=== Service Details Wrapper ===-->
+        <div class="service-details-wrapper">
+           
+            <!--=== Process Wrapper ===-->
+            <div class="process-wrapper">
+               
+                <div class="row">
+                    <div class="col-xl-4 col-md-6 col-sm-12">
+                        <!--=== Bizzen Process Item ===-->
+                        <div class="bizzen-process-item style-three mb-40" data-aos="fade-up" data-aos-duration="800">
+                            <div class="line"></div>
+                            <div class="number">01</div>
+                            <div class="content">
+                                <h4>Online Application</h4>
+                                <p>Our consultancy excels providing quick solutions tailored </p>
                             </div>
                         </div>
-                      
                     </div>
-                    <!--=== Post Navigation ===-->
-                   
+                    <div class="col-xl-4 col-md-6 col-sm-12">
+                        <!--=== Bizzen Process Item ===-->
+                        <div class="bizzen-process-item style-three mb-40" data-aos="fade-up" data-aos-duration="1200">
+                            <div class="line"></div>
+                            <div class="number">03</div>
+                            <div class="content">
+                                <h4>Compare Quotes</h4>
+                                <p>Our consultancy excels providing quick solutions tailored </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-6 col-sm-12">
+                        <!--=== Bizzen Process Item ===-->
+                        <div class="bizzen-process-item style-three mb-40" data-aos="fade-up" data-aos-duration="1400">
+                            <div class="line"></div>
+                            <div class="number">04</div>
+                            <div class="content">
+                                <h4>Solutions tailored</h4>
+                                <p>Our consultancy excels providing quick solutions tailored </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              
+            </div>
+            <!--=== Intro Wrapper ===-->
+            <div class="intro-wrapper mb-80" data-aos="fade-up" data-aos-duration="1600">
+                <h3 class="mb-20">Kye features</h3>
+                <p class="mb-25">Our service guides you through the entire strategic planning process, from initial goal formulation to precise execution. Start with a thorough assessment of your current position and market landscape, then help you define clear, actionable objectives aligned with your vision. Our approach includes developing detailed action plans.</p>
+                <p class="mb-25">Formulating and implementing business goals. We begin with an in-depth analysis of your business and market to identify opportunities and challenges. From there, we work with you to define clear, actionable.</p>
+                <div class="bizzen-image-box">
+                    <img src="assets/images/innerpage/service/intro-img1.jpg" alt="intro image">
+                    <div class="play-button">
+                        <a href="https://www.youtube.com/watch?v=H7jpB4WnAH8" class="video-popup"><img src="assets/images/innerpage/service/play-btn.png" alt="play button"></a>
+                    </div>
                 </div>
             </div>
-            <div class="col-xl-4">
-                <!--=== Sidebar widget Area ===-->
-                <div class="sidebar-widget-area mb-20">
-                    {{-- <h4 class="widget-title">People</h4> --}}
-                    {{-- <div class="bizzen-blog-post-item style-one mb-30" data-aos="fade-up" data-aos-duration="1000">
-                                           
-                        <div class="post-content">
-                            <h4 class="title">
-                                People
-                            </h4>
-                            <p>Words matter, and our copy writing rh services ensure your message heard zx loud Whether and clear.</p>
-                            <p>
-                            <a href="#" class="read-more style-one">Board of Trustees</a>
-                            </p>
-                            <p>
-                            <a href="#" class="read-more style-one">The Governing Council  </a>
-                            </p>
-                            <p>
-                            <a href="#" class="read-more style-one">Advisory Committes</a>
-                            </p>
-                        </div>
-                    </div> --}}
-                        
-                    <!--===  Sidebar Widget  ===-->
-                    <div class="sidebar-widget sidebar-nav-widget mb-30" data-aos="fade-up" data-aos-duration="800">
-                            <!--=== Bizzen Blog Item ===-->
-                                        
-                        <div class="widget-content">
-                            <ul>
-                                <li><a href="#">Board of Trustees<span><i class="far fa-angle-right"></i></span></a></li>
-                                <li><a href="#">The Governing Council<span><i class="far fa-angle-right"></i></span></a></li>
-                                <li><a href="#">Advisory Committes<span><i class="far fa-angle-right"></i></span></a></li>
-                             </ul>
-                        </div>
-                    </div>
-                    <!--=== Sidebar Widget ===-->
-                    <div class="sidebar-widget sidebar-post-widget mb-40" data-aos="fade-up" data-aos-duration="1000">
-                        <h4 class="widget-title">Need Help?</h4>
-                        <div class="widget-content">
-                            <ul class="recent-post-list">
-                                <li class="post-thumbnail-content mb-4">
-                                    <div class="content">
-                                        <h5>Contact Us Here</h5>
-                                        <p class="mt-10">+234 (0) 915-341-4314</p>
-                                        <p>info@igrcfp.org</p>
-                                    </div>
-                                </li>
-                               
-                            </ul>
-                        </div>
-                    </div>
-                   
-                </div>
-            </div>
+           
         </div>
     </div>
 </section>
+<!--======  End Service Details Section  ======-->
+                
+
 @endsection
