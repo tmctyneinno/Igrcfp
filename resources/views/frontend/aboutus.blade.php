@@ -12,6 +12,10 @@
             <div class="col-lg-10">
                 <div class="page-content text-center">
                     <h1 style="color: black;">Welcome to IGRCFP</h1>
+                        <ul >
+                            <li ><a class="text-black" href="{{ route('index') }}">Home</a></li>
+                            <li class="text-black">About Us</li>
+                        </ul>
                 </div>
             </div>
         </div>

@@ -24,6 +24,16 @@ class FrontendController extends Controller
     }
 
     public function igrcfp(){
-        return view('frontend.igrcfp');
+        return view('frontend.aboutus');
     }
+
+    public function structure(){
+        return view('frontend.structure');
+    }
+
+    public function membership(){
+        return view('frontend.membership');
+    }
+
+    
 }
