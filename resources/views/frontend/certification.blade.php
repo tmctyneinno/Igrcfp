@@ -32,7 +32,6 @@
     </div>
 </section>
 <!--======  End Who We Section  ======-->
-
  <!--======  Start Who We Section  ======-->
 <section class="bizzen-we_two pt-120 pb-20">
     <div class="container">
@@ -430,7 +429,7 @@
                             <h4 class="title text-center">
                                 <a href="#">For Mentors</a>
                             </h4>
-                            <h6 class="mb-15">Benefits:</h6>
+                             <h6 class="mb-15">Benefits:</h6>
                             <ul class="check-list style-two mb-40" >
                                 <li>Share expertise and give back.</li>
                                 <li>Strengthen leadership & coaching skills.</li>

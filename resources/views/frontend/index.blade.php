@@ -300,7 +300,7 @@
                 <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
                 <div class="">
                     <p class="title">
-                        <a href="service-details.html"  style="font-size: 20px; font-weight: 400; color: #F0F0F0;">Student Member</a>
+                        <a href="#"  style="font-size: 20px; font-weight: 400; color: #F0F0F0;">Student Member</a>
                     </p>
                     </div>
                 </div>
@@ -312,7 +312,7 @@
                 <div class="service-inner-content">
                 <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon2.png')}}" alt="icon" style="width:50px"></div>
                 <div class=""><p class="title">
-                    <a href="service-details.html"  style="font-size: 18px; font-weight: 400; color: #000000;">Associate Member</a></p></div>
+                    <a href="#"  style="font-size: 18px; font-weight: 400; color: #000000;">Associate Member</a></p></div>
                 </div>
             </div>
             </div>
@@ -322,7 +322,7 @@
                 <div class="service-inner-content">
                 <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
                 <div class=""><h4 class="title">
-                    <a href="service-details.html" style="font-size: 18px; font-weight: 400; color: #F0F0F0;">Invest Process</a></h4></div>
+                    <a href="#" style="font-size: 18px; font-weight: 400; color: #F0F0F0;">Invest Process</a></h4></div>
                 </div>
             </div>
             </div>
@@ -332,7 +332,7 @@
                 <div class="service-inner-content" style="padding-bottom: 0px;">
                 <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
                 <div class=""><h4 class="title">
-                    <a href="service-details.html" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
+                    <a href="#" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
                     Fellow (Senior Executive & Experts)
                     </a></h4></div>
                 </div>
@@ -344,7 +344,7 @@
                 <div class="service-inner-content" style="padding-bottom: 0px;">
                 <div class="icon"><img src="{{ asset('assets/images/home-three/icon/icon1.png')}}" alt="icon" style="width:50px"></div>
                 <div class=""><h4 class="title">
-                    <a href="service-details.html" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
+                    <a href="#" style="font-size: 16px; font-weight: 400; color: #F0F0F0;">
                     Cooperate Member (for Organizations)
                 </a></h4></div>
                 </div>
@@ -389,7 +389,7 @@
                         <img src="{{ asset('assets/images/home-three/icon/icon3.png')}}" alt="icon" style="width:50px"></div>
                     <div class="text-center">
                         <p class="title">
-                          <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Network Opportunities</a>
+                          <a href="#"  style="font-size: 20px; font-weight: 400;">Network Opportunities</a>
                         </p>
                         <p style="color: #666666;" class="mt-10">
                           Connect with a global network of compliance professionals.
@@ -405,7 +405,7 @@
                         <img src="{{ asset('assets/images/home-three/icon/icon4.png')}}" alt="icon" style="width:50px"></div>
                     <div class="text-center">
                         <p class="title">
-                          <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Get Relevant Updates</a>
+                          <a href="#"  style="font-size: 20px; font-weight: 400;">Get Relevant Updates</a>
                         </p>
                         <p style="color: #666666;" class="mt-10">
                           Access exclusive research, insights, and regulatory updates.
@@ -422,7 +422,7 @@
                         <img src="{{ asset('assets/images/home-three/icon/icon5.png')}}" alt="icon" style="width:50px"></div>
                     <div class="text-center">
                         <p class="title">
-                          <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">
+                          <a href="#"  style="font-size: 20px; font-weight: 400;">
                             Member Benefits
                           </a>
                         </p>
@@ -441,7 +441,7 @@
                         <img src="{{ asset('assets/images/home-three/icon/icon6.png')}}" alt="icon" style="width:50px"></div>
                     <div class="text-center">
                         <p class="title">
-                          <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Exclusive Discount</a>
+                          <a href="#"  style="font-size: 20px; font-weight: 400;">Exclusive Discount</a>
                         </p>
                         <p style="color: #666666;" class="mt-10">
                           Receive discounts on certifications, events, and publications.
@@ -459,7 +459,7 @@
                         <img src="{{ asset('assets/images/home-three/icon/icon7.png')}}" alt="icon" style="width:50px"></div>
                     <div class="text-center">
                         <p class="title">
-                          <a href="service-details.html"  style="font-size: 20px; font-weight: 400;">Recognition</a>
+                          <a href="#"  style="font-size: 20px; font-weight: 400;">Recognition</a>
                         </p>
                         <p style="color: #666666;" class="mt-10">
                           Gain recognition with post-nominals (e.g., A.IGRCFP, F.IGRCFP).      

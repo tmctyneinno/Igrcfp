@@ -25,14 +25,19 @@
                             <li class="menu-item"><a href="{{ route('index') }}">Home</a></li>
 
                             <li class="menu-item has-children">
-                                <a href="{{ route('about-us') }}">About Us +</a>
+                                <a href="{{ route('about-us') }}">About Us </a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ route('igrcfp') }}">Welcome to IGRCFP</a></li>
                                     <li><a href="{{ route('structure') }}">Our Structure</a></li>
                                 </ul>
                             </li>
                             <li class="menu-item"><a href="{{ route('membership') }}">Membership</a></li>
-                            <li class="menu-item"><a href="{{ route('certification') }}">Certifications & Training</a></li>
+                             <li class="menu-item has-children">
+                                <a href="{{ route('certification') }}">Certifications & Training </a>
+                                <ul class="sub-menu">
+                                    <li><a href="{{ route('cgfcs') }}">Certified GRC & Financial Crime Specialist (CGFCS)</a></li>
+                                </ul>
+                            </li>
                             <li class="menu-item"><a href="{{ route('event') }}">Event</a></li>
                             <li class="menu-item"><a href="{{ route('blog') }}">Blog</a></li>
 

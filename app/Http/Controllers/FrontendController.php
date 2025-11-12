@@ -35,5 +35,16 @@ class FrontendController extends Controller
         return view('frontend.membership');
     }
 
+    public function certification(){
+        return view('frontend.certification');
+    }
+
+    public function event(){
+        return view('frontend.event');
+    }
+
+    public function cgfcs(){
+        return view('frontend.cgfcs');
+    }
     
 }
