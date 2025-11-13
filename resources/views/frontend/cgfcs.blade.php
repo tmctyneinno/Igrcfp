@@ -194,11 +194,19 @@
 
  <section class="bizzen-blog-grid-sec pt-120 pb-120">
     <div class="container">
+        <div class="row ">
+            <div class="col-xl-6 col-lg-8">
+                <!--=== Section Title ===-->
+                <div class="section-title mb-60">
+                    <span class="sub-title" data-aos="fade-down" data-aos-duration="1000"> Modules</span>
+                    <h2 class="text-anm">Course Modules</h2>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
                 <div style="background-color: #E8EDF7; border-radius:8px" class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1000">
-                   
                     <div class="post-content">
                         <h4 class="title"><a href="blog-details.html">Module 1:  Foundations of GRC</a></h4>
                         <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
@@ -212,10 +220,9 @@
             <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
                 <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1200" style="background-color: #E8EDF7; border-radius:8px">
-                    
                     <div class="post-content">
                         <h4 class="title"><a href="blog-details.html">Module 2:  Financial Crime Fundamentals</a></h4>
-                        <ul>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
                             <li>Money laundering, terrorist financing, and proliferation financing</li>
                             <li>Fraud, bribery, corruption, and insider trading</li>
                             <li>Case studies: African & global perspectives</li>
@@ -223,92 +230,87 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
-                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1400">
-                    <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid3.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
-                    </div>
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1400" style="background-color: #E8EDF7; border-radius:8px">
                     <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">Why every entrepreneur needs solid digital marketing</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                        <h4 class="title"><a href="blog-details.html">Module 3:  Risk Management & Controls</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>Enterprise risk management (ERM) frameworks</li>
+                            <li>Risk appetite, tolerance, and culture</li>
+                            <li>Designing internal controls for effectiveness</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
-                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1600">
-                    <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid4.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
-                    </div>
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1600" style="background-color: #E8EDF7; border-radius:8px">
                     <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">What consultants should know about working with nonprofits</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                        <h4 class="title"><a href="blog-details.html">Module 4:  AML/CTF & Regulatory Compliance</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>Customer Due Diligence (CDD) & Enhanced Due Diligence (EDD)</li>
+                            <li>Suspicious Activity Reporting (SAR/STR)</li>
+                            <li>Sanctions screening & regulatory expectations</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
-                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1800">
-                    <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid5.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
-                    </div>
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="1800" style="background-color: #E8EDF7; border-radius:8px">
                     <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">Innovative solutions for business success dynamic from today</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                        <h4 class="title"><a href="blog-details.html">Module 5:  Emerging Risks & Technologies</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>Digital assets, crypto, and stablecoins</li>
+                            <li>Cybersecurity and resilience in financial institutions</li>
+                            <li>Artificial Intelligence & RegTech in compliance monitoring</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="col-xl-6 col-md-6 col-sm-12" >
                 <!--=== Bizzen Blog Post ===-->
-                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2000">
-                    <div class="post-thumbnail">
-                        <img src="assets/images/innerpage/blog/blog-grid6.jpg" alt="Blog Grid">
-                        <div class="date">21 <span>july</span></div>
-                    </div>
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2000" style="background-color: #E8EDF7; border-radius:8px">
                     <div class="post-content">
-                        <div class="post-meta">
-                            <span><i class="far fa-user"></i> By <a href="#">Admin</a></span>
-                            <span><i class="far fa-comment"></i><a href="#">Comments (03)</a></span>
-                        </div>
-                        <h4 class="title"><a href="blog-details.html">Spending Habits, 13 Tips for grow Your Money.</a></h4>
-                        <p>Our mission is to empowers businesses off our all size too thrive in an businesses ever changing </p>
-                        <a href="blog-details.html" class="read-more style-one">Read More <i class="far fa-arrow-right"></i></a>
+                        <h4 class="title"><a href="blog-details.html">Module 6:  ESG & Sustainability Compliance</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>ESG frameworks and investor expectations</li>
+                            <li>Climate-related financial risks and disclosures</li>
+                            <li>Integrating sustainability into risk and compliance strategies</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-12" >
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2200" style="background-color: #E8EDF7; border-radius:8px">
+                    <div class="post-content">
+                        <h4 class="title"><a href="blog-details.html">Capstone Project</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>Apply learning to a real-world compliance challenge (individual or group  project)</li>
+                            <li>Presentation to peers and faculty</li>
+                            <br/>
+                            <br/>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-6 col-sm-12" >
+                <!--=== Bizzen Blog Post ===-->
+                <div class="bizzen-blog-post-item style-two mb-35" data-aos="fade-up" data-aos-duration="2400" style="background-color: #E8EDF7; border-radius:8px">
+                    <div class="post-content">
+                        <h4 class="title"><a href="blog-details.html">Assessment & Certification</a></h4>
+                        <ul class="check-list style-two" data-aos="fade-up" data-aos-duration="1200">
+                            <li>Assessments: Multiple-choice exam (50%), project (30%), participation (20%)</li>
+                            <li>Certification: Successful candidates earn the CGFCS designation and may  use post-nominals “CGFCS” after their name.</li>
+                            <li>CPD Credits: 40 hours</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="theme-pagination text-center mt-30" data-aos="fade-up" data-aos-duration="2200">
-                    <ul>
-                        <li><a href="#"><i class="far fa-arrow-left"></i></a></li>
-                        <li><a href="#">01</a></li>
-                        <li><a href="#">02</a></li>
-                        <li><a href="#">03</a></li>
-                        <li><a href="#"><i class="far fa-arrow-right"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </section>
 

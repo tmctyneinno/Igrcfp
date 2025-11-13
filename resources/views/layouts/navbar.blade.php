@@ -1,4 +1,4 @@
- <!--=== Start  Header Area  ===-->
+<!--=== Start  Header Area  ===-->
 <header class="header-area header-three">
     <!--====  Header Navigation  ===-->
     <div class="header-navigation">
@@ -20,9 +20,9 @@
                         </div>
                     </div>
                     <!--=== Main Menu ===-->
-                    <nav class="main-menu">
+                    <nav class="main-menu" >
                         <ul>
-                            <li class="menu-item"><a href="{{ route('index') }}">Home</a></li>
+                            <li class="menu-item"><a href="{{ route('index') }}" >Home</a></li>
 
                             <li class="menu-item has-children">
                                 <a href="{{ route('about-us') }}">About Us </a>
@@ -31,7 +31,12 @@
                                     <li><a href="{{ route('structure') }}">Our Structure</a></li>
                                 </ul>
                             </li>
-                            <li class="menu-item"><a href="{{ route('membership') }}">Membership</a></li>
+                            <li class="menu-item has-children">
+                                <a href="{{ route('membership') }}">Membership </a>
+                                <ul class="sub-menu">
+                                    <li><a href="{{ route('get-involved') }}">Get Involved</a></li>
+                                </ul>
+                            </li>
                              <li class="menu-item has-children">
                                 <a href="{{ route('certification') }}">Certifications & Training </a>
                                 <ul class="sub-menu">
@@ -41,7 +46,7 @@
                             <li class="menu-item"><a href="{{ route('event') }}">Event</a></li>
                             <li class="menu-item"><a href="{{ route('blog') }}">Blog</a></li>
 
-                            <li class="menu-item"><a href="contact.html">Contact</a></li>
+                            <li class="menu-item"><a href="{{ route('contact') }}">Contact</a></li>
                         </ul>
                     </nav>
                     <!--=== Nav Button ===-->
@@ -62,7 +67,7 @@
                 <!--=== Header Nav Right ===-->
                 <div class="nav-right-item">
                     <div class="nav-button d-none d-md-block">
-                        <a href="contact.html" class="theme-btn style-one">Get A Quote<i class="far fa-arrow-right"></i></a>
+                        <a href="contact.html" class="theme-btn style-one">Join the Institute<i class="far fa-arrow-right"></i></a>
                     </div>
                     <div class="navbar-toggler">
                         <span></span>

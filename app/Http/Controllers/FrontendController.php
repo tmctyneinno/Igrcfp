@@ -46,5 +46,18 @@ class FrontendController extends Controller
     public function cgfcs(){
         return view('frontend.cgfcs');
     }
-    
+
+    public function blog(){
+        return view('frontend.blog.index');
+    }
+
+    public function blogDetails(){
+        return view('frontend.blog.details');
+    }
+
+    public function getInvolved(){
+        return view('frontend.getInvolved');
+    }
+
+
 }
