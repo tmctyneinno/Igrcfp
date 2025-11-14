@@ -59,5 +59,9 @@ class FrontendController extends Controller
         return view('frontend.getInvolved');
     }
 
+    public function contact(){
+        return view('frontend.contact');
+    }
+
 
 }
