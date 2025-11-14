@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\HomeController;
 
@@ -30,7 +31,9 @@ Route::get('/igrcfp', [FrontendController::class, 'igrcfp'])->name('igrcfp');
 Route::get('/cgfcs', [FrontendController::class, 'cgfcs'])->name('cgfcs');
 Route::get('/get-involved', [FrontendController::class, 'getInvolved'])->name('get-involved');
 
+Route::get('/registration-success', [RegisterController::class, 'showSuccessPage'])->name('registration.success');
+
+
 
 Auth::routes();
-
 Route::get('/home', [HomeController::class, 'index'])->name('home');

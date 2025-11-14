@@ -26,6 +26,8 @@
         <link rel="stylesheet" href="{{asset('assets/css/spacings.css')}}">
         <!--====== Default css ======-->
         <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     </head>
     <body>
         <!--====== Start Preloader ======-->

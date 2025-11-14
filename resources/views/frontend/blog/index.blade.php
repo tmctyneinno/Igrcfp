@@ -5,9 +5,7 @@
 <!--======  Start Page Hero Section  ======-->
 <section 
     class="page-hero bg_cover p-r z-1" 
-    {{-- style="padding-top: 0px" --}}
-    style="background-image: url('{{ asset('assets/images/innerpage/bg/page-bg.png') }}');"
->
+    style="background-image: url('{{ asset('assets/images/innerpage/bg/page-bg.png') }}');">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">

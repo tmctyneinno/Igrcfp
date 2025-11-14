@@ -3,34 +3,32 @@
 @section('content')
 
   <!--======  Start Page Hero Section  ======-->
-<section class="page-hero bg_cover p-r z-1" style="background-image: url('{{ asset('assets/images/innerpage/bg/page-bg.png') }}')">
+  <section 
+    class="page-hero bg_cover p-r z-1" 
+    style="background-image: url('{{ asset('assets/images/innerpage/bg/page-bg.png') }}');"
+>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="page-content text-center text-black">
-                    <h1 class="text-black">Contact us for inquiries</h1>
-                    <ul class="">
-                        <li class="text-black"><a href="{{  route('index') }}">Home</a></li>
-                        <li class="text-black">Contact Us</li>
-                    </ul>
+                <div class="page-content text-center">
+                    <h1 style="color: black;">Contact us for inquiries</h1>
+                        <ul >
+                            <li ><a class="text-black" href="{{ route('index') }}">Home</a></li>/
+                            <li class="text-black">Contact Us</li>
+                        </ul>
                 </div>
             </div>
         </div>
     </div>
-</section><!--======  End Page Hero Section  ======-->
+</section>
+
+<!--======  End Page Hero Section  ======-->
 <!--======  Start Contact Info Section  ======-->
 <section class="bizzen-contact-info-sec pt-105">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <!--=== Section Title ===-->
-                <div class="section-title text-center mb-50">
-                    <h2>Our Contact Information</h2>
-                </div>
-            </div>
-        </div>
+     
         <div class="row justify-content-center">
-            <div class="col-xl-4 col-md-6 col-sm-12">
+            <div class="col-xl-5 col-md-6 col-sm-12">
                 <!--=== Bizzen Info Box ===-->
                 <div class="bizzen-info-left-box mb-40">
                     <div class="icon">
@@ -38,11 +36,13 @@
                     </div>
                     <div class="content">
                         <h5>Our Address</h5>
-                        <p>374 William S Canning Blvd, Fall River MA 2721, USA</p>
+                        <p><b>EUROPE: </b> 85 Great Portland Street First Floor London W1W 7LT, United Kingdom</p>
+                        <p><b>AFRICA: </b> Adeola Adeoye Street, Off Toyin Street, Ikeja, Lagos, Nigeria </p>
+                        <p><b>Asia: </b> 21 Gillabbey Terrace, Gillabbey Street, Cork, T12 KPN4, Republic of Ireland </p>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6 col-sm-12">
+            <div class="col-xl-5 col-md-6 col-sm-12">
                 <!--=== Bizzen Info Box ===-->
                 <div class="bizzen-info-left-box mb-40">
                     <div class="icon">
@@ -50,24 +50,14 @@
                     </div>
                     <div class="content">
                         <h5>Contact Number</h5>
-                        <p><span>Mobile: <a href="tel:+13217322978">+13217322978</a></span></p>
-                        <p><span>Email: <a href="mailto:">saorhelp@gmail.com</a></span></p>
+                        <p><b>Nigeria:</b> <a href="tel:+2349153414314">09153414314</a></p>
+                        <p><b>United Kingdom Tel:</b> <a href="tel:+447466588324">+44 7466588324</a></p>
+                        <p><b>Republic of Ireland:</b> <a href="tel:++353877123968"> +353 877123968</a></p>
+                        <p><b>Email: </b><a href="mailto:">enquiries@igrfcp.com</a></p>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-md-6 col-sm-12">
-                <!--=== Bizzen Info Box ===-->
-                <div class="bizzen-info-left-box mb-40">
-                    <div class="icon">
-                        <i class="far fa-clock"></i>
-                    </div>
-                    <div class="content">
-                        <h5>Our Address</h5>
-                        <p>Mon - Sat: 9:00 - 18:00</p>
-                        <p>Sunday: Closed</p>
-                    </div>
-                </div>
-            </div>
+           
         </div>
     </div>
 </section><!--======  End Contact Info Section  ======-->
@@ -119,6 +109,6 @@
         </div>
     </div>
 </section><!--======  End Contact Section  ======-->
-
+ 
 
 @endsection

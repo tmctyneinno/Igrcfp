@@ -67,7 +67,7 @@
                 <!--=== Header Nav Right ===-->
                 <div class="nav-right-item">
                     <div class="nav-button d-none d-md-block">
-                        <a href="contact.html" class="theme-btn style-one">Join the Institute<i class="far fa-arrow-right"></i></a>
+                        <a href="{{ route('register') }}" class="theme-btn style-one">Join the Institute<i class="far fa-arrow-right"></i></a>
                     </div>
                     <div class="navbar-toggler">
                         <span></span>

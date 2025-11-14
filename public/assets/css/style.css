@@ -5747,8 +5747,12 @@ label {
 }
 
 .bizzen-contact_two .contact-wrapper {
-  border: 1px solid var(--border-color);
+  /* border: 1px solid var(--border-color); */
   padding: 35px 60px 50px;
+}
+.bizzen-contact_two .contact-wrapper label{
+  font-weight: 400;
+  color: #000;
 }
 @media (max-width: 767.98px) {
   .bizzen-contact_two .contact-wrapper {
