@@ -27,7 +27,7 @@
                         <a href="{{ route('register') }}" class="theme-btn style-one me-3 mb-10" style="border-radius: 8px;">
                             Join the Institute<i class="far fa-arrow-right"></i>
                         </a>
-                        <a href="{{ route('certification') }}" class="theme-btn style-two" style="background-color: #fff">
+                        <a href="{{ route('certification') }}" class="theme-btn style-two" style="background-color: #fff;border-radius: 8px;">
                             Explore Certifications<i class="far fa-arrow-right"></i>
                         </a>
                         </div>
