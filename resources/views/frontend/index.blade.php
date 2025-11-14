@@ -5,7 +5,7 @@
 <!--======  Start Hero Section  ======-->
 <section class="bizzen-hero">
     <!--=== Bizzen Hero ===-->
-    <div class="bizzen-hero_three ">
+    <div class="bizzen-hero_three">
         <div class="shape d-block d-lg-none" >
             <img class=""   src="{{ asset('assets/images/home-three/hero/hero-img1.png')}}" alt="shape">
         </div>

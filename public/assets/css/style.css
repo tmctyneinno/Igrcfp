@@ -1846,15 +1846,24 @@ label {
   .sider {
     padding: 220px 40px 0;
   }
+  .bizzen-hero_three{
+    padding-left: 0px;
+  }
 }
 @media screen and (max-width: 1199.98px) {
    .sider{
     padding: 220px 40px 0;
   }
+  .bizzen-hero_three{
+    padding-left: 0px;
+  }
 }
 @media screen and (max-width: 991.98px) {
   .sider {
     padding: 220px 0 110px;
+  }
+  .bizzen-hero_three{
+    padding-left: 0px;
   }
 }
 .bizzen-hero_three .shape {
