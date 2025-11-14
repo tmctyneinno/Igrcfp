@@ -1860,7 +1860,8 @@ label {
 }
 @media screen and (max-width: 991.98px) {
   .sider {
-    padding: 220px 0 110px;
+    padding: 180px 0 10px;
+    text-align: center;
   }
   .bizzen-hero_three{
     padding-left: 0px;
