@@ -65,15 +65,15 @@ export default function Certification({ courses = [] }) {
                                 </p>
 
 
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-500">
-                                        {course.instructor ? course.instructor.name : "N/A"}
-                                    </span>
-
-                                    <span className="text-blue-700 font-bold">
-                                        ₦{Number(course.price ?? 0).toLocaleString()}
-                                    </span>
+                                <div className="flex items-center justify-start">
+                                    <Link
+                                        href={`/courses/${course.id}`} // assuming you have a course detail page
+                                        className="text-blue-700 font-semibold hover:underline transition duration-200"
+                                    >
+                                        Learn More →
+                                    </Link>
                                 </div>
+
                             </div>
                         </div>
                     ))
