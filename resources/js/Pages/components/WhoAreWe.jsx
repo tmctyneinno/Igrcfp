@@ -16,7 +16,7 @@ export default function WhoAreWe() {
                     className="flex flex-col"
                 >
                     <span className="text-sm uppercase tracking-widest text-gray-400">
-                        -----Who We Are
+                        Who We Are
                     </span>
                     <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
                         Know More About Us
@@ -58,7 +58,7 @@ export default function WhoAreWe() {
                 <img
                     src="assets/images/home-three/bg/intro-bg.png"
                     alt="IGRCFP"
-                    className="max-w-4xl w-full"
+                    className="max-w-xl w-full"
                 />
             </motion.div>
         </div>
