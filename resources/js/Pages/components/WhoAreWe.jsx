@@ -42,8 +42,6 @@ export default function WhoAreWe() {
                     transition={{ duration: 0.5, ease: "easeOut" }}
                     viewport={{ once: true }}
                 >
-                    {/* HEADER */}
-                   
                     <p className="text-gray-600 mb-4">
                         The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
                     </p>
