@@ -63,6 +63,35 @@ export default function Welcome({ auth }) {
                             >
                                 Home
                             </Link>
+                             {/* Courses Dropdown - Fixed */}
+                            <div className="relative group">
+                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300">
+                                    About Us
+                                    <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                {/* Dropdown Menu */}
+                                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
+                                    <div className="px-4 py-2">
+                                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
+                                    </div>
+                                    <div className="border-t border-gray-100 my-1"></div>
+                                    <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                                            Web Development
+                                        </div>
+                                    </Link>
+                                    <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-pink-500 rounded-full mr-3"></div>
+                                            Design & Creative
+                                        </div>
+                                    </Link>
+                                </div>
+                            </div>
                             
                             {/* Courses Dropdown - Fixed */}
                             <div className="relative group">
@@ -121,12 +150,7 @@ export default function Welcome({ auth }) {
                                 </div>
                             </div>
                             
-                            <Link 
-                                href="/tutors" 
-                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
-                            >
-                                Tutors
-                            </Link>
+                            
                             <Link 
                                 href="/about" 
                                 className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
