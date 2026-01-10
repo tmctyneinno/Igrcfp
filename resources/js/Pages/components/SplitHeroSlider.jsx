@@ -296,7 +296,7 @@ export default function SplitHeroSlider({ auth }) {
                                     </div>
 
                                     {/* Image Overlay Content */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                    {/* <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                                         <div 
                                             className="transform transition-all duration-700 delay-500"
                                             style={{
@@ -311,7 +311,7 @@ export default function SplitHeroSlider({ auth }) {
                                             <h3 className="text-xl font-bold mb-2">{slide.highlighted}</h3>
                                             <p className="text-blue-100 text-sm">Slide {index + 1} of {slides.length}</p>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))}
 
@@ -388,6 +388,8 @@ export default function SplitHeroSlider({ auth }) {
                             </button>
                         ))}
                     </div>
+                    
+                    
                 </div>
 
               
