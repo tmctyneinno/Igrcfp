@@ -19,6 +19,38 @@ export default function AboutIndex({ auth, title, description }) {
                 </div>
             </section>
 
+            <section className="py-20 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    {/* Section Title */}
+                    <div className="text-center mb-12">
+                        <h2 className="text-2xl md:text-3xl font-medium text-gray-900">
+                            Our Partners & Affiliates
+                        </h2>
+                    </div>
+
+                    {/* Logos */}
+                    <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-10">
+                        {[
+                            { name: 'Reform', src: '/images/partners/reform.svg' },
+                            { name: 'Tuple', src: '/images/partners/tuple.svg' },
+                            { name: 'SavvyCal', src: '/images/partners/savvycal.svg' },
+                            { name: 'Statamic', src: '/images/partners/statamic.svg' },
+                            { name: 'Transistor', src: '/images/partners/transistor.svg' },
+                        ].map((partner, index) => (
+                            <img
+                                key={index}
+                                src={partner.src}
+                                alt={partner.name}
+                                className="h-8 md:h-9 object-contain opacity-90 hover:opacity-100 transition"
+                            />
+                        ))}
+                    </div>
+
+                </div>
+            </section>
+
+
             {/* Main Content */}
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
