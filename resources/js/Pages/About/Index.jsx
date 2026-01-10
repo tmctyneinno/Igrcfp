@@ -1,7 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import WhoAreWe from "@/Pages/components/WhoAreWe";
-import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
+import PartnersSlider from '@/Pages/About/PartnersSlider';
+import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';PartnersSlider
 
 export default function AboutIndex({ auth, title, description }) {
     return (
@@ -21,36 +22,7 @@ export default function AboutIndex({ auth, title, description }) {
                 </div>
             </section>
 
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    
-                    {/* Section Title */}
-                    <div className="text-center mb-12">
-                        <h2 className="text-2xl md:text-3xl font-medium text-gray-900">
-                            Our Partners & Affiliates
-                        </h2>
-                    </div>
-
-                    {/* Logos */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-10">
-                        {[
-                            { name: 'Reform', src: 'assets/images/partners/reform.png' },
-                            { name: 'Tuple', src: 'assets/images/partners/tuple.png' },
-                            { name: 'SavvyCal', src: 'assets/images/partners/savvycal.png' },
-                            { name: 'Statamic', src: 'assets/images/partners/statamic.png' },
-                            { name: 'Transistor', src: 'assets/images/partners/transistor.png' },
-                        ].map((partner, index) => (
-                            <img
-                                key={index}
-                                src={partner.src}
-                                alt={partner.name}
-                                className="h-10 md:h-19 object-contain opacity-90 hover:opacity-100 transition"
-                            />
-                        ))}
-                    </div>
-
-                </div>
-            </section>
+            <PartnersSlider />
 
             <section className="bg-white py-24 overflow-hidden">
                 <WhoAreWe auth={auth} />
