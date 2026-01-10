@@ -1,0 +1,26 @@
+/* resources/css/custom.css */
+
+/* Custom CSS for dropdown hover effects */
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1 !important;
+}
+
+.group:hover .group-hover\:visible {
+    visibility: visible !important;
+}
+
+.group:hover .group-hover\:translate-y-0 {
+    transform: translateY(0) !important;
+}
+
+/* Ensure dropdowns are above other content */
+.z-50 {
+    z-index: 50 !important;
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition-property: all !important;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition-duration: 300ms !important;
+}
