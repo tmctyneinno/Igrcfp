@@ -48,6 +48,11 @@ export default function Register() {
             alert('Please fill in all required fields');
             return;
         }
+        if (currentStep === 3) {
+            // This is the final step, handle submission
+            // You might want to trigger form submission here
+            return;
+        }
         setCurrentStep(currentStep + 1);
     };
 
