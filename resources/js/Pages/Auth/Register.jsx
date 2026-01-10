@@ -30,11 +30,22 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-        // Only submit if we're on the final step
-        if (currentStep === 3) {
-            post(route('register'));
+        
+        // If we're not on the final step, navigate to next step
+        if (currentStep < 3) {
+            // Validate before proceeding
+            if (currentStep === 1 && !data.role) {
+                alert('Please select a role');
+                return;
+            }
+            if (currentStep === 2 && (!data.name || !data.email)) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            setCurrentStep(currentStep + 1);
         } else {
-            nextStep();
+            // Final step - submit the form
+            post(route('register'));
         }
     };
 
@@ -56,7 +67,7 @@ export default function Register() {
         setCurrentStep(currentStep + 1);
     };
 
-    const prevStep = () => {
+        const prevStep = () => {
         setCurrentStep(currentStep - 1);
     };
 
