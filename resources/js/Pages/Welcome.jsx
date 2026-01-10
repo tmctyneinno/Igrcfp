@@ -440,7 +440,7 @@ export default function Welcome({ auth }) {
                 <SplitHeroSlider auth={auth} />
             </div>
 
-            <section className="py-20 bg-white">
+            <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
             </section>
                 
