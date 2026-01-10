@@ -51,4 +51,6 @@ class HomeController extends Controller
             'courses' => $courses,
         ]);
     }
+
+    pub
 }
