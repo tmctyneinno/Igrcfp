@@ -35,7 +35,7 @@ export default function OurValues() {
         {/* Flexbox layout: Left - Values, Right - Image */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Left Side - Values Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 flex-1">
             {valuesData.map((value, index) => (
               <div
                 key={index}
