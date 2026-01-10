@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from "framer-motion";
-import AOS from "aos";
-import "aos/dist/aos.css";
+// import AOS from "aos";
+// import "aos/dist/aos.css";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function WhoAreWe() {
@@ -11,16 +11,7 @@ export default function WhoAreWe() {
 
     const slides = [0]; // reserved for future expansion
 
-    useEffect(() => {
-        AOS.init({
-            duration: 900,
-            easing: "ease-out-cubic",
-            once: true,
-        });
-
-        startAutoSlide();
-        return () => stopAutoSlide();
-    }, [activeSlide]);
+   
 
     const startAutoSlide = () => {
         stopAutoSlide();

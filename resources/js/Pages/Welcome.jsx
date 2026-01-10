@@ -26,6 +26,17 @@ export default function Welcome({ auth }) {
         };
     }, [])
 
+     useEffect(() => {
+        AOS.init({
+            duration: 900,
+            easing: "ease-out-cubic",
+            once: true,
+        });
+
+        startAutoSlide();
+        return () => stopAutoSlide();
+    }, [activeSlide]);
+
 
     // Close mobile menu when clicking outside
     
