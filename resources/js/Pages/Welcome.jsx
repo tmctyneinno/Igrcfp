@@ -11,6 +11,7 @@ import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
 import Footer from "@/Pages/components/Footer";
+import NavBar from "@/Pages/components/NavBar";
  
 export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,7 +56,7 @@ export default function Welcome({ auth, courses }) {
                 data-aos="fade-down"
                 data-aos-duration="1400"
             >
-                
+                <NavBar />
             </nav>
 
             {/* Hero Section with AOS effects */}
