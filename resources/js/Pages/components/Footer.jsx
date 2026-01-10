@@ -39,7 +39,7 @@ export default function Footer() {
                         </div>
 
                         <p className="text-gray-400 leading-relaxed mb-6">
-                            The International Governance, Risk, Compliance & Financial Crime 
+                            The Institute Governance, Risk, Compliance & Financial Crime 
                             Professionals body advancing professional standards, ethics, 
                             and global best practices worldwide.
                         </p>
@@ -270,7 +270,7 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-blue-900/30">
                     <div className="text-center md:text-left">
                         <p className="text-gray-400">
-                            © {currentYear} International Governance, Risk, Compliance & Financial Crime Professionals (IGRCFP).
+                            © {currentYear} Institute Governance, Risk, Compliance & Financial Crime Professionals (IGRCFP).
                         </p>
                     </div>
                     
