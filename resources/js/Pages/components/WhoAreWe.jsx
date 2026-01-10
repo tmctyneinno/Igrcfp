@@ -32,6 +32,24 @@ export default function WhoAreWe() {
                     transition={{ duration: 0.5, ease: "easeOut" }}
                     viewport={{ once: true }}
                 >
+                    {/* HEADER */}
+                    <div
+                        className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
+                        data-aos="fade-up"
+                    >
+                        <div>
+                            <div className="relative inline-flex items-center mb-3">
+                                <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
+                                <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                                    Events & Summits
+                                </span>
+                            </div>
+
+                            <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
+                                Our Global Events & Summits
+                            </h2>
+                        </div>
+                    </div>
                     <p className="text-gray-600 mb-4">
                         The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
                     </p>
