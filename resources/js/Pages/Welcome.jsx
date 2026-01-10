@@ -74,20 +74,18 @@ export default function Welcome({ auth }) {
                                 
                                 {/* Dropdown Menu */}
                                 <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                                    <div className="px-4 py-2">
-                                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
-                                    </div>
+                                   
                                     <div className="border-t border-gray-100 my-1"></div>
                                     <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                                            Web Development
+                                           Welcome to IGRCFP
                                         </div>
                                     </Link>
                                     <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-pink-500 rounded-full mr-3"></div>
-                                            Design & Creative
+                                            Our Structure
                                         </div>
                                     </Link>
                                 </div>
