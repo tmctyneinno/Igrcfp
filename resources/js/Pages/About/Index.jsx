@@ -11,10 +11,10 @@ export default function AboutIndex({ auth, title, description }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            About <span className="text-blue-600">IGRCFP</span>
+                            {title}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The International Governance, Risk, Compliance & Financial Crime Professionals body
+                            The Institute of Governance, Risk, Compliance & Financial Crime Professionals body
                         </p>
                     </div>
                 </div>
