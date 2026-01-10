@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class CourseController extends Controller
 {
@@ -47,6 +48,9 @@ class CourseController extends Controller
                     'certification' => $course->certification,
                 ];
             });
+           // Debug logging
+        Log::info("courses updated: {$courses}");
+        
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
             'courses' => $courses
