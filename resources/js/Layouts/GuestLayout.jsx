@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState, useRef } from "react";
-// import Footer from '@/Pages/components/Footer'; 
+import NavBar from "@/Pages/components/NavBar";
+import Footer from '@/Pages/components/Footer'; 
 
 export default function GuestLayout({ children, auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
