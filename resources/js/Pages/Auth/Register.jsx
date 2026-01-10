@@ -12,7 +12,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
-        role: 'student',
+        role: 'learner',
         phone: '',
         linkedin: '',
         date_of_birth: '',
