@@ -63,14 +63,17 @@ export default function Welcome({ auth }) {
                             >
                                 Home
                             </Link>
-                             {/* About Dropdown - Fixed */}
+                            {/* About Dropdown - Fixed with hover bridge */}
                             <div className="relative group">
-                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300">
+                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
                                     About Us
                                     <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
+                                
+                                {/* Invisible hover bridge */}
+                                <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                                 
                                 {/* Dropdown Menu */}
                                 <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
@@ -82,15 +85,18 @@ export default function Welcome({ auth }) {
                                     </Link>
                                 </div>
                             </div>
-                            
-                            {/* Courses Dropdown - Fixed */}
+
+                            {/* Courses Dropdown - Fixed with hover bridge */}
                             <div className="relative group">
-                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300">
+                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
                                     Courses
                                     <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
+                                
+                                {/* Invisible hover bridge */}
+                                <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                                 
                                 {/* Dropdown Menu */}
                                 <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
@@ -109,7 +115,6 @@ export default function Welcome({ auth }) {
                                     <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         RegTech, SupTech & Innovation in Compliance
                                     </Link>
-                                   
                                 </div>
                             </div>
                             
