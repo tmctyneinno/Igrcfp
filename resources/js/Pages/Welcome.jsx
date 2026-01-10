@@ -56,7 +56,7 @@ export default function Welcome({ auth, courses }) {
                 data-aos="fade-down"
                 data-aos-duration="1400"
             >
-                <NavBar />
+                <NavBar auth={auth}/>
             </nav>
 
             {/* Hero Section with AOS effects */}
