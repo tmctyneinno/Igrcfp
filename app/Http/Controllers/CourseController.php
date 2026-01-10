@@ -49,7 +49,7 @@ class CourseController extends Controller
             });
 
         // Return Inertia page (React)
-        return Inertia::render('Courses/Index', [
+        return Inertia::render('Pages/Welcome', [
             'courses' => $courses
         ]);
     }
