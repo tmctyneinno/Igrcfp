@@ -119,7 +119,7 @@ export default function Register() {
                             <div className="flex items-center justify-between">
                                 {steps.map((step) => (
                                     <div key={step.number} className="flex flex-col items-center flex-1">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep >= step.number ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep >= step.number ? 'bg-blue-950 text-white' : 'bg-gray-200 text-gray-500'}`}>
                                             <span className="font-semibold">{step.number}</span>
                                         </div>
                                         <div className="text-center">
