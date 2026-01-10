@@ -158,7 +158,8 @@ export default function Welcome({ auth }) {
                                     <>
                                         <Link
                                             href={route('register')}
-                                            className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 shadow-lg"
+                                            data-aos="fade-down" data-aos-duration="1400"
+                                            className="bg-blue-600  text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 shadow-lg"
                                         >
                                             Start Learning Free
                                         </Link>
