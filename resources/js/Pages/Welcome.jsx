@@ -251,7 +251,6 @@ export default function Welcome({ auth }) {
                         </div>
                     </div>
 
-                    {/* Mobile Menu */}
                    {/* Mobile Menu - UPDATED */}
                     {isMobileMenuOpen && (
                         <div 
