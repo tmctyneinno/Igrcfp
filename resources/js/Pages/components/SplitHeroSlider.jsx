@@ -27,7 +27,8 @@ export default function SplitHeroSlider({ auth }) {
             id: 3,
             title: "Advance Your Career in",
             description: "Specialize in AML, KYC, and fraud detection with practical training from real-world scenarios.",
-            image: "https://images.unsplash.com/photo-1551836026-d5c2c5af78e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+           
             ctaPrimary: "Learn More",
             ctaSecondary: "Join Now"
         },
