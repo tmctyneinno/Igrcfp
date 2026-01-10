@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import WhoAreWe from "@/Pages/components/WhoAreWe";
 
 export default function AboutIndex({ auth, title, description }) {
     return (
@@ -51,8 +52,8 @@ export default function AboutIndex({ auth, title, description }) {
             </section>
 
             <section className="bg-white py-24 overflow-hidden">
-                           <WhoAreWe auth={auth} />
-                        </section>
+                <WhoAreWe auth={auth} />
+            </section>
 
 
             {/* Main Content */}
