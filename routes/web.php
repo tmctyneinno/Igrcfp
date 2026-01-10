@@ -5,18 +5,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Course;
+use App\Http\Controllers\HomeController;
 
-
-Route::get('/', function () {
-    $courses = Course::with('instructor')->get();
-    
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'courses' => $courses,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
