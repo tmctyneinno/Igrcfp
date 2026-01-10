@@ -270,14 +270,7 @@ export default function Footer() {
                             </li>
                         </ul>
 
-                        {/* Office Hours */}
-                        <div className="mt-8 p-4 bg-white/5 rounded-lg border border-blue-800/20">
-                            <h5 className="text-white font-medium mb-2">Office Hours</h5>
-                            <p className="text-sm text-gray-400">
-                                Mon - Fri: 9:00 AM - 6:00 PM GMT<br />
-                                Emergency: 24/7 Support Available
-                            </p>
-                        </div>
+                       
                     </motion.div>
                 </motion.div>
 
@@ -298,9 +291,6 @@ export default function Footer() {
                     <div className="text-center md:text-left">
                         <p className="text-gray-400">
                             © {currentYear} International Governance, Risk, Compliance & Financial Crime Professionals (IGRCFP).
-                        </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Registration Number: 12345678 • VAT: GB 123 4567 89
                         </p>
                     </div>
                     
