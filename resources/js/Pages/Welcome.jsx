@@ -10,7 +10,7 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
-import Footer from "@/Pages/components/Footer";
+import Footer from "@/Pages/components/Footer"; 
 import NavBar from "@/Pages/components/NavBar";
  
 export default function Welcome({ auth, courses }) {
