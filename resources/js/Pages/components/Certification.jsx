@@ -53,14 +53,6 @@ export default function Certification({ courses = [] }) {
                             {/* CONTENT */}
                             <div className="p-6">
 
-                                <div className="flex items-center justify-between mb-4">
-                                    <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
-                                        {course.level}
-                                    </span>
-                                    <span className="text-gray-500 text-sm">
-                                        {course.rating ?? "0.0"} ★
-                                    </span>
-                                </div>
 
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                     {course.title}
