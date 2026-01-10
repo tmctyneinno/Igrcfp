@@ -104,7 +104,7 @@ export default function SplitHeroSlider({ auth }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                     
-                    {/* Left Column - Text Slider */}
+                    {/* Left Column - Text Slider - FIXED */}
                     <div 
                         className="relative h-[400px] lg:h-[500px] flex items-center"
                         ref={textSliderRef}
@@ -113,20 +113,18 @@ export default function SplitHeroSlider({ auth }) {
                             {slides.map((slide, index) => (
                                 <div
                                     key={slide.id}
-                                    className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                                    className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                                         index === activeSlide 
-                                            ? 'translate-x-0 opacity-100' 
-                                            : 'translate-x-full opacity-0'
+                                            ? 'translate-x-0 opacity-100 z-10' 
+                                            : index < activeSlide
+                                            ? '-translate-x-full opacity-0 z-0'
+                                            : 'translate-x-full opacity-0 z-0'
                                     }`}
                                 >
                                     <div className="space-y-6 lg:space-y-8">
                                         {/* Badge */}
                                         <div 
-                                            className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-600 font-medium text-sm mb-4 transform transition-all duration-700 delay-300"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(-20px)',
-                                                opacity: index === activeSlide ? 1 : 0
-                                            }}
+                                            className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-600 font-medium text-sm mb-4"
                                         >
                                             <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 animate-pulse"></span>
                                             Slide {index + 1} of {slides.length}
@@ -135,12 +133,6 @@ export default function SplitHeroSlider({ auth }) {
                                         {/* Title */}
                                         <h1 
                                             className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
-                                                opacity: index === activeSlide ? 1 : 0,
-                                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transitionDelay: '200ms'
-                                            }}
                                         >
                                             {slide.title} <span className="text-blue-600 relative">
                                                 {slide.highlighted}
@@ -150,13 +142,7 @@ export default function SplitHeroSlider({ auth }) {
 
                                         {/* Description */}
                                         <p 
-                                            className="text-lg md:text-xl text-black-600 max-w-xl"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
-                                                opacity: index === activeSlide ? 1 : 0,
-                                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transitionDelay: '400ms'
-                                            }}
+                                            className="text-lg md:text-xl text-gray-600 max-w-xl"
                                         >
                                             {slide.description}
                                         </p>
@@ -164,12 +150,6 @@ export default function SplitHeroSlider({ auth }) {
                                         {/* CTA Buttons */}
                                         <div 
                                             className="flex flex-col sm:flex-row gap-4 pt-4"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
-                                                opacity: index === activeSlide ? 1 : 0,
-                                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transitionDelay: '600ms'
-                                            }}
                                         >
                                             {!auth?.user ? (
                                                 <>
@@ -188,7 +168,7 @@ export default function SplitHeroSlider({ auth }) {
                                                     >
                                                         {slide.ctaSecondary}
                                                         <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                            <path strokeLinecap="round" slideLinejoin="round" slideWidth={2} d="M9 5l7 7-7 7" />
                                                         </svg>
                                                     </Link>
                                                 </>
@@ -208,12 +188,6 @@ export default function SplitHeroSlider({ auth }) {
                                         {/* Stats */}
                                         <div 
                                             className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200 mt-8"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
-                                                opacity: index === activeSlide ? 1 : 0,
-                                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transitionDelay: '800ms'
-                                            }}
                                         >
                                             <div className="text-center">
                                                 <div className="text-2xl font-bold text-blue-600">10K+</div>
@@ -281,10 +255,12 @@ export default function SplitHeroSlider({ auth }) {
                             {slides.map((slide, index) => (
                                 <div
                                     key={slide.id}
-                                    className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                                    className={`absolute inset-0 transition-all duration-700 ease-in-out ${
                                         index === activeSlide 
-                                            ? 'translate-x-0 opacity-100 scale-100' 
-                                            : 'translate-x-full opacity-0 scale-95'
+                                            ? 'translate-x-0 opacity-100 scale-100 z-10' 
+                                            : index < activeSlide
+                                            ? '-translate-x-full opacity-0 scale-95 z-0'
+                                            : 'translate-x-full opacity-0 scale-95 z-0'
                                     }`}
                                 >
                                     {/* Image */}
@@ -296,14 +272,8 @@ export default function SplitHeroSlider({ auth }) {
                                     </div>
 
                                     {/* Image Overlay Content */}
-                                    {/* <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                                        <div 
-                                            className="transform transition-all duration-700 delay-500"
-                                            style={{
-                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
-                                                opacity: index === activeSlide ? 1 : 0
-                                            }}
-                                        >
+                                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                        <div className="transform transition-all duration-700 delay-500">
                                             <div className="flex items-center space-x-2 mb-2">
                                                 <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
                                                 <span className="text-sm font-medium">Professional Training</span>
@@ -311,12 +281,12 @@ export default function SplitHeroSlider({ auth }) {
                                             <h3 className="text-xl font-bold mb-2">{slide.highlighted}</h3>
                                             <p className="text-blue-100 text-sm">Slide {index + 1} of {slides.length}</p>
                                         </div>
-                                    </div> */}
+                                    </div>
                                 </div>
                             ))}
 
                             {/* Image Navigation Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-between p-4">
+                            <div className="absolute inset-0 flex items-center justify-between p-4 z-20">
                                 <button
                                     onClick={prevSlide}
                                     className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 group"
@@ -338,7 +308,7 @@ export default function SplitHeroSlider({ auth }) {
                             </div>
 
                             {/* Image Progress Indicator */}
-                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
                                 {slides.map((_, index) => (
                                     <div
                                         key={index}
@@ -353,7 +323,7 @@ export default function SplitHeroSlider({ auth }) {
                         </div>
 
                         {/* Floating Badge */}
-                        <div className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl shadow-xl transform rotate-3">
+                        <div className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl shadow-xl transform rotate-3 z-20">
                             <div className="flex items-center space-x-2">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -366,6 +336,16 @@ export default function SplitHeroSlider({ auth }) {
 
                 {/* Bottom Controls */}
                 <div className="flex justify-center items-center space-x-6 mt-12 lg:mt-0">
+                    <button
+                        onClick={prevSlide}
+                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
+                        aria-label="Previous slide"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="hidden sm:inline">Previous</span>
+                    </button>
                     
                     <div className="flex space-x-2">
                         {slides.map((slide, index) => (
@@ -389,10 +369,38 @@ export default function SplitHeroSlider({ auth }) {
                         ))}
                     </div>
                     
-                    
+                    <button
+                        onClick={nextSlide}
+                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
+                        aria-label="Next slide"
+                    >
+                        <span className="hidden sm:inline">Next</span>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
                 </div>
 
-              
+                {/* Auto-play toggle */}
+                <div className="flex justify-center items-center space-x-2 mt-6">
+                    <span className="text-sm text-gray-500">Auto-slide</span>
+                    <button
+                        onClick={() => slideInterval.current ? stopAutoSlide() : startAutoSlide()}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+                        aria-label="Toggle auto-slide"
+                    >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                            slideInterval.current ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                    </button>
+                    <button
+                        onClick={startAutoSlide}
+                        className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-300"
+                        aria-label="Restart auto-slide"
+                    >
+                        Restart
+                    </button>
+                </div>
             </div>
         </section>
     );
