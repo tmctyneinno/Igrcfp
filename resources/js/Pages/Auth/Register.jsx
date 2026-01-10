@@ -32,11 +32,30 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
             <div className="min-h-screen flex">
-                <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
+                {/* Left Side - Image */}
+                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="flex items-center justify-center w-full p-12">
+                        <div className="text-center">
+                            <div className="mb-8">
+                                <img 
+                                    src="/assets/admin/images/auth/auth-img.png" 
+                                    alt="Registration" 
+                                    className="mx-auto max-w-full h-auto"
+                                    style={{ maxHeight: '500px' }}
+                                />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                                Join Our Community
+                            </h2>
+                            <p className="text-gray-600">
+                                Create an account to access all features and start your journey
+                            </p>
+                        </div>
+                    </div>
                 </div>
                  {/* Right Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-                    <div className="w-full max-w-md"></div>
+                    <div className="w-full max-w-md">
                         <form onSubmit={submit} className="space-y-6">
                             <div>
                                 <InputLabel htmlFor="name" value="Name" />
@@ -156,7 +175,7 @@ export default function Register() {
                             </div>
                         </form>
                     </div>
-                
+                </div>
 
             </div>
         </GuestLayout>
