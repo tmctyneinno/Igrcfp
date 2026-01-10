@@ -1,4 +1,6 @@
 import React from 'react';
+import BackgroundVideo from '@/Pages/About/BackgroundVideo';
+
 
 const valuesData = [
   {
