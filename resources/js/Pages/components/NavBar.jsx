@@ -47,13 +47,13 @@ export default function NavBar({ auth }) {
                 <div className="hidden md:flex items-center space-x-8">
                     <Link 
                         href="/" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Home
                     </Link>
                     {/* About Dropdown - Fixed with hover bridge */}
                     <div className="relative group">
-                        <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
+                        <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
                             About Us
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -65,10 +65,10 @@ export default function NavBar({ auth }) {
                         
                         {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Welcome to IGRCFP
                             </Link>
-                            <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Our Structure
                             </Link>
                         </div>
@@ -76,14 +76,14 @@ export default function NavBar({ auth }) {
 
                         <Link 
                         href="/membership" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Membership
                     </Link>
 
                     {/* Courses Dropdown - Fixed with hover bridge */}
                     <div className="relative group">
-                        <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
+                        <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
                             Courses
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -95,19 +95,19 @@ export default function NavBar({ auth }) {
                         
                         {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Advanced Diploma in GRC & Financial Crime Prevention
                             </Link>
-                            <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Cybersecurity & Data Security for Financial Institutions
                             </Link>
-                            <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Monitoring, Reporting & Risk Analytics
                             </Link>
-                            <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Regulatory Compliance & Supervisory Engagement
                             </Link>
-                            <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 RegTech, SupTech & Innovation in Compliance
                             </Link>
                         </div>
@@ -116,25 +116,25 @@ export default function NavBar({ auth }) {
                     
                     <Link 
                         href="/about" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Events
                     </Link>
                     <Link 
                         href="/about" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Blog
                     </Link>
                     <Link 
                         href="/about" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         News
                     </Link>
                     <Link 
                         href="/contact" 
-                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Contact
                     </Link>
@@ -146,7 +146,7 @@ export default function NavBar({ auth }) {
                         <div className="flex items-center space-x-4">
                             <Link
                                 href={route('dashboard')}
-                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                                className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                             >
                                 Dashboard
                             </Link>
@@ -162,7 +162,7 @@ export default function NavBar({ auth }) {
                                 </button>
                                 {/* User Dropdown Menu */}
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50 border border-gray-100">
-                                    <Link href="/profile" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                    <Link href="/profile" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                         <div className="flex items-center">
                                             <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -170,7 +170,7 @@ export default function NavBar({ auth }) {
                                             Profile
                                         </div>
                                     </Link>
-                                    <Link href="/settings" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                    <Link href="/settings" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                         <div className="flex items-center">
                                             <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -235,7 +235,7 @@ export default function NavBar({ auth }) {
                     <div className="flex flex-col space-y-2">
                         <Link 
                             href="/" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Home
@@ -256,7 +256,7 @@ export default function NavBar({ auth }) {
                                 <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
                                     <Link 
                                         href="/about/welcome" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -266,7 +266,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <Link 
                                         href="/about/structure" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -280,7 +280,7 @@ export default function NavBar({ auth }) {
                         
                         <Link 
                             href="/membership" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Membership
@@ -301,7 +301,7 @@ export default function NavBar({ auth }) {
                                 <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
                                     <Link 
                                         href="/courses/grc" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -311,7 +311,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <Link 
                                         href="/courses/cybersecurity" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -321,7 +321,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <Link 
                                         href="/courses/monitoring" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -331,7 +331,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <Link 
                                         href="/courses/regulatory" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -341,7 +341,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <Link 
                                         href="/courses/regtech" 
-                                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
@@ -355,28 +355,28 @@ export default function NavBar({ auth }) {
                         
                         <Link 
                             href="/events" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Events
                         </Link>
                         <Link 
                             href="/blog" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Blog
                         </Link>
                         <Link 
                             href="/news" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             News
                         </Link>
                         <Link 
                             href="/contact" 
-                            className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Contact
@@ -386,7 +386,7 @@ export default function NavBar({ auth }) {
                             <div className="pt-4 border-t border-gray-100 mt-2">
                                 <Link
                                     href={route('login')}
-                                    className="block text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                    className="block text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Sign In
