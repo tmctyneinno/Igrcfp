@@ -21,9 +21,7 @@ useEffect(() => {
         {
             title: 'OUR MISSION',
             content:
-                'Elevate GRC & FCC standards globally, empower professionals with skills,
-                certifications, and mentorship, empower professionals with skills, certifications,
-                and mentorship & champion diversity, equity, and inclusion in compliance leadership',
+                'Elevate GRC & FCC standards globally, empower professionals with skills, certifications, and mentorship, empower professionals with skills, certifications, and mentorship & champion diversity, equity, and inclusion in compliance leadership',
         },
     ];
 
