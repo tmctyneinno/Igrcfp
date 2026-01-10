@@ -439,6 +439,8 @@ export default function Welcome({ auth, courses }) {
             <section className="bg-gray-50 py-24 overflow-hidden">
                <Certification courses={courses} />
             </section>
+
+            <GlobalEvents />
                 
             
                 {/* CTA Section with AOS zoom effect */}
