@@ -82,28 +82,7 @@ export default function Register() {
                             </div>
                         </div>
                         {/* Progress Steps */}
-                        <div className="mb-8">
-                            <div className="flex items-center justify-between">
-                                {steps.map((step) => (
-                                    <div key={step.number} className="flex flex-col items-center flex-1">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep >= step.number ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
-                                            <span className="font-semibold">{step.number}</span>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className={`text-sm font-medium ${currentStep >= step.number ? 'text-indigo-600' : 'text-gray-500'}`}>
-                                                {step.title}
-                                            </div>
-                                            <div className="text-xs text-gray-500 hidden md:block">
-                                                {step.description}
-                                            </div>
-                                        </div>
-                                        {step.number < steps.length && (
-                                            <div className={`h-1 flex-1 mt-5 mx-2 ${currentStep > step.number ? 'bg-indigo-600' : 'bg-gray-200'}`}></div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                       
 
                         <form onSubmit={submit} className="space-y-6">
                             {/* Role Field */}
