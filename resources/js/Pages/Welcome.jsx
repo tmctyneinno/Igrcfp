@@ -1,52 +1,41 @@
-import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState, useRef } from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import SplitHeroSlider from '@/Pages/components/SplitHeroSlider';
-import WhoAreWe from '@/Pages/components/WhoAreWe';
+import { Head, Link } from "@inertiajs/react";
+import { useEffect, useState, useRef } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
+import WhoAreWe from "@/Pages/components/WhoAreWe";
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-    const navRef = useRef(null);
- 
-    // Initialize AOS once on component mount
+
+    // ✅ AOS INIT — ONCE ONLY
     useEffect(() => {
         AOS.init({
-            duration: 1000,
+            duration: 500,
+            easing: "ease-out-cubic",
             once: true,
-            offset: 100,
-            easing: 'ease-in-out',
+            offset: 80,
         });
-        
-        // Refresh AOS on route changes or component updates
-        return () => {
-            AOS.refresh();
-        };
-    }, [])
-
-    
-
+    }, []);
 
     // Close mobile menu when clicking outside
-    
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (mobileMenuRef.current && 
-                !mobileMenuRef.current.contains(event.target) && 
-                !event.target.closest('button[aria-label="Toggle mobile menu"]')) {
+        const handleClickOutside = (e) => {
+            if (
+                mobileMenuRef.current &&
+                !mobileMenuRef.current.contains(e.target)
+            ) {
                 setIsMobileMenuOpen(false);
             }
         };
 
         if (isMobileMenuOpen) {
-            document.addEventListener('click', handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
         }
-        
-        return () => {
-            document.removeEventListener('click', handleClickOutside);
-        };
+
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isMobileMenuOpen]);
 
     return (
