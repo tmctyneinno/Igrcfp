@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SplitHeroSlider from '@/Pages/components/SplitHeroSlider';
+import WhoAreWe from '@/Pages/components/WhoAreWe';
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
