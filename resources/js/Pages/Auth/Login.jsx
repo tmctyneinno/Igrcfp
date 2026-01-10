@@ -42,7 +42,7 @@ export default function Login({ status, canResetPassword }) {
                                     alt="Authentication" 
                                     className="mx-auto max-w-full h-auto"
                                     style={{ maxHeight: '500px' }}
-                                />
+                                /> 
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">
                                 Welcome to Our Platform
