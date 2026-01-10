@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function WhoAreWe() {
     const [activeSlide, setActiveSlide] = useState(0);
@@ -36,6 +37,11 @@ export default function WhoAreWe() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         viewport={{ once: true }}
                     >
+                    <motion.div
+                        variants={fadeLeft}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}>
                         <span className="text-sm uppercase tracking-widest text-gray-400">
                             Who We Are
                         </span>
