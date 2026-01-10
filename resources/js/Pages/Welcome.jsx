@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -146,7 +146,7 @@ export default function Welcome({ auth }) {
                             {auth.user ? (
                                 <div className="flex items-center space-x-4">
                                     <Link
-                                        href='dashboard'
+                                        href={route('dashboard')}
                                         className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                                     >
                                         Dashboard
