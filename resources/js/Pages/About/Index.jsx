@@ -6,19 +6,10 @@ export default function AboutIndex({ auth, title, description }) {
         <GuestLayout auth={auth}>
             <Head title={title} />
             
-            {/* Hero Section */}\
-            <section className="w-full bg-gradient-to-r from-gray-50 via-white to-blue-50 py-28">
+            {/* Hero Section */}
+            <section className="w-full bg-gradient-to-r from-gray-200 via-white to-blue-50 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-                            Welcome to IGRCFP
-                        </h1>
-                    </div>
-                </div>
-            </section>
-            <section className="bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
+                   <div className="text-center">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                             {title}
                         </h1>
