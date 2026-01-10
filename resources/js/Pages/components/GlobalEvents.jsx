@@ -19,13 +19,6 @@ export default function GlobalEvents() {
                         Our Global Events & Summits
                     </h2>
                 </div>
-
-                <Link
-                    href="/courses"
-                    className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
-                >
-                    View All Courses →
-                </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
