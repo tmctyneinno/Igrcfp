@@ -127,6 +127,12 @@ export default function Welcome({ auth }) {
                                 Blog
                             </Link>
                             <Link 
+                                href="/about" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
+                                News
+                            </Link>
+                            <Link 
                                 href="/contact" 
                                 className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                             >
