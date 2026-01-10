@@ -238,53 +238,6 @@ export default function SplitHeroSlider({ auth }) {
                     </div>
                 </div>
 
-                {/* Bottom Controls */}
-                <div className="flex justify-center items-center space-x-6 mt-12 lg:mt-0">
-                    <button
-                        onClick={prevSlide}
-                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
-                        aria-label="Previous slide"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        <span className="hidden sm:inline">Previous</span>
-                    </button>
-                    
-                    <div className="flex space-x-2">
-                        {slides.map((slide, index) => (
-                            <button
-                                key={slide.id}
-                                onClick={() => goToSlide(index)}
-                                className={`flex flex-col items-center space-y-2 group ${
-                                    index === activeSlide ? 'text-blue-600' : 'text-gray-400'
-                                }`}
-                                aria-label={`View slide ${index + 1}: ${slide.title}`}
-                            >
-                                <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                                    index === activeSlide 
-                                        ? 'bg-blue-600 scale-125' 
-                                        : 'bg-gray-300 group-hover:bg-gray-400'
-                                }`} />
-                                <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    {index + 1}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                    
-                    <button
-                        onClick={nextSlide}
-                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
-                        aria-label="Next slide"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
-
                 
             </div>
         </section>
