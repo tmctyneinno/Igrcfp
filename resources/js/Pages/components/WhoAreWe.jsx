@@ -15,23 +15,6 @@ export default function WhoAreWe() {
                     viewport={{ once: true }}
                     className="flex flex-col"
                 >
-                    <div className="relative inline-flex items-center mb-3">
-                        <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
-                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
-                            Who We Are
-                        </span>
-                    </div>
-                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
-                        Know More About Us
-                    </h2>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    viewport={{ once: true }}
-                >
                     {/* HEADER */}
                     <div
                         className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
@@ -41,15 +24,26 @@ export default function WhoAreWe() {
                             <div className="relative inline-flex items-center mb-3">
                                 <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
                                 <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
-                                    Events & Summits
+                                    Who We Are
                                 </span>
                             </div>
 
                             <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
-                                Our Global Events & Summits
+                                Know More About Us
                             </h2>
                         </div>
                     </div>
+                   
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    viewport={{ once: true }}
+                >
+                    {/* HEADER */}
+                   
                     <p className="text-gray-600 mb-4">
                         The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
                     </p>
