@@ -15,7 +15,7 @@ export default function GlobalEvents() {
                         Events & Summits
                     </span>
 
-                    <h2 className="text-2xl xl:text-5xl font-bold text-slate-900 mb-6">
+                    <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
                         Our Global Events & Summits
                     </h2>
                 </div>
@@ -31,7 +31,7 @@ export default function GlobalEvents() {
                     viewport={{ once: true }}
                     className="relative"
                 >
-                    <div className="rounded-2xl overflow-hidden border-4 border-blue-500">
+                    <div className="rounded-2xl overflow-hidden border-4 border-white-0">
                         <img
                             src="assets/images/home-three/gallery/events-image.png"
                             alt="Global Events & Summits"
