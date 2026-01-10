@@ -1,7 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, useRef } from "react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+
 import GuestLayout from '@/Layouts/GuestLayout';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
@@ -11,7 +10,6 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
-import Footer from "@/Pages/components/Footer"; 
 
  
 export default function Welcome({ auth, courses }) {
@@ -19,15 +17,7 @@ export default function Welcome({ auth, courses }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
   
-    // ✅ AOS INIT — ONCE ONLY
-    useEffect(() => {
-        AOS.init({
-            duration: 500,
-            easing: "ease-out-cubic",
-            once: true,
-            offset: 80,
-        });
-    }, []);
+    
 
 
     return (
@@ -91,14 +81,7 @@ export default function Welcome({ auth, courses }) {
             </section>
   
         
-            {/* Footer */}
-            <footer 
-                className="bg-gray-900 text-white py-12"
-                data-aos="fade-up"
-                data-aos-duration="1400"
-            > 
-                <Footer/>
-            </footer>
+            
            
 
             {/* Mobile Menu Toggle Script */}
