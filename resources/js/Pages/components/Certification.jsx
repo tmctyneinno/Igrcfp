@@ -51,7 +51,7 @@ export default function Certification({ courses = [] }) {
                             </div>
 
                             {/* CONTENT */}
-                            <div className="p-6">
+                            <div className="p-2">
 
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                     {course.title}
