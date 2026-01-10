@@ -47,7 +47,7 @@ export default function Welcome({ auth, courses }) {
 
     return (
         <>
-            <Head title="Welcome - Professional Learning Platform" />
+            <Head title="IGRCFP - Professional Learning Platform" />
             
             {/* Navigation Bar */}
             <nav 
