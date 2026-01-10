@@ -216,7 +216,7 @@ export default function Footer() {
                         <h4 className="text-white font-semibold text-lg mb-6 pb-3 border-b border-blue-800/30">
                             Contact Information
                         </h4>
-                        <ul className="space-y-6">
+                        <ul className="space-y-3">
                             <li className="flex items-start gap-4">
                                 <div className="w-10 h-10 rounded-lg bg-blue-900/30 flex items-center justify-center flex-shrink-0">
                                     {/* Email Icon */}
