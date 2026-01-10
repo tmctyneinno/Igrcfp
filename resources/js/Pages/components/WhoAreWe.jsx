@@ -81,9 +81,8 @@ export default function WhoAreWe() {
                         </Link>
                     </motion.div>
                    
-
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="grid grid-cols-2 lg:grid-cols-2 gap-16 items-center">
                      {/* IMAGE CONTENT */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
