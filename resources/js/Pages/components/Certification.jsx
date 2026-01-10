@@ -15,8 +15,10 @@ export default function Certification() {
                             <span className="text-sm uppercase tracking-widest text-gray-400">
                                Certifications & Trainings
                             </span>
-                            <h2 className="text-3xl font-bold text-gray-900">Popular Courses</h2>
-                            <p className="text-gray-600 mt-2">Start learning with our most popular courses</p>
+                            <h2 className="text-3xl font-bold text-gray-900">Our Programmes</h2>
+                            <p className="text-gray-600 mt-2">
+                                Our professional certifications are designed to equip individuals and institutions with  globally relevant skills to tackle financial crime and compliance risks.
+                            </p>
                         </div>
                         <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-semibold">
                             View All Courses →
