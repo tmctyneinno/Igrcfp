@@ -94,10 +94,6 @@ export default function Welcome({ auth }) {
                                 
                                 {/* Dropdown Menu */}
                                 <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                                    <div className="px-4 py-2">
-                                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
-                                    </div>
-                                    <div className="border-t border-gray-100 my-1"></div>
                                     <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Advanced Diploma in GRC & Financial Crime Prevention
                                     </Link>
@@ -111,20 +107,10 @@ export default function Welcome({ auth }) {
                                         Regulatory Compliance & Supervisory Engagement
                                     </Link>
                                     <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
-                                            Data Science
-                                        </div>
+                                        RegTech, SupTech & Innovation in Compliance
                                     </Link>
                                     <div className="border-t border-gray-100 my-1"></div>
-                                    <Link href="/courses" className="block px-4 py-3 text-blue-600 hover:bg-blue-50 font-medium">
-                                        <div className="flex items-center justify-center">
-                                            View All Courses
-                                            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                            </svg>
-                                        </div>
-                                    </Link>
+                                    
                                 </div>
                             </div>
                             
