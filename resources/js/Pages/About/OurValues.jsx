@@ -9,7 +9,7 @@ const valuesData = [
   {
     title: 'Innovation',
     description:
-      'We embrace new ideas, technologies, and approaches — from RegTech to ESG frameworks — to prepare professionals for the challenges of tomorrow.',
+      'We embrace new ideas, technologies, and approaches from RegTech to ESG frameworks to prepare professionals for the challenges of tomorrow.',
   },
   {
     title: 'Collaboration',
