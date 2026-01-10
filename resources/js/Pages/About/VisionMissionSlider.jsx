@@ -23,7 +23,7 @@ useEffect(() => {
             content:
                 'Elevate GRC & FCC standards globally, empower professionals with skills,
                 certifications, and mentorship, empower professionals with skills, certifications,
-                and mentorship & champion diversity, equity, and inclusion',
+                and mentorship & champion diversity, equity, and inclusion in compliance leadership',
         },
     ];
 
