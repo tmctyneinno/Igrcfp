@@ -13,7 +13,7 @@ import WhoAreWe from "@/Pages/components/WhoAreWe";
 import Footer from "@/Pages/components/Footer";
 import NavBar from "@/Pages/components/NavBar";
  
-export default function AboutInde({ auth, courses }) {
+export default function AboutIndex({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
