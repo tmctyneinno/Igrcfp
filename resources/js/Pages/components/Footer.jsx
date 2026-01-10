@@ -138,7 +138,7 @@ export default function Footer() {
                                 { label: "Certifications", href: "/certifications" },
                                 { label: "Events", href: "/events" },
                                 { label: "News", href: "/news" },
-                                { label: "Training Programs", href: "/training" },
+                                { label: "Course", href: "/training" },
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link 
@@ -186,10 +186,9 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-3">
                             {[
-                                "Terms of Service",
-                                "Privacy Policy",
-                                "Cookie Policy",
-                                "Code of Ethics",
+                                "About Us",
+                                "Welcome to IGRCFP",
+                                "Our Structure",
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 
