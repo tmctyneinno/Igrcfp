@@ -1,13 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
-import 'aos/dist/aos.css';
+import 'aos/dist/aos.css'
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-    const navRef = useRef(null)
+    const navRef = useRef(null);
 
     // Initialize AOS once on component mount
     useEffect(() => {
@@ -26,16 +26,24 @@ export default function Welcome({ auth }) {
 
 
     // Close mobile menu when clicking outside
+    
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (isMobileMenuOpen && !event.target.closest('.mobile-menu-container')) {
+            if (mobileMenuRef.current && 
+                !mobileMenuRef.current.contains(event.target) && 
+                !event.target.closest('button[aria-label="Toggle mobile menu"]')) {
                 setIsMobileMenuOpen(false);
             }
         };
 
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, [isMobileMenuOpen])
+        if (isMobileMenuOpen) {
+            document.addEventListener('click', handleClickOutside);
+        }
+        
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [isMobileMenuOpen]);
 
     return (
         <>
