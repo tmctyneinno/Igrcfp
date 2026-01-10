@@ -149,21 +149,7 @@ export default function SplitHeroSlider({ auth }) {
                                
                             </div>
 
-                            {/* Simple navigation dots */}
-                            <div className="absolute bottom-0 left-0 right-0 flex justify-center lg:justify-start space-x-2">
-                                {slides.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => goToSlide(index)}
-                                        className={`w-12 h-2 rounded-full transition-all duration-300 ${
-                                            index === activeSlide 
-                                                ? 'bg-blue-600 w-16' 
-                                                : 'bg-gray-300 hover:bg-gray-400'
-                                        }`}
-                                        aria-label={`Go to slide ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
+                          
 
                             {/* Navigation arrows */}
                             <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden lg:flex flex-col space-y-2">
