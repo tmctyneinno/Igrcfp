@@ -30,16 +30,23 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('register'));
+        // Only submit if we're on the final step
+        if (currentStep === 3) {
+            post(route('register'));
+        } else {
+            nextStep();
+        }
     };
 
     const nextStep = () => {
         // Validate current step before proceeding
         if (currentStep === 1 && !data.role) {
-            return; // Don't proceed if role is not selected
+            alert('Please select a role');
+            return;
         }
         if (currentStep === 2 && (!data.name || !data.email)) {
-            return; // Don't proceed if required fields are empty
+            alert('Please fill in all required fields');
+            return;
         }
         setCurrentStep(currentStep + 1);
     };
@@ -131,18 +138,17 @@ export default function Register() {
                             </div>
                         </div>
 
-                        {/* Form */}
+                        {/* FORM STARTS HERE */}
                         <form onSubmit={submit}>
-                            {/* Step 1: Role Selection */}
+                            {/* Step 1 Content */}
                             {currentStep === 1 && (
-                                <div className="space-y-6" data-aos="fade-up">
+                                <div className="space-y-6">
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Select Your Role</h3>
                                         <p className="text-gray-600 mt-2">Choose how you want to use our platform</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        {/* Student Option */}
                                         <div 
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'student' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'student')}
@@ -161,7 +167,6 @@ export default function Register() {
                                             </div>
                                         </div>
 
-                                        {/* Instructor Option */}
                                         <div 
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'instructor' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'instructor')}
@@ -179,7 +184,6 @@ export default function Register() {
                                             </div>
                                         </div>
 
-                                        {/* Admin Option */}
                                         <div 
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'admin' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'admin')}
@@ -203,8 +207,7 @@ export default function Register() {
 
                                     <div className="flex justify-end pt-4">
                                         <button
-                                            type="button"
-                                            onClick={nextStep}
+                                            type="submit"
                                             disabled={!data.role}
                                             className={`px-6 py-3 rounded-md font-medium ${data.role ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                                         >
@@ -214,16 +217,15 @@ export default function Register() {
                                 </div>
                             )}
 
-                            {/* Step 2: Personal Information */}
+                            {/* Step 2 Content */}
                             {currentStep === 2 && (
-                                <div className="space-y-6" data-aos="fade-up">
+                                <div className="space-y-6">
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Personal Information</h3>
                                         <p className="text-gray-600 mt-2">Tell us a bit about yourself</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* Name */}
                                         <div>
                                             <InputLabel htmlFor="name" value="Full Name *" />
                                             <div className="mt-1 relative">
@@ -247,7 +249,6 @@ export default function Register() {
                                             <InputError message={errors.name} className="mt-2" />
                                         </div>
 
-                                        {/* Email */}
                                         <div>
                                             <InputLabel htmlFor="email" value="Email Address *" />
                                             <div className="mt-1 relative">
@@ -272,7 +273,6 @@ export default function Register() {
                                             <InputError message={errors.email} className="mt-2" />
                                         </div>
 
-                                        {/* Phone */}
                                         <div>
                                             <InputLabel htmlFor="phone" value="Phone Number" />
                                             <div className="mt-1 relative">
@@ -295,7 +295,6 @@ export default function Register() {
                                             <InputError message={errors.phone} className="mt-2" />
                                         </div>
 
-                                        {/* LinkedIn */}
                                         <div>
                                             <InputLabel htmlFor="linkedin" value="LinkedIn Profile" />
                                             <div className="mt-1 relative">
@@ -317,7 +316,6 @@ export default function Register() {
                                             <InputError message={errors.linkedin} className="mt-2" />
                                         </div>
 
-                                        {/* Date of Birth */}
                                         <div className="md:col-span-2">
                                             <InputLabel htmlFor="date_of_birth" value="Date of Birth" />
                                             <div className="mt-1 relative">
@@ -348,8 +346,7 @@ export default function Register() {
                                             Back
                                         </button>
                                         <button
-                                            type="button"
-                                            onClick={nextStep}
+                                            type="submit"
                                             disabled={!data.name || !data.email}
                                             className={`px-6 py-3 rounded-md font-medium ${data.name && data.email ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                                         >
@@ -359,16 +356,15 @@ export default function Register() {
                                 </div>
                             )}
 
-                            {/* Step 3: Password */}
+                            {/* Step 3 Content */}
                             {currentStep === 3 && (
-                                <div className="space-y-6" data-aos="fade-up">
+                                <div className="space-y-6">
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Create Password</h3>
                                         <p className="text-gray-600 mt-2">Secure your account with a strong password</p>
                                     </div>
 
                                     <div className="space-y-6">
-                                        {/* Password */}
                                         <div>
                                             <InputLabel htmlFor="password" value="Password *" />
                                             <div className="mt-1 relative">
@@ -405,26 +401,8 @@ export default function Register() {
                                                 </button>
                                             </div>
                                             <InputError message={errors.password} className="mt-2" />
-                                            <div className="mt-2 text-sm text-gray-500">
-                                                <p>Password must contain:</p>
-                                                <ul className="list-disc pl-5 space-y-1">
-                                                    <li className={data.password.length >= 8 ? 'text-green-600' : ''}>
-                                                        At least 8 characters
-                                                    </li>
-                                                    <li className={/[A-Z]/.test(data.password) ? 'text-green-600' : ''}>
-                                                        One uppercase letter
-                                                    </li>
-                                                    <li className={/\d/.test(data.password) ? 'text-green-600' : ''}>
-                                                        One number
-                                                    </li>
-                                                    <li className={/[^A-Za-z0-9]/.test(data.password) ? 'text-green-600' : ''}>
-                                                        One special character
-                                                    </li>
-                                                </ul>
-                                            </div>
                                         </div>
 
-                                        {/* Confirm Password */}
                                         <div>
                                             <InputLabel htmlFor="password_confirmation" value="Confirm Password *" />
                                             <div className="mt-1 relative">
@@ -461,12 +439,8 @@ export default function Register() {
                                                 </button>
                                             </div>
                                             <InputError message={errors.password_confirmation} className="mt-2" />
-                                            <div className={`mt-2 text-sm ${data.password === data.password_confirmation && data.password_confirmation ? 'text-green-600' : 'text-gray-500'}`}>
-                                                {data.password === data.password_confirmation && data.password_confirmation ? '✓ Passwords match' : 'Passwords must match'}
-                                            </div>
                                         </div>
 
-                                        {/* Terms Agreement */}
                                         <div className="bg-gray-50 p-4 rounded-lg">
                                             <div className="flex items-start">
                                                 <div className="flex items-center h-5">
@@ -493,7 +467,6 @@ export default function Register() {
                                             </div>
                                         </div>
 
-                                        {/* Summary */}
                                         <div className="bg-indigo-50 p-4 rounded-lg">
                                             <h4 className="font-medium text-indigo-900 mb-2">Account Summary</h4>
                                             <div className="space-y-2 text-sm">
@@ -533,57 +506,17 @@ export default function Register() {
                                                 className="px-6 py-3"
                                                 disabled={processing || !data.password || !data.password_confirmation || data.password !== data.password_confirmation}
                                             >
-                                                {processing ? (
-                                                    <>
-                                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                        </svg>
-                                                        Creating Account...
-                                                    </>
-                                                ) : (
-                                                    'Complete Registration'
-                                                )}
+                                                {processing ? 'Creating Account...' : 'Complete Registration'}
                                             </PrimaryButton>
                                         </div>
                                     </div>
                                 </div>
                             )}
                         </form>
+                        {/* FORM ENDS HERE */}
                     </div>
                 </div>
             </div>
-
-            <style>{`
-                @media (max-width: 1023px) {
-                    .min-h-screen {
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    }
-                    
-                    .w-full.lg\\:w-1\\/2 {
-                        background: white;
-                        border-radius: 1rem;
-                        margin: 1rem;
-                        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-                    }
-                }
-                
-                @media (min-width: 1024px) {
-                    .min-h-screen {
-                        background: white;
-                    }
-                }
-                
-                /* Role selection hover effects */
-                [class*="border-2"] {
-                    transition: all 0.3s ease;
-                }
-                
-                [class*="border-2"]:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                }
-            `}</style>
         </GuestLayout>
     );
 }
