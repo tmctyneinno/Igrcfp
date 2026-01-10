@@ -2,7 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, useRef } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import GuestLayout from '@/Layouts/Layout';
+import GuestLayout from '@/Layouts/GuestLayout';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
 import Certification from "@/Pages/components/Certification";
