@@ -337,7 +337,7 @@ export default function Register() {
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between pt-4">
+                                   <div className="flex justify-between pt-4">
                                         <button
                                             type="button"
                                             onClick={prevStep}
