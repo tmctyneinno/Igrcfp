@@ -153,7 +153,7 @@ export default function SplitHeroSlider({ auth }) {
                     </div>
 
                     {/* Right Column - Image Slider - KEEPING YOUR EXISTING CODE */}
-                    <div className="hidden relative h-[400px] lg:h-[500px]">
+                    <div className="relative h-[400px] lg:h-[500px]">
                         <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl">
                             {slides.map((slide, index) => (
                                 <div
