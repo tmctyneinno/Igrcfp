@@ -21,7 +21,7 @@ export default function Footer() {
                             <img
                                 src="/assets/images/home-three/logo/logo-main.png"
                                 alt="IGRCFP Logo"
-                                className="h-9 w-auto"
+                                className="h-15 w-auto"
                             />
                             <span className="text-xl font-semibold text-white">
                                 IGRCFP
