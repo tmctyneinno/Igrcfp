@@ -50,14 +50,7 @@ export default function Welcome({ auth, courses }) {
         <>
             <Head title="IGRCFP - Professional Learning Platform" />
             
-            {/* Navigation Bar */}
-            <nav 
-                className="bg-white shadow-lg fixed w-full z-50"
-                data-aos="fade-down"
-                data-aos-duration="1400"
-            >
-                <NavBar auth={auth}/>
-            </nav>
+           
 
             {/* Hero Section with AOS effects */}
             <div className="pt-16">

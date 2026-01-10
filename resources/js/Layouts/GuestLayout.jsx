@@ -4,16 +4,48 @@ import Footer from '@/Pages/components/Footer'; // Adjust path based on your foo
 
 export default function GuestLayout({ children, auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-    // Close mobile menu on route change
-    useEffect(() => {
-        setIsMobileMenuOpen(false);
-    }, []);
+       const [openDropdown, setOpenDropdown] = useState(null);
+       const mobileMenuRef = useRef(null);
+     
+       // ✅ AOS INIT — ONCE ONLY
+       useEffect(() => {
+           AOS.init({
+               duration: 500,
+               easing: "ease-out-cubic",
+               once: true,
+               offset: 80,
+           });
+       }, []);
+   
+       // Close mobile menu when clicking outside
+       useEffect(() => {
+           const handleClickOutside = (e) => {
+               if (
+                   mobileMenuRef.current &&
+                   !mobileMenuRef.current.contains(e.target)
+               ) {
+                   setIsMobileMenuOpen(false);
+               }
+           };
+   
+           if (isMobileMenuOpen) {
+               document.addEventListener("mousedown", handleClickOutside);
+           }
+   
+           return () => document.removeEventListener("mousedown", handleClickOutside);
+       }, [isMobileMenuOpen]);
 
     return (
         <div className="min-h-screen bg-gray-50">
            
-            
+            {/* Navigation Bar */}
+            <nav 
+                className="bg-white shadow-lg fixed w-full z-50"
+                data-aos="fade-down"
+                data-aos-duration="1400"
+            >
+                <NavBar auth={auth}/>
+            </nav>
 
             {/* Main Content */}
             <main className="pt-16">
