@@ -4,63 +4,55 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function Certification() {
     return (
-        <div className="max-w-7xl mx-auto px-6">
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-
-                <motion.div
-                    variants={fadeLeft}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="flex flex-col"
-                >
-                    <span className="text-sm uppercase tracking-widest text-gray-400">
-                        Who We Are
-                    </span>
-                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
-                        Know More About Us
-                    </h2>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                    viewport={{ once: true }}
-                >
-                    <p className="text-gray-600 mb-4">
-                        The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
-                    </p>
-                     <p className="text-gray-600 mb-4">
-                        We equip professionals and organizations with world-class training, certifications, and resources to stay ahead in a fast-changing regulatory environment.
-                    </p>
-                     <p className="text-gray-600 mb-4">
-                        With a presence across Africa, Europe, Asia, the Middle East, and the Americas, IGRCFP connects experts, regulators, and industry leaders to share knowledge, drive innovation, and build stronger institutions worldwide.
-                    </p>
-
-                    <Link
-                        href="/about-us"
-                        className="inline-flex mt-6 px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition"
+       
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div 
+                        className="flex justify-between items-center mb-12"
+                        data-aos="fade-up"
+                        data-aos-duration="1400"
                     >
-                        Learn More →
-                    </Link>
-                </motion.div>
-            </div>
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900">Popular Courses</h2>
+                            <p className="text-gray-600 mt-2">Start learning with our most popular courses</p>
+                        </div>
+                        <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-semibold">
+                            View All Courses →
+                        </Link>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[1, 2, 3].map((course, index) => (
+                            <div 
+                                key={course}
+                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-2"
+                                data-aos="fade-up"
+                                data-aos-delay={index * 200}
+                                data-aos-duration="1400"
+                            >
+                                <div className="h-48 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                                <div className="p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">
+                                            {course === 1 ? 'Beginner' : course === 2 ? 'Intermediate' : 'Advanced'}
+                                        </span>
+                                        <span className="text-gray-500">4.8 ★</span>
+                                    </div>
+                                    <h3 className="text-xl font-semibold mb-2">Course Title {course}</h3>
+                                    <p className="text-gray-600 mb-4">
+                                        Learn essential skills from industry experts in this comprehensive course.
+                                    </p>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center">
+                                            <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                                            <span className="ml-2 text-sm text-gray-600">John Doe</span>
+                                        </div>
+                                        <span className="text-blue-600 font-semibold">$99</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+           
 
-            <motion.div
-                variants={scaleIn}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="mt-24 flex justify-center"
-            >
-                <img
-                    src="assets/images/home-three/bg/intro-bg.png"
-                    alt="IGRCFP"
-                    className="max-w-2xl w-full"
-                />
-            </motion.div>
-        </div>
     );
 }
