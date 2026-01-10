@@ -34,9 +34,9 @@ useEffect(() => {
                 {/* Title with Divider Lines */}
                 <div className="flex items-center justify-center gap-6 mb-10">
                     <span className="w-20 h-px bg-gray-300"></span>
-                    <h2 className="text-sm tracking-widest font-semibold text-gray-900">
+                    <h1 className="text-lg tracking-widest font-bold text-gray-900">
                         {slides[activeIndex].title}
-                    </h2>
+                    </h1>
                     <span className="w-20 h-px bg-gray-300"></span>
                 </div>
 
