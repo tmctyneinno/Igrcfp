@@ -4,10 +4,10 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function GlobalEvents() {
     return (
-        <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="max-w-7xl mx-auto px-6">
             {/* HEADER */}
             <div
-                className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
+                className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
                 data-aos="fade-up"
             >
                 <div>
