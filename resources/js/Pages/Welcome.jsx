@@ -103,18 +103,13 @@ export default function Welcome({ auth }) {
                                     <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Monitoring, Reporting & Risk Analytics
                                     </Link>
-                                    <div className="border-t border-gray-100 my-1"></div>
-
                                     <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Regulatory Compliance & Supervisory Engagement
                                     </Link>
-                                    <div className="border-t border-gray-100 my-1"></div>
-
                                     <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         RegTech, SupTech & Innovation in Compliance
                                     </Link>
-                                    <div className="border-t border-gray-100 my-1"></div>
-                                    
+                                   
                                 </div>
                             </div>
                             
@@ -123,7 +118,13 @@ export default function Welcome({ auth }) {
                                 href="/about" 
                                 className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                             >
-                                About
+                                Events
+                            </Link>
+                            <Link 
+                                href="/about" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
+                                Blog
                             </Link>
                             <Link 
                                 href="/contact" 
