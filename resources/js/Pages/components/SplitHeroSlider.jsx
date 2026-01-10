@@ -366,16 +366,6 @@ export default function SplitHeroSlider({ auth }) {
 
                 {/* Bottom Controls */}
                 <div className="flex justify-center items-center space-x-6 mt-12 lg:mt-0">
-                    <button
-                        onClick={prevSlide}
-                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
-                        aria-label="Previous slide"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        <span className="hidden sm:inline">Previous</span>
-                    </button>
                     
                     <div className="flex space-x-2">
                         {slides.map((slide, index) => (
@@ -399,38 +389,10 @@ export default function SplitHeroSlider({ auth }) {
                         ))}
                     </div>
                     
-                    <button
-                        onClick={nextSlide}
-                        className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
-                        aria-label="Next slide"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
+                    
                 </div>
 
-                {/* Auto-play toggle */}
-                <div className="flex justify-center items-center space-x-2 mt-6">
-                    <span className="text-sm text-gray-500">Auto-slide</span>
-                    <button
-                        onClick={stopAutoSlide}
-                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-                        aria-label="Toggle auto-slide"
-                    >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                            slideInterval.current ? 'translate-x-6' : 'translate-x-1'
-                        }`} />
-                    </button>
-                    <button
-                        onClick={startAutoSlide}
-                        className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-300"
-                        aria-label="Restart auto-slide"
-                    >
-                        Restart
-                    </button>
-                </div>
+              
             </div>
         </section>
     );
