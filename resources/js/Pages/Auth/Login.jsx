@@ -37,12 +37,14 @@ export default function Login({ status, canResetPassword }) {
                     <div className="flex items-center justify-center w-full p-12">
                         <div className="text-center">
                             <div className="mb-8">
-                                <img 
-                                    src="/assets/admin/images/auth/auth-img.png" 
-                                    alt="Authentication" 
-                                    className="mx-auto max-w-full h-auto"
-                                    style={{ maxHeight: '500px' }}
-                                /> 
+                                <Link href="/">
+                                    <img 
+                                        src="/assets/admin/images/auth/auth-img.png" 
+                                        alt="Authentication" 
+                                        className="mx-auto max-w-full h-auto"
+                                        style={{ maxHeight: '500px' }}
+                                    /> 
+                                </Link>
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">
                                 Welcome to Our Platform
