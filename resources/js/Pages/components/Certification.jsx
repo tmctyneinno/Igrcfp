@@ -17,10 +17,12 @@ export default function Certification() {
                             </span>
                             <h2 className="text-3xl font-bold text-gray-900">Our Programmes</h2>
                             <p className="text-gray-600 mt-2">
-                                Our professional certifications are designed to equip individuals and institutions with  globally relevant skills to tackle financial crime and compliance risks.
+                                Our professional certifications are designed to equip individuals 
+                                and institutions with  globally relevant skills to tackle financial 
+                                crime and compliance risks.
                             </p>
                         </div>
-                        <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-semibold">
+                        <Link href="/courses" className="text-blue-950 hover:text-blue-700 font-semibold">
                             View All Courses →
                         </Link>
                     </div>
