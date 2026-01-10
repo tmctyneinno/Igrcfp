@@ -76,7 +76,7 @@ export default function WhoAreWe() {
 
                         <Link
                             href="/about-us"
-                            className="inline-flex items-center gap-3 mt-8 px-7 py-4 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition"
+                            className="inline-flex items-center gap-3 mt-8 px-3 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition"
                         >
                             Learn More About Us
                             <span className="text-lg">→</span>
@@ -96,7 +96,7 @@ export default function WhoAreWe() {
                         <img
                             src="assets/images/home-three/bg/intro-bg.png"
                             alt="IGRCFP global professional network"
-                            className="max-w-xl w-full"
+                            className="w-full max-w-4xl mx-auto"
                         />
                     </motion.div>
                 </div>
