@@ -52,7 +52,6 @@ export default function Certification({ courses = [] }) {
 
                             {/* CONTENT */}
                             <div className="p-6">
-                                <p>Imge:{course.image_url}</p>
 
                                 <div className="flex items-center justify-between mb-4">
                                     <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
