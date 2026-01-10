@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
 
 export default function AboutIndex({ auth, title, description }) {
     return (
@@ -54,6 +55,8 @@ export default function AboutIndex({ auth, title, description }) {
             <section className="bg-white py-24 overflow-hidden">
                 <WhoAreWe auth={auth} />
             </section>
+
+            <VisionMissionSlider />
 
 
             {/* Main Content */}
