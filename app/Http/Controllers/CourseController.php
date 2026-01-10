@@ -15,7 +15,7 @@ class CourseController extends Controller
     {
         // Fetch courses with instructor and reviews count
         $courses = Course::with('instructor')
-            ->where('status', 'published') // Only published courses
+            ->where('status', 'published') 
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($course) {
@@ -47,7 +47,6 @@ class CourseController extends Controller
                     'certification' => $course->certification,
                 ];
             });
-
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
             'courses' => $courses
