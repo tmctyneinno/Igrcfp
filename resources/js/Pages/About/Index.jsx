@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function AboutIndex({ auth, description }) {
+export default function AboutIndex({ auth, title, description }) {
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
