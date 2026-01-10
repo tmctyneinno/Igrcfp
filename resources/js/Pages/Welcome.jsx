@@ -444,6 +444,10 @@ export default function Welcome({ auth, courses }) {
             <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <GlobalEvents />
             </section>
+
+            <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <GlobalEvents />
+            </section>
             
                 {/* CTA Section with AOS zoom effect */}
                 <section 
