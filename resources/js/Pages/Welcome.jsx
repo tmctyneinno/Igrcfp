@@ -239,113 +239,114 @@ export default function Welcome({ auth }) {
                     </div>
 
                     {/* Mobile Menu */}
-                    {isMobileMenuOpen && (
-                        <div 
-                            className="md:hidden bg-white py-4 shadow-lg rounded-lg mt-2 mobile-menu-container"
-                            data-aos="fade-down"
-                            data-aos-duration="300"
-                        >
-                            <div className="flex flex-col space-y-1">
-                                <Link 
-                                    href="/" 
-                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Home
-                                </Link>
-                                
-                                {/* Courses Dropdown for Mobile */}
-                                <div className="py-1 px-4">
-                                    <div className="font-medium text-gray-700 py-2">Courses</div>
-                                    <div className="pl-4 space-y-1 border-l-2 border-gray-200">
-                                        <Link 
-                                            href="/courses/development" 
-                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Web Development
-                                        </Link>
-                                        <Link 
-                                            href="/courses/design" 
-                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Design & Creative
-                                        </Link>
-                                        <Link 
-                                            href="/courses/business" 
-                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Business
-                                        </Link>
-                                        <Link 
-                                            href="/courses/marketing" 
-                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Marketing
-                                        </Link>
-                                        <Link 
-                                            href="/courses/data-science" 
-                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Data Science
-                                        </Link>
-                                        <Link 
-                                            href="/courses" 
-                                            className="block text-blue-600 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200 mt-2"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            View All Courses →
-                                        </Link>
-                                    </div>
-                                </div>
-                                
-                                <Link 
-                                    href="/tutors" 
-                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Tutors
-                                </Link>
-                                <Link 
-                                    href="/about" 
-                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    About
-                                </Link>
-                                <Link 
-                                    href="/contact" 
-                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Contact
-                                </Link>
-                                
-                                {!auth.user && (
-                                    <div className="pt-4 border-t border-gray-100 mt-2">
-                                        <Link
-                                            href={route('login')}
-                                            className="block text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Sign In
-                                        </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="block bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 mt-2 text-center transition duration-300"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            Get Started
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
+                   {/* Mobile Menu */}
+{isMobileMenuOpen && (
+    <div 
+        className="md:hidden bg-white py-4 shadow-lg rounded-lg mt-2 mobile-menu-container"
+        data-aos="fade-down"
+        data-aos-duration="300"
+    >
+        <div className="flex flex-col space-y-1">
+            <Link 
+                href="/" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                Home
+            </Link>
+            
+            {/* Courses Dropdown for Mobile */}
+            <div className="py-1 px-4">
+                <div className="font-medium text-gray-700 py-2">Courses</div>
+                <div className="pl-4 space-y-1 border-l-2 border-gray-200">
+                    <Link 
+                        href="/courses/development" 
+                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Web Development
+                    </Link>
+                    <Link 
+                        href="/courses/design" 
+                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Design & Creative
+                    </Link>
+                    <Link 
+                        href="/courses/business" 
+                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Business
+                    </Link>
+                    <Link 
+                        href="/courses/marketing" 
+                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Marketing
+                    </Link>
+                    <Link 
+                        href="/courses/data-science" 
+                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Data Science
+                    </Link>
+                    <Link 
+                        href="/courses" 
+                        className="block text-blue-600 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200 mt-2"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        View All Courses →
+                    </Link>
+                </div>
+            </div>
+            
+            <Link 
+                href="/tutors" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                Tutors
+            </Link>
+            <Link 
+                href="/about" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                About
+            </Link>
+            <Link 
+                href="/contact" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                Contact
+            </Link>
+            
+            {!auth.user && (
+                <div className="pt-4 border-t border-gray-100 mt-2">
+                    <Link
+                        href={route('login')}
+                        className="block text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Sign In
+                    </Link>
+                    <Link
+                        href={route('register')}
+                        className="block bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 mt-2 text-center transition duration-300"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                        Get Started
+                    </Link>
+                </div>
+            )}
+        </div>
+    </div>
+)}
                 </div>
             </nav>
 
