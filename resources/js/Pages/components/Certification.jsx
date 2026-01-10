@@ -68,7 +68,7 @@ export default function Certification({ courses = [] }) {
                                 <div className="flex items-center justify-start">
                                     <Link
                                         href={`/courses/${course.id}`} // assuming you have a course detail page
-                                        className="text-blue-900 font-semibold hover:underline transition duration-200"
+                                        className="text-blue-950 font-semibold hover:underline transition duration-200"
                                     >
                                         Learn More →
                                     </Link>
