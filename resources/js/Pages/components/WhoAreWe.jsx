@@ -73,7 +73,11 @@ export default function WhoAreWe() {
                         </Link>
                     </motion.div>
 
-                    {/* IMAGE CONTENT */}
+                   
+
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                     {/* IMAGE CONTENT */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -82,16 +86,12 @@ export default function WhoAreWe() {
                         className="flex justify-center"
                     >
                         <img
-                            src="/assets/images/about/network.png"
+                            src="assets/images/home-three/bg/intro-bg.png"
                             alt="IGRCFP global professional network"
                             className="max-w-xl w-full"
                         />
                     </motion.div>
-
                 </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    
-                  </div>
             </div>
         </section>
     );
