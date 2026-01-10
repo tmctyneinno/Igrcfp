@@ -20,12 +20,11 @@ export default function Welcome({ auth }) {
         <>
             <Head title="Welcome - Professional Learning Platform" />
             
-            {/* Navigation Bar with AOS fade-down */}
+            {/* Navigation Bar */}
             <nav 
                 className="bg-white shadow-lg fixed w-full z-50"
                 data-aos="fade-down"
                 data-aos-duration="1400"
-                data-aos-easing="ease-in-out"
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
@@ -37,74 +36,66 @@ export default function Welcome({ auth }) {
                                     alt="Logo" 
                                     className="h-10 w-auto"
                                 />
-                                <span className="ml-3 text-xl font-bold text-gray-900">IGRCFP</span>
+                                <span className="ml-3 text-xl font-bold text-gray-900">LearnHub</span>
                             </Link>
                         </div>
 
-                        {/* Desktop Navigation Links with Dropdown */}
+                        {/* Desktop Navigation Links */}
                         <div className="hidden md:flex items-center space-x-8">
-                            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium">
+                            <Link 
+                                href="/" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
                                 Home
                             </Link>
                             
                             {/* Courses Dropdown */}
                             <div className="relative group">
-                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none">
+                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300">
                                     Courses
-                                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
                                 
                                 {/* Dropdown Menu */}
-                                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+                                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50 border border-gray-100">
                                     <div className="px-4 py-2">
                                         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
                                     </div>
-                                    <hr className="my-1" />
-                                    <Link href="/courses/development" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <div className="border-t border-gray-100 my-1"></div>
+                                    <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
-                                            <svg className="w-4 h-4 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                                            </svg>
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                                             Web Development
                                         </div>
                                     </Link>
-                                    <Link href="/courses/design" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
-                                            <svg className="w-4 h-4 mr-3 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
+                                            <div className="w-2 h-2 bg-pink-500 rounded-full mr-3"></div>
                                             Design & Creative
                                         </div>
                                     </Link>
-                                    <Link href="/courses/business" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
-                                            <svg className="w-4 h-4 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
+                                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                                             Business
                                         </div>
                                     </Link>
-                                    <Link href="/courses/marketing" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
-                                            <svg className="w-4 h-4 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                                            </svg>
+                                            <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
                                             Marketing
                                         </div>
                                     </Link>
-                                    <Link href="/courses/data-science" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                    <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
-                                            <svg className="w-4 h-4 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                            </svg>
+                                            <div className="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
                                             Data Science
                                         </div>
                                     </Link>
-                                    <hr className="my-1" />
-                                    <Link href="/courses" className="block px-4 py-2 text-blue-600 hover:bg-blue-50 font-medium">
+                                    <div className="border-t border-gray-100 my-1"></div>
+                                    <Link href="/courses" className="block px-4 py-3 text-blue-600 hover:bg-blue-50 font-medium">
                                         <div className="flex items-center justify-center">
                                             View All Courses
                                             <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,13 +106,22 @@ export default function Welcome({ auth }) {
                                 </div>
                             </div>
                             
-                            <Link href="/tutors" className="text-gray-700 hover:text-blue-600 font-medium">
+                            <Link 
+                                href="/tutors" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
                                 Tutors
                             </Link>
-                            <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium">
+                            <Link 
+                                href="/about" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
                                 About
                             </Link>
-                            <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium">
+                            <Link 
+                                href="/contact" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
                                 Contact
                             </Link>
                         </div>
@@ -132,7 +132,7 @@ export default function Welcome({ auth }) {
                                 <div className="flex items-center space-x-4">
                                     <Link
                                         href={route('dashboard')}
-                                        className="text-gray-700 hover:text-blue-600 font-medium"
+                                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                                     >
                                         Dashboard
                                     </Link>
@@ -142,22 +142,41 @@ export default function Welcome({ auth }) {
                                                 {auth.user.name.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="text-gray-700 font-medium">{auth.user.name}</span>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </button>
-                                        {/* Dropdown Menu */}
-                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block">
-                                            <Link href="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                                Profile
+                                        {/* User Dropdown Menu */}
+                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50 border border-gray-100">
+                                            <Link href="/profile" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                                <div className="flex items-center">
+                                                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    Profile
+                                                </div>
                                             </Link>
-                                            <Link href="/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                                Settings
+                                            <Link href="/settings" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                                                <div className="flex items-center">
+                                                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    Settings
+                                                </div>
                                             </Link>
-                                            <hr className="my-2" />
+                                            <div className="border-t border-gray-100 my-1"></div>
                                             <Link 
                                                 href={route('logout')} 
                                                 method="post"
-                                                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                                className="block px-4 py-3 text-red-600 hover:bg-red-50 transition duration-200"
                                             >
-                                                Logout
+                                                <div className="flex items-center">
+                                                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                    </svg>
+                                                    Logout
+                                                </div>
                                             </Link>
                                         </div>
                                     </div>
@@ -166,13 +185,13 @@ export default function Welcome({ auth }) {
                                 <>
                                     <Link
                                         href={route('login')}
-                                        className="text-gray-700 hover:text-blue-600 font-medium"
+                                        className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                                     >
                                         Sign In
                                     </Link>
                                     <Link
                                         href={route('register')}
-                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300"
+                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
                                     >
                                         Get Started
                                     </Link>
@@ -180,13 +199,131 @@ export default function Welcome({ auth }) {
                             )}
                             
                             {/* Mobile menu button */}
-                            <button className="md:hidden text-gray-700">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
+                            <button 
+                                className="md:hidden text-gray-700 focus:outline-none"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                {isMobileMenuOpen ? (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                )}
                             </button>
                         </div>
                     </div>
+
+                    {/* Mobile Menu */}
+                    {isMobileMenuOpen && (
+                        <div 
+                            className="md:hidden bg-white py-4 shadow-lg rounded-lg mt-2 mobile-menu-container"
+                            data-aos="fade-down"
+                            data-aos-duration="300"
+                        >
+                            <div className="flex flex-col space-y-1">
+                                <Link 
+                                    href="/" 
+                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Home
+                                </Link>
+                                
+                                {/* Courses Dropdown for Mobile */}
+                                <div className="py-1 px-4">
+                                    <div className="font-medium text-gray-700 py-2">Courses</div>
+                                    <div className="pl-4 space-y-1 border-l-2 border-gray-200">
+                                        <Link 
+                                            href="/courses/development" 
+                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Web Development
+                                        </Link>
+                                        <Link 
+                                            href="/courses/design" 
+                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Design & Creative
+                                        </Link>
+                                        <Link 
+                                            href="/courses/business" 
+                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Business
+                                        </Link>
+                                        <Link 
+                                            href="/courses/marketing" 
+                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Marketing
+                                        </Link>
+                                        <Link 
+                                            href="/courses/data-science" 
+                                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Data Science
+                                        </Link>
+                                        <Link 
+                                            href="/courses" 
+                                            className="block text-blue-600 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200 mt-2"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            View All Courses →
+                                        </Link>
+                                    </div>
+                                </div>
+                                
+                                <Link 
+                                    href="/tutors" 
+                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Tutors
+                                </Link>
+                                <Link 
+                                    href="/about" 
+                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    About
+                                </Link>
+                                <Link 
+                                    href="/contact" 
+                                    className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Contact
+                                </Link>
+                                
+                                {!auth.user && (
+                                    <div className="pt-4 border-t border-gray-100 mt-2">
+                                        <Link
+                                            href={route('login')}
+                                            className="block text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Sign In
+                                        </Link>
+                                        <Link
+                                            href={route('register')}
+                                            className="block bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 mt-2 text-center transition duration-300"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Get Started
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
 
