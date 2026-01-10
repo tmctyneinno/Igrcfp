@@ -146,21 +146,7 @@ export default function SplitHeroSlider({ auth }) {
                                     )}
                                 </div>
 
-                                {/* Stats */}
-                                <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200 mt-8">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-600">10K+</div>
-                                        <div className="text-sm text-gray-500">Students Enrolled</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-600">98%</div>
-                                        <div className="text-sm text-gray-500">Success Rate</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-600">50+</div>
-                                        <div className="text-sm text-gray-500">Expert Tutors</div>
-                                    </div>
-                                </div>
+                               
                             </div>
 
                             {/* Simple navigation dots */}
@@ -333,26 +319,7 @@ export default function SplitHeroSlider({ auth }) {
                     </button>
                 </div>
 
-                {/* Auto-play toggle */}
-                <div className="flex justify-center items-center space-x-2 mt-6">
-                    <span className="text-sm text-gray-500">Auto-slide</span>
-                    <button
-                        onClick={() => slideInterval.current ? stopAutoSlide() : startAutoSlide()}
-                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-                        aria-label="Toggle auto-slide"
-                    >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
-                            slideInterval.current ? 'translate-x-6' : 'translate-x-1'
-                        }`} />
-                    </button>
-                    <button
-                        onClick={startAutoSlide}
-                        className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-300"
-                        aria-label="Restart auto-slide"
-                    >
-                        Restart
-                    </button>
-                </div>
+                
             </div>
         </section>
     );
