@@ -436,12 +436,15 @@ export default function Welcome({ auth, courses }) {
                <WhoAreWe auth={auth} />
             </section>
 
-            <section className="bg-gray-50 py-24 overflow-hidden">
+            <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in"
+                    data-aos-duration="1000">
                <Certification courses={courses} />
             </section>
 
+            <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in"
+                    data-aos-duration="1200">
             <GlobalEvents />
-                
+                </section>
             
                 {/* CTA Section with AOS zoom effect */}
                 <section 
