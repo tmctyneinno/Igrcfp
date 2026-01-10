@@ -5,7 +5,10 @@ import 'aos/dist/aos.css';
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [openDropdown, setOpenDropdown] = useState(null)
+    const [openDropdown, setOpenDropdown] = useState(null);
+
+    const mobileMenuRef = useRef(null);
+    const navRef = useRef(null)
 
     // Initialize AOS on component mount
     useEffect(() => {
