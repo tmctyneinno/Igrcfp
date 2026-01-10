@@ -27,7 +27,7 @@ export default function Certification() {
                         </Link>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((course, index) => (
+                        {[1, 2, 3, 4].map((course, index) => (
                             <div 
                                 key={course}
                                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-2"
