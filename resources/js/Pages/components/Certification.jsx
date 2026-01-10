@@ -58,7 +58,7 @@ export default function Certification({ courses = [] }) {
                                 </h3>
 
                                 <p className="text-gray-600 text-sm mb-4">
-                                {course.description.length > 50
+                                {course.description.length > 400
                                     ? `${course.description.slice(0, 50)}...`
                                     : course.description
                                 }
