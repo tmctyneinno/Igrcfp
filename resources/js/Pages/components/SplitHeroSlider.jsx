@@ -151,27 +151,7 @@ export default function SplitHeroSlider({ auth }) {
 
                           
 
-                            {/* Navigation arrows */}
-                            <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden lg:flex flex-col space-y-2">
-                                <button
-                                    onClick={prevSlide}
-                                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-blue-50 hover:shadow-xl transition-all duration-300 group"
-                                    aria-label="Previous slide"
-                                >
-                                    <svg className="w-5 h-5 text-gray-700 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                    </svg>
-                                </button>
-                                <button
-                                    onClick={nextSlide}
-                                    className="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-blue-50 hover:shadow-xl transition-all duration-300 group"
-                                    aria-label="Next slide"
-                                >
-                                    <svg className="w-5 h-5 text-gray-700 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-                            </div>
+                           
                         </div>
                     </div>
 
