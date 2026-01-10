@@ -258,7 +258,7 @@ export default function Footer() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </div>
-                                <div>
+                                {/* <div>
                                     <span className="block text-sm text-gray-500 mb-1">Phone</span>
                                     <a 
                                         href="tel:+442071234567" 
@@ -266,7 +266,7 @@ export default function Footer() {
                                     >
                                         +44 (0)20 7123 4567
                                     </a>
-                                </div>
+                                </div> */}
                             </li>
                         </ul>
 
@@ -274,17 +274,7 @@ export default function Footer() {
                     </motion.div>
                 </motion.div>
 
-                {/* Divider */}
-                <div className="relative my-12">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-blue-900/30"></div>
-                    </div>
-                    <div className="relative flex justify-center">
-                        <span className="px-4 bg-slate-950 text-gray-500 text-sm">
-                            Certified Professional Body
-                        </span>
-                    </div>
-                </div>
+               
 
                 {/* Bottom Bar */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-blue-900/30">
@@ -295,29 +285,20 @@ export default function Footer() {
                     </div>
                     
                     <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-4">
-                            {/* ISO Certified Badge */}
-                            <div className="h-8 w-8 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 rounded p-1 opacity-70 hover:opacity-100 transition-opacity" title="ISO 9001 Certified">
-                                <span className="text-xs font-bold text-gray-800">ISO</span>
-                            </div>
-                            {/* UK Government Badge */}
-                            <div className="h-8 w-8 flex items-center justify-center bg-gradient-to-br from-red-600 to-blue-600 rounded p-1 opacity-70 hover:opacity-100 transition-opacity" title="UK Government Recognized">
-                                <span className="text-xs font-bold text-white">UK</span>
-                            </div>
-                        </div>
+                        
                         
                         <div className="flex gap-4">
-                            <Link href="/sitemap" className="text-sm text-gray-400 hover:text-white transition">
-                                Sitemap
+                            <Link href="/privacy" className="text-sm text-gray-400 hover:text-white transition">
+                                Privacy
                             </Link>
                             <span className="text-gray-600">•</span>
                             <Link href="/accessibility" className="text-sm text-gray-400 hover:text-white transition">
-                                Accessibility
+                                Terms of service
                             </Link>
                             <span className="text-gray-600">•</span>
-                            <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
+                            {/* <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
                                 Disclaimer
-                            </Link>
+                            </Link> */}
                         </div>
                     </div>
                 </div>
