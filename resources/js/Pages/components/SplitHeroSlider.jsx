@@ -112,7 +112,7 @@ export default function SplitHeroSlider({ auth }) {
                                         <>
                                             <Link
                                                 href={route('register')}
-                                                className="group bg-gradient-to-r from-blue-600 to-blue-700 text-white px-7  rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center"
+                                                className="group bg-gradient-to-r from-blue-600 to-blue-700 text-white px-7 py-3 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center"
                                             >
                                                 {slides[activeSlide].ctaPrimary}
                                                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
