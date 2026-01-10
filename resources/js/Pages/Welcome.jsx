@@ -99,28 +99,16 @@ export default function Welcome({ auth }) {
                                     </div>
                                     <div className="border-t border-gray-100 my-1"></div>
                                     <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                                            Web Development
-                                        </div>
+                                        Advanced Diploma in GRC & Financial Crime Prevention
                                     </Link>
                                     <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-pink-500 rounded-full mr-3"></div>
-                                            Design & Creative
-                                        </div>
+                                        Cybersecurity & Data Security for Financial Institutions
                                     </Link>
                                     <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                            Business
-                                        </div>
+                                        Monitoring, Reporting & Risk Analytics
                                     </Link>
                                     <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                                            Marketing
-                                        </div>
+                                        Regulatory Compliance & Supervisory Engagement
                                     </Link>
                                     <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         <div className="flex items-center">
