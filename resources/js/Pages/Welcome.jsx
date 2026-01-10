@@ -440,7 +440,6 @@ export default function Welcome({ auth, courses }) {
                <Certification courses={courses} />
             </section>
                 
-                
             
                 {/* CTA Section with AOS zoom effect */}
                 <section 
