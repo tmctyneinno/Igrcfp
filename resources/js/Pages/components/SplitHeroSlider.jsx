@@ -150,7 +150,7 @@ export default function SplitHeroSlider({ auth }) {
 
                                         {/* Description */}
                                         <p 
-                                            className="text-lg md:text-xl text-gray-600 max-w-xl"
+                                            className="text-lg md:text-xl text-black-600 max-w-xl"
                                             style={{
                                                 transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
                                                 opacity: index === activeSlide ? 1 : 0,
