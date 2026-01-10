@@ -103,6 +103,7 @@ export default function Welcome({ auth }) {
         </Link>
     </div>
 </div>
+
 {/* Courses Dropdown - With hover effects */}
 <div className="relative group">
     <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none transition duration-300">
