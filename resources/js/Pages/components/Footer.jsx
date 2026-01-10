@@ -6,11 +6,9 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
      
     return (    
-        <footer className="  text-gray-300 relative overflow-hidden">
+        <footer className="">
             {/* Decorative elements */}
-            <div className="absolute inset-0 bg-grid-slate-800/[0.02] bg-[size:20px_20px]"></div>
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
-            
+          \
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 relative">
                
                 {/* Main Footer Content */}
