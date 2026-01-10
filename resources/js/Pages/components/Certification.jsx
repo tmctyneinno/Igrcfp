@@ -52,11 +52,11 @@ export default function Certification({ courses = [] }) {
 
                             {/* CONTENT */}
                             <div className="p-2">
-
+                                <Link href={`/courses/${course.id}`} 
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                     {course.title}
                                 </h3>
-
+                                </
                                 <p className="text-gray-600 text-sm mb-4">
                                 {course.description.length > 400
                                     ? `${course.description.slice(0, 50)}...`
@@ -68,7 +68,7 @@ export default function Certification({ courses = [] }) {
                                 <div className="flex items-center justify-start">
                                     <Link
                                         href={`/courses/${course.id}`} // assuming you have a course detail page
-                                        className="text-blue-950 font-semibold hover:underline transition duration-200"
+                                        className="text-blue-950 font-bold hover:underline transition duration-200"
                                     >
                                         Learn More →
                                     </Link>
