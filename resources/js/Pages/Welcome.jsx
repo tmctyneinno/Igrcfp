@@ -51,7 +51,7 @@ export default function Welcome({ auth }) {
                                     alt="Logo" 
                                     className="h-10 w-auto"
                                 />
-                                <span className="ml-3 text-xl font-bold text-gray-900">LearnHub</span>
+                                <span className="ml-3 text-xl font-bold text-gray-900">IGRCFP</span>
                             </Link>
                         </div>
 
@@ -85,6 +85,13 @@ export default function Welcome({ auth }) {
                                     </Link>
                                 </div>
                             </div>
+
+                             <Link 
+                                href="/membership" 
+                                className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
+                            >
+                                Membership
+                            </Link>
 
                             {/* Courses Dropdown - Fixed with hover bridge */}
                             <div className="relative group">
