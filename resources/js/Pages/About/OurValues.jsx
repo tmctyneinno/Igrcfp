@@ -1,0 +1,56 @@
+import React from 'react';
+
+const valuesData = [
+  {
+    title: 'Integrity',
+    description:
+      'We uphold the highest ethical standards in governance, compliance, and financial crime prevention. Integrity guides every action we take and every partnership we build.',
+  },
+  {
+    title: 'Innovation',
+    description:
+      'We embrace new ideas, technologies, and approaches — from RegTech to ESG frameworks — to prepare professionals for the challenges of tomorrow.',
+  },
+  {
+    title: 'Collaboration',
+    description:
+      'We believe progress comes from working together. IGRCFP connects regulators, institutions, and practitioners across continents to drive global impact.',
+  },
+  {
+    title: 'Excellence',
+    description:
+      'We are committed to delivering world-class training, certifications, research, and events that set the benchmark for professional standards worldwide.',
+  },
+];
+
+export default function OurValues() {
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Title */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-medium text-gray-900">Our Values</h2>
+        </div>
+
+        {/* Values Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {valuesData.map((value, index) => (
+            <div
+              key={index}
+              className="bg-gray-100 p-6 rounded-lg shadow-md text-center"
+            >
+              <div className="mb-4">
+                {/* Icon Placeholder */}
+                <div className="w-16 h-16 bg-gray-300 mx-auto mb-4 rounded-full flex items-center justify-center">
+                  <span className="text-3xl text-gray-700">📦</span> {/* Example icon */}
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
+              <p className="text-gray-600">{value.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
