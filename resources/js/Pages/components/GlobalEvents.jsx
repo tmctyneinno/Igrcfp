@@ -15,9 +15,16 @@ export default function GlobalEvents() {
                     viewport={{ once: true }}
                     className="relative"
                 >
+                    <span className="text-sm uppercase tracking-widest text-gray-400 mb-3">
+                        Events & Summits
+                    </span>
+
+                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mb-6">
+                        Our Global Events & Summits
+                    </h2>
                     <div className="rounded-2xl overflow-hidden border-4 border-blue-500">
                         <img
-                            src="/assets/images/events/events-hero.jpg"
+                            src="assets/images/home-three/gallery/events-image.png"
                             alt="Global Events & Summits"
                             className="w-full h-full object-cover"
                         />
@@ -32,13 +39,7 @@ export default function GlobalEvents() {
                     viewport={{ once: true }}
                     className="flex flex-col"
                 >
-                    <span className="text-sm uppercase tracking-widest text-gray-400 mb-3">
-                        Events & Summits
-                    </span>
-
-                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mb-6">
-                        Our Global Events & Summits
-                    </h2>
+                    
 
                     <p className="text-gray-600 mb-6 leading-relaxed">
                         At IGRCFP, our events connect professionals, regulators,
