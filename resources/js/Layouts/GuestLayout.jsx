@@ -1,39 +1,30 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
-import Footer from '@/Pages/components/Footer'; // Adjust path based on your footer location
+import { useEffect, useState, useRef } from "react";
+// import Footer from '@/Pages/components/Footer'; 
 
 export default function GuestLayout({ children, auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-       const [openDropdown, setOpenDropdown] = useState(null);
-       const mobileMenuRef = useRef(null);
-     
-       // ✅ AOS INIT — ONCE ONLY
-       useEffect(() => {
-           AOS.init({
-               duration: 500,
-               easing: "ease-out-cubic",
-               once: true,
-               offset: 80,
-           });
-       }, []);
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const mobileMenuRef = useRef(null);
+    
    
-       // Close mobile menu when clicking outside
-       useEffect(() => {
-           const handleClickOutside = (e) => {
-               if (
-                   mobileMenuRef.current &&
-                   !mobileMenuRef.current.contains(e.target)
-               ) {
-                   setIsMobileMenuOpen(false);
-               }
-           };
-   
-           if (isMobileMenuOpen) {
-               document.addEventListener("mousedown", handleClickOutside);
-           }
-   
-           return () => document.removeEventListener("mousedown", handleClickOutside);
-       }, [isMobileMenuOpen]);
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                mobileMenuRef.current &&
+                !mobileMenuRef.current.contains(e.target)
+            ) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [isMobileMenuOpen]);
 
     return (
         <div className="min-h-screen bg-gray-50">
