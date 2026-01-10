@@ -248,7 +248,7 @@ export default function Register() {
                                                     name="email"
                                                     value={data.email}
                                                     className="pl-10 w-full"
-                                                    placeholder="you@example.com"
+                                                    placeholder="email@gmail.com"
                                                     autoComplete="email"
                                                     onChange={(e) => setData('email', e.target.value)}
                                                     required
