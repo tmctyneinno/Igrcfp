@@ -8,7 +8,7 @@ export default function SplitHeroSlider({ auth }) {
     const slides = [
         {
             id: 1,
-            title: "Learn From The Best",
+            title: "Empower Professionals, Strengthening Governance, Preventing Financial Crime",
             highlighted: "Tutors",
             description: "Join thousands of learners who are advancing their careers with personalized tutoring from industry experts.",
             image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
@@ -99,8 +99,7 @@ export default function SplitHeroSlider({ auth }) {
                                 {/* Title */}
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                                     {slides[activeSlide].title} <span className="text-blue-600 relative">
-                                        {slides[activeSlide].highlighted}
-                                        <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
+                                       <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></span>
                                     </span>
                                 </h1>
 
