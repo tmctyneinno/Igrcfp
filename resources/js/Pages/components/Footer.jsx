@@ -39,7 +39,7 @@ export default function Footer() {
                 <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="1400">
                     <h4 className="font-semibold mb-4">Contact Us</h4>
                     <ul className="space-y-2 text-gray-400">
-                        <li>Email: support@learnhub.com</li>
+                        <li>Email: enq@learnhub.com</li>
                         <li>Phone: +1 (555) 123-4567</li>
                         <li>Address: 123 Learning St, Education City</li>
                     </ul>
@@ -51,7 +51,7 @@ export default function Footer() {
                 data-aos-delay="500"
                 data-aos-duration="1400"
             >
-                <p>&copy; {new Date().getFullYear()} LearnHub. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} IGRCFP. All rights reserved.</p>
             </div>
         </div>
     );
