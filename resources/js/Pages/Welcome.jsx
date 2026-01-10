@@ -239,14 +239,14 @@ export default function Welcome({ auth }) {
                     </div>
 
                     {/* Mobile Menu */}
-                   {/* Mobile Menu */}
+                   {/* Mobile Menu - UPDATED */}
 {isMobileMenuOpen && (
     <div 
         className="md:hidden bg-white py-4 shadow-lg rounded-lg mt-2 mobile-menu-container"
         data-aos="fade-down"
         data-aos-duration="300"
     >
-        <div className="flex flex-col space-y-1">
+        <div className="flex flex-col space-y-2">
             <Link 
                 href="/" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
@@ -255,68 +255,138 @@ export default function Welcome({ auth }) {
                 Home
             </Link>
             
-            {/* Courses Dropdown for Mobile */}
+            {/* About Dropdown for Mobile */}
             <div className="py-1 px-4">
-                <div className="font-medium text-gray-700 py-2">Courses</div>
-                <div className="pl-4 space-y-1 border-l-2 border-gray-200">
-                    <Link 
-                        href="/courses/development" 
-                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Web Development
-                    </Link>
-                    <Link 
-                        href="/courses/design" 
-                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Design & Creative
-                    </Link>
-                    <Link 
-                        href="/courses/business" 
-                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Business
-                    </Link>
-                    <Link 
-                        href="/courses/marketing" 
-                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Marketing
-                    </Link>
-                    <Link 
-                        href="/courses/data-science" 
-                        className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        Data Science
-                    </Link>
-                    <Link 
-                        href="/courses" 
-                        className="block text-blue-600 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200 mt-2"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        View All Courses →
-                    </Link>
-                </div>
+                <button 
+                    className="font-medium text-gray-700 py-2 w-full text-left flex justify-between items-center"
+                    onClick={() => setOpenDropdown(openDropdown === 'about' ? null : 'about')}
+                >
+                    About Us
+                    <svg className={`w-4 h-4 transition-transform duration-300 ${openDropdown === 'about' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                {openDropdown === 'about' && (
+                    <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
+                        <Link 
+                            href="/about/welcome" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Welcome to IGRCFP
+                        </Link>
+                        <Link 
+                            href="/about/structure" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Our Structure
+                        </Link>
+                    </div>
+                )}
             </div>
             
             <Link 
-                href="/tutors" 
+                href="/membership" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
             >
-                Tutors
+                Membership
+            </Link>
+            
+            {/* Courses Dropdown for Mobile */}
+            <div className="py-1 px-4">
+                <button 
+                    className="font-medium text-gray-700 py-2 w-full text-left flex justify-between items-center"
+                    onClick={() => setOpenDropdown(openDropdown === 'courses' ? null : 'courses')}
+                >
+                    Courses
+                    <svg className={`w-4 h-4 transition-transform duration-300 ${openDropdown === 'courses' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                {openDropdown === 'courses' && (
+                    <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
+                        <Link 
+                            href="/courses/grc" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Advanced Diploma in GRC & Financial Crime Prevention
+                        </Link>
+                        <Link 
+                            href="/courses/cybersecurity" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Cybersecurity & Data Security for Financial Institutions
+                        </Link>
+                        <Link 
+                            href="/courses/monitoring" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Monitoring, Reporting & Risk Analytics
+                        </Link>
+                        <Link 
+                            href="/courses/regulatory" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            Regulatory Compliance & Supervisory Engagement
+                        </Link>
+                        <Link 
+                            href="/courses/regtech" 
+                            className="block text-gray-600 hover:text-blue-600 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                            onClick={() => {
+                                setIsMobileMenuOpen(false);
+                                setOpenDropdown(null);
+                            }}
+                        >
+                            RegTech, SupTech & Innovation in Compliance
+                        </Link>
+                    </div>
+                )}
+            </div>
+            
+            <Link 
+                href="/events" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                Events
             </Link>
             <Link 
-                href="/about" 
+                href="/blog" 
                 className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
             >
-                About
+                Blog
+            </Link>
+            <Link 
+                href="/news" 
+                className="text-gray-700 hover:text-blue-600 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                News
             </Link>
             <Link 
                 href="/contact" 
@@ -347,6 +417,7 @@ export default function Welcome({ auth }) {
         </div>
     </div>
 )}
+
                 </div>
             </nav>
 
