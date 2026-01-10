@@ -29,6 +29,8 @@ class HomeController extends Controller
                     'discount_price' => $course->discount_price,
                     'discount_percentage' => $course->discount_percentage,
                     'image_url' => $course->image_url,
+                    $course->image_url = $course->image_path ? Storage::url($course->image_path) : null;
+        
                     'instructor' => $course->instructor
                         ? [
                             'id' => $course->instructor->id,
