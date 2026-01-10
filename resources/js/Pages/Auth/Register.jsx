@@ -123,7 +123,7 @@ export default function Register() {
                                             <span className="font-semibold">{step.number}</span>
                                         </div>
                                         <div className="text-center">
-                                            <div className={`text-sm font-medium ${currentStep >= step.number ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                            <div className={`text-sm font-medium ${currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'}`}>
                                                 {step.title}
                                             </div>
                                             <div className="text-xs text-gray-500 hidden md:block">
@@ -131,7 +131,7 @@ export default function Register() {
                                             </div>
                                         </div>
                                         {step.number < steps.length && (
-                                            <div className={`h-1 flex-1 mt-5 mx-2 ${currentStep > step.number ? 'bg-indigo-600' : 'bg-gray-200'}`}></div>
+                                            <div className={`h-1 flex-1 mt-0 mx-2 ${currentStep > step.number ? 'bg-indigo-600' : 'bg-gray-200'}`}></div>
                                         )}
                                     </div>
                                 ))}
