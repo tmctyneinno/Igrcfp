@@ -52,11 +52,11 @@ export default function Certification({ courses = [] }) {
 
                             {/* CONTENT */}
                             <div className="p-2">
-                                <Link href={`/courses/${course.id}`} 
+                                <Link href={`/courses/${course.id}`} >
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                     {course.title}
                                 </h3>
-                                </
+                                </Link>
                                 <p className="text-gray-600 text-sm mb-4">
                                 {course.description.length > 400
                                     ? `${course.description.slice(0, 50)}...`
