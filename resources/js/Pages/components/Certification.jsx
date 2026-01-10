@@ -12,6 +12,9 @@ export default function Certification() {
                         data-aos-duration="1400"
                     >
                         <div>
+                            <span className="text-sm uppercase tracking-widest text-gray-400">
+                               Certifications & Trainings
+                            </span>
                             <h2 className="text-3xl font-bold text-gray-900">Popular Courses</h2>
                             <p className="text-gray-600 mt-2">Start learning with our most popular courses</p>
                         </div>
