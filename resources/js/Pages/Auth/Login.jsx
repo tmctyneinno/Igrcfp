@@ -31,7 +31,7 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
             
-            <div className="row">
+            <div className="min-h-screen flex">
                 {/* Left Side - Image */}
                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
                     <div className="flex items-center justify-center w-full p-12">
