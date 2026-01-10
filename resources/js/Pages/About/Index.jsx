@@ -34,7 +34,7 @@ export default function AboutIndex({ auth, title, description }) {
                         {[
                             { name: 'Reform', src: '/images/partners/reform.png' },
                             { name: 'Tuple', src: '/images/partners/tuple.png' },
-                            { name: 'SavvyCal', src: '/images/partners/savvycal.svg' },
+                            { name: 'SavvyCal', src: '/images/partners/savvycal.png' },
                             { name: 'Statamic', src: '/images/partners/statamic.svg' },
                             { name: 'Transistor', src: '/images/partners/transistor.svg' },
                         ].map((partner, index) => (
