@@ -1,7 +1,33 @@
 
 import { Link } from "@inertiajs/react";
+import { useEffect, useState, useRef } from "react";
 
 export default function NavBar({ auth }) {
+
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const mobileMenuRef = useRef(null);
+    
+       
+    
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                mobileMenuRef.current &&
+                !mobileMenuRef.current.contains(e.target)
+            ) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [isMobileMenuOpen]);
+
     return (
        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
