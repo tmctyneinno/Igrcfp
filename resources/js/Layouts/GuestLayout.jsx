@@ -4,9 +4,11 @@ import { Link } from '@inertiajs/react';
 export default function GuestLayout({ children }) {
     return (
         <div className="">
-            <div className="">
+            {/* Main Content */}
+            <main className="pt-16">
                 {children}
-            </div>
+            </main>
+
         </div>
     );
 }
