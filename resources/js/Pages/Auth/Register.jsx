@@ -17,6 +17,10 @@ export default function Register() {
         date_of_birth: '',
     }); 
 
+    const [currentStep, setCurrentStep] = useState(1);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     useEffect(() => {
         return () => {
             reset('password', 'password_confirmation');
@@ -27,6 +31,14 @@ export default function Register() {
         e.preventDefault();
         post(route('register'));
     };
+
+    // Steps configuration
+    const steps = [
+        { number: 1, title: 'Select Role', description: 'Choose your account type' },
+        { number: 2, title: 'Personal Info', description: 'Enter your details' },
+        { number: 3, title: 'Security', description: 'Create your password' },
+    ];
+
 
     return (
         <GuestLayout>
@@ -92,7 +104,7 @@ export default function Register() {
                                 ))}
                             </div>
                         </div>
-                        
+
                         <form onSubmit={submit} className="space-y-6">
                             {/* Role Field */}
                             <div>
