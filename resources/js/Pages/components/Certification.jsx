@@ -30,7 +30,7 @@ export default function Certification({ courses = [] }) {
                     View All Courses →
                 </Link>
             </div>
-
+ 
             {/* COURSES */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {courses.length > 0 ? (
