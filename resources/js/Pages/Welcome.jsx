@@ -209,9 +209,10 @@ export default function Welcome({ auth }) {
                                 </div>
                             ) : (
                                 <>
+                                   
                                     <Link
                                         href={route('login')}
-                                        className="text-gray-700 hover:text-blue-950 font-medium transition duration-300"
+                                        className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
                                     >
                                         Join the Insitute
                                     </Link>
