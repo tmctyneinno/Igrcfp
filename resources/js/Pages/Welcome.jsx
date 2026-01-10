@@ -5,7 +5,7 @@ import "aos/dist/aos.css";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
 import Certification from "@/Pages/components/Certification";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
-
+ 
 export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
