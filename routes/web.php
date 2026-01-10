@@ -17,7 +17,7 @@ Route::get('/', function () {
 });
 
 Route::get('/courses', function () {
-    return Inertia::render('Courses.Index');
+    return Inertia::render('Courses/Index');
 })->name('courses.index');
 
 
