@@ -10,9 +10,18 @@ export default function Certification({ courses = [] }) {
                 data-aos="fade-up"
             >
                 <div>
-                    <span className="text-sm uppercase tracking-widest text-gray-400">
-                        Certifications & Trainings
-                    </span>
+                    <div className="relative inline-flex items-center mb-3">
+                        <motion.span
+                            initial={{ width: 0 }}
+                            whileInView={{ width: 64 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            className="absolute left-0 top-1/2 h-px bg-gray-300"
+                        />
+                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                            Certifications & Trainings
+                        </span>
+                    </div>
                     <h2 className="text-3xl font-bold text-gray-900 mt-2">
                         Our Programmes
                     </h2>
