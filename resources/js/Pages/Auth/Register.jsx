@@ -12,7 +12,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
-        role: 'learner',
+        role: 'learner', // CHANGED: from 'student' to 'learner'
         phone: '',
         linkedin: '',
         date_of_birth: '',
@@ -23,10 +23,11 @@ export default function Register() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     useEffect(() => {
+        console.log('Current Step:', currentStep); // Debug
         return () => {
             reset('password', 'password_confirmation');
         };
-    }, []);
+    }, [currentStep]); // Added currentStep dependency
 
     const submit = (e) => {
         e.preventDefault();
@@ -42,32 +43,37 @@ export default function Register() {
                 alert('Please fill in all required fields');
                 return;
             }
+            console.log('Moving to step:', currentStep + 1); // Debug
             setCurrentStep(currentStep + 1);
         } else {
             // Final step - submit the form
+            console.log('Submitting form...'); // Debug
             post(route('register'));
         }
     };
 
     const nextStep = () => {
+        console.log('nextStep called, current step:', currentStep); // Debug
+        
         // Validate current step before proceeding
         if (currentStep === 1 && !data.role) {
             alert('Please select a role');
             return;
         }
         if (currentStep === 2 && (!data.name || !data.email)) {
-            alert('Please fill in all required fields');
+            alert('Please fill in name and email');
             return;
         }
-        if (currentStep === 3) {
-            // This is the final step, handle submission
-            // You might want to trigger form submission here
-            return;
-        }
-        setCurrentStep(currentStep + 1);
+        
+        console.log('Setting step to:', currentStep + 1); // Debug
+        setCurrentStep(prevStep => {
+            console.log('Previous step:', prevStep, 'New step:', prevStep + 1);
+            return prevStep + 1;
+        });
     };
 
     const prevStep = () => {
+        console.log('prevStep called, moving to step:', currentStep - 1); // Debug
         setCurrentStep(currentStep - 1);
     };
 
@@ -154,6 +160,11 @@ export default function Register() {
                             </div>
                         </div>
 
+                        {/* Debug info - remove this later */}
+                        <div className="mb-4 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
+                            Debug: Step {currentStep} | Role: {data.role} | Name: {data.name} | Email: {data.email}
+                        </div>
+
                         {/* FORM STARTS HERE */}
                         <form onSubmit={submit}>
                             {/* Step 1 Content */}
@@ -167,7 +178,7 @@ export default function Register() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {/* Learner Option */}
                                         <div 
-                                            className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'learner' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                            className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'learner' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'learner')}
                                         >
                                             <div className="text-center">
@@ -186,7 +197,7 @@ export default function Register() {
 
                                         {/* Tutor Option */}
                                         <div 
-                                            className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'tutor' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                            className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'tutor' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'tutor')}
                                         >
                                             <div className="text-center">
@@ -207,9 +218,10 @@ export default function Register() {
 
                                     <div className="flex justify-end pt-4">
                                         <button
-                                            type="submit"
+                                            type="button" // CHANGED to button
+                                            onClick={nextStep} // ADDED onClick
                                             disabled={!data.role}
-                                            className={`px-6 py-3 rounded-md font-medium ${data.role ? 'bg-blue-950 text-white hover:bg-blue-950' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                                            className={`px-6 py-3 rounded-md font-medium ${data.role ? 'bg-blue-950 text-white hover:bg-blue-900' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                                         >
                                             Continue
                                         </button>
@@ -449,18 +461,18 @@ export default function Register() {
                                                         id="terms"
                                                         name="terms"
                                                         type="checkbox"
-                                                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                                         required
                                                     />
                                                 </div>
                                                 <div className="ml-3 text-sm">
                                                     <label htmlFor="terms" className="font-medium text-gray-700">
                                                         I agree to the{' '}
-                                                        <Link href={route('terms')} className="text-indigo-600 hover:text-indigo-500">
+                                                        <Link href={route('terms')} className="text-blue-600 hover:text-blue-500">
                                                             Terms of Service
                                                         </Link>{' '}
                                                         and{' '}
-                                                        <Link href={route('privacy')} className="text-indigo-600 hover:text-indigo-500">
+                                                        <Link href={route('privacy')} className="text-blue-600 hover:text-blue-500">
                                                             Privacy Policy
                                                         </Link>
                                                     </label>
@@ -468,8 +480,8 @@ export default function Register() {
                                             </div>
                                         </div>
 
-                                        <div className="bg-indigo-50 p-4 rounded-lg">
-                                            <h4 className="font-medium text-indigo-900 mb-2">Account Summary</h4>
+                                        <div className="bg-blue-50 p-4 rounded-lg">
+                                            <h4 className="font-medium text-blue-900 mb-2">Account Summary</h4>
                                             <div className="space-y-2 text-sm">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-600">Role:</span>
