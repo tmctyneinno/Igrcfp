@@ -44,8 +44,8 @@ export default function Certification({ courses = [] }) {
                             {/* IMAGE */}
                             <div className="h-48 overflow-hidden">
                                 <img
-                                    src={course.image_url} // ✅ matches Laravel
-                                    alt={course.title}
+                                    src={course.image_url}
+                                    alt={course.title} 
                                     className="w-full h-full object-cover"
                                 />
                             </div>
