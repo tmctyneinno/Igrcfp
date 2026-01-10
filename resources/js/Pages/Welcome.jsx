@@ -8,7 +8,7 @@ export default function Welcome({ auth }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
     const navRef = useRef(null);
-
+ 
     // Initialize AOS once on component mount
     useEffect(() => {
         AOS.init({
