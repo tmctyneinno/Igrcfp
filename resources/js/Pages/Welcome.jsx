@@ -93,7 +93,7 @@ export default function Welcome({ auth }) {
                                 </button>
                                 
                                 {/* Dropdown Menu */}
-                                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
+                                <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
                                     <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Advanced Diploma in GRC & Financial Crime Prevention
                                     </Link>
@@ -103,9 +103,13 @@ export default function Welcome({ auth }) {
                                     <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Monitoring, Reporting & Risk Analytics
                                     </Link>
+                                    <div className="border-t border-gray-100 my-1"></div>
+
                                     <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         Regulatory Compliance & Supervisory Engagement
                                     </Link>
+                                    <div className="border-t border-gray-100 my-1"></div>
+
                                     <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition duration-200">
                                         RegTech, SupTech & Innovation in Compliance
                                     </Link>
