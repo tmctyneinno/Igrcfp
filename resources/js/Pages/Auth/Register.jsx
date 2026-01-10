@@ -193,7 +193,7 @@ export default function Register() {
                                         <button
                                             type="submit"
                                             disabled={!data.role}
-                                            className={`px-6 py-3 rounded-md font-medium ${data.role ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                                            className={`px-6 py-3 rounded-md font-medium ${data.role ? 'bg-blue-950 text-white hover:bg-blue-950' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                                         >
                                             Continue
                                         </button>
