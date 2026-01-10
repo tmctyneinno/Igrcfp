@@ -42,7 +42,7 @@ export default function AboutIndex({ auth, title, description }) {
                                 key={index}
                                 src={partner.src}
                                 alt={partner.name}
-                                className="h-8 md:h-9 object-contain opacity-90 hover:opacity-100 transition"
+                                className="h-10 md:h-19 object-contain opacity-90 hover:opacity-100 transition"
                             />
                         ))}
                     </div>
