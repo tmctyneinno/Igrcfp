@@ -2,12 +2,22 @@ import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState, useRef } from "react";
 import NavBar from "@/Pages/components/NavBar";
 import Footer from '@/Pages/components/Footer'; 
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function GuestLayout({ children, auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-    
+    // ✅ AOS INIT — ONCE ONLY
+    useEffect(() => {
+        AOS.init({
+            duration: 500,
+            easing: "ease-out-cubic",
+            once: true,
+            offset: 80,
+        });
+    }, []);
    
     // Close mobile menu when clicking outside
     useEffect(() => {
