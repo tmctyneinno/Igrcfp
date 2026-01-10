@@ -16,8 +16,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         <>
             <Head title="Home" />
             
-            <div id="smooth-wrapper">
-                <div id="smooth-content">
+            
                     <header className="header-area header-three fixed-top">
                         <div className="flex lg:col-start-2 lg:justify-center">
                             <svg
@@ -58,22 +57,16 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             )}
                         </nav>
                     </header>
+                    <div id="smooth-wrapper">
+                        <div id="smooth-content">
+                        <main className="mt-6">
+                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                                
 
-                    <main className="mt-6">
-                        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                            
-
-                            
-
-                            
-
-                            
-                        </div>
-                    </main>
-
-                    
+                            </div>
+                        </main>
+                    </div>
                 </div>
-            </div>
             
         </>
     );
