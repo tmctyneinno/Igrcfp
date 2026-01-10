@@ -28,7 +28,7 @@ export default function WhoAreWe() {
     return (
         <section className="bg-white py-24 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 ">
 
                     {/* TEXT CONTENT */}
                     <motion.div
@@ -36,6 +36,7 @@ export default function WhoAreWe() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
+                        className="flex flex-col items-start text-left"
                         >
                         <span className="text-sm uppercase tracking-widest text-gray-400">
                             Who We Are
