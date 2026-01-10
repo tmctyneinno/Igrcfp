@@ -137,11 +137,8 @@ export default function Footer() {
                                 { label: "Membership", href: "/membership" },
                                 { label: "Certifications", href: "/certifications" },
                                 { label: "Events", href: "/events" },
-                                { label: "Resources", href: "/resources" },
+                                { label: "News", href: "/news" },
                                 { label: "Training Programs", href: "/training" },
-                                { label: "Research & Publications", href: "/research" },
-                                { label: "Career Center", href: "/careers" },
-                                { label: "Partner With Us", href: "/partnerships" }
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link 
@@ -185,7 +182,7 @@ export default function Footer() {
                     {/* Legal & Policies */}
                     <motion.div variants={fadeIn}>
                         <h4 className="text-white font-semibold text-lg mb-6 pb-3 border-b border-blue-800/30">
-                            Legal & Policies
+                            More Links
                         </h4>
                         <ul className="space-y-3">
                             {[
@@ -193,10 +190,6 @@ export default function Footer() {
                                 "Privacy Policy",
                                 "Cookie Policy",
                                 "Code of Ethics",
-                                "Anti-Bribery Policy",
-                                "Complaints Procedure",
-                                "Whistleblowing Policy",
-                                "Accessibility Statement"
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 
