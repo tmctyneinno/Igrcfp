@@ -478,8 +478,8 @@ export default function Register() {
                                                     </label> 
                                                 </div> 
                                             </div>
-                                        </div>
-
+                                        </div> 
+  
                                         <div className="bg-blue-50 p-4 rounded-lg">
                                             <h4 className="font-medium text-blue-900 mb-2">Account Summary</h4>
                                             <div className="space-y-2 text-sm">
