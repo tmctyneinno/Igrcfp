@@ -64,6 +64,29 @@ export default function GuestLayout({ children, auth }) {
                 <Footer/>
             </footer>
 
+            {/* Mobile Menu Toggle Script */}
+            <script>{`
+                document.addEventListener('DOMContentLoaded', function() {
+                    const mobileMenuButton = document.querySelector('button.md\\:hidden');
+                    const mobileMenu = document.querySelector('.md\\:hidden.bg-white');
+                    
+                    if (mobileMenuButton && mobileMenu) {
+                        mobileMenuButton.addEventListener('click', function() {
+                            mobileMenu.classList.toggle('hidden');
+                        });
+                    }
+                });
+            `}</script>
+
+            {/* Refresh AOS on page load */}
+            <script>{`
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof AOS !== 'undefined') {
+                        AOS.refresh();
+                    }
+                });
+            `}</script>
+
         </div>
     );
 }
