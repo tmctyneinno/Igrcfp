@@ -163,20 +163,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         </svg>
                                     </div>
 
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laracasts
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Laracasts offers thousands of video
-                                            tutorials on Laravel, PHP, and
-                                            JavaScript development. Check them
-                                            out, see for yourself, and massively
-                                            level up your development skills in
-                                            the process.
-                                        </p>
-                                    </div>
+                                  
 
                                     <svg
                                         className="size-6 shrink-0 self-center stroke-[#FF2D20]"
@@ -212,20 +199,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         </svg>
                                     </div>
 
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laravel News
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Laravel News is a community driven
-                                            portal and newsletter aggregating
-                                            all of the latest and most important
-                                            news in the Laravel ecosystem,
-                                            including new package releases and
-                                            tutorials.
-                                        </p>
-                                    </div>
+                                  
 
                                     <svg
                                         className="size-6 shrink-0 self-center stroke-[#FF2D20]"
