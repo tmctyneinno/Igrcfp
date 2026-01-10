@@ -2,10 +2,15 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, useRef } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import MembershipOptions from "@/Pages/components/MembershipOptions";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
 import Certification from "@/Pages/components/Certification";
 import GlobalEvents from "@/Pages/components/GlobalEvents";
+import BecomeMember from "@/Pages/components/BecomeMember";
+import Testimonials from "@/Pages/components/Testimonials";
+import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import Footer from "@/Pages/components/Footer";
  
 export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -445,90 +450,55 @@ export default function Welcome({ auth, courses }) {
                 <GlobalEvents />
             </section>
 
-            <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <GlobalEvents />
+            <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <BecomeMember />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <MembershipOptions />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <FAQSection />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <Testimonials />
             </section>
             
-                {/* CTA Section with AOS zoom effect */}
-                <section 
-                    className="py-20 bg-gradient-to-r from-blue-600 to-blue-800"
-                    data-aos="zoom-in"
-                    data-aos-duration="1400"
-                >
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                        <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
-                        <p className="text-blue-100 mb-8 text-lg">
-                            Join thousands of successful learners who have transformed their careers with our platform.
-                        </p>
-                        <Link
-                            href={auth.user ? route('dashboard') : route('register')}
-                            className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
-                            data-aos="fade-up"
-                            data-aos-delay="300"
-                            data-aos-duration="1400"
-                        >
-                            {auth.user ? 'Continue Learning' : 'Get Started for Free'}
-                        </Link>
-                    </div>
-                </section>
+            {/* CTA Section with AOS zoom effect */}
+            <section 
+                className="py-20 bg-gradient-to-r from-blue-950 to-blue-900"
+                data-aos="zoom-in"
+                data-aos-duration="1400"
+            >
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
+                    <p className="text-blue-100 mb-8 text-lg">
+                        Join thousands of successful learners who have transformed their careers with our platform.
+                    </p>
+                    <Link
+                        href={auth.user ? route('dashboard') : route('register')}
+                        className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
+                        data-aos="fade-up"
+                        data-aos-delay="300"
+                        data-aos-duration="1400"
+                    >
+                        {auth.user ? 'Continue Learning' : 'Get Started for Free'}
+                    </Link>
+                </div>
+            </section>
 
-                {/* Footer */}
-                <footer 
-                    className="bg-gray-900 text-white py-12"
-                    data-aos="fade-up"
-                    data-aos-duration="1400"
-                >
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                            <div data-aos="fade-up" data-aos-delay="100" data-aos-duration="1400">
-                                <div className="flex items-center mb-4">
-                                    <img 
-                                        src="/assets/images/home-three/logo/logo-main.png" 
-                                        alt="Logo" 
-                                        className="h-8 w-auto"
-                                    />
-                                    <span className="ml-2 text-xl font-bold">LearnHub</span>
-                                </div>
-                                <p className="text-gray-400">
-                                    Transforming education through personalized learning experiences.
-                                </p>
-                            </div>
-                            <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1400">
-                                <h4 className="font-semibold mb-4">Quick Links</h4>
-                                <ul className="space-y-2">
-                                    <li><Link href="/" className="text-gray-400 hover:text-white">Home</Link></li>
-                                    <li><Link href="/courses" className="text-gray-400 hover:text-white">Courses</Link></li>
-                                    <li><Link href="/tutors" className="text-gray-400 hover:text-white">Tutors</Link></li>
-                                    <li><Link href="/about" className="text-gray-400 hover:text-white">About Us</Link></li>
-                                </ul>
-                            </div>
-                            <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="1400">
-                                <h4 className="font-semibold mb-4">Legal</h4>
-                                <ul className="space-y-2">
-                                    <li><Link href="/terms" className="text-gray-400 hover:text-white">Terms of Service</Link></li>
-                                    <li><Link href="/privacy" className="text-gray-400 hover:text-white">Privacy Policy</Link></li>
-                                    <li><Link href="/cookies" className="text-gray-400 hover:text-white">Cookie Policy</Link></li>
-                                </ul>
-                            </div>
-                            <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="1400">
-                                <h4 className="font-semibold mb-4">Contact Us</h4>
-                                <ul className="space-y-2 text-gray-400">
-                                    <li>Email: support@learnhub.com</li>
-                                    <li>Phone: +1 (555) 123-4567</li>
-                                    <li>Address: 123 Learning St, Education City</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div 
-                            className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"
-                            data-aos="fade-up"
-                            data-aos-delay="500"
-                            data-aos-duration="1400"
-                        >
-                            <p>&copy; {new Date().getFullYear()} LearnHub. All rights reserved.</p>
-                        </div>
-                    </div>
-                </footer>
+            
+
+            {/* Footer */}
+            <footer 
+                className="bg-gray-900 text-white py-12"
+                data-aos="fade-up"
+                data-aos-duration="1400"
+            >
+                <Footer/>
+            </footer>
            
 
             {/* Mobile Menu Toggle Script */}
