@@ -6,7 +6,7 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
      
     return (    
-        <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-gray-300 relative overflow-hidden">
+        <footer className="  text-gray-300 relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute inset-0 bg-grid-slate-800/[0.02] bg-[size:20px_20px]"></div>
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
@@ -138,7 +138,7 @@ export default function Footer() {
                                 { label: "Certifications", href: "/certifications" },
                                 { label: "Events", href: "/events" },
                                 { label: "News", href: "/news" },
-                                { label: "Course", href: "/training" },
+                                // { label: "", href: "/course" },
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link 
@@ -189,6 +189,7 @@ export default function Footer() {
                                 "About Us",
                                 "Welcome to IGRCFP",
                                 "Our Structure",
+                                'Course'
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 
