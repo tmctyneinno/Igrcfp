@@ -438,7 +438,7 @@ export default function Welcome({ auth }) {
             <div className="pt-16">
                 <SplitHeroSlider auth={auth} />
             </div>
-{/* Keep your existing sections below */}
+
             <section className="py-20 bg-white">
                <WhoAreWe auth={auth} />
             </section>
@@ -646,7 +646,7 @@ export default function Welcome({ auth }) {
                         </div>
                     </div>
                 </footer>
-            </div>
+           
 
             {/* Mobile Menu Toggle Script */}
             <script>{`
