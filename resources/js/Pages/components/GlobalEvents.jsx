@@ -6,31 +6,28 @@ export default function GlobalEvents() {
     return (
         <div className="max-w-7xl mx-auto px-6 py-24">
             {/* HEADER */}
-                        <div
-                            className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
-                            data-aos="fade-up"
-                        >
-                            <div>
-                                <span className="text-sm uppercase tracking-widest text-gray-400">
-                                    Certifications & Trainings
-                                </span>
-                                <h2 className="text-3xl font-bold text-gray-900 mt-2">
-                                    Our Programmes
-                                </h2>
-                                <p className="text-gray-600 mt-3 max-w-2xl">
-                                    Our professional certifications are designed to equip individuals
-                                    and institutions with globally relevant skills to tackle financial
-                                    crime and compliance risks.
-                                </p>
-                            </div>
-            
-                            <Link
-                                href="/courses"
-                                className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
-                            >
-                                View All Courses →
-                            </Link>
-                        </div>
+            <div
+                className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
+                data-aos="fade-up"
+            >
+                <div>
+                    <span className="text-sm uppercase tracking-widest text-gray-400 mb-3">
+                        Events & Summits
+                    </span>
+
+                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mb-6">
+                        Our Global Events & Summits
+                    </h2>
+                </div>
+
+                <Link
+                    href="/courses"
+                    className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
+                >
+                    View All Courses →
+                </Link>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
                 {/* LEFT – IMAGE */}
