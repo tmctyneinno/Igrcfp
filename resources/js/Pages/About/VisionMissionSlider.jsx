@@ -21,7 +21,7 @@ useEffect(() => {
         {
             title: 'OUR MISSION',
             content:
-                'To empower professionals and organizations worldwide through education, certification, and thought leadership in governance, risk, compliance, and financial crime prevention.',
+                'Elevate GRC & FCC standards globally, empower professionals with skill',
         },
     ];
 
