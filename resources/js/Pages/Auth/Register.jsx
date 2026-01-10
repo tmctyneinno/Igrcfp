@@ -468,11 +468,11 @@ export default function Register() {
                                                 <div className="ml-3 text-sm">
                                                     <label htmlFor="terms" className="font-medium text-gray-700">
                                                         I agree to the{' '}
-                                                        <Link href={route('terms')} className="text-blue-600 hover:text-blue-500">
+                                                        <Link href='/terms' className="text-blue-600 hover:text-blue-500">
                                                             Terms of Service
                                                         </Link>{' '}
                                                         and{' '}
-                                                        <Link href={route('privacy')} className="text-blue-600 hover:text-blue-500">
+                                                        <Link href='/privacy' className="text-blue-600 hover:text-blue-500">
                                                             Privacy Policy
                                                         </Link>
                                                     </label>
