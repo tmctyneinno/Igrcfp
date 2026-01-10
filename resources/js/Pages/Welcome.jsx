@@ -4,7 +4,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 export default function Welcome({ auth }) {
-     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null)
 
     // Initialize AOS on component mount
     useEffect(() => {
@@ -29,7 +30,7 @@ export default function Welcome({ auth }) {
 
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [isMobileMenuOpen]);
+    }, [isMobileMenuOpen])
 
     return (
         <>
