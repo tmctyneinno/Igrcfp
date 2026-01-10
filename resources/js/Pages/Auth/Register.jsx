@@ -346,7 +346,7 @@ export default function Register() {
                                             Back
                                         </button>
                                         <button
-                                            type="button"
+                                            type="button" 
                                             onClick={nextStep} 
                                             disabled={!data.name || !data.email}
                                             className={`px-3 py-2 rounded-md font-medium ${data.name && data.email ? 'bg-blue-950 text-white hover:bg-blue-900' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
