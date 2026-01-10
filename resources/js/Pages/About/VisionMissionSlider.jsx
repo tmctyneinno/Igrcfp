@@ -21,7 +21,9 @@ useEffect(() => {
         {
             title: 'OUR MISSION',
             content:
-                'Elevate GRC & FCC standards globally, empower professionals with skill',
+                'Elevate GRC & FCC standards globally, empower professionals with skills,
+                certifications, and mentorship, empower professionals with skills, certifications,
+                and m',
         },
     ];
 
