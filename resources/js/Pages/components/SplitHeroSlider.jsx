@@ -97,7 +97,7 @@ export default function SplitHeroSlider({ auth }) {
                                 </div>
 
                                 {/* Title */}
-                                <h3 className=" font-bold text-gray-900 leading-tight">
+                                <h3 className="text-3xl md:text-4xl lg:text-4xl font-bold text-gray-900 leading-tight">
                                     {slides[activeSlide].title} 
                                 </h3>
 
