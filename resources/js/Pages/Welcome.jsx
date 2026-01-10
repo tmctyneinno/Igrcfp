@@ -437,7 +437,7 @@ export default function Welcome({ auth }) {
             </section>
 
             <section className="bg-gray-50 py-24 overflow-hidden">
-               <Certification auth={auth} />
+               <Certification courses={courses} />
             </section>
                 
                 
