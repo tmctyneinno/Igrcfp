@@ -435,63 +435,7 @@ export default function Welcome({ auth }) {
 
             {/* Hero Section with AOS effects */}
             <div className="pt-16">
-                <section 
-                    className="bg-gradient-to-r from-blue-50 to-indigo-50"
-                    data-aos="fade-up"
-                    data-aos-duration="1400"
-                >
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                        <div className="text-center">
-                            <h1 
-                                className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
-                                data-aos="fade-up"
-                                data-aos-delay="200"
-                                data-aos-duration="1400"
-                            >
-                                Learn From The Best <span className="text-blue-600">Tutors</span>
-                            </h1>
-                            <p 
-                                className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
-                                data-aos="fade-up"
-                                data-aos-delay="400"
-                                data-aos-duration="1400"
-                            >
-                                Join thousands of learners who are advancing their careers with personalized 
-                                tutoring from industry experts.
-                            </p>
-                            <div 
-                                className="flex flex-col sm:flex-row gap-4 justify-center"
-                                data-aos="fade-up"
-                                data-aos-delay="600"
-                                data-aos-duration="1400"
-                            >
-                                {!auth.user ? (
-                                    <>
-                                        <Link
-                                            href={route('register')}
-                                            className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
-                                        >
-                                            Start Learning Free
-                                        </Link>
-                                        <Link
-                                            href="/courses"
-                                            className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-50 transition duration-300 border border-blue-600 transform hover:-translate-y-1"
-                                        >
-                                            Browse Courses
-                                        </Link>
-                                    </>
-                                ) : (
-                                    <Link
-                                        href={route('dashboard')}
-                                        className="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
-                                    >
-                                        Go to Dashboard
-                                    </Link>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                <SplitHeroSlider auth={auth} />
 
                 {/* Features Section with staggered AOS effects */}
                 <section className="py-20 bg-white">
