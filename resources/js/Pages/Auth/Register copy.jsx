@@ -88,6 +88,30 @@ export default function Register() {
 
                         {/* Form */}
                         <form onSubmit={submit} className="space-y-5">
+                            {/* Role Field */}
+                            <div>
+                                <InputLabel htmlFor="role" value="I want to join as a" />
+                                <div className="mt-1 relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <select
+                                        id="role"
+                                        name="role"
+                                        value={data.role}
+                                        className="pl-10 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        onChange={(e) => setData('role', e.target.value)}
+                                        required
+                                    >
+                                        <option value="student">Student</option>
+                                        <option value="instructor">Instructor</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
+                                </div>
+                                <InputError message={errors.role} className="mt-2" />
+                            </div>
                             {/* Name Field */}
                             <div>
                                 <InputLabel htmlFor="name" value="Full Name" />
@@ -137,30 +161,7 @@ export default function Register() {
                                 <InputError message={errors.email} className="mt-2" />
                             </div>
 
-                            {/* Role Field */}
-                            <div>
-                                <InputLabel htmlFor="role" value="I want to join as a" />
-                                <div className="mt-1 relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <select
-                                        id="role"
-                                        name="role"
-                                        value={data.role}
-                                        className="pl-10 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                        onChange={(e) => setData('role', e.target.value)}
-                                        required
-                                    >
-                                        <option value="student">Student</option>
-                                        <option value="instructor">Instructor</option>
-                                        <option value="admin">Administrator</option>
-                                    </select>
-                                </div>
-                                <InputError message={errors.role} className="mt-2" />
-                            </div>
+                            
 
                             {/* Phone Field */}
                             <div>
