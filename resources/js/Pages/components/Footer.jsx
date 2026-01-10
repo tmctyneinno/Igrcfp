@@ -21,7 +21,7 @@ export default function Footer() {
                             <img
                                 src="/assets/images/home-three/logo/logo-main.png"
                                 alt="IGRCFP Logo"
-                                className="h-15 w-auto"
+                                className="h-12 w-auto"
                             />
                             <span className="text-xl font-semibold text-white">
                                 IGRCFP
@@ -30,7 +30,7 @@ export default function Footer() {
 
                         <p className="text-sm leading-relaxed">
                             The International Governance, Risk, Compliance & Financial
-                            Crime Professionals body — advancing professional standards,
+                            Crime Professionals body advancing professional standards,
                             ethics, and global best practices.
                         </p>
                     </motion.div>
