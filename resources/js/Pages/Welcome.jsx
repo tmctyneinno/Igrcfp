@@ -436,7 +436,7 @@ export default function Welcome({ auth }) {
                <WhoAreWe auth={auth} />
             </section>
 
-            <section className="bg-white py-24 overflow-hidden">
+            <section className="bg-gray-50 py-24 overflow-hidden">
                <Certification auth={auth} />
             </section>
                 
