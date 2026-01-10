@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -33,7 +33,7 @@ class CourseController extends Controller
                     'has_discount' => $course->has_discount,
                     'discount_price' => $course->discount_price,
                     'discount_percentage' => $course->discount_percentage,
-                    'image_url' => $course->image_url,
+                    'image_url' => $course->image_path ? Storage::url($course->image_path) : null,
                     'instructor' => $course->instructor
                         ? [
                             'id' => $course->instructor->id,
@@ -48,9 +48,6 @@ class CourseController extends Controller
                     'certification' => $course->certification,
                 ];
             });
-           // Debug logging
-        Log::info("courses updated: {$courses}");
-        
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
             'courses' => $courses
