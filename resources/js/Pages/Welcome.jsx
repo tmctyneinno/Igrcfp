@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import SplitHeroSlider from '@/components/SplitHeroSlider';
+import SplitHeroSlider from '@/Pages/components/'
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
