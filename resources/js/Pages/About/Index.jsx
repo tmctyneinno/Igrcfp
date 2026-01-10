@@ -3,7 +3,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import WhoAreWe from "@/Pages/components/WhoAreWe";
 import OurValues from '@/Pages/About/OurValues';
 import PartnersSlider from '@/Pages/About/PartnersSlider';
-import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';PartnersSlider
+import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
 
 export default function AboutIndex({ auth, title, description }) {
     return (
