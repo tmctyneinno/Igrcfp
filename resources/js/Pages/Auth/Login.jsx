@@ -42,7 +42,7 @@ export default function Login({ status, canResetPassword }) {
                                         src="/assets/admin/images/auth/auth-img.png" 
                                         alt="Authentication" 
                                         className="mx-auto max-w-full h-auto"
-                                        style={{ maxHeight: '1600px' }}
+                                        style={{ maxHeight: '600px' }}
                                     /> 
                                 </Link>
                             </div>
