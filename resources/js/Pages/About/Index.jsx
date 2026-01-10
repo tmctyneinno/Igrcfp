@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function AboutIndex({ title, description }) {
+export default function AboutIndex({ auth, description }) {
     return (
-        <GuestLayout>
+        <GuestLayout auth={auth}>
             <Head title={title} />
             
             {/* Hero Section */}
