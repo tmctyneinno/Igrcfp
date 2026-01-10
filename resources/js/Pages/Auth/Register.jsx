@@ -17,10 +17,6 @@ export default function Register() {
         date_of_birth: '',
     }); 
 
-    const [currentStep, setCurrentStep] = useState(1);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
     useEffect(() => {
         return () => {
             reset('password', 'password_confirmation');
@@ -31,14 +27,6 @@ export default function Register() {
         e.preventDefault();
         post(route('register'));
     };
-
-    // Steps configuration
-    const steps = [
-        { number: 1, title: 'Select Role', description: 'Choose your account type' },
-        { number: 2, title: 'Personal Info', description: 'Enter your details' },
-        { number: 3, title: 'Security', description: 'Create your password' },
-    ];
-
 
     return (
         <GuestLayout>
@@ -82,8 +70,28 @@ export default function Register() {
                             </div>
                         </div>
                         {/* Progress Steps */}
-                       
-
+                        <div className="mb-8">
+                            <div className="flex items-center justify-between">
+                                {steps.map((step) => (
+                                    <div key={step.number} className="flex flex-col items-center flex-1">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep >= step.number ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                            <span className="font-semibold">{step.number}</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className={`text-sm font-medium ${currentStep >= step.number ? 'text-indigo-600' : 'text-gray-500'}`}>
+                                                {step.title}
+                                            </div>
+                                            <div className="text-xs text-gray-500 hidden md:block">
+                                                {step.description}
+                                            </div>
+                                        </div>
+                                        {step.number < steps.length && (
+                                            <div className={`h-1 flex-1 mt-5 mx-2 ${currentStep > step.number ? 'bg-indigo-600' : 'bg-gray-200'}`}></div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                         <form onSubmit={submit} className="space-y-6">
                             {/* Role Field */}
                             <div>
