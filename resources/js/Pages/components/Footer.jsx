@@ -4,7 +4,7 @@ import { fadeIn, scaleIn, staggerContainer } from "@/utils/motionPresets";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
-    
+     
     return (
         <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-gray-300 relative overflow-hidden">
             {/* Decorative elements */}
