@@ -14,7 +14,7 @@ class CourseController extends Controller
     public function index()
     {
         // Fetch courses with instructor and reviews count
-        $courses = Course::with('instructor')
+        $courses = Course::query()
             ->where('status', 'published') 
             ->orderBy('created_at', 'desc')
             ->get()
