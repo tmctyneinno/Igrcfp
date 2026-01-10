@@ -18,6 +18,12 @@ export default function WhoAreWe() {
                     <span className="text-sm uppercase tracking-widest text-gray-400">
                         Who We Are
                     </span>
+                    <div className="relative inline-flex items-center mb-3">
+                        <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
+                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                            Events & Summits
+                        </span>
+                    </div>
                     <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
                         Know More About Us
                     </h2>
