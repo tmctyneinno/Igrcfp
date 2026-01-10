@@ -465,7 +465,7 @@ export default function Welcome({ auth, courses }) {
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <Testimonials />
             </section>
-            
+
             {/* CTA Section with AOS zoom effect */}
             <section 
                 className="py-20 bg-gradient-to-r from-blue-950 to-blue-900"
@@ -496,7 +496,7 @@ export default function Welcome({ auth, courses }) {
                 className="bg-gray-900 text-white py-12"
                 data-aos="fade-up"
                 data-aos-duration="1400"
-            >
+            > 
                 <Footer/>
             </footer>
            
