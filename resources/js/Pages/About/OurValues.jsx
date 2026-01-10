@@ -39,7 +39,7 @@ export default function OurValues() {
                 {valuesData.map((value, index) => (
                 <div
                     key={index}
-                    className="bg-gray-100 p-1 rounded-lg shadow-md text-center flex flex-col justify-between h-full"
+                    className="bg-gray-100 p-2.3 rounded-lg shadow-md text-center flex flex-col justify-between h-full"
                 >
                     <div className="mb-0">
                         {/* Icon Placeholder */}
