@@ -18,7 +18,7 @@ export default function Certification() {
                             <h2 className="text-3xl font-bold text-gray-900">Our Programmes</h2>
                             <p className="text-gray-600 mt-2">
                                 Our professional certifications are designed to equip individuals 
-                                and institutions with  globally relevant skills to tackle financial 
+                                and institutions with  globally relevant skills to tackle <br/>financial 
                                 crime and compliance risks.
                             </p>
                         </div>
