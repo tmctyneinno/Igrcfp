@@ -11,7 +11,7 @@ export default function GlobalEvents() {
                 data-aos="fade-up"
             >
                 <div>
-                    <span className="text-sm uppercase tracking-widest text-gray-400 mb-3">
+                    <span className="text-sm  tracking-widest text-gray-400 mb-3">
                         Events & Summits
                     </span>
 
@@ -31,7 +31,7 @@ export default function GlobalEvents() {
                     viewport={{ once: true }}
                     className="relative"
                 >
-                    <div className="rounded-2xl overflow-hidden border-4 border-white-0">
+                    <div className="rounded-2xl overflow-hidden border-4 border-white">
                         <img
                             src="assets/images/home-three/gallery/events-image.png"
                             alt="Global Events & Summits"
