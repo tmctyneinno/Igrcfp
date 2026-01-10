@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function WhoAreWe() {
@@ -10,6 +12,12 @@ export default function WhoAreWe() {
     const slides = [0]; // reserved for future expansion
 
     useEffect(() => {
+        AOS.init({
+            duration: 900,
+            easing: "ease-out-cubic",
+            once: true,
+        });
+
         startAutoSlide();
         return () => stopAutoSlide();
     }, [activeSlide]);
@@ -28,31 +36,38 @@ export default function WhoAreWe() {
     return (
         <section className="bg-white py-24 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 ">
 
-                    {/* TEXT CONTENT */}
+                {/* TEXT SECTION */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+                    {/* TEXT CONTENT – HEADER */}
                     <motion.div
                         variants={fadeLeft}
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
                         className="flex flex-col items-start text-left"
+                    >
+                        <span
+                            className="text-sm uppercase tracking-widest text-gray-400"
+                            data-aos="fade-right"
                         >
-                        <span className="text-sm uppercase tracking-widest text-gray-400">
                             Who We Are
                         </span>
 
                         <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
                             Know More About Us
                         </h2>
-
                     </motion.div>
 
-                     <motion.div
-                        initial={{ opacity: 0, x: -60 }}
+                    {/* TEXT CONTENT – BODY */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -40 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         viewport={{ once: true }}
+                        className="flex flex-col items-start text-left"
+                        data-aos="fade-up"
                     >
                         <p className="text-gray-600 leading-relaxed mb-4">
                             The Institute of Governance, Risk & Compliance & Financial Crime
@@ -62,9 +77,9 @@ export default function WhoAreWe() {
                         </p>
 
                         <p className="text-gray-600 leading-relaxed mb-4">
-                            We equip professionals and organizations with world‑class
+                            We equip professionals and organizations with world-class
                             training, certifications, and resources to stay ahead in a
-                            fast‑changing regulatory environment.
+                            fast-changing regulatory environment.
                         </p>
 
                         <p className="text-gray-600 leading-relaxed">
@@ -76,22 +91,24 @@ export default function WhoAreWe() {
 
                         <Link
                             href="/about-us"
-                            className="inline-flex items-center gap-3 mt-8 px-3 py-3 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition"
+                            className="inline-flex items-center gap-3 mt-8 px-6 py-4 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition-all duration-300 hover:-translate-y-0.5"
+                            data-aos="zoom-in"
                         >
                             Learn More About Us
                             <span className="text-lg">→</span>
                         </Link>
                     </motion.div>
-                   
                 </div>
-                <div className="grid grid-cols-2 lg:grid-cols-2 gap-16 items-center">
-                     {/* IMAGE CONTENT */}
+
+                {/* IMAGE SECTION */}
+                <div className="grid grid-cols-1 mt-24 items-center">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.9, ease: "easeOut" }}
+                        variants={scaleIn}
+                        initial="hidden"
+                        whileInView="visible"
                         viewport={{ once: true }}
-                        className=" justify-center"
+                        className="flex justify-center items-center w-full"
+                        data-aos="fade-up"
                     >
                         <img
                             src="assets/images/home-three/bg/intro-bg.png"
@@ -100,6 +117,7 @@ export default function WhoAreWe() {
                         />
                     </motion.div>
                 </div>
+
             </div>
         </section>
     );
