@@ -12,44 +12,7 @@ export default function Footer() {
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
             
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 relative">
-                {/* Newsletter Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
-                    className="mb-16 p-8 bg-gradient-to-r from-blue-900/30 to-indigo-900/30 backdrop-blur-sm rounded-2xl border border-blue-800/30"
-                >
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
-                        <div>
-                            <h3 className="text-2xl font-bold text-white mb-3">
-                                Stay Updated with Industry Insights
-                            </h3>
-                            <p className="text-blue-100">
-                                Subscribe to our newsletter for the latest GRC & Financial Crime Prevention updates.
-                            </p>
-                        </div>
-                        <div>
-                            <form className="flex flex-col sm:flex-row gap-3">
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    className="flex-grow px-4 py-3 bg-white/5 border border-blue-700/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-400"
-                                />
-                                <button
-                                    type="submit"
-                                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/25"
-                                >
-                                    Subscribe
-                                </button>
-                            </form>
-                            <p className="text-xs text-gray-400 mt-3">
-                                By subscribing, you agree to our Privacy Policy. Unsubscribe anytime.
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
-
+               
                 {/* Main Footer Content */}
                 <motion.div
                     variants={staggerContainer}
