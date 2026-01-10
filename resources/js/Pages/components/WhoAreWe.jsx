@@ -28,15 +28,15 @@ export default function WhoAreWe() {
     return (
         <section className="bg-white py-24 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-                {/* TEXT CONTENT — STARTS FROM TOP */}
-                <div className="max-w-3xl">
+                    {/* TEXT CONTENT */}
                     <motion.div
                         variants={fadeLeft}
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                    >
+                        >
                         <span className="text-sm uppercase tracking-widest text-gray-400">
                             Who We Are
                         </span>
@@ -44,11 +44,12 @@ export default function WhoAreWe() {
                         <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
                             Know More About Us
                         </h2>
+
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                     <motion.div
+                        initial={{ opacity: 0, x: -60 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         viewport={{ once: true }}
                     >
@@ -60,9 +61,9 @@ export default function WhoAreWe() {
                         </p>
 
                         <p className="text-gray-600 leading-relaxed mb-4">
-                            We equip professionals and organizations with world-class
+                            We equip professionals and organizations with world‑class
                             training, certifications, and resources to stay ahead in a
-                            fast-changing regulatory environment.
+                            fast‑changing regulatory environment.
                         </p>
 
                         <p className="text-gray-600 leading-relaxed">
@@ -80,23 +81,24 @@ export default function WhoAreWe() {
                             <span className="text-lg">→</span>
                         </Link>
                     </motion.div>
+                   
                 </div>
-
-                {/* IMAGE CONTENT — CENTERED & FULL */}
-                <motion.div
-                    variants={scaleIn}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="flex justify-center mt-20"
-                >
-                    <img
-                        src="assets/images/home-three/bg/intro-bg.png"
-                        alt="IGRCFP global professional network"
-                        className="w-full max-w-5xl"
-                    />
-                </motion.div>
-
+                <div className="grid grid-cols-2 lg:grid-cols-2 gap-16 items-center">
+                     {/* IMAGE CONTENT */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.9, ease: "easeOut" }}
+                        viewport={{ once: true }}
+                        className=" justify-center"
+                    >
+                        <img
+                            src="assets/images/home-three/bg/intro-bg.png"
+                            alt="IGRCFP global professional network"
+                            className="max-w-xl w-full"
+                        />
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
