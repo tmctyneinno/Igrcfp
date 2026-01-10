@@ -44,7 +44,7 @@ export default function Certification({ courses = [] }) {
                             {/* IMAGE */}
                             <div className="h-48 overflow-hidden">
                                 <img
-                                    src={course.image_url}
+                                    src={course.image_url || '/fallback-image.png'}
                                     alt={course.title} 
                                     className="w-full h-full object-cover"
                                 />
