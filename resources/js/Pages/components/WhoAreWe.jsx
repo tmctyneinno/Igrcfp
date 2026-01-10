@@ -89,7 +89,7 @@ export default function WhoAreWe() {
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.9, ease: "easeOut" }}
                         viewport={{ once: true }}
-                        className="flex justify-center"
+                        className=" justify-center"
                     >
                         <img
                             src="assets/images/home-three/bg/intro-bg.png"
