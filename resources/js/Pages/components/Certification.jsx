@@ -1,65 +1,94 @@
-import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
-import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
-export default function Certification() {
+export default function Certification({ courses = [] }) {
     return (
-       
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div 
-                        className="flex justify-between items-center mb-12"
-                        data-aos="fade-up"
-                        data-aos-duration="1400"
-                    >
-                        <div>
-                            <span className="text-sm uppercase tracking-widest text-gray-400">
-                               Certifications & Trainings
-                            </span>
-                            <h2 className="text-3xl font-bold text-gray-900">Our Programmes</h2>
-                            <p className="text-gray-600 mt-2">
-                                Our professional certifications are designed to equip individuals 
-                                and institutions with  globally relevant skills to tackle <br/>financial 
-                                crime and compliance risks.
-                            </p>
-                        </div>
-                        <Link href="/courses" className="text-blue-950 hover:text-blue-700 font-semibold">
-                            View All Courses →
-                        </Link>
+        <section className="py-24 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                {/* HEADER */}
+                <div
+                    className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
+                    data-aos="fade-up"
+                >
+                    <div>
+                        <span className="text-sm uppercase tracking-widest text-gray-400">
+                            Certifications & Trainings
+                        </span>
+                        <h2 className="text-3xl font-bold text-gray-900 mt-2">
+                            Our Programmes
+                        </h2>
+                        <p className="text-gray-600 mt-3 max-w-2xl">
+                            Our professional certifications are designed to equip individuals
+                            and institutions with globally relevant skills to tackle financial
+                            crime and compliance risks.
+                        </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[1, 2, 3,].map((course, index) => (
-                            <div 
-                                key={course}
-                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-2"
-                                data-aos="fade-up"
-                                data-aos-delay={index * 200}
-                                data-aos-duration="1400"
-                            >
-                                <div className="h-48 bg-gradient-to-r from-blue-900 to-blue-950"></div>
-                                <div className="p-6">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">
-                                            {course === 1 ? 'Beginner' : course === 2 ? 'Intermediate' : 'Advanced'}
-                                        </span>
-                                        <span className="text-gray-500">4.8 ★</span>
-                                    </div>
-                                    <h3 className="text-xl font-semibold mb-2">Course Title {course}</h3>
-                                    <p className="text-gray-600 mb-4">
-                                        Learn essential skills from industry experts in this comprehensive course.
-                                    </p>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center">
-                                            <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-                                            <span className="ml-2 text-sm text-gray-600">John Doe</span>
-                                        </div>
-                                        <span className="text-blue-600 font-semibold">$99</span>
-                                    </div>
+
+                    <Link
+                        href="/courses"
+                        className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
+                    >
+                        View All Courses →
+                    </Link>
+                </div>
+
+                {/* COURSES */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {courses.map((course, index) => (
+                        <div
+                            key={course.id}
+                            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
+                            data-aos="fade-up"
+                            data-aos-delay={index * 150}
+                        >
+                            {/* IMAGE */}
+                            <div className="h-48 overflow-hidden">
+                                <img
+                                    src={course.image}
+                                    alt={course.title}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
+                            {/* CONTENT */}
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+                                        {course.level}
+                                    </span>
+                                    <span className="text-gray-500 text-sm">
+                                        {course.rating} ★
+                                    </span>
+                                </div>
+
+                                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                    {course.title}
+                                </h3>
+
+                                <p className="text-gray-600 text-sm mb-4">
+                                    {course.short_description}
+                                </p>
+
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-500">
+                                        {course.instructor}
+                                    </span>
+
+                                    <span className="text-blue-700 font-bold">
+                                        ₦{Number(course.price).toLocaleString()}
+                                    </span>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-           
+                        </div>
+                    ))}
 
+                    {courses.length === 0 && (
+                        <p className="col-span-3 text-center text-gray-500">
+                            No courses available at the moment.
+                        </p>
+                    )}
+                </div>
+            </div>
+        </section>
     );
 }
