@@ -58,7 +58,7 @@ export default function WhoAreWe() {
                 <img
                     src="assets/images/home-three/bg/intro-bg.png"
                     alt="IGRCFP"
-                    className="max-w-xl w-full"
+                    className="max-w-2xl w-full"
                 />
             </motion.div>
         </div>
