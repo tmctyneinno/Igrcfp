@@ -175,17 +175,6 @@ export default function SplitHeroSlider({ auth }) {
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                                     </div>
 
-                                    {/* Image Overlay Content */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                                        <div className="transform transition-all duration-700 delay-500">
-                                            <div className="flex items-center space-x-2 mb-2">
-                                                <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-                                                <span className="text-sm font-medium">Professional Training</span>
-                                            </div>
-                                            <h3 className="text-xl font-bold mb-2">{slide.highlighted}</h3>
-                                            <p className="text-blue-100 text-sm">Slide {index + 1} of {slides.length}</p>
-                                        </div>
-                                    </div>
                                 </div>
                             ))}
 
