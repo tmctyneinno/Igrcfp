@@ -33,7 +33,7 @@ export default function Footer() {
                                 <div className="absolute -inset-1 bg-blue-500/10 blur-md rounded-full"></div>
                             </div>
                             <div>
-                                <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                                <span className="text-2xl font-bold  bg-clip-text text-white">
                                     IGRCFP
                                 </span>
                                 <p className="text-sm text-gray-400">Global Professional Body</p>
