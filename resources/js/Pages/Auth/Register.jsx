@@ -69,7 +69,25 @@ export default function Register() {
                                 </div>
                             </div>
                         </div>
-                   
+                        <!-- Progress Steps -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="progress-steps d-flex justify-content-center">
+                                <div class="step active" data-step="1">
+                                    <div class="step-circle">1</div>
+                                    <div class="step-label">Role</div>
+                                </div>
+                                <div class="step" data-step="2">
+                                    <div class="step-circle">2</div>
+                                    <div class="step-label">Personal Info</div>
+                                </div>
+                                <div class="step" data-step="3">
+                                    <div class="step-circle">3</div>
+                                    <div class="step-label">Password</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                         <form onSubmit={submit} className="space-y-6">
                             {/* Role Field */}
                             <div>
