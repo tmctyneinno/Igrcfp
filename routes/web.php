@@ -16,9 +16,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/courses', function () {
-    return Inertia::render('Courses/Index');
-})->name('courses.index');
+Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
 
 
 Route::get('/dashboard', function () {
