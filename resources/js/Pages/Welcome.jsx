@@ -4,6 +4,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 export default function Welcome({ auth }) {
+     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     // Initialize AOS on component mount
     useEffect(() => {
         AOS.init({
@@ -15,6 +17,19 @@ export default function Welcome({ auth }) {
         // Refresh AOS when component updates
         AOS.refresh();
     }, []);
+
+
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isMobileMenuOpen && !event.target.closest('.mobile-menu-container')) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isMobileMenuOpen]);
 
     return (
         <>
@@ -131,7 +146,7 @@ export default function Welcome({ auth }) {
                             {auth.user ? (
                                 <div className="flex items-center space-x-4">
                                     <Link
-                                        href={route('dashboard')}
+                                        href='dashboard'
                                         className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                                     >
                                         Dashboard
