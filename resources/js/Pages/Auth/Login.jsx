@@ -63,7 +63,7 @@ export default function Login({ status, canResetPassword }) {
                                     <div className="col-lg-12">
                                         <div className="section-title text-center mb-50">
                                             <div className="site-branding mb-3">
-                                                <Link href={route('index')} className="brand-logo">
+                                                <Link href={route('home')} className="brand-logo">
                                                     <img 
                                                         src="/assets/images/home-three/logo/logo-main.png" 
                                                         style={{width: '60px'}} 
