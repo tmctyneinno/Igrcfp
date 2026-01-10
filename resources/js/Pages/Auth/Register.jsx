@@ -55,20 +55,21 @@ export default function Register() {
                 </div>
                  {/* Right Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-                <div class="row justify-content-center">
-                        <div className="col-lg-12">
-                            <div className="section-title text-center mb-50">
-                                <div className="site-branding">
-                                    <a href="{{ route('index') }}" className="brand-logo">
-                                        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" style={{width:'60px'}} alt="Brand Logo"/>
-                                    </a>
+                    <div class="row justify-content-center">
+                        <div className="w-full max-w-md">
+                            <div className="col-lg-12">
+                                <div className="section-title text-center mb-50">
+                                    <div className="site-branding">
+                                        <a href="{{ route('index') }}" className="brand-logo">
+                                            <img src="/assets/images/home-three/logo/logo-main.png" style={{width:'60px'}} alt="Brand Logo"/>
+                                        </a>
+                                    </div>
+                                    <h2>Join Us!</h2>
+                                    <p>Please provide your details</p>
                                 </div>
-                                <h2>Join Us!</h2>
-                                <p>Please provide your details</p>
                             </div>
                         </div>
-                    </div>
-                    <div className="w-full max-w-md">
+                   
                         <form onSubmit={submit} className="space-y-6">
                             {/* Role Field */}
                             <div>
