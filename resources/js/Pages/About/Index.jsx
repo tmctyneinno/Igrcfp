@@ -30,7 +30,7 @@ export default function AboutIndex({ auth, title, description }) {
                     </div>
 
                     {/* Logos */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-10">
+                    <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-10">
                         {[
                             { name: 'Reform', src: 'assets/images/partners/reform.png' },
                             { name: 'Tuple', src: 'assets/images/partners/tuple.png' },
@@ -49,6 +49,10 @@ export default function AboutIndex({ auth, title, description }) {
 
                 </div>
             </section>
+
+            <section className="bg-white py-24 overflow-hidden">
+                           <WhoAreWe auth={auth} />
+                        </section>
 
 
             {/* Main Content */}
