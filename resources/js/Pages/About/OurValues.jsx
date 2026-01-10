@@ -32,23 +32,35 @@ export default function OurValues() {
           <h2 className="text-3xl md:text-4xl font-medium text-gray-900">Our Values</h2>
         </div>
 
-        {/* Values Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {valuesData.map((value, index) => (
-            <div
-              key={index}
-              className="bg-gray-100 p-6 rounded-lg shadow-md text-center"
-            >
-              <div className="mb-4">
-                {/* Icon Placeholder */}
-                <div className="w-16 h-16 bg-gray-300 mx-auto mb-4 rounded-full flex items-center justify-center">
-                  <span className="text-3xl text-gray-700">📦</span> {/* Example icon */}
+        {/* Flexbox layout: Left - Values, Right - Image */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          {/* Left Side - Values Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 flex-1">
+            {valuesData.map((value, index) => (
+              <div
+                key={index}
+                className="bg-gray-100 p-6 rounded-lg shadow-md text-center"
+              >
+                <div className="mb-4">
+                  {/* Icon Placeholder */}
+                  <div className="w-16 h-16 bg-gray-300 mx-auto mb-4 rounded-full flex items-center justify-center">
+                    <span className="text-3xl text-gray-700">📦</span> {/* Example icon */}
+                  </div>
                 </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
+                <p className="text-gray-600">{value.description}</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
-              <p className="text-gray-600">{value.description}</p>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Right Side - Image */}
+          <div className="flex-1">
+            <img
+              src="your-image-url.jpg" // Replace with the actual image URL
+              alt="Our Values Visual"
+              className="w-full h-full object-cover rounded-lg"
+            />
+          </div>
         </div>
       </div>
     </section>
