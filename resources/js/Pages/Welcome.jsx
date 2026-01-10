@@ -437,6 +437,8 @@ export default function Welcome({ auth }) {
             {/* Hero Section with AOS effects */}
             <div className="pt-16">
                 <SplitHeroSlider auth={auth} />
+                
+                <SplitHeroSlider auth={auth} />
 
                 {/* Features Section with staggered AOS effects */}
                 <section className="py-20 bg-white">
