@@ -32,8 +32,8 @@ export default function AboutIndex({ auth, title, description }) {
                     {/* Logos */}
                     <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-10">
                         {[
-                            { name: 'Reform', src: '/images/partners/reform.svg' },
-                            { name: 'Tuple', src: '/images/partners/tuple.svg' },
+                            { name: 'Reform', src: '/images/partners/reform.png' },
+                            { name: 'Tuple', src: '/images/partners/tuple.png' },
                             { name: 'SavvyCal', src: '/images/partners/savvycal.svg' },
                             { name: 'Statamic', src: '/images/partners/statamic.svg' },
                             { name: 'Transistor', src: '/images/partners/transistor.svg' },
