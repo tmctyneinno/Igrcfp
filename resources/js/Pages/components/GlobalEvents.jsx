@@ -6,25 +6,26 @@ export default function GlobalEvents() {
     return (
         <div className="max-w-7xl mx-auto px-6">
             {/* HEADER */}
-            <div className="relative inline-flex items-center mb-3">
-    <motion.span
-        initial={{ width: 0 }}
-        whileInView={{ width: 64 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        viewport={{ once: true }}
-        className="absolute left-0 top-1/2 h-px bg-gray-300"
-    />
-    <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
-        Events & Summits
-    </span>
-</div>
+            
             <div
                 className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
                 data-aos="fade-up"
             >
                 <div>
-                    <div className="relative inline-flex items-center mb-3">
+                    {/* <div className="relative inline-flex items-center mb-3">
                         <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
+                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                            Events & Summits
+                        </span>
+                    </div> */}
+                    <div className="relative inline-flex items-center mb-3">
+                        <motion.span
+                            initial={{ width: 0 }}
+                            whileInView={{ width: 64 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            className="absolute left-0 top-1/2 h-px bg-gray-300"
+                        />
                         <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
                             Events & Summits
                         </span>
