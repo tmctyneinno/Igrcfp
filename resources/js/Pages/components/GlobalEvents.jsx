@@ -11,9 +11,12 @@ export default function GlobalEvents() {
                 data-aos="fade-up"
             >
                 <div>
-                    <span className="text-sm  tracking-widest text-gray-400 mb-3">
-                        Events & Summits
-                    </span>
+                    <div className="relative inline-flex items-center mb-3">
+                        <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
+                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                            Events & Summits
+                        </span>
+                    </div>
 
                     <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
                         Our Global Events & Summits
