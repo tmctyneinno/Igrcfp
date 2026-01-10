@@ -15,7 +15,7 @@ export default function GlobalEvents() {
                         Events & Summits
                     </span>
 
-                    <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mb-6">
+                    <h2 className="text-2xl xl:text-5xl font-bold text-slate-900 mb-6">
                         Our Global Events & Summits
                     </h2>
                 </div>
