@@ -56,7 +56,7 @@ export default function OurValues() {
           {/* Right Side - Image */}
           <div className="flex-1">
             <img
-              src="your-image-url.jpg" // Replace with the actual image URL
+              src="assets/images/innerpage/bg/about-bg.png" // Replace with the actual image URL
               alt="Our Values Visual"
               className="w-full h-full object-cover rounded-lg"
             />
