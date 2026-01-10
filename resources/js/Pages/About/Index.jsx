@@ -32,11 +32,11 @@ export default function AboutIndex({ auth, title, description }) {
                     {/* Logos */}
                     <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-10">
                         {[
-                            { name: 'Reform', src: '/images/partners/reform.png' },
-                            { name: 'Tuple', src: '/images/partners/tuple.png' },
-                            { name: 'SavvyCal', src: '/images/partners/savvycal.png' },
-                            { name: 'Statamic', src: '/images/partners/statamic.svg' },
-                            { name: 'Transistor', src: '/images/partners/transistor.svg' },
+                            { name: 'Reform', src: 'assets/images/partners/reform.png' },
+                            { name: 'Tuple', src: 'assets/images/partners/tuple.png' },
+                            { name: 'SavvyCal', src: 'assets/images/partners/savvycal.png' },
+                            { name: 'Statamic', src: 'assets/images/partners/statamic.png' },
+                            { name: 'Transistor', src: 'assets/images/partners/transistor.png' },
                         ].map((partner, index) => (
                             <img
                                 key={index}
