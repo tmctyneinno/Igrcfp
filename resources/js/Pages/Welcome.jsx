@@ -2,6 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, useRef } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import GuestLayout from '@/Layouts/Layout';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
 import Certification from "@/Pages/components/Certification";
@@ -28,30 +29,11 @@ export default function Welcome({ auth, courses }) {
         });
     }, []);
 
-    // Close mobile menu when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (
-                mobileMenuRef.current &&
-                !mobileMenuRef.current.contains(e.target)
-            ) {
-                setIsMobileMenuOpen(false);
-            }
-        };
-
-        if (isMobileMenuOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [isMobileMenuOpen]);
 
     return (
-        <>
+        <GuestLayout>
             <Head title="IGRCFP - Professional Learning Platform" />
             
-           
-
             {/* Hero Section with AOS effects */}
             <div className="pt-16">
                 <SplitHeroSlider auth={auth} />
@@ -141,6 +123,6 @@ export default function Welcome({ auth, courses }) {
                     }
                 });
             `}</script>
-        </>
+        </GuestLayout>
     );
 }
