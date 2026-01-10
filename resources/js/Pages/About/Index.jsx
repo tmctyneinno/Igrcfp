@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
-import Layout from '@/Layouts/Layout';
+import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function AboutIndex({ title, description }) {
     return (
-        <Layout>
+        <GuestLayout>
             <Head title={title} />
             
             {/* Hero Section */}
@@ -73,6 +73,6 @@ export default function AboutIndex({ title, description }) {
                     </div>
                 </div>
             </section>
-        </Layout>
+        </GuestLayout>
     );
 }
