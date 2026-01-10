@@ -388,8 +388,6 @@ export default function SplitHeroSlider({ auth }) {
                             </button>
                         ))}
                     </div>
-                    
-                    
                 </div>
 
               
