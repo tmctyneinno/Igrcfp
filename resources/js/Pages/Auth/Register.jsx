@@ -67,7 +67,7 @@ export default function Register() {
         setCurrentStep(currentStep + 1);
     };
 
-        const prevStep = () => {
+    const prevStep = () => {
         setCurrentStep(currentStep - 1);
     };
 
