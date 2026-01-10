@@ -31,7 +31,7 @@ export default function Certification({ courses = [] }) {
                     View All Courses →
                 </Link>
             </div>
-
+            {courses}
             {/* COURSES */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {courses.map((course, index) => (
