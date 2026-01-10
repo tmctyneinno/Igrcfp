@@ -41,91 +41,90 @@ export default function Welcome({ auth }) {
                             </Link>
                         </div>
 
-                        {/* Desktop Navigation Links */}
-                      {/* Desktop Navigation Links with Dropdown */}
-<div className="hidden md:flex items-center space-x-8">
-    <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium">
-        Home
-    </Link>
-    
-    {/* Courses Dropdown */}
-    <div className="relative group">
-        <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none">
-            Courses
-            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-        </button>
-        
-        {/* Dropdown Menu */}
-        <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
-            <div className="px-4 py-2">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
-            </div>
-            <hr className="my-1" />
-            <Link href="/courses/development" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                    Web Development
-                </div>
-            </Link>
-            <Link href="/courses/design" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Design & Creative
-                </div>
-            </Link>
-            <Link href="/courses/business" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Business
-                </div>
-            </Link>
-            <Link href="/courses/marketing" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                    </svg>
-                    Marketing
-                </div>
-            </Link>
-            <Link href="/courses/data-science" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    Data Science
-                </div>
-            </Link>
-            <hr className="my-1" />
-            <Link href="/courses" className="block px-4 py-2 text-blue-600 hover:bg-blue-50 font-medium">
-                <div className="flex items-center justify-center">
-                    View All Courses
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                </div>
-            </Link>
-        </div>
-    </div>
-    
-    <Link href="/tutors" className="text-gray-700 hover:text-blue-600 font-medium">
-        Tutors
-    </Link>
-    <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium">
-        About
-    </Link>
-    <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium">
-        Contact
-    </Link>
-</div>
+                        {/* Desktop Navigation Links with Dropdown */}
+                        <div className="hidden md:flex items-center space-x-8">
+                            <Link href="/" className="text-gray-700 hover:text-blue-600 font-medium">
+                                Home
+                            </Link>
+                            
+                            {/* Courses Dropdown */}
+                            <div className="relative group">
+                                <button className="text-gray-700 hover:text-blue-600 font-medium flex items-center focus:outline-none">
+                                    Courses
+                                    <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                {/* Dropdown Menu */}
+                                <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
+                                    <div className="px-4 py-2">
+                                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Categories</span>
+                                    </div>
+                                    <hr className="my-1" />
+                                    <Link href="/courses/development" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                        <div className="flex items-center">
+                                            <svg className="w-4 h-4 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                            </svg>
+                                            Web Development
+                                        </div>
+                                    </Link>
+                                    <Link href="/courses/design" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                        <div className="flex items-center">
+                                            <svg className="w-4 h-4 mr-3 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Design & Creative
+                                        </div>
+                                    </Link>
+                                    <Link href="/courses/business" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                        <div className="flex items-center">
+                                            <svg className="w-4 h-4 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Business
+                                        </div>
+                                    </Link>
+                                    <Link href="/courses/marketing" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                        <div className="flex items-center">
+                                            <svg className="w-4 h-4 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                                            </svg>
+                                            Marketing
+                                        </div>
+                                    </Link>
+                                    <Link href="/courses/data-science" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                                        <div className="flex items-center">
+                                            <svg className="w-4 h-4 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                            Data Science
+                                        </div>
+                                    </Link>
+                                    <hr className="my-1" />
+                                    <Link href="/courses" className="block px-4 py-2 text-blue-600 hover:bg-blue-50 font-medium">
+                                        <div className="flex items-center justify-center">
+                                            View All Courses
+                                            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                            </svg>
+                                        </div>
+                                    </Link>
+                                </div>
+                            </div>
+                            
+                            <Link href="/tutors" className="text-gray-700 hover:text-blue-600 font-medium">
+                                Tutors
+                            </Link>
+                            <Link href="/about" className="text-gray-700 hover:text-blue-600 font-medium">
+                                About
+                            </Link>
+                            <Link href="/contact" className="text-gray-700 hover:text-blue-600 font-medium">
+                                Contact
+                            </Link>
+                        </div>
 
                         {/* Authentication Buttons */}
                         <div className="flex items-center space-x-4">
