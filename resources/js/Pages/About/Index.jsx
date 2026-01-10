@@ -1,78 +1,153 @@
-import { Head, Link } from '@inertiajs/react';
-import Layout from '@/Layouts/Layout';
+import { Head, Link } from "@inertiajs/react";
+import { useEffect, useState, useRef } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import MembershipOptions from "@/Pages/components/MembershipOptions";
+import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
+import Certification from "@/Pages/components/Certification";
+import GlobalEvents from "@/Pages/components/GlobalEvents";
+import BecomeMember from "@/Pages/components/BecomeMember";
+import Testimonials from "@/Pages/components/Testimonials";
+import FAQSection from "@/Pages/components/FAQSection";
+import WhoAreWe from "@/Pages/components/WhoAreWe";
+import Footer from "@/Pages/components/Footer";
+import NavBar from "@/Pages/components/NavBar";
+ 
+export default function AboutInde({ auth, courses }) {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const mobileMenuRef = useRef(null);
+  
+    // ✅ AOS INIT — ONCE ONLY
+    useEffect(() => {
+        AOS.init({
+            duration: 500,
+            easing: "ease-out-cubic",
+            once: true,
+            offset: 80,
+        });
+    }, []);
 
-export default function AboutIndex({ title, description }) {
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (
+                mobileMenuRef.current &&
+                !mobileMenuRef.current.contains(e.target)
+            ) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        if (isMobileMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [isMobileMenuOpen]);
+
     return (
-        <Layout>
-            <Head title={title} />
+        <>
+            <Head title="IGRCFP - Professional Learning Platform" />
             
-            {/* Hero Section */}
-            <section className="bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            About <span className="text-blue-600">IGRCFP</span>
-                        </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The International Governance, Risk, Compliance & Financial Crime Professionals body
-                        </p>
-                    </div>
-                </div>
+            {/* Navigation Bar */}
+            <nav 
+                className="bg-white shadow-lg fixed w-full z-50"
+                data-aos="fade-down"
+                data-aos-duration="1400"
+            >
+                <NavBar auth={auth}/>
+            </nav>
+
+            {/* Hero Section with AOS effects */}
+            <div className="pt-16">
+                <SplitHeroSlider auth={auth} />
+            </div>
+
+            <section className="bg-white py-24 overflow-hidden">
+               <WhoAreWe auth={auth} />
             </section>
 
-            {/* Main Content */}
-            <section className="py-16 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
-                            <p className="text-gray-600 mb-6">
-                                The International Governance, Risk, Compliance & Financial Crime Professionals (IGRCFP) 
-                                is a global professional body dedicated to advancing standards, ethics, and best practices 
-                                in governance, risk management, compliance, and financial crime prevention.
-                            </p>
-                            <p className="text-gray-600 mb-6">
-                                We provide certification, training, and professional development for individuals and 
-                                organizations worldwide, ensuring the highest levels of professionalism and integrity 
-                                in these critical fields.
-                            </p>
-                            
-                            <div className="mt-8">
-                                <Link
-                                    href="/about-us/welcome"
-                                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
-                                >
-                                    Welcome Message
-                                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </Link>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl p-8">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Key Focus Areas</h3>
-                            <ul className="space-y-4">
-                                {[
-                                    "Governance & Ethics",
-                                    "Risk Management",
-                                    "Regulatory Compliance",
-                                    "Financial Crime Prevention",
-                                    "Anti-Money Laundering",
-                                    "Cybersecurity & Data Protection"
-                                ].map((area, index) => (
-                                    <li key={index} className="flex items-center">
-                                        <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                        </svg>
-                                        <span className="text-gray-700">{area}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
+            <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
+               <Certification courses={courses} />
+            </section>
+
+            <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <GlobalEvents />
+            </section>
+
+            <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <BecomeMember />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <MembershipOptions />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <FAQSection />
+            </section>
+
+            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+                <Testimonials />
+            </section>
+
+            {/* CTA Section with AOS zoom effect */}
+            <section 
+                className="py-20 bg-gradient-to-r from-blue-950 to-blue-900"
+                data-aos="zoom-in"
+                data-aos-duration="1400"
+            >
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
+                    <p className="text-blue-100 mb-8 text-lg">
+                        Join thousands of successful learners who have transformed their careers with our platform.
+                    </p>
+                    <Link
+                        href={auth.user ? route('dashboard') : route('register')}
+                        className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
+                        data-aos="fade-up"
+                        data-aos-delay="300"
+                        data-aos-duration="1400"
+                    >
+                        {auth.user ? 'Continue Learning' : 'Get Started for Free'}
+                    </Link>
                 </div>
             </section>
-        </Layout>
+  
+        
+            {/* Footer */}
+            <footer 
+                className="bg-gray-900 text-white py-12"
+                data-aos="fade-up"
+                data-aos-duration="1400"
+            > 
+                <Footer/>
+            </footer>
+           
+
+            {/* Mobile Menu Toggle Script */}
+            <script>{`
+                document.addEventListener('DOMContentLoaded', function() {
+                    const mobileMenuButton = document.querySelector('button.md\\:hidden');
+                    const mobileMenu = document.querySelector('.md\\:hidden.bg-white');
+                    
+                    if (mobileMenuButton && mobileMenu) {
+                        mobileMenuButton.addEventListener('click', function() {
+                            mobileMenu.classList.toggle('hidden');
+                        });
+                    }
+                });
+            `}</script>
+
+            {/* Refresh AOS on page load */}
+            <script>{`
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof AOS !== 'undefined') {
+                        AOS.refresh();
+                    }
+                });
+            `}</script>
+        </>
     );
 }
