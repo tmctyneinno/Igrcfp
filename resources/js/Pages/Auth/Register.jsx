@@ -57,10 +57,10 @@ export default function Register() {
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
                 <div class="row justify-content-center">
                         <div className="col-lg-12">
-                            <div class="section-title text-center mb-50">
-                                <div class="site-branding">
-                                    <a href="{{ route('index') }}" class="brand-logo">
-                                        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" style="width:60px" alt="Brand Logo"/>
+                            <div className="section-title text-center mb-50">
+                                <div className="site-branding">
+                                    <a href="{{ route('index') }}" className="brand-logo">
+                                        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" style={{width:'60px'}} alt="Brand Logo"/>
                                     </a>
                                 </div>
                                 <h2>Join Us!</h2>
