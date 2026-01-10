@@ -14,7 +14,7 @@ export default function AboutIndex({ auth, title, description }) {
                             {title}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Professionals body
+                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
                         </p>
                     </div>
                 </div>
