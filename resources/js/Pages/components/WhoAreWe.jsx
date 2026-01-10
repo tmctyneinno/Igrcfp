@@ -16,7 +16,7 @@ export default function WhoAreWe() {
                     className="flex flex-col"
                 >
                     <span className="text-sm uppercase tracking-widest text-gray-400">
-                        Who We Are
+                        -----Who We Are
                     </span>
                     <h2 className="text-4xl xl:text-5xl font-bold text-slate-900 mt-3 mb-6">
                         Know More About Us
@@ -31,15 +31,12 @@ export default function WhoAreWe() {
                 >
                     <p className="text-gray-600 mb-4">
                         The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
-
-                        We equip professionals and organizations with world-class training, certifications, and resources to stay ahead in a fast-changing regulatory environment.
-
-                        With a presence across Africa, Europe, Asia, the Middle East, and the Americas, IGRCFP connects experts, regulators, and industry leaders to share knowledge, drive innovation, and build stronger institutions worldwide.
                     </p>
-
-                    <p className="text-gray-600 mb-4">
-                        We equip professionals with world-class training,
-                        certifications, and regulatory insight.
+                     <p className="text-gray-600 mb-4">
+                        We equip professionals and organizations with world-class training, certifications, and resources to stay ahead in a fast-changing regulatory environment.
+                    </p>
+                     <p className="text-gray-600 mb-4">
+                        With a presence across Africa, Europe, Asia, the Middle East, and the Americas, IGRCFP connects experts, regulators, and industry leaders to share knowledge, drive innovation, and build stronger institutions worldwide.
                     </p>
 
                     <Link
