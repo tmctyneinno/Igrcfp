@@ -10,7 +10,7 @@ export default function SplitHeroSlider({ auth }) {
             id: 1,
             title: "Empower Professionals, Strengthening Governance, Preventing Financial Crime",
             highlighted: "Tutors",
-            description: "Join thousands of learners who are advancing their careers with personalized tutoring from industry experts.",
+            description: "The Institute of GRC & Financial Crime Prevention (IGRCFP) is a global professional  body dedicated to advancing excellence in governance, risk management,  compliance, and financial crime prevention.",
             image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
             ctaPrimary: "Start Learning Free",
             ctaSecondary: "Browse Courses"
