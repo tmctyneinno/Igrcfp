@@ -141,8 +141,14 @@ export default function SplitHeroSlider({ auth }) {
                                         </h1>
 
                                         {/* Description */}
-                                        <p 
-                                            className="text-lg md:text-xl text-gray-600 max-w-xl"
+                                       <p 
+                                            className="text-lg md:text-xl text-black-600 max-w-xl"
+                                            style={{
+                                                transform: index === activeSlide ? 'translateY(0)' : 'translateY(30px)',
+                                                opacity: index === activeSlide ? 1 : 0,
+                                                transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                transitionDelay: '400ms'
+                                            }}
                                         >
                                             {slide.description}
                                         </p>
