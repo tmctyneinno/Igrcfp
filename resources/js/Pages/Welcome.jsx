@@ -81,9 +81,6 @@ export default function Welcome({ auth, courses }) {
             </section>
   
         
-            
-           
-
             {/* Mobile Menu Toggle Script */}
             <script>{`
                 document.addEventListener('DOMContentLoaded', function() {

@@ -55,7 +55,15 @@ export default function GuestLayout({ children, auth }) {
             </main>
 
             {/* Footer */}
-            <Footer />
+            {/* Footer */}
+            <footer 
+                className="bg-blue-950 text-white py-12"
+                data-aos="fade-up"
+                data-aos-duration="1400"
+            > 
+                <Footer/>
+            </footer>
+
         </div>
     );
 }
