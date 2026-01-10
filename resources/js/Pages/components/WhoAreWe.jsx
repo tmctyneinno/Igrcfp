@@ -44,6 +44,21 @@ export default function WhoAreWe() {
                             Know More About Us
                         </h2>
 
+                        <Link
+                            href="/about-us"
+                            className="inline-flex items-center gap-3 mt-8 px-7 py-4 rounded-xl bg-slate-900 text-white font-semibold shadow-lg hover:bg-slate-800 transition"
+                        >
+                            Learn More About Us
+                            <span className="text-lg">→</span>
+                        </Link>
+                    </motion.div>
+
+                     <motion.div
+                        initial={{ opacity: 0, x: -60 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        viewport={{ once: true }}
+                    >
                         <p className="text-gray-600 leading-relaxed mb-4">
                             The Institute of Governance, Risk & Compliance & Financial Crime
                             Prevention (IGRCFP) is a global professional body dedicated to
@@ -72,7 +87,6 @@ export default function WhoAreWe() {
                             <span className="text-lg">→</span>
                         </Link>
                     </motion.div>
-
                    
 
                 </div>
