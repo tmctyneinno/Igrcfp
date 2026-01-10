@@ -35,7 +35,7 @@ export default function Certification() {
                                 data-aos-delay={index * 200}
                                 data-aos-duration="1400"
                             >
-                                <div className="h-48 bg-gradient-to-r from-blue-900 to-blue-600"></div>
+                                <div className="h-48 bg-gradient-to-r from-blue-900 to-blue-950"></div>
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full">
