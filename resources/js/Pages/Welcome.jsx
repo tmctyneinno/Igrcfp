@@ -1,16 +1,15 @@
 import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 export default function Welcome({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
-
     const mobileMenuRef = useRef(null);
     const navRef = useRef(null)
 
-    // Initialize AOS on component mount
+    // Initialize AOS once on component mount
     useEffect(() => {
         AOS.init({
             duration: 1000,
@@ -18,9 +17,12 @@ export default function Welcome({ auth }) {
             offset: 100,
             easing: 'ease-in-out',
         });
-        // Refresh AOS when component updates
-        AOS.refresh();
-    }, []);
+        
+        // Refresh AOS on route changes or component updates
+        return () => {
+            AOS.refresh();
+        };
+    }, [])
 
 
     // Close mobile menu when clicking outside
