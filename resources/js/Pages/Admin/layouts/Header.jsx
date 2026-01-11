@@ -1,4 +1,5 @@
 // resources/js/Pages/Admin/layouts/Header.jsx
+
 import { Head } from "@inertiajs/react";
 
 export default function Header({title }) {
