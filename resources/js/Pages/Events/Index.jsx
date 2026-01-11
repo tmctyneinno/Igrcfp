@@ -17,9 +17,6 @@ export default function Events({ auth, title, description, events }) {
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return '/images/default-event.jpg';
         
-        // If image is stored in storage/app/public
-        // Laravel's storage:link creates a symlink from storage/app/public to public/storage
-        // So we need to prepend /storage/ to the path
         if (imageUrl.startsWith('storage/')) {
             return `/${imageUrl}`;
         }
