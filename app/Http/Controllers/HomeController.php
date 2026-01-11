@@ -60,5 +60,10 @@ class HomeController extends Controller
         ]);
     }
 
-    public function OurStructure
+    public function OurStructure(){
+        return Inertia::render('About/OurStructure', [
+            'title' => 'Welcome to IGRCFP',
+            'description' => 'Learn about the International Governance, Risk, Compliance & Financial Crime Professionals body.',
+        ]);
+    }
 }
