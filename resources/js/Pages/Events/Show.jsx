@@ -281,7 +281,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                         </button>
                                     ) : (
                                         <Link
-                                            href={route('events.register', event.slug)}
+                                            href={`/events/${event.slug}/register`}
                                             className="block w-full text-center py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                                             preserveState
                                             preserveScroll
