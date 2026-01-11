@@ -25,7 +25,7 @@ export default function AdminLogin({ status }) {
             {/* LEFT SIDE – IMAGE */}
             <div className="hidden lg:flex items-center justify-center bg-blue-950 relative">
                 <img
-                    src="/assets/images/home-three/gallery/membership.png"
+                    src="/assets/admin/images/auth/auth-img.png"
                     alt="Admin Login Visual"
                     className="max-w-lg w-full object-contain"
                 />
