@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import MentorshipProgramme from "@/Pages/Membership/components/MentorshipProgramme";
+import HowMembershipWorks from "@/Pages/Membership/components/HowMembershipWorks";
 import MembershipTable from "@/Pages/Membership/components/MembershipTable";
 import MembershipCTA from '@/Pages/Membership/components/MembershipCTA';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
@@ -29,6 +30,7 @@ export default function Membership({ auth, title, description }) {
             <MembershipOptions />
             <MembershipTable/>
             <MentorshipProgramme />
+            <HowMembershipWorks />
            
         </GuestLayout>
     );
