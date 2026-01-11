@@ -91,11 +91,11 @@ export default function BoardOfTrustees() {
                     <div>
                         <h4 className="font-semibold text-lg mb-3">Need Help?</h4>
                         <p className="text-gray-600 mb-3">Contact Us Here</p>
-                        <p className="text-blue-600 text-sm mb-1">
+                        {/* <p className="text-blue-600 text-sm mb-1">
                             +234 (0) 915-341-4314
-                        </p>
-                        <p className="text-blue-600 text-sm">
-                            info@igrcfp.org
+                        </p> */}
+                        <p className="text-blue-900 text-sm">
+                            enquiries@igrfcp.org
                         </p>
                     </div>
                 </aside>
