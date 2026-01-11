@@ -41,6 +41,16 @@ export default function Events({ auth, title, description, events }) {
         }
         return 'Time TBA';
     };
+    const formatEventDate = (dateString) => {
+        if (!dateString) return 'Date TBA';
+        
+        try {
+            return format(parseISO(dateString), 'MMMM dd, yyyy');
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return 'Date TBA';
+        }
+    };
 
     return (
         <GuestLayout auth={auth}>
