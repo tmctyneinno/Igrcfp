@@ -167,45 +167,45 @@ class HomeController extends Controller
                 'errors' => ['general' => 'Not enough seats available.']
             ], 422);
         }
+        try {
+            // Create registration
+            $registration = EventRegistration::create([
+                'event_id' => $event->id,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'company' => $validated['company'],
+                'position' => $validated['position'],
+                'additional_attendees' => $validated['additional_attendees'] ?? 0,
+                'dietary_requirements' => $validated['dietary_requirements'],
+                'special_requirements' => $validated['special_requirements'],
+                'hear_about_event' => $validated['hear_about_event'],
+                'registration_number' => 'REG-' . strtoupper(Str::random(8)),
+                'status' => 'pending',
+            ]);
 
-        // Create registration
-        $registration = EventRegistration::create([
-            'event_id' => $event->id,
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'company' => $validated['company'],
-            'position' => $validated['position'],
-            'additional_attendees' => $validated['additional_attendees'] ?? 0,
-            'dietary_requirements' => $validated['dietary_requirements'],
-            'special_requirements' => $validated['special_requirements'],
-            'hear_about_event' => $validated['hear_about_event'],
-            'registration_number' => 'REG-' . strtoupper(Str::random(8)),
-            'status' => 'pending',
-        ]);
+            // Update available seats
+            $event->decrement('available_seats', $totalAttendees);
 
-        // Update available seats
-        $event->decrement('available_seats', $totalAttendees);
+            // Send confirmation email
+            // Mail::to($validated['email'])->send(new EventRegistrationConfirmation($registration, $event));
 
-        // Send confirmation email
-        Mail::to($validated['email'])->send(new EventRegistrationConfirmation($registration, $event));
+            // Send notification to admin
+            // Mail::to(config('mail.admin_email'))->send(new NewEventRegistration($registration, $event));
 
-        // Send notification to admin
-        Mail::to(config('mail.admin_email'))->send(new NewEventRegistration($registration, $event));
-
-            return response()->json([
-                'message' => 'Registration successful!',
-                'registration' => $registration
-            ], 201);
-        } catch (\Exception $e) {
-            \Log::error('Registration error: ' . $e->getMessage());
-            
-            return response()->json([
-                'errors' => ['general' => 'An error occurred during registration. Please try again.']
-            ], 500);
+                return response()->json([
+                    'message' => 'Registration successful!',
+                    'registration' => $registration
+                ], 201);
+            } catch (\Exception $e) {
+                \Log::error('Registration error: ' . $e->getMessage());
+                
+                return response()->json([
+                    'errors' => ['general' => 'An error occurred during registration. Please try again.']
+                ], 500);
+            }
+        
         }
-    }
-    }
 
      public function blog(){
         return Inertia::render('Blog/Index', [
