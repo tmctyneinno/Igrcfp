@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { format, parseISO } from 'date-fns';
-// Add this import at the very top of your file
 import axios from 'axios';
 
 export default function EventRegister({ auth, event }) {
