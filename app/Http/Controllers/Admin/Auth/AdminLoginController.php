@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -28,7 +29,7 @@ class AdminLoginController extends Controller
     {
         return Auth::guard('admin');
     }
-    
+
     public function showLoginForm() 
     {
         // return Inertia::render('Admin/Auth/Login');
