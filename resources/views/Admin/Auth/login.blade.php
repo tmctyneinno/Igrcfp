@@ -56,7 +56,7 @@
                         {{ $errors->first() }}
                     </div>
                 @endif
-            <form action="{{ route('admin.authenticate') }}" method="POST">
+            <form action="{{ route('admin.login') }}" method="POST">
                     @csrf
                     <div class="icon-field mb-16">
                         <span class="icon top-50 translate-middle-y">
