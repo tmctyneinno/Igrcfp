@@ -2,6 +2,14 @@ import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Events({ auth, title, description, events }) {
+    // Handle paginated events data
+    const eventsData = events?.data || events || [];
+    
+    // Get featured and available counts
+    const featuredCount = eventsData.filter(e => e.is_featured).length;
+    const availableCount = eventsData.filter(e => e.registration_status === 'available').length;
+    const totalCount = eventsData.length;
+
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
@@ -32,18 +40,18 @@ export default function Events({ auth, title, description, events }) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="text-center">
                                 <div className="text-3xl font-bold text-blue-700">
-                                    {events?.filter(e => e.is_featured).length || 0}
+                                    {featuredCount}
                                 </div>
                                 <div className="text-gray-600">Featured Events</div>
                             </div>
                             <div className="text-center">
                                 <div className="text-3xl font-bold text-green-700">
-                                    {events?.filter(e => e.registration_status === 'available').length || 0}
+                                    {availableCount}
                                 </div>
                                 <div className="text-gray-600">Available Now</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-gray-700">{events?.length || 0}</div>
+                                <div className="text-3xl font-bold text-gray-700">{totalCount}</div>
                                 <div className="text-gray-600">Total Events</div>
                             </div>
                         </div>
@@ -51,8 +59,8 @@ export default function Events({ auth, title, description, events }) {
 
                     {/* Events List */}
                     <div className="space-y-8">
-                        {events && events.length > 0 ? (
-                            events.map((event, index) => (
+                        {eventsData.length > 0 ? (
+                            eventsData.map((event, index) => (
                                 <div
                                     key={event.id}
                                     className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200"
@@ -170,7 +178,7 @@ export default function Events({ auth, title, description, events }) {
                     </div>
 
                     {/* Pagination */}
-                    {events && events.length > 0 && events.links && (
+                    {events && events.meta && events.links && events.links.length > 1 && (
                         <div className="mt-12 flex justify-center">
                             <nav className="inline-flex items-center space-x-2">
                                 {events.links.map((link, index) => (
