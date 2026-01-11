@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-// Initialize AOS
+// Initialize AOS 
 AOS.init({
     duration: 1000,
     once: true, // Animation only happens once
