@@ -71,6 +71,26 @@ export default function BoardOfTrustees() {
                             </div>
                         ))}
                     </div> */}
+                     {/* The Governing Council */}
+                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                        The Governing Council
+                    </h1>
+
+                    <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
+                        The Governing Council is responsible for the formulation and implementation of the Institute's policies, providing direction for the activities of the Executive Management, and overseeing the Institute's core functions, including membership, education, certification, and research. 
+                    </p>
+
+                    <h3 className="font-semibold text-gray-900 mb-3">
+                        Key Responsibilities:
+                    </h3>
+
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
+                        <li>Developing and reviewing policies to ensure alignment with the Institute’s objectives.</li>
+                        <li>Approving the Institute’s code of conduct, certification requirements, and membership policies.</li>
+                        <li>Advising on matters related to education, certification, and professional development.</li>
+                        <li>Overseeing disciplinary matters and upholding ethical standards.</li>
+                        <li>Providing guidance on partnerships and collaboration with regulatory bodies and global organizations.</li>
+                    </ul>
 
                     <h1 className="text-3xl font-bold text-gray-900 mb-6">
                         The Governing Council
@@ -88,8 +108,8 @@ export default function BoardOfTrustees() {
                         <li>Developing and reviewing policies to ensure alignment with the Institute’s objectives.</li>
                         <li>Approving the Institute’s code of conduct, certification requirements, and membership policies.</li>
                         <li>Advising on matters related to education, certification, and professional development.</li>
-                        <li>Appointing council members and leadership succession.</li>
-                        <li>Ensuring compliance with Nigerian and international standards.</li>
+                        <li>Overseeing disciplinary matters and upholding ethical standards.</li>
+                        <li>Providing guidance on partnerships and collaboration with regulatory bodies and global organizations.</li>
                     </ul>
 
                 </div>
