@@ -16,8 +16,8 @@ export default function MembershipCTA() {
                     </p>
 
                     <Link
-                        href="/membership"
-                        className="inline-flex items-center gap-3 bg-blue-900 text-white px-7 py-4 rounded-lg font-medium hover:bg-blue-800 transition"
+                        href="/login"
+                        className="inline-flex items-center gap-3 bg-blue-950 text-white px-7 py-4 rounded-lg font-medium hover:bg-blue-800 transition"
                     >
                         Become a Member Today
                         <span className="text-xl">→</span>
