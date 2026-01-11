@@ -68,6 +68,15 @@ class HomeController extends Controller
     }
 
     public function membership(){
+        
+        $membershipData = [
+            ['category' => 'Student Affiliate', 'annualFee' => '$50', 'benefits' => 'Access to online community, selected resources, and discounts on training.'],
+            ['category' => 'Associate Member (A.IGRCFP)', 'annualFee' => '$150', 'benefits' => 'Full access to resources, participation in events, and certification discounts.'],
+            ['category' => 'Professional Member', 'annualFee' => '$250', 'benefits' => 'Full access to resources, participation in events, and certification discounts.'],
+            ['category' => 'Fellow (F.IGRCFP)', 'annualFee' => '$350', 'benefits' => 'Leadership recognition, eligibility for governance roles, and priority speaker slots.'],
+            ['category' => 'Corporate Membership', 'annualFee' => '$1500', 'benefits' => 'Multi-user access for teams, brand recognition, advisory engagement, and event sponsorship discounts.']
+        ];
+
         return Inertia::render('Membership/Index', [
             'title' => 'Membership',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
