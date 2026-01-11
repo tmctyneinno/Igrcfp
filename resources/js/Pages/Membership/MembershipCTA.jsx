@@ -25,40 +25,16 @@ export default function MembershipCTA() {
                 </div>
 
                 {/* RIGHT IMAGE COLLAGE */}
-                <div className="relative h-[420px] w-full">
+                <div className=" h-[420px] w-full">
 
                     {/* Top images */}
                     <img
-                        src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
+                        src="assets/images/home-three/gallery/membership.png"
                         alt=""
                         className="absolute top-0 left-20 w-36 h-44 object-cover rounded-md"
                     />
 
-                    <img
-                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
-                        alt=""
-                        className="absolute top-0 right-10 w-36 h-44 object-cover rounded-md"
-                    />
 
-                    {/* Middle images */}
-                    <img
-                        src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7"
-                        alt=""
-                        className="absolute top-32 left-0 w-44 h-52 object-cover rounded-md"
-                    />
-
-                    <img
-                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2"
-                        alt=""
-                        className="absolute top-32 right-24 w-44 h-52 object-cover rounded-md"
-                    />
-
-                    {/* Bottom image */}
-                    <img
-                        src="https://images.unsplash.com/photo-1527980965255-d3b416303d12"
-                        alt=""
-                        className="absolute bottom-0 right-0 w-44 h-52 object-cover rounded-md"
-                    />
                 </div>
 
             </div>
