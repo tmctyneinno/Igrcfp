@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use App\Models\EventRegistration;
 use App\Models\Event;
 use Inertia\Inertia;
 
@@ -164,7 +166,7 @@ class HomeController extends Controller
         }
 
         // Create registration
-        $registration = Registration::create([
+        $registration = EventRegistration::create([
             'event_id' => $event->id,
             'name' => $validated['name'],
             'email' => $validated['email'],
