@@ -1,3 +1,5 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from '@inertiajs/react';
 
 export default function SplitHeroSlider({ auth }) {
     const [activeSlide, setActiveSlide] = useState(0);
