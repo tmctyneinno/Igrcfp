@@ -9,10 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateAdmin
 {
+    /**
+     * Handle an incoming request.
+     */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
-        // If no specific guard is provided, use 'admin' guard
-        $guards = empty($guards) ? ['admin'] : $guards;
+        // Use admin guard by default for admin routes
+        if (empty($guards)) {
+            $guards = ['admin'];
+        }
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
@@ -20,7 +25,12 @@ class AuthenticateAdmin
             }
         }
 
-        // Redirect to admin login page
-        return redirect()->guest(route('admin.login'));
+        // For admin routes, redirect to admin login
+        if ($request->is('admin/*')) {
+            return redirect()->guest(route('admin.login'));
+        }
+
+        // Fallback for other routes
+        return redirect()->guest(route('login'));
     }
 }
