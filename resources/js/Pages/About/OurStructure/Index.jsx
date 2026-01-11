@@ -24,17 +24,7 @@ export default function OurStructure({ auth, title, description }) {
                 </div>
             </section>
 
-            <PartnersSlider />
-
-            <section className="bg-white py-24 overflow-hidden">
-                <WhoAreWe auth={auth} />
-            </section>
-
-            <VisionMissionSlider />
             
-            <OurValues />
-
-            <CoreServices />
 
            
         </GuestLayout>
