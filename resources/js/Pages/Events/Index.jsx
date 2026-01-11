@@ -32,16 +32,19 @@ export default function Events({ auth, title, description, events }) {
     };
 
     // Format time display
-    const formatTime = (event) => {
-        if (event.start_time && event.end_time) {
-            return `${event.start_time} - ${event.end_time}`;
-        } else if (event.event_time) {
-            return event.event_time;
-        } else if (event.start_time) {
-            return `${event.start_time} (Start)`;
+    const formatTime = (time) => {
+        if (!time) return '';
+        // Convert 24h to 12h format if needed
+        if (time.includes(':')) {
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
         }
-        return 'Time TBA';
+        return time;
     };
+
     const formatEventDate = (dateString) => {
         if (!dateString) return 'Date TBA';
         
@@ -167,7 +170,7 @@ export default function Events({ auth, title, description, events }) {
                                                             <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                             </svg>
-                                                            <span className="font-medium">Time: {event.start_time} - {event.end_time}</span>
+                                                            <span className="font-medium">Time: {formatTime(event.start_time)} - {formatTime(event.end_time)}</span>
                                                         </div>
                                                     ) : event.event_time ? (
                                                         <div className="flex items-center text-gray-700 text-sm">
