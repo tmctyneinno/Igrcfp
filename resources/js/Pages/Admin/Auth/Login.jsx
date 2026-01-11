@@ -38,14 +38,14 @@ export default function AdminLogin({ status }) {
                         <img
                             src="/assets/images/home-three/logo/logo-main.png"
                             alt="IGRCFP Logo"
-                            className="h-14 w-auto align-center"
+                            className="h-14 w-auto mx-auto"
                         />
                     </div>
 
-                    <h2 className="text-3xl font-extrabold text-gray-900">
+                    <h2 className="text-3xl font-extrabold text-gray-900 w-auto mx-auto">
                         Admin Portal
                     </h2>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-2 text-sm text-gray-600 mx-auto">
                         Sign in to access the admin dashboard
                     </p>
 
