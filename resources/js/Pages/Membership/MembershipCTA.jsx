@@ -1,4 +1,6 @@
-import { Link } from '@inertiajs/react';
+import { motion } from "framer-motion";
+import { Link } from "@inertiajs/react";
+import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function MembershipCTA() {
     return (
@@ -25,7 +27,7 @@ export default function MembershipCTA() {
                 </div>
 
                 {/* RIGHT IMAGE COLLAGE */}
-                <div className=" h-10 md:h-16 object-contain w-full">
+                {/* <div className=" h-10 md:h-16 object-contain w-full"> */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -40,7 +42,7 @@ export default function MembershipCTA() {
                         />
                     </motion.div>
 
-                </div>
+                {/* </div> */}
 
             </div>
         </section>
