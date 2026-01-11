@@ -73,4 +73,4 @@ chmod -R 775 bootstrap/cache/
 Admin
 superadmin@igrcfp.org
 password123
- 
+ php artisan make:migration create_event_registrations_table
