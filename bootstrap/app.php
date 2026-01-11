@@ -16,6 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.role' => \App\Http\Middleware\CheckAdminRole::class,
             'auth.admin' => \App\Http\Middleware\AuthenticateAdmin::class, // Optional: create this too
         ]);
+         // Admin middleware group
+        $middleware->group('admin', [
+            'auth:admin',
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+        ]);
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
