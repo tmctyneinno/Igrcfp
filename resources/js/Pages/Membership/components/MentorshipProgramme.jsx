@@ -51,7 +51,7 @@ export default function MentorshipProgramme() {
             >
                 <div className="relative flex items-center justify-between max-w-4xl mx-auto">
                     {/* LINE */}
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-blue-900 rounded-full"></div>
+                    <div className="absolute top-1/4 left-0 w-full h-1 bg-blue-900 rounded-full "></div>
 
                     {steps.map((step, index) => (
                         <div
