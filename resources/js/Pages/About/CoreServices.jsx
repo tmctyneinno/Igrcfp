@@ -43,7 +43,10 @@ export default function CoreServices() {
     return (
         <section className="py-20 bg-white">
             <div className="max-w-6xl mx-auto px-4 text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-12">Our Core Services</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-10">Our Core Services</h1>
+                <p className='mb-12 te'>
+                    At IGRCFP, we empower professionals and institutions through education, membership, research, and global events. Our core services are designed to strengthen governance, compliance, and financial crime prevention worldwide
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
                     {services.map((service, index) => (
                         <div
