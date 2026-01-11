@@ -234,4 +234,6 @@ class EventController extends Controller
 
         return back()->with('success', $message);
     }
+
+    
 }
