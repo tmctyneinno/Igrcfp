@@ -131,7 +131,7 @@ export default function Events({ auth, title, description, events }) {
                                         </div>
 
                                         {/* Event Details - Compact */}
-                                        <div className="md:w-2/3 lg:w-3/5 p-0 md:p-4">
+                                        <div className="md:w-2/3 lg:w-3/5 p-2 md:p-4">
                                             <div className="flex flex-col h-full">
                                                 {/* Date and Time */}
                                                 <div className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm mb-3">
@@ -144,7 +144,7 @@ export default function Events({ auth, title, description, events }) {
                                                 </div>
 
                                                 {/* Title */}
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors line-clamp-2">
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-950 transition-colors line-clamp-2">
                                                     <Link href={route('events.show', event.slug)} className="hover:no-underline">
                                                         {event.title}
                                                     </Link>
