@@ -1,9 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import BoardOfTrustees from '@/Pages/About/OBoardOfTrustees';
-import CoreServices from '@/Pages/About/CoreServices';
-import PartnersSlider from '@/Pages/About/PartnersSlider';
-import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
+import BoardOfTrustees from '@/Pages/About/OurStructure/BoardOfTrustees';
 
 export default function OurStructure({ auth, title, description }) {
     return (
