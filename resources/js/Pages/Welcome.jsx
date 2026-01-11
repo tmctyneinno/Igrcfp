@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, useRef } from "react";
-
+import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import SplitHeroSlider from "@/Pages/components/SplitHeroSlider";
