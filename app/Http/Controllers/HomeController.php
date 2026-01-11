@@ -82,7 +82,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function events(){
+    public function eventsIndex(){
         $events = Event::query()
         ->where('status', 'published')
         ->orderBy('start_date', 'asc')
@@ -95,7 +95,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function show($slug)
+    public function eventShow($slug)
     {
         $event = Event::where('slug', $slug)
             ->where('status', 'published')
