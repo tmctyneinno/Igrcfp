@@ -207,7 +207,7 @@ const NavBar = ({ adminName }) => {
                         <Icon icon="lucide:power" className="icon text-xl" />
                         Log Out
                         </button>
-                    </li>
+                    </li> 
                     </ul>
                 </div>
                 </div>
