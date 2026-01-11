@@ -20,11 +20,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Registration Routes (only for super_admin)
     Route::get('/register', [AdminRegisterController::class, 'showRegistrationForm'])
         ->name('register')
-        ->middleware(['auth:admin', 'admin.role:super_admin']);
+        ->middleware(['auth.admin', 'admin.role:super_admin']);
     
     Route::post('/register', [AdminRegisterController::class, 'register'])
         ->name('register.post')
-        ->middleware(['auth:admin', 'admin.role:super_admin']);
+        ->middleware(['auth.admin', 'admin.role:super_admin']);
     
     // Password Reset Routes
     Route::get('/password/reset', [AdminForgotPasswordController::class, 'showLinkRequestForm'])
@@ -46,5 +46,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Logout (Protected)
     Route::post('/logout', [AdminLoginController::class, 'logout'])
         ->name('logout')
-        ->middleware('auth:admin');
+        ->middleware('auth.admin');
 });
