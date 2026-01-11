@@ -59,4 +59,6 @@ class HomeController extends Controller
             'description' => 'Learn about the International Governance, Risk, Compliance & Financial Crime Professionals body.',
         ]);
     }
+
+    public function OurStructure
 }
