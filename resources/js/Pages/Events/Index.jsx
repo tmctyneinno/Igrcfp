@@ -147,35 +147,24 @@ export default function Events({ auth, title, description, events }) {
                                                 </div>
 
                                                 {/* Event Time Details */}
-                                                {/* Event Time Details */}
-<div className="space-y-1 mb-3">
-    {/* Combined Time Display */}
-    {(event.start_time && event.end_time) ? (
-        <div className="flex items-center text-gray-700 text-sm">
-            <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-medium">Time: {event.start_time} - {event.end_time}</span>
-        </div>
-    ) : event.event_time ? (
-        <div className="flex items-center text-gray-700 text-sm">
-            <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-medium">Time: {event.event_time}</span>
-        </div>
-    ) : null}
-
-    {/* Duration */}
-    {event.duration && (
-        <div className="flex items-center text-gray-700 text-sm">
-            <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span className="font-medium">Duration: {event.duration} hours</span>
-        </div>
-    )}
-</div>
+                                                <div className="space-y-1 mb-3">
+                                                    {/* Combined Time Display */}
+                                                    {(event.start_time && event.end_time) ? (
+                                                        <div className="flex items-center text-gray-700 text-sm">
+                                                            <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-medium">Time: {event.start_time} - {event.end_time}</span>
+                                                        </div>
+                                                    ) : event.event_time ? (
+                                                        <div className="flex items-center text-gray-700 text-sm">
+                                                            <svg className="w-3.5 h-3.5 mr-2 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-medium">Time: {event.event_time}</span>
+                                                        </div>
+                                                    ) : null}
+                                                </div>
 
                                                 {/* Description Excerpt - Smaller */}
                                                 <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">
