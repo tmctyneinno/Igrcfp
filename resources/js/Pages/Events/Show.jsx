@@ -282,7 +282,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                     ) : (
                                         <Link
                                             href={route('events.register', event.slug)}
-                                            className="block w-full text-center py-3 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-900 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                            className="block w-full text-center py-3 px-14 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                                         >
                                             Register Now
                                         </Link>
