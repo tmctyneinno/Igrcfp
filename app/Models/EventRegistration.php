@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class EventRegistration extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $table = 'events_registrations';
 
     protected $fillable = [
         'event_id',
