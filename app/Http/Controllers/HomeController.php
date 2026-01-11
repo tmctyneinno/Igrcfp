@@ -119,6 +119,22 @@ class HomeController extends Controller
         ]);
     }
 
+    public function eventRegister($slug)
+    {
+        $event = Event::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        // Check if registration is open
+        if ($event->registration_status === 'sold_out') {
+            abort(403, 'This event is sold out.');
+        }
+
+        return Inertia::render('Events/Register', [
+            'event' => $event,
+        ]);
+    }
+
      public function blog(){
         return Inertia::render('Blog/Index', [
             'title' => 'Blog',
