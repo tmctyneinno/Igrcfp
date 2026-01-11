@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class AdminLoginController extends Controller
 {
-     use AuthenticatesUsers;
+    use AuthenticatesUsers;
     
     /**
      * Where to redirect users after login.
@@ -22,7 +21,8 @@ class AdminLoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest:admin')->except('logout');
+        // Remove middleware from constructor in Laravel 11
+        // $this->middleware('guest:admin')->except('logout');
     }
     
     protected function guard()
@@ -32,15 +32,26 @@ class AdminLoginController extends Controller
 
     public function showLoginForm() 
     {
+        // If user is already authenticated as admin, redirect to dashboard
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+        
+        // Redirect if accessing /login instead of /admin/login
         if (request()->is('login') && !request()->is('admin/*')) {
             return redirect()->route('admin.login');
         }
-        // return Inertia::render('Admin/Auth/Login');
+        
         return view('admin.auth.login');
     }
 
     public function login(Request $request)
     {
+        // If already authenticated, redirect to dashboard
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+        
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
