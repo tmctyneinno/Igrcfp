@@ -49,7 +49,7 @@ export default function BoardOfTrustees() {
                     </ul>
 
                     {/* TRUSTEES */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                         {trustees.map((member, index) => (
                             <div key={index} className="text-center">
                                 <img
@@ -70,14 +70,14 @@ export default function BoardOfTrustees() {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* RIGHT SIDEBAR */}
                 <aside className="space-y-14">
                     <div>
                         <h4 className="font-semibold text-lg mb-4">People</h4>
-                        <ul className="space-y-3 text-blue-600">
+                        <ul className="space-y-3 text-blue-950">
                             <li className="font-medium cursor-pointer">Board of Trustees</li>
                             <li className="cursor-pointer hover:underline">
                                 The Governing Council
@@ -94,7 +94,7 @@ export default function BoardOfTrustees() {
                         {/* <p className="text-blue-600 text-sm mb-1">
                             +234 (0) 915-341-4314
                         </p> */}
-                        <p className="text-blue-900 text-sm">
+                        <p className="text-blue-950 text-sm">
                             enquiries@igrfcp.org
                         </p>
                     </div>
