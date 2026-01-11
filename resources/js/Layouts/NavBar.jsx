@@ -117,7 +117,7 @@ export default function NavBar({ auth }) {
                     
                     
                     <Link 
-                        href="/about" 
+                        href="/events" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Events
