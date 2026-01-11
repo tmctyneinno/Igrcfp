@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +43,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
     Route::get('/login', function () { return inertia('Auth/Login');})->name('login');
     
-    Route::post('/register', [RegistrationController::class, 'register'])->name('register.post');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 });
 
