@@ -25,7 +25,7 @@ export default function Welcome({ auth, courses }) {
             <Head title="IGRCFP - Professional Learning Platform" />
             
             {/* Hero Section with AOS effects */}
-            <div className="pt-10">
+            <div className="pt-0">
                 <SplitHeroSlider auth={auth} />
             </div>
 
