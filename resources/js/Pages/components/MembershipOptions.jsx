@@ -140,7 +140,7 @@ export default function MembershipOptions() {
 
                         <h2 className="text-4xl xl:text-4xl font-bold text-blue-900">
                             Why Join IGRCFP?
-                        </h2>
+                        </h2> 
                     </motion.div>
 
                     {/* RIGHT CONTENT */}
