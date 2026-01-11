@@ -20,6 +20,6 @@ class AuthenticateAdmin
         }
 
         // return redirect()->route('admin.login');
-        return echo "Login";
+        return  "Login";
     }
 }
