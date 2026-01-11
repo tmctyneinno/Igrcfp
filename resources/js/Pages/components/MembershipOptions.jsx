@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
-import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 
 
 const memberships = [
@@ -69,7 +68,7 @@ const benefits = [
 ];
 
 export default function MembershipOptions() {
-    return (
+    return ( 
         <div>
             
             <div className="max-w-7xl mx-auto px-6 py-10">
@@ -122,7 +121,6 @@ export default function MembershipOptions() {
                     ))}
                 </motion.div>
             </div>
-            <JoinIGRCFP />
             
         </div>
     );
