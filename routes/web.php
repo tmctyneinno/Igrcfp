@@ -32,7 +32,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
+    Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
     
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
     Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 });
 
