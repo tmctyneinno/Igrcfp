@@ -225,7 +225,8 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                             </svg>
                                             <div>
                                                 <h4 className="font-semibold text-gray-900 mb-1">Organizer</h4>
-                                                <p className="text-gray-600">{event.user.name}</p>
+                                                {/* <p className="text-gray-600">{event.user.name}</p> */}
+                                                <p className="text-gray-600">Morgans</p>
                                             </div>
                                         </div>
                                     )}
@@ -318,7 +319,8 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                         {event.user && (
                                             <div>
                                                 <p className="text-sm text-gray-500 mb-1">Organizer</p>
-                                                <p className="font-medium text-gray-900">{event.user.name}</p>
+                                                {/* <p className="font-medium text-gray-900">{event.user.name}</p> */}
+                                                  <p className="font-medium text-gray-900">Morgans</p>
                                             </div>
                                         )}
                                         
