@@ -56,14 +56,14 @@ class HomeController extends Controller
     {
         return Inertia::render('About/Index', [
             'title' => 'Welcome to IGRCFP',
-            'description' => 'Learn about the Institute Governance, Risk, Compliance & Financial Crime Professionals body.',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
 
     public function OurStructure(){
         return Inertia::render('About/OurStructure/Index', [
             'title' => 'Our Structure',
-            'description' => 'Learn about the International Governance, Risk, Compliance & Financial Crime Professionals body.',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
 }
