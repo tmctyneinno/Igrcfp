@@ -11,17 +11,27 @@ export default function Events({ auth, title, description, events }) {
     const totalCount = eventsData.length;
 
     // Helper function to get image URL
+   
+
+    // Helper function to get image URL for storage/app/public
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return '/images/default-event.jpg';
-        // If image is stored in storage, prepend the storage URL
+        
+        // If image is stored in storage/app/public
+        // Laravel's storage:link creates a symlink from storage/app/public to public/storage
+        // So we need to prepend /storage/ to the path
         if (imageUrl.startsWith('storage/')) {
-            return `/storage/${imageUrl.replace('storage/', '')}`;
+            return `/${imageUrl}`;
         }
-        // If it's already a full URL or starts with /, return as is
-        if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) {
+        // If it's already a full URL, return as is
+        if (imageUrl.startsWith('http')) {
             return imageUrl;
         }
-        // Otherwise assume it's in public storage
+        // If it starts with /, return as is (already from public directory)
+        if (imageUrl.startsWith('/')) {
+            return imageUrl;
+        }
+        // Default: assume it's in storage/app/public
         return `/storage/${imageUrl}`;
     };
 
