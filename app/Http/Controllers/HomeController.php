@@ -95,6 +95,30 @@ class HomeController extends Controller
         ]);
     }
 
+    public function show($slug)
+    {
+        $event = Event::where('slug', $slug)
+            ->where('status', 'published')
+            ->with('user')
+            ->firstOrFail();
+
+        $relatedEvents = Event::where('status', 'published')
+            ->where('id', '!=', $event->id)
+            ->where(function($query) use ($event) {
+                $query->where('venue', $event->venue)
+                    ->orWhere('location', $event->location)
+                    ->orWhere('start_date', '>=', now());
+            })
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
+
+        return Inertia::render('Events/Show', [
+            'event' => $event,
+            'relatedEvents' => $relatedEvents,
+        ]);
+    }
+
      public function blog(){
         return Inertia::render('Blog/Index', [
             'title' => 'Blog',
