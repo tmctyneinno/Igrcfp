@@ -1,3 +1,4 @@
+import React from "react";
 import { FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 export default function BoardOfTrustees() {
