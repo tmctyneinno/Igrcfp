@@ -27,25 +27,18 @@ export default function MembershipCTA() {
                 {/* RIGHT IMAGE COLLAGE */}
                 <div className=" h-10 md:h-16 object-contain w-full">
                     <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    viewport={{ once: true }}
-                    className="rounded-3xl overflow-hidden"
-                >
-                    <img
-                        src="/assets/images/home-three/gallery/membership-img2.png"
-                        alt="Members celebrating"
-                        className="max-w-2xl w-full pt-24"
-                    />
-                </motion.div>
-                    {/* Top images */}
-                    <img
-                        src="assets/images/home-three/gallery/membership.png"
-                        alt=""
-                        className=" h-10 md:h-16 object-contain rounded-md"
-                    />
-
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        viewport={{ once: true }}
+                        className="rounded-3xl overflow-hidden"
+                    >
+                        <img
+                            src="/assets/images/home-three/gallery/membership.png"
+                            alt="Members celebrating"
+                            className="max-w-2xl w-full pt-24"
+                        />
+                    </motion.div>
 
                 </div>
 
