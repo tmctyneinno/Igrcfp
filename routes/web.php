@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\LoginController;
+// use App\Http\Controllers\Auth\RegisteredUserController;
+// use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -39,12 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('guest')->group(function () {
-    Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
-    Route::get('/login', function () { return inertia('Auth/Login');})->name('login');
-    
-    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
-    Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-});
+Routh::route();
 
 require __DIR__.'/admin/admins.php';
