@@ -22,11 +22,10 @@ export default function HowMembershipWorks() {
 
                 {/* Section Header */}
                 <div className="mb-12">
-                    <p className="text-gray-400 text-sm mb-2">Membership</p>
                     <div className="relative inline-flex items-center mb-4">
                         <span className="absolute left-0 top-1/2 w-14 h-px bg-gray-300"></span>
                         <span className="pl-20 text-sm tracking-widest uppercase text-gray-400">
-                            Mentorship programme
+                            Membership
                         </span>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-semibold text-blue-950">
