@@ -1,3 +1,4 @@
+import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { fadeIn, scaleIn, staggerContainer } from "@/utils/motionPresets";
