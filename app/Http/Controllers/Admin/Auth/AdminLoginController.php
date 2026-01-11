@@ -11,7 +11,8 @@ class AdminLoginController extends Controller
 {
     public function showLoginForm()
     {
-        return Inertia::render('Admin/Auth/Login');
+        // return Inertia::render('Admin/Auth/Login');
+        return view('admin.auth.login');
     }
 
     public function login(Request $request)
