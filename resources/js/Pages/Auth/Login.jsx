@@ -28,7 +28,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout au>
+        <GuestLayout auth={auth}>
             <Head title="Log in" /> 
             
             <div className="min-h-screen flex">
