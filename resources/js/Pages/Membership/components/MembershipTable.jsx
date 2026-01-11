@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 import { usePage } from '@inertiajs/react';
 import { fadeLeft, scaleIn } from '@/utils/motionPresets';
 
-export default function MembershipTable() {
-  const { membershipData } = usePage().props; // Fetching data passed from the server-side
+export default function MembershipTable({ membershipData = [] }) {
+//   const { membershipData } = usePage().props; 
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-20">
