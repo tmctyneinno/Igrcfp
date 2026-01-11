@@ -208,7 +208,7 @@ export default function Events({ auth, title, description, events }) {
                                                     {/* Read More Button - Smaller */}
                                                     <Link
                                                         href={route('events.show', event.slug)}
-                                                        className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-900 to-indigo-800 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow hover:shadow-md transform hover:-translate-y-0.5"
+                                                        className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-950 to-indigo-950 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow hover:shadow-md transform hover:-translate-y-0.5"
                                                     >
                                                         View Details
                                                         <svg className="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
