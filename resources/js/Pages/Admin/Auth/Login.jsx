@@ -38,7 +38,7 @@ export default function AdminLogin({ status }) {
                         <img
                             src="/assets/images/home-three/logo/logo-main.png"
                             alt="IGRCFP Logo"
-                            className="h-14 w-auto alg"
+                            className="h-14 w-auto align-center"
                         />
                     </div>
 
