@@ -17,7 +17,7 @@ Route::get('/certifications', [HomeController::class, 'certifications'])->name('
 Route::get('/events', [HomeController::class, 'eventsIndex'])->name('events.index');
 Route::get('/events/{slug}', [HomeController::class, 'eventShow'])->name('events.show');
 Route::get('/events/{slug}/register', [HomeController::class, 'eventRegister'])->name('events.register');
-Route::post('/events/{slug}/register', [EventController::class, 'storeEventRegistration'])->name('events.register.store');
+Route::post('/events/{slug}/register', [HomeController::class, 'storeEventRegistration'])->name('events.register.store');
 
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'blog'])->name('contact');
