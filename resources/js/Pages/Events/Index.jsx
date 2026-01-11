@@ -154,7 +154,7 @@ export default function Events({ auth, title, description, events }) {
                                 </div>
                             ))
                         ) : (
-                            {/* No Events Message */}
+                            // No Events Message
                             <div className="text-center py-16">
                                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
                                     <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ export default function Events({ auth, title, description, events }) {
                                     We're currently planning our next events. Please check back soon for updates or subscribe to our newsletter.
                                 </p>
                             </div>
-                        ){'}'}
+                        )}
                     </div>
 
                     {/* Pagination */}
