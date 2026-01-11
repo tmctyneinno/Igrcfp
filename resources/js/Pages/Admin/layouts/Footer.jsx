@@ -1,4 +1,5 @@
 // resources/js/Pages/Admin/layouts/Footer.jsx
+import React from 'react';
 import { Head } from '@inertiajs/react';
 
 export default function Footer() {

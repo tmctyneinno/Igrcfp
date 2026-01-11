@@ -1,3 +1,4 @@
+import React from 'react';
 import Header from "@/Pages/Admin/layouts/Header";
 import Footer from "@/Pages/Admin/layouts/Footer";
 import NavBar from "@/Pages/Admin/layouts/NavBar";
