@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { Icon } from "@iconify/react";
 import React, { useState } from "react";
 
@@ -7,6 +7,10 @@ export default function SideBar() {
 
     const toggleMenu = (menu) => {
         setOpenMenu(openMenu === menu ? null : menu);
+    };
+
+    const handleLogout = () => {
+        router.post(route('admin.logout'));
     };
 
     return (
@@ -128,6 +132,16 @@ export default function SideBar() {
                                 </Link>
                             </li>
                         </ul>
+                    </li>
+
+                     <li>
+                        <button onClick={handleLogout}>
+                            <Icon
+                                icon="flowbite:users-group-outline"
+                                className="menu-icon"
+                            />
+                            <span>Logout</span>
+                        </button>
                     </li>
 
                 </ul>
