@@ -77,3 +77,4 @@ password123
 
  composer require laravel/ui
 php artisan ui bootstrap --auth
+npm install @inertiajs/react react react-dom @vitejs/plugin-react
