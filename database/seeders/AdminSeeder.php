@@ -2,17 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        Admin::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@igrcfp.org',
+            'password' => Hash::make('password123'),
+            'role' => 'super_admin',
+        ]);
+
+        Admin::create([
+            'name' => 'Admin User',
+            'email' => 'admin@igrcfp.org',
+            'password' => Hash::make('password123'),
+            'role' => 'admin',
+        ]);
+
+        Admin::create([
+            'name' => 'Content Moderator',
+            'email' => 'moderator@igrcfp.org',
+            'password' => Hash::make('password123'),
+            'role' => 'moderator',
+        ]);
     }
 }
- 
