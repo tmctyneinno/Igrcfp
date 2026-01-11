@@ -21,8 +21,7 @@ class AdminLoginController extends Controller
      */
     public function __construct()
     {
-        // Remove middleware from constructor in Laravel 11
-        // $this->middleware('guest:admin')->except('logout');
+        
     }
     
     protected function guard()
