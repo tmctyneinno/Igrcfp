@@ -23,7 +23,7 @@ export default function AdminLogin({ status }) {
         <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
             <Head title="Admin Login" />
             {/* LEFT SIDE – IMAGE */}
-            <div className="hidden lg:flex items-center justify-center bg-blue-950 relative">
+            <div className="hidden lg:flex items-center justify-center auth relative">
                 <img
                     src="/assets/admin/images/auth/auth-img.png"
                     alt="Admin Login Visual"
