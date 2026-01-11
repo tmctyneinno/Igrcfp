@@ -12,6 +12,7 @@ Route::get('/welcome-to-igrcfp', [HomeController::class, 'welcomeToIGRCFP'])->na
 Route::get('/our-structure', [HomeController::class, 'OurStructure'])->name('our-structure');
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
+Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
 
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
