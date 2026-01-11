@@ -42,10 +42,10 @@ export default function AdminLogin({ status }) {
                         />
                     </div>
 
-                    <h2 className="text-3xl font-extrabold text-gray-900 w-auto mx-auto">
+                    <h2 className="text-3xl font-extrabold text-gray-900 w-auto text-center">
                         Admin Portal
                     </h2>
-                    <p className="mt-2 text-sm text-gray-600 mx-auto">
+                    <p className="mt-2 text-sm text-gray-600 w-auto mx-auto text-c">
                         Sign in to access the admin dashboard
                     </p>
 
