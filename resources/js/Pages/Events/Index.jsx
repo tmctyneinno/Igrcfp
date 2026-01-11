@@ -273,7 +273,7 @@ export default function Events({ auth, title, description, events }) {
                     </p>
                     <Link
                         href={route('contact')}
-                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow hover:shadow-md transform hover:-translate-y-0.5"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-950 to-indigo-800 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow hover:shadow-md transform hover:-translate-y-0.5"
                     >
                         Contact Us
                         <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
