@@ -270,7 +270,7 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-blue-900/30">
                     <div className="text-center md:text-left">
                         <p className="text-gray-400">
-                            © {currentYear} Institute Governance, Risk, Compliance & Financial Crime Professionals (IGRCFP).
+                            © {currentYear} The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP).
                         </p>
                     </div>
                     
