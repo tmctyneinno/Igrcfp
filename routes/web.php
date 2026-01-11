@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index']);
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::route();
+
+// Auth routes (login, register, password reset, etc.)
+Auth::routes();
 
 require __DIR__.'/admin/admins.php';
