@@ -17,7 +17,7 @@ export default function MembershipCTA() {
                     </p>
 
                     <Link
-                        href="/membership"
+                        href="/login"
                         className="inline-flex items-center gap-3 bg-blue-950 text-white px-7 py-4 rounded-lg font-medium hover:bg-blue-800 transition"
                     >
                         Become a Member Today
@@ -37,7 +37,7 @@ export default function MembershipCTA() {
                         <img
                             src="/assets/images/home-three/gallery/membership.png"
                             alt="Members celebrating"
-                            className="max-w-2xl w-full pt-24"
+                            className="max-w-2xl w-full pt-2"
                         />
                     </motion.div>
                 </div>
