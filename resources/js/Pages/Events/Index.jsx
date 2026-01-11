@@ -160,7 +160,7 @@ export default function Events({ auth, title, description, events }) {
                                                 </div>
 
                                                 {/* Event Time Details */}
-                                                <div className="space-y-0 mb-3">
+                                                <div className="space-y-1 mb-3">
                                                     {/* Combined Time Display */}
                                                     {(event.start_time && event.end_time) ? (
                                                         <div className="flex items-center text-gray-700 text-sm">
