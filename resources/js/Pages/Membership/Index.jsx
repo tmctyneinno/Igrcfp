@@ -20,7 +20,7 @@ export default function Membership({ auth, title, description }) {
                 </div>
             </section>
 
-            <BoardOfTrustees />
+            <MembershipCTA />
  
            
         </GuestLayout>
