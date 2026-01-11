@@ -10,7 +10,9 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 
+ 
  
 export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -47,6 +49,7 @@ export default function Welcome({ auth, courses }) {
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <MembershipOptions />
+                <JoinIGRCFP />
             </section>
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
