@@ -10,7 +10,7 @@ export default function GuestLayout({ children, auth }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
     // ✅ AOS INIT — ONCE ONLY
-    useEffect(() => {
+    useEffect(() => { 
         AOS.init({
             duration: 500,
             easing: "ease-out-cubic",
