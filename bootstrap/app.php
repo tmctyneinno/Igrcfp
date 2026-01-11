@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.role' => App\Http\Middleware\CheckAdminRole::class,
             'auth.admin' => App\Http\Middleware\AuthenticateAdmin::class,
+            'guest:admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);
         
         // Admin middleware group (more streamlined)
