@@ -11,7 +11,8 @@ class AuthenticateAdmin
 {
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
-        $guards = empty($guards) ? [null] : $guards;
+        // If no specific guard is provided, use 'admin' guard
+        $guards = empty($guards) ? ['admin'] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
@@ -19,6 +20,7 @@ class AuthenticateAdmin
             }
         }
 
-        return redirect()->route('admin.login');
+        // Redirect to admin login page
+        return redirect()->guest(route('admin.login'));
     }
 }
