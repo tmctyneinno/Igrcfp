@@ -61,8 +61,8 @@ class HomeController extends Controller
     }
 
     public function OurStructure(){
-        return Inertia::render('About/OurStructure', [
-            'title' => 'Welcome to IGRCFP',
+        return Inertia::render('About/OurStructure/Index', [
+            'title' => 'Our Structure',
             'description' => 'Learn about the International Governance, Risk, Compliance & Financial Crime Professionals body.',
         ]);
     }
