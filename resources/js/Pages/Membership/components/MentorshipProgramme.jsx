@@ -56,7 +56,7 @@ export default function MentorshipProgramme() {
                     {steps.map((step, index) => (
                         <div
                             key={index}
-                            className="relative z-10 flex flex-col items-center text-center w-1/4"
+                            className="relative z-10 pt-3 flex flex-col items-center text-center w-1/4"
                         >
                             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-900 text-white text-sm font-semibold mb-4">
                                 ✓
