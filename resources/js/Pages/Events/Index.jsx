@@ -58,7 +58,7 @@ export default function Events({ auth, title, description, events }) {
                     </div>
 
                     {/* Events List */}
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                         {eventsData.length > 0 ? (
                             eventsData.map((event, index) => (
                                 <div
