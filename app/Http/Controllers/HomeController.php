@@ -82,9 +82,15 @@ class HomeController extends Controller
     }
 
     public function events(){
+        $events = Event::query()
+        ->where('status', 'published')
+        ->orderBy('event_date', 'asc')
+        ->paginate(10);
+
         return Inertia::render('Events/Index', [
-            'title' => 'Events',
-            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+            'title' => 'Professional Events & Workshops',
+            'description' => 'Join IGRCFP for expert-led workshops, seminars, and networking events designed for governance, risk, compliance, and financial crime prevention professionals.',
+            'events' => $events,
         ]);
     }
 
