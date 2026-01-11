@@ -54,7 +54,7 @@ class HomeController extends Controller
 
     public function welcomeToIGRCFP()
     {
-        return Inertia::render('About/Index', [
+        return Inertia::render('About/WelcomeIGRCFP/Index', [
             'title' => 'Welcome to IGRCFP',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
