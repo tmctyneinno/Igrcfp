@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/welcome-to-igrcfp', [HomeController::class, 'WelcomeIGRFCP'])->name('welcome-to-igrcfp');
+Route::get('/welcome-to-igrcfp', [HomeController::class, 'WelcomeIGRFCP'])->name('welcome-to-igrcfp');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
