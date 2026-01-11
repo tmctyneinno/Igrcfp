@@ -32,10 +32,10 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
-    Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
+    Route::get('/login', function () { return inertia('Auth/Login');})->name('login');
     
     Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
-    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+    Route::post('/login', [RegisterController::class, 'login'])->name('login.post');
 });
 
 require __DIR__.'/admin/admins.php';
