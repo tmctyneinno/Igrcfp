@@ -110,7 +110,7 @@ export default function Events({ auth, title, description, events }) {
                                     <div className="flex flex-col md:flex-row">
                                         {/* Event Image - Smaller */}
                                         <div className="md:w-1/3 lg:w-2/5">
-                                            <div className="relative h-48 md:h-full overflow-hidden bg-gray-100">
+                                            <div className="relative h-38 md:h-full overflow-hidden bg-gray-100">
                                                 <img
                                                     src={getImageUrl(event.image)}
                                                     alt={event.title}
@@ -131,7 +131,7 @@ export default function Events({ auth, title, description, events }) {
                                         </div>
 
                                         {/* Event Details - Compact */}
-                                        <div className="md:w-2/3 lg:w-3/5 p-4 md:p-4">
+                                        <div className="md:w-2/3 lg:w-3/5 p-0 md:p-4">
                                             <div className="flex flex-col h-full">
                                                 {/* Date and Time */}
                                                 <div className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm mb-3">
