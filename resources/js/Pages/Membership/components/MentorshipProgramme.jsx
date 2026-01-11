@@ -11,7 +11,7 @@ const steps = [
 
 export default function MentorshipProgramme() {
     return (
-        <div className="max-w-7xl mx-auto px-6 py-24">
+        <div className="bg-gray max-w-7xl mx-auto px-6 py-24">
             {/* SECTION HEADER */}
             <motion.div
                 variants={fadeLeft}
@@ -113,7 +113,7 @@ export default function MentorshipProgramme() {
                 {/* MENTORS */}
                 <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
                     <img
-                        src="/images/mentor.png"
+                        src="/assets/images/innerpage/gallery/mentor.png"
                         alt="For Mentors"
                         className="mb-6 mx-auto"
                     />
