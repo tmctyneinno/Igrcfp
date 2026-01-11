@@ -1,6 +1,6 @@
 
 import { Link } from "@inertiajs/react";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 export default function NavBar({ auth }) {
 
