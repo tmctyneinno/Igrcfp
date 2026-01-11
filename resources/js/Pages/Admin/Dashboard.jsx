@@ -1,21 +1,17 @@
 import { Head } from '@inertiajs/react';
+import AdminLayout from "@/Pages/Admin/layouts/AdminLayout";
 
-export default function Dashboard({ stats }) {
+export default function Dashboard({ stats, auth }) {
     return (
         <>
-            <Head>
-                <title>Admin Dashboard</title>
-                {/* Link to external CSS */}
-                <link rel="stylesheet" href="/css/admin.css" />
-                <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-            </Head>
-            
+           <AdminLayout title="Admin Dashboard" adminName={stats.admin_name}>
             <div className="admin-dashboard">
                 {/* Your dashboard content */}
+                <h1 className="text-3xl font-bold mb-6">Welcome back, {stats.admin_name}!</h1>
                 <h1 className="text-3xl font-bold">Dashboard</h1>
                 {/* ... */}
             </div>
+            </AdminLayout>
         </>
-    );
+    ); 
 }

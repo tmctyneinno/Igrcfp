@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Course;
@@ -13,15 +14,20 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
+        $admin = Auth::guard('admin')->user();
         $stats = [
             'total_users' => User::count(),
             'total_courses' => Course::count(),
             'total_admins' => Admin::count(),
             'recent_users' => User::latest()->take(5)->get(),
+            'admin_name' => $admin->name,
         ];
 
         return inertia('Admin/Dashboard', [
             'stats' => $stats,
+            'auth' => [ 
+                'admin' => $admin
+            ]
         ]);
     }
 
