@@ -78,6 +78,7 @@ class HomeController extends Controller
         ];
 
         return Inertia::render('Membership/Index', [
+            'membershipData' => $membershipData,
             'title' => 'Membership',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
