@@ -52,7 +52,7 @@ class HomeController extends Controller
         ]);
     }
 
-    public function WelcomeIGRFCP()
+    public function welcomeToIGRCFP()
     {
         return Inertia::render('About/Index', [
             'title' => 'Welcome to IGRCFP',
