@@ -45,3 +45,7 @@ Route::middleware('auth')->group(function () {
 Auth::routes();
 
 require __DIR__.'/admin/admins.php';
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
