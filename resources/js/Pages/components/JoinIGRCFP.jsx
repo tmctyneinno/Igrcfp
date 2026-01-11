@@ -2,39 +2,6 @@ import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
-const memberships = [
-    {
-        title: "Student Member",
-        bg: "bg-slate-900",
-        text: "text-white",
-        icon: "🎓",
-        iconColor: "text-white", // Always white for Student Member
-    },
-    {
-        title: "Associate Member",
-        bg: "bg-gray-100",
-        text: "text-slate-900",
-        icon: "🎓",
-    },
-    {
-        title: "Professional Member",
-        bg: "bg-emerald-700",
-        text: "text-white",
-        icon: "🎓",
-    },
-    {
-        title: "Fellow (Senior Executive & Experts)",
-        bg: "bg-teal-600",
-        text: "text-white",
-        icon: "🎓",
-    },
-    {
-        title: "Cooperate Member (for Organizations)",
-        bg: "bg-blue-900",
-        text: "text-white",
-        icon: "🎓",
-    },
-];
 
 const benefits = [
     {
