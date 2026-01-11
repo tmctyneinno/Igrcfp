@@ -44,7 +44,7 @@ export default function NavBar({ auth }) {
                 </div>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden md:flex items-center space-x-">
+                <div className="hidden md:flex items-center space-x-4">
                     <Link 
                         href="/" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
@@ -84,7 +84,7 @@ export default function NavBar({ auth }) {
                     {/* Courses Dropdown - Fixed with hover bridge */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                            Certifications & Trainings
+                            Certifications
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
