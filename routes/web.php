@@ -39,6 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Routh::route();
+Route::route();
 
 require __DIR__.'/admin/admins.php';
