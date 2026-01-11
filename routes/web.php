@@ -15,6 +15,7 @@ Route::get('/certifications', [HomeController::class, 'certifications'])->name('
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/events/show/{id}', [HomeController::class, 'eventShow'])->name('events.show');
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
+Route::get('/contact', [HomeController::class, 'blog'])->name('contact');
 
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
