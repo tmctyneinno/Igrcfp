@@ -1,5 +1,4 @@
 import { Head, Link } from '@inertiajs/react';
-import { format, parseISO } from 'date-fns';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Events({ auth, title, description, events }) {
@@ -41,17 +40,6 @@ export default function Events({ auth, title, description, events }) {
             return `${event.start_time} (Start)`;
         }
         return 'Time TBA';
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Date TBA';
-        try {
-            // For ISO string: "2025-12-12T00:00:00.000000Z"
-            return format(parseISO(dateString), 'MMMM dd, yyyy');
-            // Or: format(parseISO(dateString), 'dd MMM yyyy');
-        } catch (error) {
-            return 'Date TBA';
-        }
     };
 
     return (
@@ -140,8 +128,8 @@ export default function Events({ auth, title, description, events }) {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                     <span className="font-medium">
-                                                        {event.start_date ? formatDate(event.start_date) : 'Date TBA'}
-                                                    </span>
+                                                    {event.start_date ? (event.start_date) : 'Date TBA'}
+                                                </span>
                                                 </div>
 
                                                 {/* Title */}
