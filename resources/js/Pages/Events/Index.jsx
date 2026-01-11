@@ -180,8 +180,8 @@ export default function Events({ auth, title, description, events }) {
                                                 </div>
 
                                                 {/* Description Excerpt - Smaller */}
-                                                <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">
-                                                    {event.excerpt || 'Join us for this professional development opportunity.'}
+                                                <p className="text-gray-600 text-sm mb-1 line-clamp-2 flex-grow">
+                                                    {event.short_description || 'Join us for this professional development opportunity.'}
                                                 </p>
 
                                                 {/* Footer with Status and CTA - Compact */}
