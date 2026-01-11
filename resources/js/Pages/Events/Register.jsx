@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
 import { format, parseISO } from 'date-fns';
 
 export default function EventRegister({ auth, event }) {
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
+        name: auth?.user?.name || '',
+        email: auth?.user?.email || '',
         phone: '',
         company: '',
         position: '',
@@ -19,6 +18,31 @@ export default function EventRegister({ auth, event }) {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
+    const [isVisible, setIsVisible] = useState(false);
+
+    // Show modal with animation
+    useEffect(() => {
+        setTimeout(() => {
+            setIsVisible(true);
+        }, 10);
+        
+        // Prevent body scroll when modal is open
+        document.body.style.overflow = 'hidden';
+        
+        // Add ESC key listener
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        };
+        
+        document.addEventListener('keydown', handleEscKey);
+        
+        return () => {
+            document.body.style.overflow = 'unset';
+            document.removeEventListener('keydown', handleEscKey);
+        };
+    }, []);
 
     // Helper function to get image URL
     const getImageUrl = (imageUrl) => {
@@ -68,7 +92,6 @@ export default function EventRegister({ auth, event }) {
             [name]: type === 'checkbox' ? checked : value
         }));
         
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
@@ -77,7 +100,6 @@ export default function EventRegister({ auth, event }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Basic validation
         const newErrors = {};
         if (!formData.name.trim()) newErrors.name = 'Name is required';
         if (!formData.email.trim()) newErrors.email = 'Email is required';
@@ -92,15 +114,15 @@ export default function EventRegister({ auth, event }) {
         setIsSubmitting(true);
 
         try {
-            // Submit registration
             await axios.post(`/events/${event.slug}/register`, {
                 ...formData,
                 event_id: event.id,
             });
 
-            // Show success message (you could redirect to a thank you page instead)
+            // Close modal on success
+            closeModal();
+            // You could also show a success toast here
             alert('Registration successful! You will receive a confirmation email shortly.');
-            window.history.back(); // Go back to event page
         } catch (error) {
             if (error.response?.data?.errors) {
                 setErrors(error.response.data.errors);
@@ -112,8 +134,17 @@ export default function EventRegister({ auth, event }) {
         }
     };
 
-    const handleCancel = () => {
-        window.history.back();
+    const closeModal = () => {
+        setIsVisible(false);
+        setTimeout(() => {
+            window.history.back();
+        }, 300);
+    };
+
+    const handleBackdropClick = (e) => {
+        if (e.target === e.currentTarget) {
+            closeModal();
+        }
     };
 
     const hearAboutOptions = [
@@ -127,12 +158,22 @@ export default function EventRegister({ auth, event }) {
     ];
 
     return (
-        <GuestLayout auth={auth}>
+        <>
             <Head title={`Register - ${event.title}`} />
-
+            
             {/* Modal Overlay */}
-            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <div 
+                className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+                    isVisible ? 'bg-black bg-opacity-50' : 'bg-black bg-opacity-0'
+                }`}
+                onClick={handleBackdropClick}
+            >
+                {/* Modal Container */}
+                <div 
+                    className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all duration-300 ${
+                        isVisible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95'
+                    }`}
+                >
                     {/* Modal Header */}
                     <div className="sticky top-0 bg-white border-b border-gray-200 p-6 z-10">
                         <div className="flex justify-between items-center">
@@ -141,8 +182,9 @@ export default function EventRegister({ auth, event }) {
                                 <p className="text-gray-600 mt-1">{event.title}</p>
                             </div>
                             <button
-                                onClick={handleCancel}
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                onClick={closeModal}
+                                className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+                                aria-label="Close modal"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -154,104 +196,104 @@ export default function EventRegister({ auth, event }) {
                     {/* Modal Content - Scrollable */}
                     <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
                         <div className="p-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                {/* Left Column - Event Info */}
-                                <div className="lg:col-span-1">
-                                    <div className="bg-gray-50 rounded-xl p-6 sticky top-6">
-                                        {/* Event Image */}
-                                        <div className="rounded-lg overflow-hidden mb-6">
-                                            <img
-                                                src={getImageUrl(event.image)}
-                                                alt={event.title}
-                                                className="w-full h-48 object-cover"
-                                                onError={(e) => {
-                                                    e.target.src = '/images/default-event.jpg';
-                                                }}
-                                            />
-                                        </div>
-
-                                        {/* Event Details */}
-                                        <div className="space-y-4">
-                                            <div>
-                                                <p className="text-sm text-gray-500 mb-1">Date</p>
-                                                <p className="font-medium text-gray-900">
-                                                    {formatEventDate(event.start_date)}
-                                                </p>
+                            {event.registration_status === 'sold_out' ? (
+                                <div className="text-center py-12">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                                        <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-xl font-semibold text-gray-700 mb-2">Event Sold Out</h3>
+                                    <p className="text-gray-500 mb-6">
+                                        This event has reached full capacity. Please check back for future events.
+                                    </p>
+                                    <button
+                                        onClick={closeModal}
+                                        className="inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-all duration-300"
+                                    >
+                                        Back to Event
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {/* Left Column - Event Info */}
+                                    <div className="lg:col-span-1">
+                                        <div className="bg-gray-50 rounded-xl p-6 sticky top-6">
+                                            {/* Event Image */}
+                                            <div className="rounded-lg overflow-hidden mb-6">
+                                                <img
+                                                    src={getImageUrl(event.image)}
+                                                    alt={event.title}
+                                                    className="w-full h-48 object-cover"
+                                                    onError={(e) => {
+                                                        e.target.src = '/images/default-event.jpg';
+                                                    }}
+                                                />
                                             </div>
 
-                                            {event.start_time && event.end_time && (
+                                            {/* Event Details */}
+                                            <div className="space-y-4">
                                                 <div>
-                                                    <p className="text-sm text-gray-500 mb-1">Time</p>
+                                                    <p className="text-sm text-gray-500 mb-1">Date</p>
                                                     <p className="font-medium text-gray-900">
-                                                        {formatTime(event.start_time)} - {formatTime(event.end_time)}
+                                                        {formatEventDate(event.start_date)}
                                                     </p>
                                                 </div>
-                                            )}
 
-                                            <div>
-                                                <p className="text-sm text-gray-500 mb-1">Venue</p>
-                                                <p className="font-medium text-gray-900">
-                                                    {event.venue || event.location}
-                                                </p>
-                                                {event.address && (
-                                                    <p className="text-sm text-gray-600 mt-1">{event.address}</p>
-                                                )}
-                                            </div>
-
-                                            {event.capacity && event.available_seats !== undefined && (
-                                                <div className="pt-4 border-t border-gray-200">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <p className="text-sm text-gray-500">Available Seats</p>
+                                                {event.start_time && event.end_time && (
+                                                    <div>
+                                                        <p className="text-sm text-gray-500 mb-1">Time</p>
                                                         <p className="font-medium text-gray-900">
-                                                            {event.available_seats} / {event.capacity}
+                                                            {formatTime(event.start_time)} - {formatTime(event.end_time)}
                                                         </p>
                                                     </div>
-                                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                                        <div 
-                                                            className="bg-blue-600 h-2 rounded-full" 
-                                                            style={{ 
-                                                                width: `${(event.available_seats / event.capacity) * 100}%` 
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                </div>
-                                            )}
+                                                )}
 
-                                            {/* Status Badge */}
-                                            <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
-                                                event.registration_status === 'sold_out' ? 'bg-red-100 text-red-800' :
-                                                event.registration_status === 'few_seats' ? 'bg-amber-100 text-amber-800' :
-                                                'bg-emerald-100 text-emerald-800'
-                                            }`}>
-                                                {event.registration_status === 'sold_out' ? 'Sold Out' : 
-                                                 event.registration_status === 'few_seats' ? 'Few Seats Left' : 
-                                                 'Registration Open'}
+                                                <div>
+                                                    <p className="text-sm text-gray-500 mb-1">Venue</p>
+                                                    <p className="font-medium text-gray-900">
+                                                        {event.venue || event.location}
+                                                    </p>
+                                                    {event.address && (
+                                                        <p className="text-sm text-gray-600 mt-1">{event.address}</p>
+                                                    )}
+                                                </div>
+
+                                                {event.capacity && event.available_seats !== undefined && (
+                                                    <div className="pt-4 border-t border-gray-200">
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <p className="text-sm text-gray-500">Available Seats</p>
+                                                            <p className="font-medium text-gray-900">
+                                                                {event.available_seats} / {event.capacity}
+                                                            </p>
+                                                        </div>
+                                                        <div className="w-full bg-gray-200 rounded-full h-2">
+                                                            <div 
+                                                                className="bg-blue-600 h-2 rounded-full" 
+                                                                style={{ 
+                                                                    width: `${(event.available_seats / event.capacity) * 100}%` 
+                                                                }}
+                                                            ></div>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* Status Badge */}
+                                                <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+                                                    event.registration_status === 'sold_out' ? 'bg-red-100 text-red-800' :
+                                                    event.registration_status === 'few_seats' ? 'bg-amber-100 text-amber-800' :
+                                                    'bg-emerald-100 text-emerald-800'
+                                                }`}>
+                                                    {event.registration_status === 'sold_out' ? 'Sold Out' : 
+                                                     event.registration_status === 'few_seats' ? 'Few Seats Left' : 
+                                                     'Registration Open'}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Right Column - Registration Form */}
-                                <div className="lg:col-span-2">
-                                    {event.registration_status === 'sold_out' ? (
-                                        <div className="text-center py-12">
-                                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
-                                                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </div>
-                                            <h3 className="text-xl font-semibold text-gray-700 mb-2">Event Sold Out</h3>
-                                            <p className="text-gray-500 mb-6">
-                                                This event has reached full capacity. Please check back for future events.
-                                            </p>
-                                            <button
-                                                onClick={handleCancel}
-                                                className="inline-flex items-center justify-center px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-all duration-300"
-                                            >
-                                                Back to Event
-                                            </button>
-                                        </div>
-                                    ) : (
+                                    {/* Right Column - Registration Form */}
+                                    <div className="lg:col-span-2">
                                         <form onSubmit={handleSubmit} className="space-y-6">
                                             {/* Personal Information */}
                                             <div className="space-y-6">
@@ -384,7 +426,7 @@ export default function EventRegister({ auth, event }) {
                                                                     ...prev,
                                                                     additional_attendees: Math.max(0, prev.additional_attendees - 1)
                                                                 }))}
-                                                                className="px-4 py-2 border border-gray-300 rounded-l-lg hover:bg-gray-50"
+                                                                className="px-4 py-2 border border-gray-300 rounded-l-lg hover:bg-gray-50 transition-colors"
                                                             >
                                                                 -
                                                             </button>
@@ -395,7 +437,7 @@ export default function EventRegister({ auth, event }) {
                                                                 onChange={handleChange}
                                                                 min="0"
                                                                 max="5"
-                                                                className="w-20 px-4 py-2 border-t border-b border-gray-300 text-center"
+                                                                className="w-20 px-4 py-2 border-t border-b border-gray-300 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                             />
                                                             <button
                                                                 type="button"
@@ -403,14 +445,14 @@ export default function EventRegister({ auth, event }) {
                                                                     ...prev,
                                                                     additional_attendees: Math.min(5, prev.additional_attendees + 1)
                                                                 }))}
-                                                                className="px-4 py-2 border border-gray-300 rounded-r-lg hover:bg-gray-50"
+                                                                className="px-4 py-2 border border-gray-300 rounded-r-lg hover:bg-gray-50 transition-colors"
                                                             >
                                                                 +
                                                             </button>
                                                         </div>
                                                         <p className="text-xs text-gray-500 mt-2">
-                                            You can bring up to 5 additional attendees
-                                        </p>
+                                                            You can bring up to 5 additional attendees
+                                                        </p>
                                                     </div>
                                                 </div>
 
@@ -452,7 +494,7 @@ export default function EventRegister({ auth, event }) {
                                                         name="agree_to_terms"
                                                         checked={formData.agree_to_terms}
                                                         onChange={handleChange}
-                                                        className="mt-1 mr-3"
+                                                        className="mt-1 mr-3 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                                     />
                                                     <div>
                                                         <label htmlFor="agree_to_terms" className="text-sm text-gray-700">
@@ -472,7 +514,7 @@ export default function EventRegister({ auth, event }) {
                                             <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
                                                 <button
                                                     type="button"
-                                                    onClick={handleCancel}
+                                                    onClick={closeModal}
                                                     className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all duration-300"
                                                     disabled={isSubmitting}
                                                 >
@@ -501,13 +543,13 @@ export default function EventRegister({ auth, event }) {
                                                 </button>
                                             </div>
                                         </form>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </>
     );
 }
