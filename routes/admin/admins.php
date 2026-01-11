@@ -64,3 +64,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:su
     Route::put('/profile/password', [AdminManagementController::class, 'updatePassword'])
         ->name('profile.password.update');
 });
+
+// Include admin route files
+require __DIR__.'/admin/auth.php';
+require __DIR__.'/admin/dashboard.php';
+require __DIR__.'/admin/users.php';
+require __DIR__.'/admin/settings.php';
