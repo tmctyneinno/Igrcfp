@@ -19,6 +19,7 @@ class AuthenticateAdmin
             }
         }
 
-        return redirect()->route('admin.login');
+        // return redirect()->route('admin.login');
+        return echo "Login";
     }
 }
