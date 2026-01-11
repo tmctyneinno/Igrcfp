@@ -27,7 +27,7 @@ const valuesData = [
 
 export default function OurValues() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-0 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="text-center mb-12">
