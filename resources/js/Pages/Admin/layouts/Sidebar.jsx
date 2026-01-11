@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function SideBar() {
     const [openMenu, setOpenMenu] = useState(null);
