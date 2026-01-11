@@ -31,4 +31,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
+// Include admin route files
+require __DIR__.'/admin/auth.php';
+require __DIR__.'/admin/dashboard.php';
+require __DIR__.'/admin/users.php';
+require __DIR__.'/admin/settings.php';
