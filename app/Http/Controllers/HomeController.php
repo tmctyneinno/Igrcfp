@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Event;
 use Inertia\Inertia;
 
 class HomeController extends Controller
