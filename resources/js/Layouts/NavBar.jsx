@@ -144,7 +144,7 @@ export default function NavBar({ auth }) {
 
                 {/* Authentication Buttons */}
                 <div className="flex items-center space-x-4">
-                    {auth.user ? (
+                    {auth && auth.user ? (
                         <div className="flex items-center space-x-4">
                             <Link 
                                 href='/dashboard'
