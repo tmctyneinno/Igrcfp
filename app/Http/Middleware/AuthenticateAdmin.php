@@ -9,18 +9,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthenticateAdmin
 {
-    public function handle(Request $request, Closure $next, string ...$guards): Response
+    public function handle(Request $request, Closure $next, $guard = null)
     {
-        $guards = empty($guards) ? [null] : $guards;
-        // $guard = $guards[0] ?? 'admin';
-        
+        $guard = $guard ?? 'web';
 
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return $next($request);
+        if (Auth::guard($guard)->check()) {
+            if ($guard === 'admin') {
+                return redirect()->route('admin.dashboard'); // admin users
             }
+
+            return redirect()->route('home'); // normal users
         }
 
-        return redirect()->route('admin.login');
+        return $next($request);
     }
 }
