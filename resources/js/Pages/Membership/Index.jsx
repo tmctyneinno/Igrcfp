@@ -5,7 +5,7 @@ import MembershipCTA from '@/Pages/Membership/MembershipCTA';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 
-export default function Membership({ auth, membershipData, title, description }) {
+export default function Membership({ auth, title, description }) {
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
@@ -26,7 +26,7 @@ export default function Membership({ auth, membershipData, title, description })
             <MembershipCTA />
             <JoinIGRCFP />
             <MembershipOptions />
-            <MembershipTable membershipData={membershipData} />
+            <MembershipTable/>
            
         </GuestLayout>
     );
