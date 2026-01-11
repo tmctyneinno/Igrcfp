@@ -66,7 +66,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:su
 });
 
 // Include admin route files
-require __DIR__.'/admin/auth.php';
+require __DIR__.'/auth.php';
 require __DIR__.'/admin/dashboard.php';
 require __DIR__.'/admin/users.php';
 require __DIR__.'/admin/settings.php';
