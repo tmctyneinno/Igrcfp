@@ -13,8 +13,8 @@ export default function Events({ auth, title, description }) {
                             {title}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
-                        </p>
+                           Our Upcoming Events 
+                        </p> 
                     </div>
                 </div>
             </section>
