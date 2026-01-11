@@ -10,7 +10,7 @@ class AdminLoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('admin.auth.login');
+        return Inertia::render('admin.auth.login');
     }
 
     public function login(Request $request)
