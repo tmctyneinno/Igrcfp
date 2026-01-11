@@ -41,8 +41,8 @@ Route::middleware('auth')->group(function () {
 
 
 // Auth routes (login, register, password reset, etc.)
-Auth::routes();
-
+// Auth::routes();
+require __DIR__.'/auth.php';
 require __DIR__.'/admin/admins.php';
 
 
