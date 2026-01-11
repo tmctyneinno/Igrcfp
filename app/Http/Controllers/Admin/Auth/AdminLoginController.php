@@ -9,7 +9,27 @@ use Inertia\Inertia;
 
 class AdminLoginController extends Controller
 {
-    public function showLoginForm()
+     use AuthenticatesUsers;
+    
+    /**
+     * Where to redirect users after login.
+     */
+    protected $redirectTo = '/admin/dashboard';
+    
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct()
+    {
+        $this->middleware('guest:admin')->except('logout');
+    }
+    
+    protected function guard()
+    {
+        return Auth::guard('admin');
+    }
+    
+    public function showLoginForm() 
     {
         // return Inertia::render('Admin/Auth/Login');
         return view('admin.auth.login');
