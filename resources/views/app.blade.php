@@ -29,8 +29,8 @@
         <!--====== Default css ======-->
         <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        
-        <!-- Scripts -->
+        {{-- Admin --}}
+         <!-- Scripts -->
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
