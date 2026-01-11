@@ -23,21 +23,84 @@ export default function AdminLogin({ status }) {
         <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
             <Head title="Admin Login" />
             
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="flex justify-center">
-                    <img
-                        src="/assets/images/home-three/logo/logo-main.png"
-                        alt="IGRCFP Logo"
-                        className="h-16 w-auto"
-                    />
-                </div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Admin Portal
-                </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Sign in to access the admin dashboard
-                </p>
+           <section class="auth bg-base d-flex flex-wrap">  
+        <div class="auth-left d-lg-block d-none">
+            <div class="d-flex align-items-center flex-column h-100 justify-content-center">
+                <img src="{{ asset('assets/admin/images/auth/auth-img.png')}}" alt="">
             </div>
+        </div>
+        <div class="auth-right py-32 px-24 d-flex flex-column justify-content-center">
+            <div class="max-w-464-px mx-auto w-100">
+                <div>
+                    <div class="text-center mb-40">
+                        <a href="#" class="d-inline-block max-w-290-px">
+                            <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" style="width:60px" alt="">
+                        </a>
+                    </div>
+
+                    <h4 class="mb-12">Admin Sign In</h4>
+                    <p class="mb-32 text-secondary-light text-lg">Welcome back! please enter your detail</p>
+                </div> 
+                @if($errors->any())
+                    <div class="alert alert-danger mt-3">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+            <form action="{{ route('admin.login') }}" method="POST">
+                    @csrf 
+                    <div class="icon-field mb-16">
+                        <span class="icon top-50 translate-middle-y">
+                            <iconify-icon icon="mage:email"></iconify-icon>
+                        </span>
+                        <input type="email" name="email" value="{{ old('email') }}" class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Email" required>
+                    </div>
+                    <div class="position-relative mb-20">
+                        <div class="icon-field">
+                            <span class="icon top-50 translate-middle-y">
+                                <iconify-icon icon="solar:lock-password-outline"></iconify-icon>
+                            </span> 
+                            <input type="password" name="password" class="form-control h-56-px bg-neutral-50 radius-12" id="your-password" placeholder="Password" required>
+                        </div>
+                        <span class="toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light" data-toggle="#your-password"></span>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="mb-16">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span class="checkmark"></span>
+                            Remember Me
+                        </label>
+                    </div>
+
+                    <!-- Error Messages -->
+                    @if($errors->any())
+                        <div class="alert alert-danger mb-16">
+                            @foreach($errors->all() as $error)
+                                <p class="mb-0">{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger mb-16">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="alert alert-success mb-16">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <button type="submit" class="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-32">Sign In</button>
+
+                
+                </form>
+            </div>
+        </div>
+    </section>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
