@@ -4,7 +4,7 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function BecomeMember() {
     return (
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-0">
             {/* TOP CONTENT */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
 
