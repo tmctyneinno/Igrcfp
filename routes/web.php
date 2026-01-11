@@ -3,7 +3,7 @@
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
