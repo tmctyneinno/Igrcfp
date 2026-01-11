@@ -26,7 +26,7 @@ export default function MembershipTable() {
     },
     {
         category: "Corporate Membership",
-        annualFee: "$1500",
+        annualFee: "1500",
         benefits: "Multi-user access, brand recognition, and sponsorship discounts.",
     },
 ];
