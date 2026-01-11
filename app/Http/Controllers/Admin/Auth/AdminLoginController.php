@@ -32,6 +32,9 @@ class AdminLoginController extends Controller
 
     public function showLoginForm() 
     {
+        if (request()->is('login') && !request()->is('admin/*')) {
+            return redirect()->route('admin.login');
+        }
         // return Inertia::render('Admin/Auth/Login');
         return view('admin.auth.login');
     }
