@@ -29,7 +29,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="Log in" /> 
             
             <div className="min-h-screen flex">
                 {/* Left Side - Image */}
