@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/slick.css')}}">
   <!-- main css -->
   <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css')}}">
-</head>
+</head> 
   <body>
 
     <section class="auth bg-base d-flex flex-wrap">  
