@@ -25,13 +25,13 @@ export default function MembershipCTA() {
                 </div>
 
                 {/* RIGHT IMAGE COLLAGE */}
-                <div className=" h-[420px] w-full">
+                <div className=" h-10 md:h-16 object-contain w-full">
 
                     {/* Top images */}
                     <img
                         src="assets/images/home-three/gallery/membership.png"
                         alt=""
-                        className="absolute top-0 left-20 w-36 h-44 object-cover rounded-md"
+                        className=" h-10 md:h-16 object-contain object-cover rounded-md"
                     />
 
 
