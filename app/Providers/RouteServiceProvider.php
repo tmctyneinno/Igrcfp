@@ -19,20 +19,20 @@ class RouteServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-{
-    $this->configureRateLimiting();
+    {
+        $this->configureRateLimiting();
 
-    $this->routes(function () {
-        Route::middleware('api')
-            ->prefix('api')
-            ->group(base_path('routes/api.php'));
+        $this->routes(function () {
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
 
-        Route::middleware('web')
-            ->group(base_path('routes/web.php'));
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
 
-        // Add this line
-        Route::middleware('web')
-            ->group(base_path('routes/admin.php'));
-    });
-}
+            // Add this line
+            Route::middleware('web')
+                ->group(base_path('routes/admin.php'));
+        });
+    }
 }
