@@ -526,7 +526,7 @@ export default function EventRegister({ auth, event }) {
                                                     className={`flex-1 px-6 py-3 font-medium rounded-lg transition-all duration-300 ${
                                                         isSubmitting || event.registration_status === 'sold_out'
                                                             ? 'bg-gray-400 cursor-not-allowed'
-                                                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'
+                                                            : 'bg-gradient-to-r from-blue-900 to-indigo-900 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'
                                                     }`}
                                                 >
                                                     {isSubmitting ? (
