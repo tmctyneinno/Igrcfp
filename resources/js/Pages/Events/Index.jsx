@@ -94,7 +94,7 @@ export default function Events({ auth, title, description, events }) {
                                         <div className="md:w-1/3 lg:w-2/5">
                                             <div className="relative h-48 md:h-full overflow-hidden">
                                                 <img
-                                                    src={getImageUrl(event.image_url)}
+                                                    src={getImageUrl(event.image)}
                                                     alt={event.title}
                                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
