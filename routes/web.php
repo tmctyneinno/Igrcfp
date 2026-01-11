@@ -12,8 +12,9 @@ Route::get('/welcome-to-igrcfp', [HomeController::class, 'welcomeToIGRCFP'])->na
 Route::get('/our-structure', [HomeController::class, 'OurStructure'])->name('our-structure');
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
-Route::get('/events', [HomeController::class, 'eventsIndex'])->name('events');
-Route::get('/events/show/{slug}', [HomeController::class, 'eventShow'])->name('events.show');
+Route::get('/events', [HomeController::class, 'eventsIndex'])->name('events.index');
+Route::get('/events/{slug}', [HomeController::class, 'eventShow'])->name('events.show');
+Route::get('/events/register', [HomeController::class, 'eventRegister'])->name('events.register');
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'blog'])->name('contact');
 
