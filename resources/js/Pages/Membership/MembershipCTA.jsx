@@ -1,10 +1,9 @@
-import { motion } from "framer-motion";
-import { Link } from "@inertiajs/react";
-import { fadeLeft, scaleIn } from "@/utils/motionPresets";
+import { Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 
 export default function MembershipCTA() {
     return (
-        <section className="bg-white py-24">
+        <section className="bg-white py-10">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
                 {/* LEFT CONTENT */}
@@ -18,7 +17,7 @@ export default function MembershipCTA() {
                     </p>
 
                     <Link
-                        href="/login"
+                        href="/membership"
                         className="inline-flex items-center gap-3 bg-blue-950 text-white px-7 py-4 rounded-lg font-medium hover:bg-blue-800 transition"
                     >
                         Become a Member Today
@@ -26,12 +25,12 @@ export default function MembershipCTA() {
                     </Link>
                 </div>
 
-                {/* RIGHT IMAGE COLLAGE */}
-                {/* <div className=" h-10 md:h-16 object-contain w-full"> */}
+                {/* RIGHT IMAGE (Framer Motion) */}
+                <div className="flex justify-center lg:justify-end">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
                         viewport={{ once: true }}
                         className="rounded-3xl overflow-hidden"
                     >
@@ -41,8 +40,7 @@ export default function MembershipCTA() {
                             className="max-w-2xl w-full pt-24"
                         />
                     </motion.div>
-
-                {/* </div> */}
+                </div>
 
             </div>
         </section>
