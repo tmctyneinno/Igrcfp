@@ -13,6 +13,7 @@ Route::get('/our-structure', [HomeController::class, 'OurStructure'])->name('our
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
+Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
