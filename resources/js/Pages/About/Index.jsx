@@ -33,6 +33,8 @@ export default function AboutIndex({ auth, title, description }) {
             
             <OurValues />
 
+            <
+
            
         </GuestLayout>
     );
