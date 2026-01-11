@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import BoardOfTrustees from '@/Pages/About/OurStructure/BoardOfTrustees';
+import MembershipCTA from '@/Pages/Membership/MembershipCTA';
 
 export default function Membership({ auth, title, description }) {
     return (
