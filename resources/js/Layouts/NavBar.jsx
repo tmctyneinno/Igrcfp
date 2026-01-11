@@ -44,7 +44,7 @@ export default function NavBar({ auth }) {
                 </div>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden md:flex items-center space-x-8">
+                <div className="hidden md:flex items-center space-x-">
                     <Link 
                         href="/" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
