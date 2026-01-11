@@ -85,7 +85,7 @@ class HomeController extends Controller
     public function events(){
         $events = Event::query()
         ->where('status', 'published')
-        ->orderBy('event_date', 'asc')
+        ->orderBy('start_date', 'asc')
         ->paginate(10);
 
         return Inertia::render('Events/Index', [
