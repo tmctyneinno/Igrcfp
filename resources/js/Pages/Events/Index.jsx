@@ -10,13 +10,11 @@ export default function Events({ auth, title, description, events }) {
     const availableCount = eventsData.filter(e => e.registration_status === 'available').length;
     const totalCount = eventsData.length;
 
-    // Helper function to get image URL
-   
-
     // Helper function to get image URL for storage/app/public
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return '/images/default-event.jpg';
         
+        // If image is stored in storage/app/public
         if (imageUrl.startsWith('storage/')) {
             return `/${imageUrl}`;
         }
@@ -30,6 +28,18 @@ export default function Events({ auth, title, description, events }) {
         }
         // Default: assume it's in storage/app/public
         return `/storage/${imageUrl}`;
+    };
+
+    // Format time display
+    const formatTimeDisplay = (event) => {
+        if (event.start_time && event.end_time) {
+            return `${event.start_time} - ${event.end_time}`;
+        } else if (event.event_time) {
+            return event.event_time;
+        } else if (event.start_time) {
+            return `${event.start_time} (Start)`;
+        }
+        return 'Time TBA';
     };
 
     return (
@@ -89,11 +99,14 @@ export default function Events({ auth, title, description, events }) {
                                     <div className="flex flex-col md:flex-row">
                                         {/* Event Image - Smaller */}
                                         <div className="md:w-1/3 lg:w-2/5">
-                                            <div className="relative h-48 md:h-full overflow-hidden">
+                                            <div className="relative h-48 md:h-full overflow-hidden bg-gray-100">
                                                 <img
-                                                    src={getImageUrl(event.image)}
+                                                    src={getImageUrl(event.image_url)}
                                                     alt={event.title}
                                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.src = '/images/default-event.jpg';
+                                                    }}
                                                 />
                                                 {event.is_featured && (
                                                     <div className="absolute top-3 left-3">
@@ -102,6 +115,7 @@ export default function Events({ auth, title, description, events }) {
                                                         </span>
                                                     </div>
                                                 )}
+                                                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/10 to-transparent" />
                                             </div>
                                         </div>
 
@@ -114,8 +128,6 @@ export default function Events({ auth, title, description, events }) {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                     </svg>
                                                     <span className="font-medium">{event.event_date}</span>
-                                                    <span className="mx-1.5">•</span>
-                                                    <span>{event.event_time}</span>
                                                 </div>
 
                                                 {/* Title */}
@@ -126,12 +138,58 @@ export default function Events({ auth, title, description, events }) {
                                                 </h3>
 
                                                 {/* Venue */}
-                                                <div className="flex items-center text-gray-600 text-sm mb-3">
+                                                <div className="flex items-center text-gray-600 text-sm mb-2">
                                                     <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     </svg>
                                                     <span className="line-clamp-1">{event.venue || event.location}</span>
+                                                </div>
+
+                                                {/* Event Time Details */}
+                                                <div className="space-y-1.5 mb-3">
+                                                    {/* Start Time */}
+                                                    {event.start_time && (
+                                                        <div className="flex items-center text-gray-700 text-sm">
+                                                            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-medium mr-1">Start:</span>
+                                                            <span>{event.start_time}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* End Time */}
+                                                    {event.end_time && (
+                                                        <div className="flex items-center text-gray-700 text-sm">
+                                                            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-medium mr-1">End:</span>
+                                                            <span>{event.end_time}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Combined Time Display (alternative) */}
+                                                    {!event.start_time && !event.end_time && event.event_time && (
+                                                        <div className="flex items-center text-gray-700 text-sm">
+                                                            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                            <span className="font-medium mr-1">Time:</span>
+                                                            <span>{event.event_time}</span>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Duration if available */}
+                                                    {event.duration && (
+                                                        <div className="flex items-center text-gray-600 text-xs">
+                                                            <svg className="w-3 h-3 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                            </svg>
+                                                            <span>Duration: {event.duration}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Description Excerpt - Smaller */}
