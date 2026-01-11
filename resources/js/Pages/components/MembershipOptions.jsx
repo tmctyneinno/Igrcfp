@@ -89,7 +89,7 @@ export default function MembershipOptions() {
                     </div>
 
                     <h2 className="text-4xl xl:text-5xl font-bold text-blue-900">
-                        Our Membership Options
+                        Our Membership Categories
                     </h2>
                 </motion.div>
 
