@@ -19,7 +19,6 @@ class AuthenticateAdmin
             }
         }
 
-        // return redirect()->route('admin.login');
-        return  "Login";
+        return redirect()->route('admin.login');
     }
 }
