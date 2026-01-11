@@ -7,6 +7,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\EventRegistration;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
 
