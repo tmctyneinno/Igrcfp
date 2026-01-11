@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, React } from "react";
 import NavBar from "@/Layouts/NavBar";
 import Footer from '@/Layouts/Footer'; 
 import AOS from "aos";
