@@ -6,7 +6,7 @@ import CoreServices from '@/Pages/About/CoreServices';
 import PartnersSlider from '@/Pages/About/PartnersSlider';
 import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
 
-export default function AboutIndex({ auth, title, description }) {
+export default function OurStructure({ auth, title, description }) {
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
