@@ -41,7 +41,7 @@ export default function BoardOfTrustees() {
                     </h3>
 
                     <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
-                        <li>Establishing the strategic vision and mission of IFPN.</li>
+                        <li>Establishing the strategic vision and mission of IGRCFP.</li>
                         <li>Overseeing governance policies and ensuring sustainability.</li>
                         <li>Approving annual budgets and financial reports.</li>
                         <li>Appointing council members and leadership succession.</li>
@@ -85,9 +85,9 @@ export default function BoardOfTrustees() {
                     </h3>
 
                     <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
-                        <li>Establishing the strategic vision and mission of IFPN.</li>
-                        <li>Overseeing governance policies and ensuring sustainability.</li>
-                        <li>Approving annual budgets and financial reports.</li>
+                        <li>Developing and reviewing policies to ensure alignment with the Institute’s objectives.</li>
+                        <li>Approving the Institute’s code of conduct, certification requirements, and membership policies.</li>
+                        <li>Advising on matters related to education, certification, and professional development.</li>
                         <li>Appointing council members and leadership succession.</li>
                         <li>Ensuring compliance with Nigerian and international standards.</li>
                     </ul>
