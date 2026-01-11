@@ -65,7 +65,7 @@ export default function NavBar({ auth }) {
                         
                         {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            <Link href='welcome-to-igrcfp' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                            <Link href='/welcome-to-igrcfp' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Welcome to IGRCFP
                             </Link>
                             <Link href='our-structure' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
@@ -146,8 +146,8 @@ export default function NavBar({ auth }) {
                 <div className="flex items-center space-x-4">
                     {auth.user ? (
                         <div className="flex items-center space-x-4">
-                            <Link
-                                href={route('dashboard')}
+                            <Link 
+                                href='/dashboard'
                                 className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                             >
                                 Dashboard
@@ -183,7 +183,7 @@ export default function NavBar({ auth }) {
                                     </Link>
                                     <div className="border-t border-gray-100 my-1"></div>
                                     <Link 
-                                        href={route('logout')} 
+                                        href='/logout' 
                                         method="post"
                                         className="block px-4 py-3 text-red-600 hover:bg-red-50 transition duration-200"
                                     >
@@ -201,7 +201,7 @@ export default function NavBar({ auth }) {
                         <>
                             
                             <Link
-                                href={route('login')}
+                                href='/login'
                                 className="bg-blue-950 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
                             >
                                 Join the Institute
@@ -387,14 +387,14 @@ export default function NavBar({ auth }) {
                         {!auth.user && (
                             <div className="pt-4 border-t border-gray-100 mt-2">
                                 <Link
-                                    href={route('login')}
+                                    href='/login'
                                     className="block text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Sign In
                                 </Link>
                                 <Link
-                                    href={route('register')}
+                                    href='/register'
                                     className="block bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 mt-2 text-center transition duration-300"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >

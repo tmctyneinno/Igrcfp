@@ -30,4 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('guest')->group(function () {
+    Route::get('/register', function () { return inertia('Auth/Register');})->name('register');
+    
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
+});
+
 require __DIR__.'/admin/admins.php';
