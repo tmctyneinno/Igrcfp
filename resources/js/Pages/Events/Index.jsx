@@ -32,7 +32,7 @@ export default function Events({ auth, title, description, events }) {
     };
 
     // Format time display
-    const formatTimeDisplay = (event) => {
+    const formatTime = (event) => {
         if (event.start_time && event.end_time) {
             return `${event.start_time} - ${event.end_time}`;
         } else if (event.event_time) {
@@ -144,7 +144,7 @@ export default function Events({ auth, title, description, events }) {
                                                 </div>
 
                                                 {/* Title */}
-                                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-950 transition-colors line-clamp-2">
+                                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
                                                     <Link href={route('events.show', event.slug)} className="hover:no-underline">
                                                         {event.title}
                                                     </Link>
