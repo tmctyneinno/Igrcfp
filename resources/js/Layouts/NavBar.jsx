@@ -88,7 +88,7 @@ export default function NavBar({ auth }) {
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
-                        </button>
+                        </Link>
                         
                         {/* Invisible hover bridge */}
                         <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
