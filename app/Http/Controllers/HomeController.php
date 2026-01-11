@@ -135,6 +135,65 @@ class HomeController extends Controller
         ]);
     }
 
+    public function storeEventRegistration(Request $request, $slug)
+    {
+        $event = Event::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        // Validate registration
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'company' => 'nullable|string|max:255',
+            'position' => 'nullable|string|max:255',
+            'additional_attendees' => 'nullable|integer|min:0|max:5',
+            'dietary_requirements' => 'nullable|string|max:500',
+            'special_requirements' => 'nullable|string|max:500',
+            'hear_about_event' => 'nullable|string|max:255',
+            'agree_to_terms' => 'required|accepted',
+        ]);
+
+        // Check availability
+        $totalAttendees = 1 + ($validated['additional_attendees'] ?? 0);
+        if ($event->available_seats < $totalAttendees) {
+            return response()->json([
+                'errors' => ['general' => 'Not enough seats available.']
+            ], 422);
+        }
+
+        // Create registration
+        $registration = Registration::create([
+            'event_id' => $event->id,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'company' => $validated['company'],
+            'position' => $validated['position'],
+            'additional_attendees' => $validated['additional_attendees'] ?? 0,
+            'dietary_requirements' => $validated['dietary_requirements'],
+            'special_requirements' => $validated['special_requirements'],
+            'hear_about_event' => $validated['hear_about_event'],
+            'registration_number' => 'REG-' . strtoupper(Str::random(8)),
+            'status' => 'pending',
+        ]);
+
+        // Update available seats
+        $event->decrement('available_seats', $totalAttendees);
+
+        // Send confirmation email
+        Mail::to($validated['email'])->send(new EventRegistrationConfirmation($registration, $event));
+
+        // Send notification to admin
+        Mail::to(config('mail.admin_email'))->send(new NewEventRegistration($registration, $event));
+
+        return response()->json([
+            'message' => 'Registration successful!',
+            'registration' => $registration
+        ]);
+    }
+
      public function blog(){
         return Inertia::render('Blog/Index', [
             'title' => 'Blog',
