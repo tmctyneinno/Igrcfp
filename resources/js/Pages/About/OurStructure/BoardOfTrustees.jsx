@@ -71,6 +71,27 @@ export default function BoardOfTrustees() {
                             </div>
                         ))}
                     </div> */}
+
+                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                        The Governing Council
+                    </h1>
+
+                    <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
+                        The Governing Council is responsible for the formulation and implementation of the Institute's policies, providing direction for the activities of the Executive Management, and overseeing the Institute's core functions, including membership, education, certification, and research. 
+                    </p>
+
+                    <h3 className="font-semibold text-gray-900 mb-3">
+                        Key Responsibilities:
+                    </h3>
+
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
+                        <li>Establishing the strategic vision and mission of IFPN.</li>
+                        <li>Overseeing governance policies and ensuring sustainability.</li>
+                        <li>Approving annual budgets and financial reports.</li>
+                        <li>Appointing council members and leadership succession.</li>
+                        <li>Ensuring compliance with Nigerian and international standards.</li>
+                    </ul>
+
                 </div>
 
                 {/* RIGHT SIDEBAR */}
