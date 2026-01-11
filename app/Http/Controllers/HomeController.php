@@ -193,10 +193,18 @@ class HomeController extends Controller
         // Send notification to admin
         Mail::to(config('mail.admin_email'))->send(new NewEventRegistration($registration, $event));
 
-        return response()->json([
-            'message' => 'Registration successful!',
-            'registration' => $registration
-        ]);
+            return response()->json([
+                'message' => 'Registration successful!',
+                'registration' => $registration
+            ], 201);
+        } catch (\Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            
+            return response()->json([
+                'errors' => ['general' => 'An error occurred during registration. Please try again.']
+            ], 500);
+        }
+    }
     }
 
      public function blog(){
