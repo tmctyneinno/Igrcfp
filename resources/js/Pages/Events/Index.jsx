@@ -42,6 +42,17 @@ export default function Events({ auth, title, description, events }) {
         return 'Time TBA';
     };
 
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Date TBA';
+        try {
+            // For ISO string: "2025-12-12T00:00:00.000000Z"
+            return format(parseISO(dateString), 'MMMM dd, yyyy');
+            // Or: format(parseISO(dateString), 'dd MMM yyyy');
+        } catch (error) {
+            return 'Date TBA';
+        }
+    };
+
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
