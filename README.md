@@ -69,3 +69,8 @@ npm install aos
 
 chmod -R 775 storage/
 chmod -R 775 bootstrap/cache/
+
+Admin
+superadmin@igrcfp.org
+password123
+ 
