@@ -21,7 +21,7 @@ export default function OurStructure({ auth, title, description }) {
             </section>
 
             <BoardOfTrustees />
-
+ 
            
         </GuestLayout>
     );
