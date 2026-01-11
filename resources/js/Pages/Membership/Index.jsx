@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import MentorshipProgramme from "@/Pages/Membership/components/MentorshipProgramme";
 import MembershipTable from "@/Pages/Membership/components/MembershipTable";
-import MembershipTable from "@/Pages/Membership/components/MembershipTable";MentorshipProgramme
 import MembershipCTA from '@/Pages/Membership/components/MembershipCTA';
 import MembershipOptions from "@/Pages/components/MembershipOptions";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
