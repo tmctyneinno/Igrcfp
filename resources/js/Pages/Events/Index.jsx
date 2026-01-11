@@ -1,3 +1,4 @@
+import React from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { format, parseISO } from 'date-fns';
