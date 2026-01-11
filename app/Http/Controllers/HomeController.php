@@ -76,7 +76,7 @@ class HomeController extends Controller
 
     public function certifications(){
         return Inertia::render('Certifications/Index', [
-            'title' => 'Membership',
+            'title' => 'Certifications',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
