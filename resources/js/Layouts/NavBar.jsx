@@ -61,16 +61,16 @@ export default function NavBar({ auth }) {
                         </button>
                         
                         {/* Invisible hover bridge */}
-                        {/* <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div> */}
+                        <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                         
                         {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
                             <Link href="/welcome-to-igrcfp" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Welcome to IGRCFP
                             </Link>
-                            <Link href="/our-structure" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                            {/* <Link href="/our-structure" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Our Structure
-                            </Link>
+                            </Link> */}
                         </div>
                     </div>
 
