@@ -68,7 +68,7 @@ export default function NavBar({ auth }) {
                             <Link href='/welcome-to-igrcfp' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Welcome to IGRCFP
                             </Link>
-                            <Link href='our-structure' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                            <Link href='/our-structure' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Our Structure
                             </Link>
                         </div>
