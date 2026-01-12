@@ -76,6 +76,7 @@ password123
  php artisan make:migration create_event_registrations_table
 
  composer require laravel/ui
+ 
 php artisan ui bootstrap --auth
 npm install @inertiajs/react react react-dom @vitejs/plugin-react
 
