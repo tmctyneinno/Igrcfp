@@ -47,13 +47,13 @@ class ContactController extends Controller
             $cleanPhone = preg_replace('/[^\d+]/', '', $validated['phone']);
             Log::info('Phone cleaned:', ['original' => $validated['phone'], 'cleaned' => $cleanPhone]);
             
-            // Create contact message
+              // Map camelCase to snake_case for database
             $contactMessage = ContactMessage::create([
-                'first_name' => $validated['first_name'],
+                'first_name' => $validated['firstName'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
-                'phone' => $cleanPhone,
-                'country_code' => $validated['country_code'],
+                'phone' => preg_replace('/[^\d+]/', '', $validated['phone']),
+                'country_code' => $validated['countryCode'],
                 'message' => $validated['message'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
