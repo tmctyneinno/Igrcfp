@@ -100,9 +100,13 @@ export default function Index({ auth, title }) {
              <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                    <div className="text-center">
-                        <div className="inline-flex items-center bg-blue-100 px-3 py-1 justify-center space-x-2 mb-6">
+                        <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
                             <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className="text-blue-300 font-medium text-sm uppercase tracking-wider"> {title}</span>
+                             <span className="text-blue-300 font-medium text-sm  tracking-wider"> {title}</span>
+                        </div>
+                        <div className="inline-flex items-center bg-blue-100 px-3 py-1 justify-center space-x-2 mb-6 rounded-full">
+                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                           
                         </div>
                         <h1 
                             id="page-title"
