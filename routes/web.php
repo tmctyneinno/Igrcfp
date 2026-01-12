@@ -24,7 +24,6 @@ Route::post('/events/{slug}/register', [EventController::class, 'storeEventRegis
 
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/contact/create', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
