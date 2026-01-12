@@ -358,7 +358,7 @@ export default function Index({ auth, title }) {
                     </div>
                     
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InputField
                                 label="First Name"
                                 id="first_name"
