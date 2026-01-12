@@ -377,9 +377,9 @@ export default function Index({ auth, title }) {
                                         
                                         <InputField
                                             label="Last Name"
-                                            id="lastName"
-                                            name="lastName"
-                                            placeholder="Doe"
+                                            id="last_name"
+                                            name="last_name"
+                                            placeholder=""
                                             autoComplete="family-name"
                                         />
                                     </div>
@@ -402,8 +402,8 @@ export default function Index({ auth, title }) {
                                         <div className="flex flex-col sm:flex-row gap-4">
                                             <div className="sm:w-48">
                                                 <select
-                                                    name="countryCode"
-                                                    id="countryCode"
+                                                    name="country_code"
+                                                    id="country_code"
                                                     value={data.countryCode}
                                                     onChange={handleChange}
                                                     disabled={processing}
