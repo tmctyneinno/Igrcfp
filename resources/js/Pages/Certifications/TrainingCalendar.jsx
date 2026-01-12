@@ -88,6 +88,15 @@ export default function Index({ auth, title }) {
                                     <td className="px-4 py-4">Virtual Masterclass</td>
                                     <td className="px-4 py-4">Risk managers, reporting officers</td>
                                 </tr>
+                                 <tr>
+                                    <td className="px-4 py-4"></td>
+                                    <td className="px-4 py-4 font-medium">
+                                        Executive Short Course: ESG & Sustainable Finance Compliance
+                                    </td>
+                                    <td className="px-4 py-4">Jun 9 – Jun 11, 2025</td>
+                                    <td className="px-4 py-4">Virtual Masterclass</td>
+                                    <td className="px-4 py-4">Risk managers, reporting officers</td>
+                                </tr>
 
                                 <tr>
                                     <td className="px-4 py-4">Q3 2025</td>
