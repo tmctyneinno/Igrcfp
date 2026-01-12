@@ -96,7 +96,7 @@ export default function Blog({ auth, title, description }) {
             </section>
 
             {/* Newsletter Subscription Section */}
-            <section className="mx-auto px-4 py-12 rounded-lg w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16">
+            <section className="max-w-7xl mx-auto px-4 rounded-lg  bg-gradient-to-r from-blue-600 via-blue-00 to-green-500 ">
                 <div className="mx-6 md:mx-12 lg:mx-16 xl:mx-24"> {/* Increased margins */}
                     <div className="max-w-7xl mx-auto text-white text-center py-8 md:py-12 lg:py-16">
                         <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
@@ -118,36 +118,6 @@ export default function Blog({ auth, title, description }) {
                 </div>
             </section>
 
-            {/* Newsletter Subscription Section */}
-<section className="px-4  w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16 rounded-lg">
-    <div className="px-4  max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="text-white text-center">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4 md:mb-6">Never miss an update.</h3>
-            <p className="text-lg md:text-xl mb-8 md:mb-10 opacity-90">Get insights delivered to your inbox.</p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8 md:mb-10">
-                <div className="w-full sm:w-auto sm:flex-1 max-w-md">
-                    <input
-                        type="email"
-                        placeholder="Enter your email"
-                        className="w-full py-3 px-4 border border-white rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                    />
-                </div>
-                <button className="w-full sm:w-auto py-3 px-8 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-300 whitespace-nowrap">
-                    Subscribe
-                </button>
-            </div>
-
-            <p className="text-sm md:text-base opacity-80">
-                We care about your data in our{' '}
-                <Link href="#" className="text-white font-medium underline hover:no-underline">
-                    privacy policy
-                </Link>
-                .
-            </p>
-        </div>
-    </div>
-</section>
             
 
 
