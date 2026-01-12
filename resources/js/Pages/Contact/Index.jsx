@@ -167,7 +167,7 @@ export default function Index({ auth, title }) {
             {/* Main Content Section */}
             <section className="py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols- gap-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                        
                         {/* Left  Column - Contact Information & Map */}
                         <div className="space-y-1">
