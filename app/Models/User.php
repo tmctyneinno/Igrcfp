@@ -88,7 +88,6 @@ class User extends Authenticatable
         'sms_notifications' => 'boolean',
         'newsletter_subscription' => 'boolean',
         'marketing_emails' => 'boolean',
-        'deleted_at' => 'datetime',
     ];
 
     /**
