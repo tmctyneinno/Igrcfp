@@ -193,7 +193,7 @@ export default function Index({ auth, title }) {
                                     </div>
 
                                     {/* Phone Card */}
-                                    <div className="flex items-start p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition-shadow duration-200">
+                                    {/* <div className="flex items-start p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition-shadow duration-200">
                                         <div className="flex-shrink-0">
                                             <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
                                                 <PhoneIcon className="h-6 w-6 text-white" />
@@ -201,18 +201,18 @@ export default function Index({ auth, title }) {
                                         </div>
                                         <div className="ml-5">
                                             <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                                            {/* <a 
+                                            <a 
                                                 href="tel:+2348000000000" 
                                                 className="text-emerald-600 hover:text-emerald-700 font-medium text-lg block mb-1"
                                             >
                                                 +234 800 000 0000
-                                            </a> */}
+                                            </a>
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <ClockIcon className="h-4 w-4 mr-1.5" />
                                                 Mon-Fri: 9AM-6PM WAT
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
 
                                     {/* Location Card */}
                                     <div className="flex items-start p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-shadow duration-200">
