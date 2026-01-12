@@ -17,15 +17,15 @@ export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
     
-    const { data, setData, post, processing, errors, reset } = useForm({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        countryCode: 'NG',
-        message: '',
-        agree: false,
-    });
+    const formData = {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        country_code: data.countryCode,
+        message: data.message,
+        agree: data.agree,
+    };
 
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
@@ -42,7 +42,7 @@ export default function Index({ auth, title }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form submitting...', data);
+        console.log('Form submitting...', formData);
         post(route('contact.store'), {
             preserveScroll: true,
             onSuccess: () => {
