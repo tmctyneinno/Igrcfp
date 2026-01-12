@@ -49,7 +49,7 @@ class ContactController extends Controller
             
               // Map camelCase to snake_case for database
             $contactMessage = ContactMessage::create([
-                'first_name' => $validated['firstName'],
+                'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'phone' => preg_replace('/[^\d+]/', '', $validated['phone']),
