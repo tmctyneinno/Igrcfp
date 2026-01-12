@@ -37,12 +37,11 @@ class ContactController extends Controller
             ]);
 
             // Send notification to admin
-            Mail::to(config('mail.admin.address', config('mail.from.address')))
-                ->send(new ContactFormSubmitted($contactMessage));
+            $adminEmail = config('mail.from.address'); // Use default from address
+            Mail::to($adminEmail)->send(new ContactFormSubmitted($contactMessage));
 
             // Send confirmation to user
-            Mail::to($contactMessage->email)
-                ->send(new ContactFormConfirmation($contactMessage));
+            Mail::to($contactMessage->email)->send(new ContactFormConfirmation($contactMessage));
 
             // Log successful submission
             Log::info('Contact form submitted successfully', [
