@@ -13,9 +13,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    protected $table = 'users';
 
     public const ROLE_TUTOR = 'tutor';
-    public const ROLE_LEARNER = 'learner';
+    public const ROLE_LEARNER = 'learner'; 
     
     public const STATUS_PENDING = 'pending';
     public const STATUS_ACTIVE = 'active';
