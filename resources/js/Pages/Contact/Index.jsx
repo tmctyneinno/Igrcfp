@@ -17,7 +17,7 @@ export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
     
-    const formData = {
+    const data = {
         first_name: data.firstName,
         last_name: data.lastName,
         email: data.email,
@@ -42,7 +42,7 @@ export default function Index({ auth, title }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form submitting...', formData);
+        console.log('Form submitting...', data);
         post(route('contact.store'), {
             preserveScroll: true,
             onSuccess: () => {
