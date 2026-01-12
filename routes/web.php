@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\CourseController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileController;ContactController
+use App\Http\Controllers\ProfileController;ContactController
 // use App\Http\Controllers\Auth\RegisteredUserController;
 // use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\EventController;
