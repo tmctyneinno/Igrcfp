@@ -96,3 +96,13 @@ php artisan key:generate --show
 2. npm install --production
 3. npm run build
 4. php artisan optimize:clear
+
+
+php artisan view:clear
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan clear-compiled
+
+# Also clear the compiled views cache
+rm -f storage/framework/views/*
