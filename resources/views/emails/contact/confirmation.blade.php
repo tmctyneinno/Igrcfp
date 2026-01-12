@@ -25,7 +25,7 @@
     </div>
     
     <div class="content">
-        <p>Dear <strong>{{ $message->full_name }}</strong>,</p>
+        <p>Dear <strong>{{ $message->first_name }} {{ $message->last_name }}</strong>,</p>
         
         <p>Thank you for reaching out to <strong>{{ config('app.name') }}</strong>. We have successfully received your inquiry and our team is reviewing it.</p>
 
