@@ -200,7 +200,7 @@ export default function Index({ auth, title }) {
                                     </p>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-6">
                                     {/* Email Card */}
                                     <div className="flex items-start p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-shadow duration-200">
                                         <div className="flex-shrink-0">
