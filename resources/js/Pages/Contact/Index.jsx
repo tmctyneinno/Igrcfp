@@ -204,12 +204,12 @@ export default function Index({ auth, title }) {
                 </div>
             )}
 
-            {flash.error && (
+            {flash?.error && (
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                     <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r">
                         <div className="flex items-center">
                             <ExclamationCircleIcon className="h-5 w-5 text-red-400 mr-3" />
-                            <p className="text-red-700">{flash.error}</p>
+                            <p className="text-red-700">{flash?.error}</p>
                         </div>
                     </div>
                 </div>
