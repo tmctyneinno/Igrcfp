@@ -11,7 +11,7 @@ export default function Certifications({ auth, title, description }) {
                    <div className="text-center">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                             {title}
-                        </h1>
+                        </h1> 
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                             The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
                         </p>
