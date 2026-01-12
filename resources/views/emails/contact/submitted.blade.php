@@ -27,38 +27,38 @@
         <div class="info-grid">
             <div class="info-item">
                 <span class="label">From:</span>
-                {{ $message->first_name }} {{ $message->last_name }}
+                {{ $contactMessage->first_name }} {{ $contactMessage->last_name }}
             </div>
             <div class="info-item">
                 <span class="label">Email:</span>
-                <a href="mailto:{{ $message->email }}">{{ $message->email }}</a>
+                <a href="mailto:{{ $contactMessage->email }}">{{ $contactMessage->email }}</a>
             </div>
             <div class="info-item">
                 <span class="label">Phone:</span>
-                {{ $message->formatted_phone ?? 'Not provided' }}
+                {{ $contactMessage->phone ? '+' . $contactMessage->country_code . ' ' . $contactMessage->phone : 'Not provided' }}
             </div>
             <div class="info-item">
                 <span class="label">Submitted:</span>
-                {{ $message->created_at->format('F j, Y \a\t g:i A') }}
+                {{ $contactMessage->created_at->format('F j, Y \a\t g:i A') }}
             </div>
         </div>
 
         <div class="message-box">
             <strong class="label">Message:</strong>
-            <p>{{ $message->message }}</p>
+            <p>{{ $contactMessage->message }}</p>
         </div>
 
         <div style="background: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <strong>📋 Submission Details:</strong>
             <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                <li>IP Address: {{ $message->ip_address ?? 'Not recorded' }}</li>
-                <li>Privacy Policy Agreed: {{ $message->privacy_agreed ? 'Yes' : 'No' }}</li>
-                <li>Status: <strong style="color: #e74c3c;">{{ ucfirst(str_replace('_', ' ', $message->status)) }}</strong></li>
+                <li>IP Address: {{ $contactMessage->ip_address ?? 'Not recorded' }}</li>
+                <li>Privacy Policy Agreed: {{ $contactMessage->privacy_agreed ? 'Yes' : 'No' }}</li>
+                <li>Status: <strong style="color: #e74c3c;">New</strong></li>
             </ul>
         </div>
 
         <div style="text-align: center;">
-            <a href="{{ url('/admin/contact-messages/' . $message->id) }}" class="btn">
+            <a href="{{ url('/admin/contact-messages/' . $contactMessage->id) }}" class="btn">
                 View in Admin Panel
             </a>
         </div>
