@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\BlogController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Dashboard Routes (Protected)
@@ -22,6 +23,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction'])
         ->name('dashboard.quick-action');
 
+    // Event Management
     Route::get('/events/index', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
@@ -44,5 +46,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::patch('/{blog}/toggle-status', [BlogController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/bulk-action', [BlogController::class, 'bulkAction'])->name('bulk-action');
     });
-    
+
 });
