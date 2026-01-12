@@ -70,7 +70,7 @@ export default function Index({ auth, title }) {
                                 </tr>
 
                                 <tr>
-                                    <td className="px-4 py-4">Q2 2025</td>
+                                    <td className="px-3 py-4">Q2 2025</td>
                                     <td className="px-4 py-4 font-medium">
                                         RegTech, SupTech & Innovation in Compliance
                                     </td>
@@ -143,7 +143,7 @@ export default function Index({ auth, title }) {
                                     </td>
                                     <td className="px-4 py-4">Nov 3 – Dec 19, 2025</td>
                                     <td className="px-4 py-4">Online (8 weeks)</td>
-                                    <td className="px-4 py-4">Compliance leaders, data scientists, risk executives</td>
+                                    <td className="px-4 py-4">New and mid-career compliance practitioners</td>
                                 </tr>
                             </tbody>
                         </table>
