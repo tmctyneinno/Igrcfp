@@ -16,17 +16,7 @@ use Illuminate\View\View;
 
 class ContactController extends Controller
 {
-    /**
-     * Show the contact form.
-     */
-    public function create(Request $request): View
-    {
-        return view('contact.create', [
-            'title' => 'Contact Us',
-            'countryCodes' => $this->getCountryCodes(),
-        ]);
-    }
-
+   
     /**
      * Handle contact form submission.
      */
