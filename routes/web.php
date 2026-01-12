@@ -25,7 +25,7 @@ Route::post('/events/{slug}/register', [EventController::class, 'storeEventRegis
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
-Route::get('/training-calendar', [HomeController::class, 'index'])->name('courses.index');
+Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->name('training.calendar');
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
