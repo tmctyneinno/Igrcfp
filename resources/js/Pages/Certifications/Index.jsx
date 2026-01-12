@@ -49,7 +49,7 @@ export default function Certifications({ auth, title, description }) {
                         {/* Image Section */}
                         <div className="relative">
                             <img
-                                src="/path-to-your-image.png" // Replace with your actual image path
+                                src="assets/images/home-three/gallery/certification.png" // Replace with your actual image path
                                 alt="Certification"
                                 className="rounded-lg shadow-lg object-cover w-full h-full"
                             />
