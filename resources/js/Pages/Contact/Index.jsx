@@ -103,6 +103,12 @@ export default function Index({ auth, title }) {
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                             {title}
                         </h1>
+                        <h1 
+                            id="page-title"
+                            className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                        >
+                            Let's Start a Conversation
+                        </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                             The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
                         </p>
