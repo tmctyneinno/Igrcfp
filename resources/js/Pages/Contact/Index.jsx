@@ -13,7 +13,7 @@ import {
     CheckBadgeIcon
 } from '@heroicons/react/24/outline';
 
-export default function ContactUs({ auth, title }) {
+export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
     
