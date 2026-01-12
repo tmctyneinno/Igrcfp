@@ -4,10 +4,10 @@ use App\Http\Controllers\Admin\BlogController;
 use Illuminate\Support\Facades\Route;
 
 // Blog Management Routes
-Route::prefix('blog')->name('blog.')->group(function () {
+Route::prefix('blog')->name('admin.')->group(function () {
     
     // Blog Posts - List all posts
-    Route::get('/posts', [BlogController::class, 'index'])->name('.index');
+    Route::get('/posts', [BlogController::class, 'index'])->name('blogs.index');
     
     // Create new post
     Route::get('/posts/create', [BlogController::class, 'create'])->name('posts.create');
