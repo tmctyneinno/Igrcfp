@@ -22,6 +22,11 @@ class ContactController extends Controller
      */
     public function store(ContactFormRequest $request): RedirectResponse
     {
+         \Log::info('Contact form submission attempt', [
+            'data' => $request->all(),
+            'ip' => $request->ip(),
+        ]);
+
         try {
             // Create contact message
             $contactMessage = ContactMessage::create([
