@@ -145,20 +145,7 @@ export default function Index({ auth, title }) {
                 </div>
             </section>
 
-            {/* DEBUG SECTION - Shows what's in flash object */}
-            {process.env.NODE_ENV !== 'production' && (
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                    <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-4">
-                        <h3 className="font-bold text-yellow-800 mb-2">Debug Information:</h3>
-                        <p className="text-sm text-yellow-700 mb-1">
-                            Flash object: {JSON.stringify(flash)}
-                        </p>
-                        <p className="text-sm text-yellow-700">
-                            Has success message: {flash?.success ? 'YES' : 'NO'}
-                        </p>
-                    </div>
-                </div>
-            )}
+           
 
             {/* SUCCESS MESSAGE - Always shows if there's a flash.success */}
             {flash?.success && (
