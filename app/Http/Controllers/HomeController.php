@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
-
+ 
 class HomeController extends Controller
 {
     public function index()
@@ -82,7 +82,7 @@ class HomeController extends Controller
 
     public function certifications(){
         return Inertia::render('Certifications/Index', [
-            'title' => 'Certifications',
+            'title' => 'Certifications & Trainings ',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
