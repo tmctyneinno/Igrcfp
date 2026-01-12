@@ -22,7 +22,7 @@ Route::get('/events/{slug}/register', [HomeController::class, 'eventRegister'])-
 Route::post('/events/{slug}/register', [EventController::class, 'storeEventRegistration'])->name('events.register.store');
 
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
-Route::get('/contact', [HomeController::class, 'blog'])->name('contact');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
