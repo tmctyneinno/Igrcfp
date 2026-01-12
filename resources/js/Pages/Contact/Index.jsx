@@ -16,16 +16,6 @@ import {
 export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
-    
-    const data = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        country_code: data.countryCode,
-        message: data.message,
-        agree: data.agree,
-    };
 
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
@@ -40,10 +30,23 @@ export default function Index({ auth, title }) {
         { code: 'DE', name: 'Germany (+49)' },
     ];
 
-    const handleSubmit = (e) => {
+   const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form submitting...', data);
-        post(route('contact.store'), {
+        
+        // Convert to snake_case for Laravel
+        const formData = {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            email: data.email,
+            phone: data.phone,
+            country_code: data.countryCode,
+            message: data.message,
+            agree: data.agree,
+        };
+        
+        console.log('Sending data:', formData);
+        
+        post(route('contact.store'), formData, {
             preserveScroll: true,
             onSuccess: () => {
                 console.log('Form submitted successfully');
