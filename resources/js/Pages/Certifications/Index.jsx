@@ -14,7 +14,7 @@ export default function Certifications({ auth, title, description }) {
         title: 'Advanced Diploma in GRC & Financial Crime Prevention',
         description:
             'A deep-dive, multi-disciplinary programme covering advanced governance, risk, compliance, and financial crime prevention with real-world case projects.',
-        image: '/images/programs/diploma.jpg',
+        image: 'assets/images/programs/diploma.png',
     },
     {
         title: 'Cybersecurity & Data Security for Financial Institutions',
