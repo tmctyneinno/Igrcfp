@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
-
 import { 
     CheckCircleIcon, 
     ExclamationCircleIcon,
@@ -17,26 +16,38 @@ import {
 export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
-    const [successMessage, setSuccessMessage] = useState(null);
 
-
-    // IMPORTANT: Change state to use snake_case to match input names
+    // Use snake_case for ALL form fields to match Laravel validation
     const { data, setData, post, processing, errors, reset } = useForm({
-        first_name: '',  // Changed from firstName
-        last_name: '',   // Changed from lastName
+        first_name: '',
+        last_name: '',
         email: '',
         phone: '',
-        country_code: 'NG',  // Changed from countryCode
+        country_code: 'NG',
         message: '',
         agree: false,
     });
 
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    // Check for flash message on component mount and when page props change
     useEffect(() => {
-        if (successMessage) {
-            const timer = setTimeout(() => setSuccessMessage(null), 5000);
+        console.log('Flash data:', flash);
+        console.log('Has success message?', !!flash?.success);
+        
+        if (flash?.success) {
+            setShowSuccess(true);
+            setSuccessMessage(flash.success);
+            
+            // Auto-hide after 8 seconds
+            const timer = setTimeout(() => {
+                setShowSuccess(false);
+            }, 8000);
+            
             return () => clearTimeout(timer);
         }
-    }, [successMessage]);
+    }, [flash]);
 
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
@@ -54,22 +65,21 @@ export default function Index({ auth, title }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        console.log('Form submitting...', data);
+        console.log('Form data being sent:', data);
         
-        // No need to convert to snake_case anymore since data already uses snake_case
-        post(route('contact.store'), data, {
-            preserveScroll: true,
-            onSuccess: (page) => {
-                console.log('Success response:', page);
-                console.log('Flash messages:', page.props.flash);
-                setSuccessMessage('Your message has been sent successfully.');
+        // Submit with a different approach
+        post(route('contact.store'), {
+            ...data,
+            preserveState: false, // This forces a full page reload
+        }, {
+            onSuccess: () => {
+                console.log('Form submitted successfully!');
                 reset();
-                // Auto-scroll to show success message
+                // Force scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             onError: (errors) => {
-                console.log('Form submission errors:', errors);
-                // Also scroll to top on error to see error messages
+                console.log('Form errors:', errors);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
         });
@@ -100,16 +110,10 @@ export default function Index({ auth, title }) {
                         : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
                 } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
                 required={required}
-                aria-invalid={errors[props.name] ? 'true' : 'false'}
-                aria-describedby={errors[props.name] ? `${id}-error` : undefined}
                 {...props}
             />
             {errors[props.name] && (
-                <p 
-                    id={`${id}-error`} 
-                    className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
-                    role="alert"
-                >
+                <p className="mt-2 text-sm text-red-600 flex items-center gap-1.5">
                     <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
                     {errors[props.name]}
                 </p>
@@ -131,10 +135,7 @@ export default function Index({ auth, title }) {
                             <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
                             <span className="font-medium text-sm tracking-wider">{title}</span>
                         </div>
-                        <h1 
-                            id="page-title"
-                            className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
-                        >
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
                             Let's Start a Conversation
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -144,49 +145,66 @@ export default function Index({ auth, title }) {
                 </div>
             </section>
 
-            {/* Status Messages with Improved Visibility */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 mb-8 space-y-4">
-                {successMessage && (
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-lg shadow-lg animate-fade-in">
-                        <div className="flex items-center">
-                            <CheckCircleIcon className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 animate-pulse" />
-                            <div>
-                                <p className="text-green-800 font-medium">{successMessage}</p>
-                                <p className="text-green-600 text-sm mt-1">
-                                    We'll get back to you within 24-48 hours.
+            {/* DEBUG SECTION - Shows what's in flash object */}
+            {process.env.NODE_ENV !== 'production' && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                    <div className="bg-yellow-100 border border-yellow-400 rounded-lg p-4">
+                        <h3 className="font-bold text-yellow-800 mb-2">Debug Information:</h3>
+                        <p className="text-sm text-yellow-700 mb-1">
+                            Flash object: {JSON.stringify(flash)}
+                        </p>
+                        <p className="text-sm text-yellow-700">
+                            Has success message: {flash?.success ? 'YES' : 'NO'}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* SUCCESS MESSAGE - Always shows if there's a flash.success */}
+            {flash?.success && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-4">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded-lg shadow-lg animate-fade-in">
+                        <div className="flex items-start">
+                            <div className="flex-shrink-0">
+                                <CheckCircleIcon className="h-8 w-8 text-green-500 animate-bounce" />
+                            </div>
+                            <div className="ml-4">
+                                <h3 className="text-lg font-semibold text-green-800 mb-1">
+                                    Message Sent Successfully!
+                                </h3>
+                                <p className="text-green-700 mb-2">
+                                    {flash.success}
+                                </p>
+                                <p className="text-sm text-green-600">
+                                    ✅ We've received your message and will respond within 24-48 hours.
                                 </p>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
-                {flash?.error && (
-                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-lg shadow-lg animate-fade-in">
+            {/* ERROR MESSAGE */}
+            {flash?.error && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-4">
+                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg animate-fade-in">
                         <div className="flex items-center">
-                            <ExclamationCircleIcon className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
-                            <p className="text-red-800 font-medium">{flash.error}</p>
+                            <ExclamationCircleIcon className="h-8 w-8 text-red-500 mr-3 flex-shrink-0" />
+                            <div>
+                                <p className="text-red-800 font-semibold">{flash.error}</p>
+                            </div>
                         </div>
                     </div>
-                )}
-
-                {flash?.message && (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-lg shadow-lg animate-fade-in">
-                        <div className="flex items-center">
-                            <ChatBubbleLeftRightIcon className="h-6 w-6 text-blue-500 mr-3 flex-shrink-0" />
-                            <p className="text-blue-800 font-medium">{flash.message}</p>
-                        </div>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* Main Content Section */}
             <section className="py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                        
-                        {/* Left Column - Contact Information & Map */}
+                        {/* Left Column - Contact Information */}
                         <div className="space-y-8">
-                            {/* Contact Information Cards */}
                             <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 border border-gray-100">
                                 <div className="text-center mb-10">
                                     <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl mb-6">
@@ -201,7 +219,6 @@ export default function Index({ auth, title }) {
                                 </div>
 
                                 <div className="space-y-6">
-                                    {/* Email Card */}
                                     <div className="flex items-start p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-shadow duration-200">
                                         <div className="flex-shrink-0">
                                             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -222,7 +239,6 @@ export default function Index({ auth, title }) {
                                         </div>
                                     </div>
 
-                                    {/* Location Card */}
                                     <div className="flex items-start p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-shadow duration-200">
                                         <div className="flex-shrink-0">
                                             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
@@ -251,48 +267,12 @@ export default function Index({ auth, title }) {
                                     </div>
                                 </div>
 
-                                {/* Response Time Info */}
                                 <div className="mt-8 pt-8 border-t border-gray-200">
                                     <div className="flex items-center justify-center space-x-3">
                                         <CheckBadgeIcon className="h-6 w-6 text-green-500" />
                                         <span className="text-gray-700 font-medium">
                                             Average Response Time: <span className="text-green-600">24-48 hours</span>
                                         </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Google Map Embed */}
-                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
-                                <div className="p-6 border-b border-gray-200">
-                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                                        <MapPinIcon className="h-6 w-6 text-blue-500 mr-2" />
-                                        Our Location
-                                    </h3>
-                                </div>
-                                <div className="relative h-80">
-                                    <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.778581834643!2d-0.14409758422943673!3d51.51890797963733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761ad554c4a7c5%3A0xc78e84c8b982c8a6!2s85%20Great%20Portland%20St%2C%20London%20W1W%207LT%2C%20UK!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen=""
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                        title="IGRCFP Office Location"
-                                        className="absolute inset-0"
-                                    ></iframe>
-                                    
-                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
-                                                <MapPinIcon className="h-5 w-5 text-white" />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
-                                                <p className="text-xs text-gray-600">London Office</p>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +294,6 @@ export default function Index({ auth, title }) {
                                 </div>
                                 
                                 <form onSubmit={handleSubmit} className="space-y-8">
-                                    {/* Name Fields */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <InputField
                                             label="First Name"
@@ -333,17 +312,15 @@ export default function Index({ auth, title }) {
                                         />
                                     </div>
 
-                                    {/* Email */}
                                     <InputField
                                         label="Email Address"
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder="john.doe@example.com"
+                                        placeholder=""
                                         autoComplete="email"
                                     />
 
-                                    {/* Phone Number */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Phone Number <span className="text-red-500">*</span>
@@ -356,10 +333,7 @@ export default function Index({ auth, title }) {
                                                     value={data.country_code}
                                                     onChange={handleChange}
                                                     disabled={processing}
-                                                    className={`w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 ${
-                                                        processing ? 'opacity-60 cursor-not-allowed' : 'hover:border-gray-400 focus:shadow-lg'
-                                                    }`}
-                                                    aria-label="Country code"
+                                                    className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 hover:border-gray-400 focus:shadow-lg"
                                                 >
                                                     {countryCodes.map((country) => (
                                                         <option key={country.code} value={country.code}>
@@ -382,16 +356,10 @@ export default function Index({ auth, title }) {
                                                         errors.phone 
                                                             ? 'border-red-300 bg-red-50 focus:ring-red-500/30 focus:border-red-500' 
                                                             : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
-                                                    } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                                    aria-invalid={errors.phone ? 'true' : 'false'}
-                                                    aria-describedby={errors.phone ? 'phone-error' : undefined}
+                                                    }`}
                                                 />
                                                 {errors.phone && (
-                                                    <p 
-                                                        id="phone-error" 
-                                                        className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
-                                                        role="alert"
-                                                    >
+                                                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1.5">
                                                         <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
                                                         {errors.phone}
                                                     </p>
@@ -400,7 +368,6 @@ export default function Index({ auth, title }) {
                                         </div>
                                     </div>
 
-                                    {/* Message */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Your Message <span className="text-red-500">*</span>
@@ -416,29 +383,17 @@ export default function Index({ auth, title }) {
                                                 errors.message 
                                                     ? 'border-red-300 bg-red-50 focus:ring-red-500/30 focus:border-red-500' 
                                                     : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
-                                            } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                            }`}
                                             placeholder="Tell us how we can help you..."
-                                            aria-invalid={errors.message ? 'true' : 'false'}
-                                            aria-describedby={errors.message ? 'message-error' : undefined}
                                         />
-                                        <div className="flex justify-between items-center mt-3">
-                                            {errors.message && (
-                                                <p 
-                                                    id="message-error" 
-                                                    className="text-sm text-red-600 flex items-center gap-1.5"
-                                                    role="alert"
-                                                >
-                                                    <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
-                                                    {errors.message}
-                                                </p>
-                                            )}
-                                            <span className={`text-sm ${processing ? 'text-gray-400' : 'text-gray-500'} ml-auto`}>
-                                                {data.message.length}/2000 characters
-                                            </span>
-                                        </div>
+                                        {errors.message && (
+                                            <p className="mt-2 text-sm text-red-600 flex items-center gap-1.5">
+                                                <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
+                                                {errors.message}
+                                            </p>
+                                        )}
                                     </div>
 
-                                    {/* Privacy Policy Agreement */}
                                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
                                         <div className="flex items-start">
                                             <div className="flex items-center h-5 mt-1">
@@ -449,29 +404,19 @@ export default function Index({ auth, title }) {
                                                     checked={data.agree}
                                                     onChange={handleChange}
                                                     disabled={processing}
-                                                    className={`h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-3 focus:ring-indigo-500/30 ${
-                                                        processing ? 'opacity-60 cursor-not-allowed' : ''
-                                                    }`}
+                                                    className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-3 focus:ring-indigo-500/30"
                                                     required
-                                                    aria-invalid={errors.agree ? 'true' : 'false'}
-                                                    aria-describedby={errors.agree ? 'agree-error' : 'agree-description'}
                                                 />
                                             </div>
                                             <div className="ml-4">
-                                                <label 
-                                                    htmlFor="agree" 
-                                                    className={`text-sm font-medium ${processing ? 'text-gray-400' : 'text-gray-900'}`}
-                                                >
+                                                <label htmlFor="agree" className="text-sm font-medium text-gray-900">
                                                     I agree to the privacy policy
                                                 </label>
-                                                <p 
-                                                    id="agree-description" 
-                                                    className={`text-sm ${processing ? 'text-gray-400' : 'text-gray-600'} mt-1.5`}
-                                                >
+                                                <p className="text-sm text-gray-600 mt-1.5">
                                                     By submitting this form, you acknowledge that you have read and agree to our{' '}
                                                     <a 
                                                         href="/privacy-policy" 
-                                                        className={`${processing ? 'text-gray-400' : 'text-indigo-600 hover:text-indigo-500'} font-medium underline`}
+                                                        className="text-indigo-600 hover:text-indigo-500 font-medium underline"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -480,11 +425,7 @@ export default function Index({ auth, title }) {
                                                     . Your information is secure with us.
                                                 </p>
                                                 {errors.agree && (
-                                                    <p 
-                                                        id="agree-error" 
-                                                        className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
-                                                        role="alert"
-                                                    >
+                                                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1.5">
                                                         <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
                                                         {errors.agree}
                                                     </p>
@@ -493,20 +434,14 @@ export default function Index({ auth, title }) {
                                         </div>
                                     </div>
 
-                                    {/* Submit Button */}
                                     <div className="pt-2">
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-900/30 ${
-                                                processing
-                                                    ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-blue-900 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 active:scale-[0.98] shadow-lg hover:shadow-xl'
-                                            }`}
-                                            aria-busy={processing}
+                                            className="w-full py-4 px-6 rounded-xl font-semibold bg-gradient-to-r from-blue-900 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-900/30 active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                                         >
                                             {processing ? (
-                                                <span className="flex items-center justify-center gap-3 text-white">
+                                                <span className="flex items-center justify-center gap-3">
                                                     <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -514,7 +449,7 @@ export default function Index({ auth, title }) {
                                                     <span>Sending Your Message...</span>
                                                 </span>
                                             ) : (
-                                                <span className="text-white flex items-center justify-center gap-2">
+                                                <span className="flex items-center justify-center gap-2">
                                                     <EnvelopeIcon className="h-5 w-5" />
                                                     Send Message
                                                 </span>
@@ -546,25 +481,10 @@ export default function Index({ auth, title }) {
 
             {/* Add CSS animations */}
             <style jsx>{`
-                @keyframes blob {
-                    0% {
-                        transform: translate(0px, 0px) scale(1);
-                    }
-                    33% {
-                        transform: translate(30px, -50px) scale(1.1);
-                    }
-                    66% {
-                        transform: translate(-20px, 20px) scale(0.9);
-                    }
-                    100% {
-                        transform: translate(0px, 0px) scale(1);
-                    }
-                }
-                
                 @keyframes fadeIn {
                     from {
                         opacity: 0;
-                        transform: translateY(-10px);
+                        transform: translateY(-20px);
                     }
                     to {
                         opacity: 1;
@@ -572,20 +492,21 @@ export default function Index({ auth, title }) {
                     }
                 }
                 
-                .animate-blob {
-                    animation: blob 7s infinite;
-                }
-                
                 .animate-fade-in {
                     animation: fadeIn 0.5s ease-out;
                 }
                 
-                .animation-delay-2000 {
-                    animation-delay: 2s;
+                .animate-bounce {
+                    animation: bounce 1s infinite;
                 }
                 
-                .animation-delay-4000 {
-                    animation-delay: 4s;
+                @keyframes bounce {
+                    0%, 100% {
+                        transform: translateY(0);
+                    }
+                    50% {
+                        transform: translateY(-5px);
+                    }
                 }
             `}</style>
         </GuestLayout>
