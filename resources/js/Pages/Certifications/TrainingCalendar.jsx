@@ -15,8 +15,16 @@ export default function Index({ auth, title, description }) {
                             {title}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                            Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.
+                            View upcoming courses, workshops, and programmes at IGRCFP. Choose the format and dates that work for you.
                         </p>
+                        <div className="mt-8">
+                            <Link
+                                href="/training-calendar"
+                                className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition"
+                            >
+                                Download  
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </section>
