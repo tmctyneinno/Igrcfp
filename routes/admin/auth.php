@@ -12,7 +12,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])
         ->name('login')
         ->middleware('guest:admin');
-    
+     
     Route::post('/login', [AdminLoginController::class, 'login'])
         ->name('login.post')
         ->middleware('guest:admin');

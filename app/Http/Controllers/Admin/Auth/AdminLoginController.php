@@ -30,19 +30,40 @@ class AdminLoginController extends Controller
     } 
 
     public function showLoginForm() 
-    {
-        // If user is already authenticated as admin, redirect to dashboard
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-        
-        // Redirect if accessing /login instead of /admin/login
-        if (request()->is('login') && !request()->is('admin/*')) {
-            return redirect()->route('admin.login');
-        }
-        
-        return view('admin.auth.login');
+{
+    // If user is already authenticated as admin, redirect to dashboard
+    if (Auth::guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
     }
+    
+    // Redirect if accessing /login instead of /admin/login
+    if (request()->is('login') && !request()->is('admin/*')) {
+        return redirect()->route('admin.login');
+    }
+    
+    // Debug: Check if view exists
+    $viewPath = 'admin.auth.login';
+    
+    if (!view()->exists($viewPath)) {
+        // Log or dump to see what's happening
+        \Log::error("View not found: {$viewPath}");
+        
+        // Check available views
+        $allViews = scandir(resource_path('views/admin/auth/'));
+        \Log::info('Available views in auth directory:', $allViews);
+        
+        // Return error for debugging
+        return response()->json([
+            'error' => 'View not found',
+            'expected_path' => resource_path('views/admin/auth/login.blade.php'),
+            'available_files' => $allViews,
+            'base_path' => base_path(),
+            'view_paths' => config('view.paths'),
+        ]);
+    }
+    
+    return view($viewPath);
+}
 
     public function login(Request $request)
     {
