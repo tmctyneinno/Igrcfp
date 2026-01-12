@@ -132,7 +132,6 @@
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
-                                            <iconify-icon icon="ic:baseline-save" class="icon me-2"></iconify-icon>
                                             Save Blog
                                         </button>
                                         <a href="{{ route('admin.blogs.index') }}" class="btn btn-outline-secondary">
