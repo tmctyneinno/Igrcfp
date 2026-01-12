@@ -81,6 +81,7 @@ npm install @inertiajs/react react react-dom @vitejs/plugin-react
 
 chmod -R 755 public
 chmod -R 775 storage bootstrap/cache
+
 chown -R www-data:www-data storage bootstrap/cache  
 php artisan key:generate --show
 
