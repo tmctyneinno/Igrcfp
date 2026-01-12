@@ -223,9 +223,9 @@ export default function Index({ auth, title }) {
                                         <div className="ml-5">
                                             <h3 className="font-semibold text-gray-900 mb-1">Visit Our Office</h3>
                                             <address className="text-gray-800 not-italic mb-2">
-                                                Tyneside Innovation Centre<br />
-                                                Willington Square<br />
-                                                Wallsend, NE28 6HQ
+                                                85 Great Portland Street
+                                                First Floor, W1W 7LT
+                                                London, United Kingdom
                                             </address>
                                             <a 
                                                 href="https://maps.google.com/?q=Tyneside+Innovation+Centre+Wallington+Square+Wallsend+NE28+6HQ"
