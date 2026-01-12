@@ -68,7 +68,7 @@ export default function Index({ auth, title }) {
                                     <td className="px-4 py-4">In-person (Lagos, Nigeria)</td>
                                     <td className="px-4 py-4">CISOs, IT security & audit leaders</td>
                                 </tr>
-
+    
                                 <tr>
                                     <td className="px-3 py-4">Q2 2025</td>
                                     <td className="px-4 py-4 font-medium">

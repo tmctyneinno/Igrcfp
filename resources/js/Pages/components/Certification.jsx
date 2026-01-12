@@ -12,7 +12,7 @@ export default function Certification({ courses = [] }) {
             <div
                 className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
                 data-aos="fade-up"
-            >
+            >      
                 <div>
                     <div className="relative inline-flex items-center mb-3">
                         <motion.span
