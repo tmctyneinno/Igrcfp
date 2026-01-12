@@ -352,7 +352,8 @@ export default function Index({ auth, title }) {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        
+                        
 
 
                         {/* Right Column - Contact Form */}
