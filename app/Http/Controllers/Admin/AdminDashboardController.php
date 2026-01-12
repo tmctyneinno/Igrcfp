@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
-{
+{ 
     public function index()
     {
         $admin = Auth::guard('admin')->user();
