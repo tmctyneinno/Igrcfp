@@ -520,7 +520,7 @@ export default function Index({ auth, title }) {
                                             className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-900/30 ${
                                                 processing
                                                     ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed'
-                                                    : 'bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 active:scale-[0.98] shadow-lg hover:shadow-xl'
+                                                    : 'bg-gradient-to-r from-blue-900 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 active:scale-[0.98] shadow-lg hover:shadow-xl'
                                             }`}
                                             aria-busy={processing}
                                         >
