@@ -4,7 +4,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ContactFormRequest extends FormRequest
 {
@@ -35,6 +34,7 @@ class ContactFormRequest extends FormRequest
             'last_name.min' => 'Last name must be at least 2 characters.',
             'email.required' => 'Please enter your email address.',
             'email.email' => 'Please enter a valid email address.',
+            'country_code.required' => 'Please select a country code.',
             'phone.required' => 'Please enter your phone number.',
             'phone.regex' => 'Please enter a valid phone number.',
             'message.required' => 'Please enter your message.',
@@ -51,13 +51,12 @@ class ContactFormRequest extends FormRequest
             'first_name' => 'first name',
             'last_name' => 'last name',
             'country_code' => 'country code',
-            'agree' => 'privacy agreement',
         ];
     }
 
     protected function prepareForValidation()
     {
-        // Clean phone number input
+        // Clean phone number input - remove non-numeric characters except + sign
         if ($this->has('phone')) {
             $this->merge([
                 'phone' => preg_replace('/[^\d+]/', '', $this->phone),

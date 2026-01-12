@@ -22,7 +22,6 @@ class ContactMessage extends Model
         'ip_address',
         'user_agent',
         'privacy_agreed',
-        'status',
     ];
 
     protected $casts = [
