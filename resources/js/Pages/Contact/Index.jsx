@@ -111,47 +111,12 @@ export default function Index({ auth, title }) {
                             Let's Start a Conversation
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
+                            Your success is our priority. Connect with our expert team for personalized support, partnership opportunities, or any questions about our services.
                         </p>
                     </div>
                 </div>
             </section>
-            <section 
-                className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200 overflow-hidden"
-                aria-labelledby="page-title"
-            >
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/60 to-purple-900/60"></div>
-                </div>
-                
-                {/* Animated Orbs */}
-                <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                <div className="absolute top-40 right-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-                    <div className="text-center max-w-3xl mx-auto">
-                        <div className="inline-flex items-center justify-center space-x-2 mb-6">
-                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className="text-blue-300 font-medium text-sm uppercase tracking-wider">Contact Us</span>
-                        </div>
-                        
-                        <h1 
-                            id="page-title"
-                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
-                        >
-                            Let's Start a <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">Conversation</span>
-                        </h1>
-                        
-                        <p className="text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
-                            Your success is our priority. Connect with our expert team for personalized support, 
-                            partnership opportunities, or any questions about our services.
-                        </p>
-                    </div>
-                </div>
-            </section>
+          
 
             {/* Status Messages */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-4">
