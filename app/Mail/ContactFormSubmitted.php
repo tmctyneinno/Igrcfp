@@ -39,7 +39,7 @@ class ContactFormSubmitted extends Mailable
             view: 'emails.contact.submitted',
             with: [
                 'message' => $this->contactMessage,
-                'adminName' => config('app.admin_name', 'Administrator'),
+                'adminName' => 'Administrator',
             ],
         );
     }
