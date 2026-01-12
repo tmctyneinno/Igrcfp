@@ -14,7 +14,7 @@ export default function Blog({ auth, title, description }) {
                             {title}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention 
+                            Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.
                         </p>
                     </div>
                 </div>
