@@ -139,10 +139,10 @@ export default function Index({ auth, title }) {
                                 <tr>
                                     <td className="px-4 py-4"></td>
                                     <td className="px-4 py-4 font-medium">
-                                        Executive Masterclass: AI in Compliance & Risk Management
+                                        Certified GRC & Financial Crime Specialist (CGFCS) – 2nd Cohort
                                     </td>
-                                    <td className="px-4 py-4">Sep 15 – Sep 17, 2026</td>
-                                    <td className="px-4 py-4">Virtual Masterclass</td>
+                                    <td className="px-4 py-4">Nov 3 – Dec 19, 2025</td>
+                                    <td className="px-4 py-4">Online (8 weeks)</td>
                                     <td className="px-4 py-4">Compliance leaders, data scientists, risk executives</td>
                                 </tr>
                             </tbody>
