@@ -28,11 +28,11 @@ export default function Certifications({ auth, title, description }) {
                             <h2 className="text-4xl font-semibold text-gray-800">
                                 Advance Your Career. Build Institutional Resilience.
                             </h2>
-                            <p className="mt-4 text-gray-600 text-1xl">
+                            <p className="mt-4 text-gray-600 text-2xl">
                                 Our professional certifications are designed to equip individuals and institutions with globally relevant skills to tackle financial crime and compliance risks.
                             </p>
                             
-                            <div className="mb-16 mt-20">
+                            <div className="mb-10 mt-15">
                                 <h3 className="text-start text-lg font-semibold text-gray-500 mb-8 uppercase tracking-wider">
                                     TRUSTED BY
                                 </h3>
