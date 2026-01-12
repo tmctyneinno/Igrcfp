@@ -27,7 +27,7 @@
         <div class="info-grid">
             <div class="info-item">
                 <span class="label">From:</span>
-                {{ $contactMessage->first_name }} {{ $contactMessage->last_name }}
+                {{ $message->first_name }} {{ $message->last_name }}
             </div>
             <div class="info-item">
                 <span class="label">Email:</span>
