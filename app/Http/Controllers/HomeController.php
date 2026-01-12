@@ -149,7 +149,7 @@ class HomeController extends Controller
 
     public function contact(){
         return Inertia::render('Contact/Index', [
-            'title' => 'Contact',
+            'title' => 'Contact Us',
             'description' => 'Our friendly team would love to hear from you.',
         ]);
     }
