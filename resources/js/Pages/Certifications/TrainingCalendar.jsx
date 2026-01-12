@@ -24,6 +24,7 @@ export default function Index({ auth, title, description }) {
                             >
                                 Download Prospectus
                             </Link>
+                            
                         </div>
                     </div>
                 </div>
