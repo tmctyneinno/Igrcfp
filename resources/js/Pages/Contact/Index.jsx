@@ -42,7 +42,7 @@ export default function ContactUs({ auth, title }) {
                     <div className="text-center">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{title}</h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention
+                            Our friendly team would love to hear from you.
                         </p>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ export default function ContactUs({ auth, title }) {
                         Send us an email @ info@jgrcfp.org
                     </a>
                 </div>
-            </footer>
+            </footer>. 
         </GuestLayout>
     );
 }
