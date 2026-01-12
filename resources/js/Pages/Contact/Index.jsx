@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
@@ -7,7 +7,7 @@ export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
     
-    const [formData, setFormData] = useState({
+    const { data, setData, post, processing, errors, reset } = useForm({
         firstName: '',
         lastName: '',
         email: '',
@@ -17,7 +17,6 @@ export default function Index({ auth, title }) {
         agree: false,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errors, setErrors] = useState({});
     const [submitStatus, setSubmitStatus] = useState(null);
 
     const countryCodes = [
