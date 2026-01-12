@@ -40,7 +40,7 @@ export default function Certifications({ auth, title, description }) {
                                 {/* Stats Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
                                     {/* Learners Stat */}
-                                    <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
+                                    <div className="bg-gray-50 rounded-xl p-5 text-center border border-gray-200">
                                         <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
                                             40k+
                                         </div>
@@ -53,7 +53,7 @@ export default function Certifications({ auth, title, description }) {
                                     </div>
                                     
                                     {/* Experts Stat */}
-                                    <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
+                                    <div className="bg-gray-50 rounded-xl p-5 text-center border border-gray-200">
                                         <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">
                                             100+
                                         </div>
