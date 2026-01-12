@@ -60,6 +60,7 @@ class User extends Authenticatable
         'email_verified_at',
         'profile_completed_at',
         'tutor_agreement_accepted_at',
+        'deleted_at',
     ]; 
 
     /**
