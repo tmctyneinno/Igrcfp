@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ContactMessage extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $table = 'contact_message';
 
     protected $fillable = [
         'first_name',
