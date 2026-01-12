@@ -6,11 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\EventRegistration;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
-use Inertia\Inertia;
 
 class EventController extends Controller
 {
@@ -31,16 +27,8 @@ class EventController extends Controller
             })
             ->latest()
             ->paginate($perPage);
-       
-        return Inertia::render('Admin/Events/Index', [  // Changed to 'Index' (capital I)
-            'title' => 'Event Management',  // This will be used by AdminLayout
-            'filters' => [
-                'search' => $search,
-                'status' => $status,
-                'per_page' => $perPage,
-            ],
-            'events' => $events,  // Pass the actual events data
-        ]);
+
+        return view('admin.events.index', compact('events', 'search', 'status', 'perPage'));
     }
 
     public function create()
@@ -236,79 +224,5 @@ class EventController extends Controller
         }
 
         return back()->with('success', $message);
-    }
-
-    public function storeEventRegistration(Request $request, $slug)
-    {
-        $event = Event::where('slug', $slug)
-            ->where('status', 'published')
-            ->firstOrFail();
-
-        // Validate registration
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'company' => 'nullable|string|max:255',
-            'position' => 'nullable|string|max:255',
-            'additional_attendees' => 'nullable|integer|min:0|max:5',
-            'dietary_requirements' => 'nullable|string|max:500',
-            'special_requirements' => 'nullable|string|max:500',
-            'hear_about_event' => 'nullable|string|max:255',
-            'agree_to_terms' => 'required|accepted',
-        ]);
-
-        // Check availability
-        $totalAttendees = 1 + ($validated['additional_attendees'] ?? 0);
-        if ($event->available_seats < $totalAttendees) {
-            return response()->json([
-                'errors' => ['general' => 'Not enough seats available.']
-            ], 422);
-        }
-        try {
-            // Create registration
-            $registration = EventRegistration::create([
-                'event_id' => $event->id,
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'phone' => $validated['phone'],
-                'company' => $validated['company'],
-                'position' => $validated['position'],
-                'additional_attendees' => $validated['additional_attendees'] ?? 0,
-                'dietary_requirements' => $validated['dietary_requirements'],
-                'special_requirements' => $validated['special_requirements'],
-                'hear_about_event' => $validated['hear_about_event'],
-                'registration_number' => 'REG-' . strtoupper(Str::random(8)),
-                'status' => 'pending',
-            ]);
-
-            // Update available seats
-            $event->decrement('available_seats', $totalAttendees);
-
-            // Send confirmation email
-            // Mail::to($validated['email'])->send(new EventRegistrationConfirmation($registration, $event));
-
-            // Send notification to admin
-            // Mail::to(config('mail.admin_email'))->send(new NewEventRegistration($registration, $event));
-
-                return response()->json([
-                    'message' => 'Registration successful!',
-                    'registration' => $registration
-                ], 201);
-            } catch (\Exception $e) {
-                \Log::error('Registration error: ' . $e->getMessage());
-                
-                return response()->json([
-                    'errors' => ['general' => 'An error occurred during registration. Please try again.']
-                ], 500);
-            }
-        
-        }
-
-     public function blog(){
-        return Inertia::render('Blog/Index', [
-            'title' => 'Blog',
-            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
-        ]); 
     }
 }
