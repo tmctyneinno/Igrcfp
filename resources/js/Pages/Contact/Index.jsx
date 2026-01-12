@@ -263,7 +263,7 @@ export default function Index({ auth, title }) {
                                             <h3 className="font-medium text-gray-900">Our Office</h3>
                                             <address className="text-sm text-gray-800 not-italic">
                                                 85 Great Portland Street<br />
-                                                First Floor, W1W 7LT<br />
+                                                First Floor, W1W 7LT
                                                 London, UK
                                             </address>
                                             <a 
