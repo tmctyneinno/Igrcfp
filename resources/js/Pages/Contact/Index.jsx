@@ -5,7 +5,7 @@ import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outl
 
 export default function Index({ auth, title }) {
     const pageProps = usePage().props;
-    const flash = pageProps.flash || {};
+    const flash = pageProps?.flash || {};
     
     const [formData, setFormData] = useState({
         firstName: '',
