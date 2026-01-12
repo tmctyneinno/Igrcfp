@@ -27,7 +27,7 @@
             <a href="javascript:void(0)">
             <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
             <span>Blogs</span> 
-            </a> 
+            </a>  
             <ul class="sidebar-submenu">
                 <li>
                     <a href="{{ route('admin.blogs.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
