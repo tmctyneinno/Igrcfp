@@ -1,15 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { 
     CheckCircleIcon, 
-    ExclamationCircleIcon, 
-    PhotoIcon,
-    XMarkIcon,
-    MapPinIcon,
+    ExclamationCircleIcon,
     EnvelopeIcon,
     PhoneIcon,
-    GlobeAltIcon
+    MapPinIcon,
+    ClockIcon,
+    ChatBubbleLeftRightIcon,
+    UserGroupIcon,
+    CheckBadgeIcon
 } from '@heroicons/react/24/outline';
 
 export default function ContactUs({ auth, title }) {
@@ -24,11 +25,7 @@ export default function ContactUs({ auth, title }) {
         countryCode: 'NG',
         message: '',
         agree: false,
-        attachments: [],
     });
-
-    const fileInputRef = useRef(null);
-    const [previewImages, setPreviewImages] = useState([]);
 
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
@@ -37,32 +34,17 @@ export default function ContactUs({ auth, title }) {
         { code: 'GH', name: 'Ghana (+233)' },
         { code: 'KE', name: 'Kenya (+254)' },
         { code: 'ZA', name: 'South Africa (+27)' },
+        { code: 'CA', name: 'Canada (+1)' },
+        { code: 'AU', name: 'Australia (+61)' },
+        { code: 'FR', name: 'France (+33)' },
+        { code: 'DE', name: 'Germany (+49)' },
     ];
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        
-        // Append all form data
-        Object.keys(data).forEach(key => {
-            if (key === 'attachments') {
-                data.attachments.forEach(file => {
-                    formData.append('attachments[]', file);
-                });
-            } else if (key === 'agree') {
-                formData.append(key, data[key] ? '1' : '0');
-            } else {
-                formData.append(key, data[key]);
-            }
-        });
-
         post(route('contact.store'), {
             preserveScroll: true,
-            data: formData,
-            onSuccess: () => {
-                reset();
-                setPreviewImages([]);
-            },
+            onSuccess: () => reset(),
         });
     };
 
@@ -71,65 +53,11 @@ export default function ContactUs({ auth, title }) {
         setData(name, type === 'checkbox' ? checked : value);
     };
 
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        
-        // Validate file types and size
-        const validFiles = files.filter(file => {
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            
-            if (!validTypes.includes(file.type)) {
-                alert(`File ${file.name} is not a supported format. Please upload JPEG, PNG, GIF, or PDF files.`);
-                return false;
-            }
-            
-            if (file.size > maxSize) {
-                alert(`File ${file.name} is too large. Maximum size is 5MB.`);
-                return false;
-            }
-            
-            return true;
-        });
-
-        // Create previews for images
-        const imagePreviews = validFiles
-            .filter(file => file.type.startsWith('image/'))
-            .map(file => ({
-                url: URL.createObjectURL(file),
-                name: file.name,
-                type: file.type
-            }));
-
-        setPreviewImages(prev => [...prev, ...imagePreviews]);
-        setData('attachments', [...data.attachments, ...validFiles]);
-    };
-
-    const removeAttachment = (index) => {
-        const updatedAttachments = [...data.attachments];
-        const updatedPreviews = [...previewImages];
-        
-        // Revoke object URL to prevent memory leaks
-        if (updatedPreviews[index]) {
-            URL.revokeObjectURL(updatedPreviews[index].url);
-        }
-        
-        updatedAttachments.splice(index, 1);
-        updatedPreviews.splice(index, 1);
-        
-        setData('attachments', updatedAttachments);
-        setPreviewImages(updatedPreviews);
-    };
-
-    const openFilePicker = () => {
-        fileInputRef.current.click();
-    };
-
     const InputField = ({ label, id, type = 'text', required = true, ...props }) => (
         <div>
             <label 
                 htmlFor={id} 
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-700 mb-2"
             >
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
@@ -139,11 +67,11 @@ export default function ContactUs({ auth, title }) {
                 value={data[props.name] || ''}
                 onChange={handleChange}
                 disabled={processing}
-                className={`w-full px-4 py-3 border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                className={`w-full px-4 py-3.5 border rounded-xl transition-all duration-200 focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 ${
                     errors[props.name] 
-                        ? 'border-red-300 bg-red-50' 
-                        : 'border-gray-300 hover:border-gray-400'
-                } ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        ? 'border-red-300 bg-red-50 focus:ring-red-500/30 focus:border-red-500' 
+                        : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
+                } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
                 required={required}
                 aria-invalid={errors[props.name] ? 'true' : 'false'}
                 aria-describedby={errors[props.name] ? `${id}-error` : undefined}
@@ -152,10 +80,10 @@ export default function ContactUs({ auth, title }) {
             {errors[props.name] && (
                 <p 
                     id={`${id}-error`} 
-                    className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                    className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
                     role="alert"
                 >
-                    <ExclamationCircleIcon className="h-4 w-4" />
+                    <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
                     {errors[props.name]}
                 </p>
             )}
@@ -168,224 +96,144 @@ export default function ContactUs({ auth, title }) {
                 <meta name="description" content="Get in touch with IGRCFP. Our team is ready to assist you with any inquiries or support you may need." />
             </Head>
             
-            {/* Hero Section with Background Image */}
+            {/* Hero Banner with Background Image */}
             <section 
-                className="relative py-20 md:py-28 bg-gradient-to-r from-blue-900/90 to-indigo-900/90"
+                className="relative bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900 overflow-hidden"
                 aria-labelledby="page-title"
             >
-                {/* Background Image */}
-                <div 
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-                    style={{
-                        backgroundImage: 'url("https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80")'
-                    }}
-                />
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/60 to-purple-900/60"></div>
+                </div>
                 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Animated Orbs */}
+                <div className="absolute top-10 left-10 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+                <div className="absolute top-40 right-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+                <div className="absolute -bottom-8 left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
                     <div className="text-center max-w-3xl mx-auto">
+                        <div className="inline-flex items-center justify-center space-x-2 mb-6">
+                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                            <span className="text-blue-300 font-medium text-sm uppercase tracking-wider">Contact Us</span>
+                        </div>
+                        
                         <h1 
                             id="page-title"
-                            className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+                            className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
                         >
-                            {title}
+                            Let's Start a <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300">Conversation</span>
                         </h1>
-                        <p className="text-xl text-blue-100 leading-relaxed">
-                            Our dedicated team is committed to providing exceptional support. 
-                            Reach out with your questions, feedback, or partnership inquiries.
+                        
+                        <p className="text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto">
+                            Your success is our priority. Connect with our expert team for personalized support, 
+                            partnership opportunities, or any questions about our services.
                         </p>
                     </div>
                 </div>
             </section>
 
             {/* Status Messages */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-4">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-4">
                 {flash?.success && (
-                    <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-r">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg shadow-sm">
                         <div className="flex items-center">
-                            <CheckCircleIcon className="h-5 w-5 text-green-400 mr-3" />
-                            <p className="text-green-700">{flash?.success}</p>
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                            <p className="text-green-800">{flash?.success}</p>
                         </div>
                     </div>
                 )}
 
                 {flash?.error && (
-                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r">
+                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
                         <div className="flex items-center">
-                            <ExclamationCircleIcon className="h-5 w-5 text-red-400 mr-3" />
-                            <p className="text-red-700">{flash?.error}</p>
+                            <ExclamationCircleIcon className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
+                            <p className="text-red-800">{flash?.error}</p>
+                        </div>
+                    </div>
+                )}
+
+                {flash?.message && (
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+                        <div className="flex items-center">
+                            <ChatBubbleLeftRightIcon className="h-5 w-5 text-blue-500 mr-3 flex-shrink-0" />
+                            <p className="text-blue-800">{flash?.message}</p>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Main Content Grid */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Contact Information & Map Column */}
-                    <div className="lg:col-span-1 space-y-8">
-                        {/* Contact Info Cards */}
-                        <div className="bg-white rounded-2xl shadow-xl p-6 space-y-6">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Get in Touch</h3>
-                            
-                            <div className="space-y-4">
-                                <div className="flex items-start space-x-3">
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <MapPinIcon className="h-6 w-6 text-blue-600" />
+            {/* Main Content Section */}
+            <section className="py-16 lg:py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        {/* Left Column - Contact Form */}
+                        <div>
+                            <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100">
+                                <div className="text-center mb-10">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6">
+                                        <EnvelopeIcon className="h-8 w-8 text-white" />
                                     </div>
-                                    <div>
-                                        <h4 className="font-medium text-gray-900">Visit Our Office</h4>
-                                        <p className="text-gray-600 mt-1">
-                                            Tyneside Innovation Centre<br />
-                                            Willington Square<br />
-                                            Wallsend, NE28 6HQ
-                                        </p>
-                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                                        Send Your Message
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        Fill out the form below and we'll get back to you as soon as possible.
+                                    </p>
                                 </div>
-
-                                <div className="flex items-start space-x-3">
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <EnvelopeIcon className="h-6 w-6 text-blue-600" />
+                                
+                                <form onSubmit={handleSubmit} className="space-y-8">
+                                    {/* Name Fields */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <InputField
+                                            label="First Name"
+                                            id="firstName"
+                                            name="firstName"
+                                            placeholder="John"
+                                            autoComplete="given-name"
+                                        />
+                                        
+                                        <InputField
+                                            label="Last Name"
+                                            id="lastName"
+                                            name="lastName"
+                                            placeholder="Doe"
+                                            autoComplete="family-name"
+                                        />
                                     </div>
-                                    <div>
-                                        <h4 className="font-medium text-gray-900">Email Us</h4>
-                                        <a 
-                                            href="mailto:info@igrcfp.org" 
-                                            className="text-blue-600 hover:text-blue-700 font-medium"
-                                        >
-                                            info@igrcfp.org
-                                        </a>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Response time: 24 hours
-                                        </p>
-                                    </div>
-                                </div>
 
-                                <div className="flex items-start space-x-3">
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <PhoneIcon className="h-6 w-6 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-gray-900">Call Us</h4>
-                                        <a 
-                                            href="tel:+2348000000000" 
-                                            className="text-blue-600 hover:text-blue-700 font-medium"
-                                        >
-                                            +234 800 000 0000
-                                        </a>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Mon-Fri, 9AM-5PM WAT
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start space-x-3">
-                                    <div className="bg-blue-50 p-3 rounded-lg">
-                                        <GlobeAltIcon className="h-6 w-6 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-gray-900">Website</h4>
-                                        <a 
-                                            href="https://www.igrcfp.org" 
-                                            className="text-blue-600 hover:text-blue-700 font-medium"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            www.igrcfp.org
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Google Map */}
-                        <div className="bg-white rounded-2xl shadow-xl p-6">
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Find Us on Map</h3>
-                            <div className="relative h-64 md:h-80 rounded-lg overflow-hidden">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.964897232018!2d-1.5345391232329413!3d54.99158397186481!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70b1c4a97a59%3A0xf9c31faf6bcd4012!2sTyneside%20Innovation%20Centre%2C%20Willington%20Square%2C%20Wallsend%20NE28%206HQ%2C%20UK!5e0!3m2!1sen!2sng!4v1700000000000!5m2!1sen!2sng"
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0 }}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                    title="IGRCFP Location Map"
-                                    className="absolute inset-0"
-                                />
-                            </div>
-                            <div className="mt-4 text-center">
-                                <a
-                                    href="https://goo.gl/maps/example"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                    <MapPinIcon className="h-5 w-5 mr-2" />
-                                    Open in Google Maps
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Contact Form Column */}
-                    <div className="lg:col-span-2">
-                        <div className="bg-white rounded-2xl shadow-xl p-8">
-                            <div className="text-center mb-8">
-                                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                                    Send Us a Message
-                                </h2>
-                                <p className="text-gray-600">
-                                    Fill out the form below and we'll get back to you as soon as possible.
-                                </p>
-                            </div>
-                            
-                            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-                                {/* Name Fields */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <InputField
-                                        label="First Name"
-                                        id="firstName"
-                                        name="firstName"
-                                        placeholder="Enter your first name"
-                                        autoComplete="given-name"
-                                    />
-                                    
-                                    <InputField
-                                        label="Last Name"
-                                        id="lastName"
-                                        name="lastName"
-                                        placeholder="Enter your last name"
-                                        autoComplete="family-name"
-                                    />
-                                </div>
-
-                                {/* Contact Info */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Email */}
                                     <InputField
                                         label="Email Address"
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder="your.email@example.com"
+                                        placeholder="john.doe@example.com"
                                         autoComplete="email"
                                     />
 
+                                    {/* Phone Number */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Phone Number <span className="text-red-500">*</span>
                                         </label>
-                                        <div className="flex gap-3">
-                                            <div className="w-32">
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            <div className="sm:w-48">
                                                 <select
                                                     name="countryCode"
+                                                    id="countryCode"
                                                     value={data.countryCode}
                                                     onChange={handleChange}
                                                     disabled={processing}
-                                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className={`w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 ${
+                                                        processing ? 'opacity-60 cursor-not-allowed' : 'hover:border-gray-400 focus:shadow-lg'
+                                                    }`}
+                                                    aria-label="Country code"
                                                 >
-                                                    {countryCodes.map(country => (
+                                                    {countryCodes.map((country) => (
                                                         <option key={country.code} value={country.code}>
-                                                            {country.code}
+                                                            {country.name}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -394,235 +242,384 @@ export default function ContactUs({ auth, title }) {
                                                 <input
                                                     type="tel"
                                                     name="phone"
+                                                    id="phone"
                                                     value={data.phone}
                                                     onChange={handleChange}
                                                     disabled={processing}
                                                     placeholder="Phone number"
-                                                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                                        errors.phone ? 'border-red-300' : 'border-gray-300'
-                                                    }`}
+                                                    autoComplete="tel"
+                                                    className={`w-full px-4 py-3.5 border rounded-xl transition-all duration-200 focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 ${
+                                                        errors.phone 
+                                                            ? 'border-red-300 bg-red-50 focus:ring-red-500/30 focus:border-red-500' 
+                                                            : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
+                                                    } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                                    aria-invalid={errors.phone ? 'true' : 'false'}
+                                                    aria-describedby={errors.phone ? 'phone-error' : undefined}
                                                 />
                                                 {errors.phone && (
-                                                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                                                    <p 
+                                                        id="phone-error" 
+                                                        className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
+                                                        role="alert"
+                                                    >
+                                                        <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
+                                                        {errors.phone}
+                                                    </p>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Message */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Your Message <span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            name="message"
+                                            id="message"
+                                            rows="6"
+                                            value={data.message}
+                                            onChange={handleChange}
+                                            disabled={processing}
+                                            className={`w-full px-4 py-3.5 border rounded-xl transition-all duration-200 focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 resize-none ${
+                                                errors.message 
+                                                    ? 'border-red-300 bg-red-50 focus:ring-red-500/30 focus:border-red-500' 
+                                                    : 'border-gray-300 hover:border-gray-400 focus:shadow-lg'
+                                            } ${processing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                            placeholder="Tell us how we can help you..."
+                                            aria-invalid={errors.message ? 'true' : 'false'}
+                                            aria-describedby={errors.message ? 'message-error' : undefined}
+                                        />
+                                        <div className="flex justify-between items-center mt-3">
+                                            {errors.message && (
+                                                <p 
+                                                    id="message-error" 
+                                                    className="text-sm text-red-600 flex items-center gap-1.5"
+                                                    role="alert"
+                                                >
+                                                    <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
+                                                    {errors.message}
+                                                </p>
+                                            )}
+                                            <span className={`text-sm ${processing ? 'text-gray-400' : 'text-gray-500'} ml-auto`}>
+                                                {data.message.length}/2000 characters
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Privacy Policy Agreement */}
+                                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                                        <div className="flex items-start">
+                                            <div className="flex items-center h-5 mt-1">
+                                                <input
+                                                    type="checkbox"
+                                                    name="agree"
+                                                    id="agree"
+                                                    checked={data.agree}
+                                                    onChange={handleChange}
+                                                    disabled={processing}
+                                                    className={`h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-3 focus:ring-indigo-500/30 ${
+                                                        processing ? 'opacity-60 cursor-not-allowed' : ''
+                                                    }`}
+                                                    required
+                                                    aria-invalid={errors.agree ? 'true' : 'false'}
+                                                    aria-describedby={errors.agree ? 'agree-error' : 'agree-description'}
+                                                />
+                                            </div>
+                                            <div className="ml-4">
+                                                <label 
+                                                    htmlFor="agree" 
+                                                    className={`text-sm font-medium ${processing ? 'text-gray-400' : 'text-gray-900'}`}
+                                                >
+                                                    I agree to the privacy policy
+                                                </label>
+                                                <p 
+                                                    id="agree-description" 
+                                                    className={`text-sm ${processing ? 'text-gray-400' : 'text-gray-600'} mt-1.5`}
+                                                >
+                                                    By submitting this form, you acknowledge that you have read and agree to our{' '}
+                                                    <a 
+                                                        href="/privacy-policy" 
+                                                        className={`${processing ? 'text-gray-400' : 'text-indigo-600 hover:text-indigo-500'} font-medium underline`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        Privacy Policy
+                                                    </a>
+                                                    . Your information is secure with us.
+                                                </p>
+                                                {errors.agree && (
+                                                    <p 
+                                                        id="agree-error" 
+                                                        className="mt-2 text-sm text-red-600 flex items-center gap-1.5"
+                                                        role="alert"
+                                                    >
+                                                        <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
+                                                        {errors.agree}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Submit Button */}
+                                    <div className="pt-2">
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className={`w-full py-4 px-6 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/30 ${
+                                                processing
+                                                    ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed'
+                                                    : 'bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 active:scale-[0.98] shadow-lg hover:shadow-xl'
+                                            }`}
+                                            aria-busy={processing}
+                                        >
+                                            {processing ? (
+                                                <span className="flex items-center justify-center gap-3 text-white">
+                                                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                                    </svg>
+                                                    <span>Sending Your Message...</span>
+                                                </span>
+                                            ) : (
+                                                <span className="text-white flex items-center justify-center gap-2">
+                                                    <EnvelopeIcon className="h-5 w-5" />
+                                                    Send Message
+                                                </span>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        {/* Right Column - Contact Information & Map */}
+                        <div className="space-y-8">
+                            {/* Contact Information Cards */}
+                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 border border-gray-100">
+                                <div className="text-center mb-10">
+                                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl mb-6">
+                                        <UserGroupIcon className="h-8 w-8 text-white" />
+                                    </div>
+                                    <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                                        Get in Touch
+                                    </h2>
+                                    <p className="text-gray-600">
+                                        Multiple ways to connect with our team.
+                                    </p>
                                 </div>
 
-                                {/* Message */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Your Message <span className="text-red-500">*</span>
-                                    </label>
-                                    <textarea
-                                        name="message"
-                                        value={data.message}
-                                        onChange={handleChange}
-                                        disabled={processing}
-                                        rows="4"
-                                        placeholder="Tell us how we can help you..."
-                                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                                            errors.message ? 'border-red-300' : 'border-gray-300'
-                                        }`}
-                                    />
-                                    {errors.message && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.message}</p>
-                                    )}
-                                    <div className="flex justify-between items-center mt-1">
-                                        <span className="text-sm text-gray-500">
-                                            {data.message.length}/2000 characters
+                                <div className="space-y-6">
+                                    {/* Email Card */}
+                                    <div className="flex items-start p-5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-shadow duration-200">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                                <EnvelopeIcon className="h-6 w-6 text-white" />
+                                            </div>
+                                        </div>
+                                        <div className="ml-5">
+                                            <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
+                                            <a 
+                                                href="mailto:info@igrcfp.org" 
+                                                className="text-blue-600 hover:text-blue-700 font-medium text-lg block mb-1"
+                                            >
+                                                info@igrcfp.org
+                                            </a>
+                                            <p className="text-sm text-gray-600">
+                                                We typically respond within 24 hours
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Phone Card */}
+                                    <div className="flex items-start p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition-shadow duration-200">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                                                <PhoneIcon className="h-6 w-6 text-white" />
+                                            </div>
+                                        </div>
+                                        <div className="ml-5">
+                                            <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
+                                            <a 
+                                                href="tel:+2348000000000" 
+                                                className="text-emerald-600 hover:text-emerald-700 font-medium text-lg block mb-1"
+                                            >
+                                                +234 800 000 0000
+                                            </a>
+                                            <div className="flex items-center text-sm text-gray-600">
+                                                <ClockIcon className="h-4 w-4 mr-1.5" />
+                                                Mon-Fri: 9AM-6PM WAT
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Location Card */}
+                                    <div className="flex items-start p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-shadow duration-200">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                                                <MapPinIcon className="h-6 w-6 text-white" />
+                                            </div>
+                                        </div>
+                                        <div className="ml-5">
+                                            <h3 className="font-semibold text-gray-900 mb-1">Visit Our Office</h3>
+                                            <address className="text-gray-800 not-italic mb-2">
+                                                Tyneside Innovation Centre<br />
+                                                Willington Square<br />
+                                                Wallsend, NE28 6HQ
+                                            </address>
+                                            <a 
+                                                href="https://maps.google.com/?q=Tyneside+Innovation+Centre+Wallington+Square+Wallsend+NE28+6HQ"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-purple-600 hover:text-purple-700 font-medium text-sm inline-flex items-center"
+                                            >
+                                                Get Directions
+                                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Response Time Info */}
+                                <div className="mt-8 pt-8 border-t border-gray-200">
+                                    <div className="flex items-center justify-center space-x-3">
+                                        <CheckBadgeIcon className="h-6 w-6 text-green-500" />
+                                        <span className="text-gray-700 font-medium">
+                                            Average Response Time: <span className="text-green-600">24-48 hours</span>
                                         </span>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* File Upload */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Attachments (Optional)
-                                    </label>
-                                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
-                                        <div className="space-y-1 text-center">
-                                            <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
-                                            <div className="flex text-sm text-gray-600">
-                                                <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                                                    <span>Upload files</span>
-                                                    <input
-                                                        ref={fileInputRef}
-                                                        type="file"
-                                                        multiple
-                                                        accept=".jpg,.jpeg,.png,.gif,.pdf"
-                                                        onChange={handleFileChange}
-                                                        className="sr-only"
-                                                    />
-                                                </label>
-                                                <p className="pl-1">or drag and drop</p>
-                                            </div>
-                                            <p className="text-xs text-gray-500">
-                                                PNG, JPG, GIF, PDF up to 5MB each
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                Maximum 5 files
-                                            </p>
-                                        </div>
-                                    </div>
+                            {/* Google Map Embed */}
+                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                                <div className="p-6 border-b border-gray-200">
+                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                        <MapPinIcon className="h-6 w-6 text-blue-500 mr-2" />
+                                        Our Location
+                                    </h3>
+                                </div>
+                                <div className="relative h-80">
+                                    {/* Google Maps Iframe */}
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.089024865421!2d-1.5337692836437086!3d54.99101198035857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70e3c24a8a2f%3A0x8b4b4b4b4b4b4b4b!2sTyneside%20Innovation%20Centre!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen=""
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title="IGRCFP Office Location"
+                                        className="absolute inset-0"
+                                    ></iframe>
                                     
-                                    {/* File Previews */}
-                                    {previewImages.length > 0 && (
-                                        <div className="mt-4">
-                                            <h4 className="text-sm font-medium text-gray-700 mb-2">
-                                                Selected Files ({data.attachments.length})
-                                            </h4>
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                                {previewImages.map((preview, index) => (
-                                                    <div key={index} className="relative group">
-                                                        <div className="relative h-24 w-full rounded-lg overflow-hidden bg-gray-100">
-                                                            {preview.type.startsWith('image/') ? (
-                                                                <img
-                                                                    src={preview.url}
-                                                                    alt={preview.name}
-                                                                    className="h-full w-full object-cover"
-                                                                />
-                                                            ) : (
-                                                                <div className="flex items-center justify-center h-full">
-                                                                    <div className="text-center">
-                                                                        <div className="text-xs text-gray-500 mb-1">PDF</div>
-                                                                        <div className="text-xs text-gray-700 truncate px-2">
-                                                                            {preview.name}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeAttachment(index)}
-                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            >
-                                                                <XMarkIcon className="h-4 w-4" />
-                                                            </button>
-                                                        </div>
-                                                        <p className="text-xs text-gray-500 truncate mt-1">
-                                                            {preview.name}
-                                                        </p>
-                                                    </div>
-                                                ))}
+                                    {/* Map Overlay with Logo */}
+                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                                                <MapPinIcon className="h-5 w-5 text-white" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
+                                                <p className="text-xs text-gray-600">Tyneside Innovation Centre</p>
                                             </div>
                                         </div>
-                                    )}
-                                    
-                                    {errors.attachments && (
-                                        <p className="mt-2 text-sm text-red-600">{errors.attachments}</p>
-                                    )}
-                                </div>
-
-                                {/* Privacy Policy */}
-                                <div className="flex items-start">
-                                    <div className="flex items-center h-5">
-                                        <input
-                                            id="agree"
-                                            name="agree"
-                                            type="checkbox"
-                                            checked={data.agree}
-                                            onChange={handleChange}
-                                            disabled={processing}
-                                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                        />
-                                    </div>
-                                    <div className="ml-3 text-sm">
-                                        <label htmlFor="agree" className="font-medium text-gray-700">
-                                            I agree to the{' '}
-                                            <a href="/privacy-policy" className="text-blue-600 hover:text-blue-500">
-                                                privacy policy
-                                            </a>
-                                        </label>
-                                        <p className="text-gray-500">
-                                            By submitting this form, you consent to our privacy policy.
-                                        </p>
-                                        {errors.agree && (
-                                            <p className="mt-1 text-sm text-red-600">{errors.agree}</p>
-                                        )}
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Submit Button */}
-                                <div>
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                                            processing
-                                                ? 'bg-gray-400 cursor-not-allowed'
-                                                : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                        }`}
-                                    >
-                                        {processing ? (
-                                            <span className="flex items-center justify-center">
-                                                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                                </svg>
-                                                Sending...
-                                            </span>
-                                        ) : (
-                                            'Send Message'
-                                        )}
-                                    </button>
+                            {/* Office Image */}
+                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                                <div className="p-6 border-b border-gray-200">
+                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                        <svg className="h-6 w-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Our Office Environment
+                                    </h3>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Footer Section */}
-            <footer className="bg-gray-900 text-white py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div>
-                            <h3 className="text-xl font-bold mb-4">About IGRCFP</h3>
-                            <p className="text-gray-300">
-                                We are dedicated to fostering innovation and providing exceptional support 
-                                to our community. Your success is our priority.
-                            </p>
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-                            <ul className="space-y-2">
-                                <li><a href="/about" className="text-gray-300 hover:text-white">About Us</a></li>
-                                <li><a href="/services" className="text-gray-300 hover:text-white">Services</a></li>
-                                <li><a href="/contact" className="text-gray-300 hover:text-white">Contact</a></li>
-                                <li><a href="/privacy-policy" className="text-gray-300 hover:text-white">Privacy Policy</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold mb-4">Connect With Us</h3>
-                            <div className="flex space-x-4">
-                                <a href="#" className="text-gray-300 hover:text-white">
-                                    <span className="sr-only">Facebook</span>
-                                    <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                    </svg>
-                                </a>
-                                <a href="#" className="text-gray-300 hover:text-white">
-                                    <span className="sr-only">Twitter</span>
-                                    <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                    </svg>
-                                </a>
-                                <a href="#" className="text-gray-300 hover:text-white">
-                                    <span className="sr-only">LinkedIn</span>
-                                    <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                    </svg>
-                                </a>
+                                <div className="relative h-64">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                                        alt="IGRCFP Office Interior"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
+                                        <div className="p-6 text-white">
+                                            <p className="text-sm opacity-90">Modern workspace designed for innovation and collaboration</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
-                        <p>&copy; {new Date().getFullYear()} IGRCFP. All rights reserved.</p>
+                </div>
+            </section>
+
+            {/* Statistics Section */}
+            <section className="py-16 bg-gradient-to-r from-gray-50 to-blue-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                            Why Choose Us
+                        </h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto">
+                            We're committed to providing exceptional service and support to all our clients.
+                        </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+                            <div className="text-4xl font-bold text-blue-600 mb-2">24h</div>
+                            <div className="text-sm text-gray-600">Average Response Time</div>
+                        </div>
+                        <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+                            <div className="text-4xl font-bold text-blue-600 mb-2">99%</div>
+                            <div className="text-sm text-gray-600">Satisfaction Rate</div>
+                        </div>
+                        <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+                            <div className="text-4xl font-bold text-blue-600 mb-2">5+</div>
+                            <div className="text-sm text-gray-600">Years of Experience</div>
+                        </div>
+                        <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+                            <div className="text-4xl font-bold text-blue-600 mb-2">1000+</div>
+                            <div className="text-sm text-gray-600">Happy Clients</div>
+                        </div>
                     </div>
                 </div>
-            </footer>
+            </section>
+
+            {/* CSS for Blob Animation */}
+            <style jsx>{`
+                @keyframes blob {
+                    0% {
+                        transform: translate(0px, 0px) scale(1);
+                    }
+                    33% {
+                        transform: translate(30px, -50px) scale(1.1);
+                    }
+                    66% {
+                        transform: translate(-20px, 20px) scale(0.9);
+                    }
+                    100% {
+                        transform: translate(0px, 0px) scale(1);
+                    }
+                }
+                .animate-blob {
+                    animation: blob 7s infinite;
+                }
+                .animation-delay-2000 {
+                    animation-delay: 2s;
+                }
+                .animation-delay-4000 {
+                    animation-delay: 4s;
+                }
+            `}</style>
         </GuestLayout>
     );
 }
