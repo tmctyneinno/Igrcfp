@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+
 import { 
     CheckCircleIcon, 
     ExclamationCircleIcon,
@@ -16,6 +17,8 @@ import {
 export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
+    const [successMessage, setSuccessMessage] = useState(null);
+
 
     // IMPORTANT: Change state to use snake_case to match input names
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -52,10 +55,7 @@ export default function Index({ auth, title }) {
             onSuccess: (page) => {
                 console.log('Success response:', page);
                 console.log('Flash messages:', page.props.flash);
-                
-                if (page.props.flash?.success) {
-                    console.log('Flash success message found:', page.props.flash.success);
-                }
+                setSuccessMessage('Your message has been sent successfully.');
                 reset();
                 // Auto-scroll to show success message
                 window.scrollTo({ top: 0, behavior: 'smooth' });
