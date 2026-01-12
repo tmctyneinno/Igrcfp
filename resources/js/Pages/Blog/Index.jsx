@@ -21,6 +21,24 @@ export default function Blog({ auth, title, description }) {
                 </div>
             </section>
 
+            {/* Search Input Field Above Featured Insights */}
+            <section className="bg-white py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-lg mx-auto">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search insights, news, or updates..."
+                                className="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                🔍
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Featured Insights */}
             <section className="bg-white py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
