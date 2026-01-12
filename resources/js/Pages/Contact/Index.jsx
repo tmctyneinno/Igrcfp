@@ -42,9 +42,19 @@ export default function Index({ auth, title }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log('Form submitting...', data);
         post(route('contact.store'), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                console.log('Form submitted successfully');
+                reset();
+            },
+            onError: (errors) => {
+                console.log('Form submission errors:', errors);
+            },
+            onFinish: () => {
+                console.log('Form submission finished');
+            }
         });
     };
 
