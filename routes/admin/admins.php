@@ -69,5 +69,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:su
 require __DIR__.'/auth.php';
 require __DIR__.'/dashboard.php';
 require __DIR__.'/users.php';
-require __DIR__.'/blog.php';
 require __DIR__.'/settings.php';
