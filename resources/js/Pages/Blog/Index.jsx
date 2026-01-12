@@ -14,7 +14,7 @@ export default function Blog({ auth, title, description }) {
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                             {title}
                         </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                             Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.
                         </p>
                     </div>
@@ -92,6 +92,27 @@ export default function Blog({ auth, title, description }) {
                             </Link>
                         </nav>
                     </div>
+                </div>
+            </section>
+
+            {/* Newsletter Subscription Section */}
+            <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white text-center">
+                    <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
+                    <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
+
+                    <div className="flex justify-center mb-4">
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            className="w-full max-w-md py-3 pl-4 pr-4 border border-white rounded-md text-black"
+                        />
+                        <button className="ml-4 py-3 px-6 bg-white text-blue-600 font-semibold rounded-md hover:bg-gray-200">
+                            Subscribe
+                        </button>
+                    </div>
+
+                    <p className="text-sm">We care about your data in our <Link href="#" className="text-blue-200 hover:text-blue-100">privacy policy</Link>.</p>
                 </div>
             </section>
         </GuestLayout>
