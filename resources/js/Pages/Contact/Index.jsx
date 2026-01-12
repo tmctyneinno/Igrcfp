@@ -10,8 +10,51 @@ import {
     ClockIcon,
     ChatBubbleLeftRightIcon,
     UserGroupIcon,
-    CheckBadgeIcon
+    CheckBadgeIcon,
+    XMarkIcon
 } from '@heroicons/react/24/outline';
+
+// Toast Component
+const Toast = ({ message, type = 'success', onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onClose();
+        }, 5000); // Auto-close after 5 seconds
+
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    const bgColor = type === 'success' 
+        ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500' 
+        : 'bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500';
+    
+    const iconColor = type === 'success' ? 'text-green-500' : 'text-red-500';
+    const Icon = type === 'success' ? CheckCircleIcon : ExclamationCircleIcon;
+
+    return (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-md animate-slide-in ${bgColor}`}>
+            <div className="flex items-start">
+                <div className="flex-shrink-0">
+                    <Icon className={`h-6 w-6 ${iconColor}`} />
+                </div>
+                <div className="ml-3 flex-1">
+                    <p className="text-sm font-medium text-gray-900">
+                        {type === 'success' ? 'Success!' : 'Error!'}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-700">
+                        {message}
+                    </p>
+                </div>
+                <button
+                    onClick={onClose}
+                    className="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600"
+                >
+                    <XMarkIcon className="h-5 w-5" />
+                </button>
+            </div>
+        </div>
+    );
+};
 
 export default function Index({ auth, title }) {
     const pageProps = usePage().props;
@@ -28,24 +71,30 @@ export default function Index({ auth, title }) {
         agree: false,
     });
 
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
+    // State for toast notifications
+    const [toast, setToast] = useState(null);
 
-    // Check for flash message on component mount and when page props change
+    // Show toast when flash message comes from server
     useEffect(() => {
-        console.log('Flash data:', flash);
-        console.log('Has success message?', !!flash?.success);
-        
         if (flash?.success) {
-            setShowSuccess(true);
-            setSuccessMessage(flash.success);
-            
-            // Auto-hide after 8 seconds
-            const timer = setTimeout(() => {
-                setShowSuccess(false);
-            }, 8000);
-            
-            return () => clearTimeout(timer);
+            setToast({
+                message: flash.success,
+                type: 'success'
+            });
+        }
+        
+        if (flash?.error) {
+            setToast({
+                message: flash.error,
+                type: 'error'
+            });
+        }
+        
+        if (flash?.message) {
+            setToast({
+                message: flash.message,
+                type: 'info'
+            });
         }
     }, [flash]);
 
@@ -67,20 +116,33 @@ export default function Index({ auth, title }) {
         
         console.log('Form data being sent:', data);
         
-        // Submit with a different approach
-        post(route('contact.store'), {
-            ...data,
-            preserveState: false, // This forces a full page reload
-        }, {
-            onSuccess: () => {
+        post(route('contact.store'), data, {
+            onSuccess: (page) => {
                 console.log('Form submitted successfully!');
+                
+                // Show toast notification for success
+                if (page.props.flash?.success) {
+                    setToast({
+                        message: page.props.flash.success,
+                        type: 'success'
+                    });
+                }
+                
                 reset();
-                // Force scroll to top
+                
+                // Scroll to top to show form is cleared
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             onError: (errors) => {
                 console.log('Form errors:', errors);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Show error toast if there's a general error
+                if (errors?.general) {
+                    setToast({
+                        message: errors.general,
+                        type: 'error'
+                    });
+                }
             },
         });
     };
@@ -127,6 +189,15 @@ export default function Index({ auth, title }) {
                 <meta name="description" content="Get in touch with IGRCFP. Our team is ready to assist you with any inquiries or support you may need." />
             </Head>
             
+            {/* Toast Notification */}
+            {toast && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={() => setToast(null)} 
+                />
+            )}
+            
             {/* Hero Banner */}
             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -144,46 +215,6 @@ export default function Index({ auth, title }) {
                     </div>
                 </div>
             </section>
-
-           
-
-            {/* SUCCESS MESSAGE - Always shows if there's a flash.success */}
-            {flash?.success && (
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-4">
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded-lg shadow-lg animate-fade-in">
-                        <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                                <CheckCircleIcon className="h-8 w-8 text-green-500 animate-bounce" />
-                            </div>
-                            <div className="ml-4">
-                                <h3 className="text-lg font-semibold text-green-800 mb-1">
-                                    Message Sent Successfully!
-                                </h3>
-                                <p className="text-green-700 mb-2">
-                                    {flash.success}
-                                </p>
-                                <p className="text-sm text-green-600">
-                                    ✅ We've received your message and will respond within 24-48 hours.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ERROR MESSAGE */}
-            {flash?.error && (
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-4">
-                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg animate-fade-in">
-                        <div className="flex items-center">
-                            <ExclamationCircleIcon className="h-8 w-8 text-red-500 mr-3 flex-shrink-0" />
-                            <div>
-                                <p className="text-red-800 font-semibold">{flash.error}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Main Content Section */}
             <section className="py-16 lg:py-20">
@@ -304,7 +335,7 @@ export default function Index({ auth, title }) {
                                         id="email"
                                         name="email"
                                         type="email"
-                                        placeholder=""
+                                        placeholder="john.doe@example.com"
                                         autoComplete="email"
                                     />
 
@@ -468,32 +499,32 @@ export default function Index({ auth, title }) {
 
             {/* Add CSS animations */}
             <style jsx>{`
-                @keyframes fadeIn {
+                @keyframes slideIn {
                     from {
+                        transform: translateX(100%);
                         opacity: 0;
-                        transform: translateY(-20px);
                     }
                     to {
+                        transform: translateX(0);
                         opacity: 1;
-                        transform: translateY(0);
                     }
                 }
                 
-                .animate-fade-in {
-                    animation: fadeIn 0.5s ease-out;
+                @keyframes fadeOut {
+                    from {
+                        opacity: 1;
+                    }
+                    to {
+                        opacity: 0;
+                    }
                 }
                 
-                .animate-bounce {
-                    animation: bounce 1s infinite;
+                .animate-slide-in {
+                    animation: slideIn 0.3s ease-out forwards;
                 }
                 
-                @keyframes bounce {
-                    0%, 100% {
-                        transform: translateY(0);
-                    }
-                    50% {
-                        transform: translateY(-5px);
-                    }
+                .animate-fade-out {
+                    animation: fadeOut 0.3s ease-out forwards;
                 }
             `}</style>
         </GuestLayout>
