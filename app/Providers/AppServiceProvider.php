@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,11 +23,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
         Inertia::share([
-        'flash' => fn () => [
-            'success' => session('success'),
-            'error'   => session('error'),
-        ],
-    ]);
+            'flash' => fn () => [
+                'success' => session('success'),
+                'error'   => session('error'),
+            ],
+        ]);
 
     }
 }
