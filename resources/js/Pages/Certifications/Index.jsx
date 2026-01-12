@@ -25,10 +25,10 @@ export default function Certifications({ auth, title, description }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <div>
-                            <h2 className="text-3xl font-semibold text-gray-800">
+                            <h2 className="text-4xl font-semibold text-gray-800">
                                 Advance Your Career. Build Institutional Resilience.
                             </h2>
-                            <p className="mt-4 text-gray-600">
+                            <p className="mt-4 text-gray-600 text-1xl">
                                 Our professional certifications are designed to equip individuals and institutions with globally relevant skills to tackle financial crime and compliance risks.
                             </p>
                             
