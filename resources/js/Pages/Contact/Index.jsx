@@ -52,6 +52,7 @@ export default function Index({ auth, title }) {
             onSuccess: (page) => {
                 console.log('Success response:', page);
                 console.log('Flash messages:', page.props.flash);
+                
                 if (page.props.flash?.success) {
                     console.log('Flash success message found:', page.props.flash.success);
                 }
