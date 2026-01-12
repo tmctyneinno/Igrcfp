@@ -452,7 +452,7 @@ export default function Index({ auth, title }) {
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="w-full py-3 px-4 rounded-lg font-medium bg-blue-700 hover:bg-blue-800 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                            className="w-full py-3 px-4 rounded-lg font-medium bg-blue-900 hover:bg-blue-800 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-60 disabled:cursor-not-allowed"
                                         >
                                             {processing ? (
                                                 <span className="flex items-center justify-center gap-2">
