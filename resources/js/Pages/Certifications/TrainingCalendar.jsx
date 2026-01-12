@@ -20,7 +20,7 @@ export default function Index({ auth, title, description }) {
                         <div className="mt-8">
                             <Link
                                 href="/training-calendar"
-                                className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition outline-btn"
+                                className="borde-bl inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-white rounded-md hover:bg-blue-800 transition "
                             >
                                 Download Prospectus
                             </Link>
