@@ -27,13 +27,13 @@ export default function Certifications({ auth, title, description }) {
         description:
             'Equips compliance teams with tools to design monitoring frameworks, track key risk indicators, and use analytics for regulatory reporting.',
         image: '/assets/images/programs/diploma.png',
-    },
+    }, 
     {
         title: 'Regulatory Compliance & Supervisory Engagement',
         description:
             'Covers global regulatory requirements, reporting obligations, and effective engagement with supervisors including mock interviews.',
         image: '/assets/images/programs/diploma.png',
-    },
+    }, 
     {
         title: 'RegTech, SupTech & Innovation in Compliance',
         description:
