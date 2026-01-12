@@ -25,14 +25,14 @@
     </div>
     
     <div class="content">
-        <p>Dear <strong>{{ $message->first_name }} {{ $message->last_name }}</strong>,</p>
+        <p>Dear <strong>{{ $contactMessage->first_name }} {{ $contactMessage->last_name }}</strong>,</p>
         
         <p>Thank you for reaching out to <strong>{{ config('app.name') }}</strong>. We have successfully received your inquiry and our team is reviewing it.</p>
 
         <div class="info-box">
             <h3 style="color: #667eea; margin-top: 0;">📋 Message Details</h3>
-            <p><strong>Reference ID:</strong> <span class="message-id">#CM{{ str_pad($message->id, 6, '0', STR_PAD_LEFT) }}</span></p>
-            <p><strong>Submitted:</strong> {{ $message->created_at->format('F j, Y \a\t g:i A') }}</p>
+            <p><strong>Reference ID:</strong> <span class="message-id">#CM{{ str_pad($contactMessage->id, 6, '0', STR_PAD_LEFT) }}</span></p>
+            <p><strong>Submitted:</strong> {{ $contactMessage->created_at->format('F j, Y \a\t g:i A') }}</p>
             <p><strong>Subject:</strong> Contact Form Submission</p>
         </div>
 
@@ -42,14 +42,14 @@
                 <li>Your message has been forwarded to our support team</li>
                 <li>We aim to respond within <strong>{{ $responseTime }}</strong></li>
                 <li>You will receive updates via this email address</li>
-                <li>We may contact you at <strong>{{ $message->formatted_phone ?? 'your provided phone number' }}</strong> if needed</li>
+                <li>We may contact you at <strong>{{ $contactMessage->phone ? '+' . $contactMessage->country_code . ' ' . $contactMessage->phone : 'your provided phone number' }}</strong> if needed</li>
             </ol>
         </div>
 
         <div class="info-box">
             <h3 style="color: #667eea; margin-top: 0;">📝 Your Message</h3>
             <blockquote style="border-left: 4px solid #667eea; margin: 15px 0; padding-left: 15px; font-style: italic;">
-                {{ $message->message }}
+                {{ $contactMessage->message }}
             </blockquote>
         </div>
 
