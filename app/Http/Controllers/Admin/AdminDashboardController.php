@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Blog;
 use App\Models\User;
-use App\Models\Admin;
+use App\Models\Event;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,7 +20,7 @@ class AdminDashboardController extends Controller
             'total_users' => User::count(),
             'total_blogs' => Blog::count() ?? 0,
             'total_courses' => Course::count(),
-            'total_admins' => Admin::count(),
+            'total_events' => Event::count() ?? 0,
             'recent_users' => User::latest()->take(5)->get(),
             'admin_name' => $admin->name,
         ];
