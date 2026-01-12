@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { 
@@ -17,13 +17,13 @@ export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
 
-    
+    // IMPORTANT: Change state to use snake_case to match input names
     const { data, setData, post, processing, errors, reset } = useForm({
-        firstName: '',
-        lastName: '',
+        first_name: '',  // Changed from firstName
+        last_name: '',   // Changed from lastName
         email: '',
         phone: '',
-        countryCode: 'NG',
+        country_code: 'NG',  // Changed from countryCode
         message: '',
         agree: false,
     });
@@ -41,33 +41,14 @@ export default function Index({ auth, title }) {
         { code: 'DE', name: 'Germany (+49)' },
     ];
 
-   const handleSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         
-        console.log('Form submitting...');
-        console.log('Current data:', data);
+        console.log('Form submitting...', data);
         
-        // Convert to snake_case for Laravel
-        const formData = {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            email: data.email,
-            phone: data.phone,
-            country_code: data.countryCode,
-            message: data.message,
-            agree: data.agree,
-        };
-        
-        console.log('Sending snake_case data:', formData);
-        console.log('Route URL:', route('contact.store'));
-        
-        // REMOVE THE .catch() - Inertia handles errors differently
-        post(route('contact.store'), formData, {
+        // No need to convert to snake_case anymore since data already uses snake_case
+        post(route('contact.store'), data, {
             preserveScroll: true,
-            onStart: () => console.log('Request started'),
-            onProgress: (progress) => console.log('Progress:', progress),
-            onFinish: () => console.log('Request finished'),
-            onCancel: () => console.log('Request cancelled'),
             onSuccess: (page) => {
                 console.log('Success response:', page);
                 console.log('Flash messages:', page.props.flash);
@@ -75,16 +56,12 @@ export default function Index({ auth, title }) {
                     console.log('Flash success message found:', page.props.flash.success);
                 }
                 reset();
-                window.scrollTo({ top: 0, behavior: 'smooth' })
+                // Auto-scroll to show success message
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             onError: (errors) => {
                 console.log('Form submission errors:', errors);
-                console.log('Error details:', errors);
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-            },
-            onFinish: () => {
-                console.log('Request finished');
-                // You might want to scroll to top to see the flash message
+                // Also scroll to top on error to see error messages
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
         });
@@ -138,14 +115,13 @@ export default function Index({ auth, title }) {
                 <meta name="description" content="Get in touch with IGRCFP. Our team is ready to assist you with any inquiries or support you may need." />
             </Head>
             
-            {/* Hero Banner with Background Image */}
-             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
+            {/* Hero Banner */}
+            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                    <div className="text-center">
-                        
                         <div className="inline-flex items-center bg-blue-100 px-3 py-1 justify-center space-x-2 mb-6 rounded-full">
                             <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className=" font-medium text-sm  tracking-wider"> {title}</span>
+                            <span className="font-medium text-sm tracking-wider">{title}</span>
                         </div>
                         <h1 
                             id="page-title"
@@ -159,33 +135,37 @@ export default function Index({ auth, title }) {
                     </div>
                 </div>
             </section>
-          
 
-            {/* Status Messages */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-4">
+            {/* Status Messages with Improved Visibility */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 mb-8 space-y-4">
                 {flash?.success && (
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-r-lg shadow-sm">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-lg shadow-lg animate-fade-in">
                         <div className="flex items-center">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                            <p className="text-green-800">{flash?.success}</p>
+                            <CheckCircleIcon className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 animate-pulse" />
+                            <div>
+                                <p className="text-green-800 font-medium">{flash.success}</p>
+                                <p className="text-green-600 text-sm mt-1">
+                                    We'll get back to you within 24-48 hours.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 )}
 
                 {flash?.error && (
-                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+                    <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 p-4 rounded-lg shadow-lg animate-fade-in">
                         <div className="flex items-center">
-                            <ExclamationCircleIcon className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-                            <p className="text-red-800">{flash?.error}</p>
+                            <ExclamationCircleIcon className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
+                            <p className="text-red-800 font-medium">{flash.error}</p>
                         </div>
                     </div>
                 )}
 
                 {flash?.message && (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-r-lg shadow-sm">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-lg shadow-lg animate-fade-in">
                         <div className="flex items-center">
-                            <ChatBubbleLeftRightIcon className="h-5 w-5 text-blue-500 mr-3 flex-shrink-0" />
-                            <p className="text-blue-800">{flash?.message}</p>
+                            <ChatBubbleLeftRightIcon className="h-6 w-6 text-blue-500 mr-3 flex-shrink-0" />
+                            <p className="text-blue-800 font-medium">{flash.message}</p>
                         </div>
                     </div>
                 )}
@@ -196,8 +176,8 @@ export default function Index({ auth, title }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                        
-                        {/* Left  Column - Contact Information & Map */}
-                        <div className="space-y-1">
+                        {/* Left Column - Contact Information & Map */}
+                        <div className="space-y-8">
                             {/* Contact Information Cards */}
                             <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 border border-gray-100">
                                 <div className="text-center mb-10">
@@ -223,7 +203,7 @@ export default function Index({ auth, title }) {
                                         <div className="ml-5">
                                             <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
                                             <a 
-                                                href="mailto:info@igrcfp.org" 
+                                                href="mailto:enquiries@igrfcp.org" 
                                                 className="text-blue-600 hover:text-blue-700 font-medium text-lg block mb-1"
                                             >
                                                enquiries@igrfcp.org
@@ -233,28 +213,6 @@ export default function Index({ auth, title }) {
                                             </p>
                                         </div>
                                     </div>
-
-                                    {/* Phone Card */}
-                                    {/* <div className="flex items-start p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl hover:shadow-md transition-shadow duration-200">
-                                        <div className="flex-shrink-0">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                                                <PhoneIcon className="h-6 w-6 text-white" />
-                                            </div>
-                                        </div>
-                                        <div className="ml-5">
-                                            <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                                            <a 
-                                                href="tel:+2348000000000" 
-                                                className="text-emerald-600 hover:text-emerald-700 font-medium text-lg block mb-1"
-                                            >
-                                                +234 800 000 0000
-                                            </a>
-                                            <div className="flex items-center text-sm text-gray-600">
-                                                <ClockIcon className="h-4 w-4 mr-1.5" />
-                                                Mon-Fri: 9AM-6PM WAT
-                                            </div>
-                                        </div>
-                                    </div> */}
 
                                     {/* Location Card */}
                                     <div className="flex items-start p-5 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-shadow duration-200">
@@ -266,12 +224,12 @@ export default function Index({ auth, title }) {
                                         <div className="ml-5">
                                             <h3 className="font-semibold text-gray-900 mb-1">Visit Our Office</h3>
                                             <address className="text-gray-800 not-italic mb-2">
-                                                85 Great Portland Street
-                                                First Floor, W1W 7LT
+                                                85 Great Portland Street<br />
+                                                First Floor, W1W 7LT<br />
                                                 London, United Kingdom
                                             </address>
                                             <a 
-                                                href="https://maps.google.com/?q=Tyneside+Innovation+Centre+Wallington+Square+Wallsend+NE28+6HQ"
+                                                href="https://maps.google.com/?q=85+Great+Portland+Street+London+W1W+7LT"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-purple-600 hover:text-purple-700 font-medium text-sm inline-flex items-center"
@@ -305,9 +263,8 @@ export default function Index({ auth, title }) {
                                     </h3>
                                 </div>
                                 <div className="relative h-80">
-                                    {/* Google Maps Iframe */}
                                     <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.089024865421!2d-1.5337692836437086!3d54.99101198035857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70e3c24a8a2f%3A0x8b4b4b4b4b4b4b4b!2sTyneside%20Innovation%20Centre!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2482.778581834643!2d-0.14409758422943673!3d51.51890797963733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761ad554c4a7c5%3A0xc78e84c8b982c8a6!2s85%20Great%20Portland%20St%2C%20London%20W1W%207LT%2C%20UK!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
                                         width="100%"
                                         height="100%"
                                         style={{ border: 0 }}
@@ -318,7 +275,6 @@ export default function Index({ auth, title }) {
                                         className="absolute inset-0"
                                     ></iframe>
                                     
-                                    {/* Map Overlay with Logo */}
                                     <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
                                         <div className="flex items-center space-x-3">
                                             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
@@ -326,33 +282,8 @@ export default function Index({ auth, title }) {
                                             </div>
                                             <div>
                                                 <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
-                                                <p className="text-xs text-gray-600">Tyneside Innovation Centre</p>
+                                                <p className="text-xs text-gray-600">London Office</p>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Office Image */}
-                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
-                                <div className="p-6 border-b border-gray-200">
-                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                                        <svg className="h-6 w-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        Our Office Environment
-                                    </h3>
-                                </div>
-                                <div className="relative h-64">
-                                    <img
-                                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                                        alt="IGRCFP Office Interior"
-                                        className="w-full h-full object-cover"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
-                                        <div className="p-6 text-white">
-                                            <p className="text-sm opacity-90">Modern workspace designed for innovation and collaboration</p>
                                         </div>
                                     </div>
                                 </div>
@@ -414,7 +345,7 @@ export default function Index({ auth, title }) {
                                                 <select
                                                     name="country_code"
                                                     id="country_code"
-                                                    value={data.countryCode}
+                                                    value={data.country_code}
                                                     onChange={handleChange}
                                                     disabled={processing}
                                                     className={`w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-3 focus:ring-indigo-500/30 focus:border-indigo-500 ${
@@ -585,17 +516,12 @@ export default function Index({ auth, title }) {
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
 
-            {/* CTA Section with AOS zoom effect */}
-            <section 
-                className="py-20 bg-gradient-to-r from-blue-950 to-blue-900"
-                data-aos="zoom-in"
-                data-aos-duration="1400"
-            >
+            {/* CTA Section */}
+            <section className="py-20 bg-gradient-to-r from-blue-950 to-blue-900">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
                     <p className="text-blue-100 mb-8 text-lg">
@@ -604,16 +530,13 @@ export default function Index({ auth, title }) {
                     <Link
                         href={auth.user ? route('dashboard') : route('register')}
                         className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
-                        data-aos="fade-up"
-                        data-aos-delay="300"
-                        data-aos-duration="1400"
                     >
                         {auth.user ? 'Continue Learning' : 'Get Started for Free'}
                     </Link>
                 </div>
             </section>
 
-            {/* CSS for Blob Animation */}
+            {/* Add CSS animations */}
             <style jsx>{`
                 @keyframes blob {
                     0% {
@@ -629,12 +552,30 @@ export default function Index({ auth, title }) {
                         transform: translate(0px, 0px) scale(1);
                     }
                 }
+                
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
                 .animate-blob {
                     animation: blob 7s infinite;
                 }
+                
+                .animate-fade-in {
+                    animation: fadeIn 0.5s ease-out;
+                }
+                
                 .animation-delay-2000 {
                     animation-delay: 2s;
                 }
+                
                 .animation-delay-4000 {
                     animation-delay: 4s;
                 }
