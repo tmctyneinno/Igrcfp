@@ -1,178 +1,545 @@
-import  { useState } from 'react';
-import { Head } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
-export default function ContactUs({ auth, title }) {
+export default function Index({ auth, title }) {
+    const { flash } = usePage().props;
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phone: '',
+        countryCode: 'NG',
         message: '',
         agree: false,
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [submitStatus, setSubmitStatus] = useState(null);
+
+    const countryCodes = [
+        { code: 'NG', name: 'Nigeria (+234)' },
+        { code: 'US', name: 'USA (+1)' },
+        { code: 'GB', name: 'UK (+44)' },
+        { code: 'GH', name: 'Ghana (+233)' },
+        { code: 'KE', name: 'Kenya (+254)' },
+        { code: 'ZA', name: 'South Africa (+27)' },
+    ];
+
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First name is required';
+        }
+        
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last name is required';
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address';
+        }
+        
+        const phoneRegex = /^[0-9+\-\s()]{10,}$/;
+        if (!formData.phone.trim()) {
+            newErrors.phone = 'Phone number is required';
+        } else if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+            newErrors.phone = 'Please enter a valid phone number';
+        }
+        
+        if (!formData.message.trim()) {
+            newErrors.message = 'Message is required';
+        } else if (formData.message.trim().length < 10) {
+            newErrors.message = 'Message must be at least 10 characters';
+        }
+        
+        if (!formData.agree) {
+            newErrors.agree = 'You must agree to the privacy policy';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+        const { name, value, type } = e.target;
+        
+        if (type === 'checkbox') {
+            setFormData(prev => ({
+                ...prev,
+                [name]: e.target.checked,
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+            }));
+            
+            // Clear error for this field when user starts typing
+            if (errors[name]) {
+                setErrors(prev => ({
+                    ...prev,
+                    [name]: '',
+                }));
+            }
+        }
     };
 
-    const handleCheckboxChange = (e) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            agree: e.target.checked,
-        }));
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your submit logic here
-        console.log('Form Submitted:', formData);
+        
+        if (!validateForm()) {
+            return;
+        }
+        
+        setIsSubmitting(true);
+        setSubmitStatus(null);
+        
+        try {
+            // In a real application, this would be an Inertia POST request
+            // await Inertia.post('/contact', formData);
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            setSubmitStatus('success');
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                countryCode: 'NG',
+                message: '',
+                agree: false,
+            });
+            
+            // Show success message for 5 seconds
+            setTimeout(() => setSubmitStatus(null), 5000);
+        } catch (error) {
+            setSubmitStatus('error');
+            console.error('Form submission error:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+    const InputField = ({ label, id, type = 'text', required = true, ...props }) => (
+        <div>
+            <label 
+                htmlFor={id} 
+                className="block text-sm font-medium text-gray-700 mb-1"
+            >
+                {label} {required && <span className="text-red-500">*</span>}
+            </label>
+            <input
+                id={id}
+                type={type}
+                className={`w-full px-4 py-3 border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                    errors[props.name] 
+                        ? 'border-red-300 bg-red-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                }`}
+                required={required}
+                aria-invalid={errors[props.name] ? 'true' : 'false'}
+                aria-describedby={errors[props.name] ? `${id}-error` : undefined}
+                {...props}
+            />
+            {errors[props.name] && (
+                <p 
+                    id={`${id}-error`} 
+                    className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                    role="alert"
+                >
+                    <ExclamationCircleIcon className="h-4 w-4" />
+                    {errors[props.name]}
+                </p>
+            )}
+        </div>
+    );
 
     return (
         <GuestLayout auth={auth}>
-            <Head title={title} />
+            <Head title={title}>
+                <meta name="description" content="Get in touch with IGRCFP. Our team is ready to assist you with any inquiries or support you may need." />
+            </Head>
+            
             {/* Hero Section */}
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{title}</h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Our friendly team would love to hear from you.
+            <section 
+                className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20 md:py-28"
+                aria-labelledby="page-title"
+            >
+                <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center max-w-3xl mx-auto">
+                        <h1 
+                            id="page-title"
+                            className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight"
+                        >
+                            {title}
+                        </h1>
+                        <p className="text-xl text-gray-600 leading-relaxed">
+                            Our dedicated team is committed to providing exceptional support. 
+                            Reach out with your questions, feedback, or partnership inquiries.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Contact Us Form */}
-            <section className="w-full py-12">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Contact us</h2>
-                        <p className="text-lg text-gray-600">Our friendly team would love to hear from you.</p>
+            {/* Status Messages */}
+            {flash.success && (
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-r">
+                        <div className="flex items-center">
+                            <CheckCircleIcon className="h-5 w-5 text-green-400 mr-3" />
+                            <p className="text-green-700">{flash.success}</p>
+                        </div>
                     </div>
-                    <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-8 space-y-6">
-                        {/* Name Fields */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                </div>
+            )}
+
+            {submitStatus === 'success' && (
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <div 
+                        className="bg-green-50 border-l-4 border-green-400 p-4 rounded-r"
+                        role="alert"
+                        aria-live="polite"
+                    >
+                        <div className="flex items-center">
+                            <CheckCircleIcon className="h-5 w-5 text-green-400 mr-3" />
                             <div>
-                                <label htmlFor="firstName" className="text-sm font-medium text-gray-700">First name</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    id="firstName"
-                                    className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last name</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    id="lastName"
-                                    className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    required
-                                />
+                                <p className="text-green-800 font-medium">
+                                    Message Sent Successfully!
+                                </p>
+                                <p className="text-green-700 mt-1">
+                                    Thank you for contacting us. We'll respond within 24-48 hours.
+                                </p>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
 
-                        {/* Email */}
-                        <div>
-                            <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                value={formData.email}
+            {submitStatus === 'error' && (
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                    <div 
+                        className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r"
+                        role="alert"
+                        aria-live="assertive"
+                    >
+                        <div className="flex items-center">
+                            <ExclamationCircleIcon className="h-5 w-5 text-red-400 mr-3" />
+                            <div>
+                                <p className="text-red-800 font-medium">
+                                    Submission Failed
+                                </p>
+                                <p className="text-red-700 mt-1">
+                                    Please try again or contact us directly at info@igrcfp.org
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Contact Form Section */}
+            <section className="py-16" aria-labelledby="contact-form-title">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 
+                            id="contact-form-title"
+                            className="text-3xl font-bold text-gray-900 mb-4"
+                        >
+                            Send Us a Message
+                        </h2>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Complete the form below and our team will respond promptly. 
+                            All fields marked with <span className="text-red-500">*</span> are required.
+                        </p>
+                    </div>
+                    
+                    <form 
+                        onSubmit={handleSubmit}
+                        className="bg-white rounded-2xl shadow-xl p-8 md:p-10 space-y-8"
+                        noValidate
+                    >
+                        {/* Name Fields */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <InputField
+                                label="First Name"
+                                id="firstName"
+                                name="firstName"
+                                value={formData.firstName}
                                 onChange={handleChange}
-                                required
+                                placeholder="Enter your first name"
+                                autoComplete="given-name"
+                            />
+                            
+                            <InputField
+                                label="Last Name"
+                                id="lastName"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                placeholder="Enter your last name"
+                                autoComplete="family-name"
                             />
                         </div>
 
+                        {/* Email */}
+                        <InputField
+                            label="Email Address"
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="your.email@example.com"
+                            autoComplete="email"
+                        />
+
                         {/* Phone Number */}
                         <div>
-                            <label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone number</label>
-                            <div className="flex items-center mt-2">
-                                <select
-                                    name="countryCode"
-                                    className="mr-3 p-2 border border-gray-300 rounded-md"
-                                >
-                                    <option value="NG">NG</option>
-                                    {/* Add more country codes as necessary */}
-                                </select>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    id="phone"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <label 
+                                htmlFor="phone" 
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                Phone Number <span className="text-red-500">*</span>
+                            </label>
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <div className="sm:w-40">
+                                    <select
+                                        name="countryCode"
+                                        id="countryCode"
+                                        value={formData.countryCode}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                        aria-label="Country code"
+                                    >
+                                        {countryCodes.map((country) => (
+                                            <option key={country.code} value={country.code}>
+                                                {country.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="flex-1">
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        id="phone"
+                                        className={`w-full px-4 py-3 border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${
+                                            errors.phone 
+                                                ? 'border-red-300 bg-red-50' 
+                                                : 'border-gray-300 hover:border-gray-400'
+                                        }`}
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder="Phone number"
+                                        autoComplete="tel"
+                                        aria-invalid={errors.phone ? 'true' : 'false'}
+                                        aria-describedby={errors.phone ? 'phone-error' : undefined}
+                                    />
+                                    {errors.phone && (
+                                        <p 
+                                            id="phone-error" 
+                                            className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                                            role="alert"
+                                        >
+                                            <ExclamationCircleIcon className="h-4 w-4" />
+                                            {errors.phone}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
                         {/* Message */}
                         <div>
-                            <label htmlFor="message" className="text-sm font-medium text-gray-700">Message</label>
+                            <label 
+                                htmlFor="message" 
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                            >
+                                Your Message <span className="text-red-500">*</span>
+                            </label>
                             <textarea
                                 name="message"
                                 id="message"
-                                rows="4"
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                rows="5"
+                                className={`w-full px-4 py-3 border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none ${
+                                    errors.message 
+                                        ? 'border-red-300 bg-red-50' 
+                                        : 'border-gray-300 hover:border-gray-400'
+                                }`}
                                 value={formData.message}
                                 onChange={handleChange}
-                                required
+                                placeholder="Please provide details about your inquiry..."
+                                aria-invalid={errors.message ? 'true' : 'false'}
+                                aria-describedby={errors.message ? 'message-error' : undefined}
                             />
+                            <div className="flex justify-between items-center mt-1">
+                                {errors.message && (
+                                    <p 
+                                        id="message-error" 
+                                        className="text-sm text-red-600 flex items-center gap-1"
+                                        role="alert"
+                                    >
+                                        <ExclamationCircleIcon className="h-4 w-4" />
+                                        {errors.message}
+                                    </p>
+                                )}
+                                <span className="text-sm text-gray-500 ml-auto">
+                                    {formData.message.length}/1000 characters
+                                </span>
+                            </div>
                         </div>
 
-                        {/* Privacy Policy */}
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                name="agree"
-                                id="agree"
-                                className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                                checked={formData.agree}
-                                onChange={handleCheckboxChange}
-                                required
-                            />
-                            <label htmlFor="agree" className="ml-2 text-sm text-gray-600">
-                                You agree to our <a href="/privacy-policy" className="text-indigo-600">privacy policy</a>.
-                            </label>
+                        {/* Privacy Policy Agreement */}
+                        <div className="bg-blue-50 rounded-lg p-4">
+                            <div className="flex items-start">
+                                <div className="flex items-center h-5">
+                                    <input
+                                        type="checkbox"
+                                        name="agree"
+                                        id="agree"
+                                        className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                        checked={formData.agree}
+                                        onChange={handleChange}
+                                        required
+                                        aria-invalid={errors.agree ? 'true' : 'false'}
+                                        aria-describedby={errors.agree ? 'agree-error' : 'agree-description'}
+                                    />
+                                </div>
+                                <div className="ml-3">
+                                    <label 
+                                        htmlFor="agree" 
+                                        className="text-sm font-medium text-gray-700"
+                                    >
+                                        I agree to the privacy policy
+                                    </label>
+                                    <p 
+                                        id="agree-description" 
+                                        className="text-sm text-gray-600 mt-1"
+                                    >
+                                        By submitting this form, you acknowledge that you have read and agree to our{' '}
+                                        <a 
+                                            href="/privacy-policy" 
+                                            className="text-indigo-600 hover:text-indigo-500 font-medium underline"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Privacy Policy
+                                        </a>
+                                        . We respect your data and will only use it to respond to your inquiry.
+                                    </p>
+                                    {errors.agree && (
+                                        <p 
+                                            id="agree-error" 
+                                            className="mt-1 text-sm text-red-600 flex items-center gap-1"
+                                            role="alert"
+                                        >
+                                            <ExclamationCircleIcon className="h-4 w-4" />
+                                            {errors.agree}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
                         </div>
 
                         {/* Submit Button */}
-                        <div className="text-center">
+                        <div className="pt-4">
                             <button
                                 type="submit"
-                                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                disabled={isSubmitting}
+                                className={`w-full py-3 px-6 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                                    isSubmitting
+                                        ? 'bg-indigo-400 cursor-not-allowed'
+                                        : 'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 shadow-md hover:shadow-lg'
+                                }`}
+                                aria-busy={isSubmitting}
                             >
-                                Send message
+                                {isSubmitting ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                        Sending Message...
+                                    </span>
+                                ) : (
+                                    'Send Message'
+                                )}
                             </button>
                         </div>
                     </form>
                 </div>
             </section>
 
-            {/* Footer Section */}
-            <footer className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-12 mt-12">
-                <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-                    <p className="text-lg text-gray-900">We would love to hear from you</p>
-                    <a href="mailto:info@jgrcfp.org" className="text-indigo-600 hover:text-indigo-700 mt-2 block">
-                        Send us an email @ info@jgrcfp.org
-                    </a>
+            {/* Contact Information Footer */}
+            <footer className="bg-gradient-to-r from-blue-50 via-white to-indigo-50 py-16 mt-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                            Additional Contact Information
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 max-w-4xl mx-auto">
+                            <div className="p-6 bg-white rounded-xl shadow-sm">
+                                <div className="text-indigo-600 mb-3">
+                                    <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                                    </svg>
+                                </div>
+                                <h4 className="font-medium text-gray-900 mb-2">Email Us</h4>
+                                <a 
+                                    href="mailto:info@igrcfp.org" 
+                                    className="text-indigo-600 hover:text-indigo-700 font-medium"
+                                >
+                                    info@igrcfp.org
+                                </a>
+                                <p className="text-sm text-gray-600 mt-2">
+                                    Typical response time: 24 hours
+                                </p>
+                            </div>
+                            
+                            <div className="p-6 bg-white rounded-xl shadow-sm">
+                                <div className="text-indigo-600 mb-3">
+                                    <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                                    </svg>
+                                </div>
+                                <h4 className="font-medium text-gray-900 mb-2">Call Us</h4>
+                                <a 
+                                    href="tel:+2348000000000" 
+                                    className="text-indigo-600 hover:text-indigo-700 font-medium"
+                                >
+                                    +234 800 000 0000
+                                </a>
+                                <p className="text-sm text-gray-600 mt-2">
+                                    Monday-Friday, 9AM-5PM WAT
+                                </p>
+                            </div>
+                            
+                            <div className="p-6 bg-white rounded-xl shadow-sm">
+                                <div className="text-indigo-600 mb-3">
+                                    <svg className="h-8 w-8 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                                    </svg>
+                                </div>
+                                <h4 className="font-medium text-gray-900 mb-2">Visit Us</h4>
+                                <address className="text-gray-600 not-italic">
+                                    Tyneside Innovation Centre,<br />
+                                    Willington Square,<br />
+                                    Wallsend, NE28 6HQ
+                                </address>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </footer>. 
+            </footer>
         </GuestLayout>
     );
 }
