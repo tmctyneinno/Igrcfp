@@ -10,18 +10,18 @@ Route::prefix('blog')->name('admin.')->group(function () {
     Route::get('/posts', [BlogController::class, 'index'])->name('blogs.index');
     
     // Create new post
-    Route::get('/posts/create', [BlogController::class, 'create'])->name('posts.create');
+    Route::get('/posts/create', [BlogController::class, 'create'])->name('blogs.create');
     Route::post('/posts', [BlogController::class, 'store'])->name('posts.store');
     
     // Edit post
-    Route::get('/posts/{post}/edit', [BlogController::class, 'edit'])->name('posts.edit');
-    Route::put('/posts/{post}', [BlogController::class, 'update'])->name('posts.update');
+    Route::get('/posts/{post}/edit', [BlogController::class, 'edit'])->name('blogs.edit');
+    Route::put('/posts/{post}', [BlogController::class, 'update'])->name('blogs.update');
     
     // Delete post
-    Route::delete('/posts/{post}', [BlogController::class, 'destroy'])->name('posts.destroy');
+    Route::delete('/posts/{post}', [BlogController::class, 'destroy'])->name('blogs.destroy');
     
     // Show post (preview)
-    Route::get('/posts/{post}', [BlogController::class, 'show'])->name('posts.show');
+    Route::get('/posts/{post}', [BlogController::class, 'show'])->name('blogs.show');
     
     // Blog Categories
     Route::get('/categories', [BlogController::class, 'categories'])->name('categories.index');
