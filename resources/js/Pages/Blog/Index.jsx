@@ -96,9 +96,8 @@ export default function Blog({ auth, title, description }) {
             </section>
 
             {/* Newsletter Subscription Section */}
-           <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16 mx-8">
-    <div className="max-w-7xl mx-auto text-white text-center py-12 px-6 md:py-16 md:px-8">
-        
+            <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 mt-16 mb-16 ml-8 mr-8 py-8 px-4 md:py-12 md:px-6 lg:py-16 lg:px-8">
+                <div className="max-w-7xl mx-auto text-white text-center">
         
                     <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
                     <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
