@@ -72,22 +72,4 @@ class ContactController extends Controller
         }
     }
 
-    /**
-     * Get country codes for dropdown.
-     */
-    private function getCountryCodes(): array
-    {
-        return [
-            ['code' => 'NG', 'name' => 'Nigeria (+234)'],
-            ['code' => 'GH', 'name' => 'Ghana (+233)'],
-            ['code' => 'KE', 'name' => 'Kenya (+254)'],
-            ['code' => 'ZA', 'name' => 'South Africa (+27)'],
-            ['code' => 'US', 'name' => 'USA (+1)'],
-            ['code' => 'GB', 'name' => 'UK (+44)'],
-            ['code' => 'CA', 'name' => 'Canada (+1)'],
-            ['code' => 'AU', 'name' => 'Australia (+61)'],
-            ['code' => 'FR', 'name' => 'France (+33)'],
-            ['code' => 'DE', 'name' => 'Germany (+49)'],
-        ];
-    }
 }
