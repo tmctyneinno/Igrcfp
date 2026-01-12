@@ -31,6 +31,13 @@ export default function Index({ auth, title }) {
         agree: false,
     });
 
+    useEffect(() => {
+        if (successMessage) {
+            const timer = setTimeout(() => setSuccessMessage(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [successMessage]);
+
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
         { code: 'US', name: 'USA (+1)' },
