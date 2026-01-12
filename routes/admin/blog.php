@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('blog')->name('blog.')->group(function () {
     
     // Blog Posts - List all posts
-    Route::get('/posts', [BlogController::class, 'index'])->name('posts.index');
+    Route::get('/posts', [BlogController::class, 'index'])->name('.index');
     
     // Create new post
     Route::get('/posts/create', [BlogController::class, 'create'])->name('posts.create');
