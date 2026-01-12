@@ -53,7 +53,7 @@ class ContactController extends Controller
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
                 'phone' => preg_replace('/[^\d+]/', '', $validated['phone']),
-                'country_code' => $validated['countryCode'],
+                'country_code' => $validated['country_code'],
                 'message' => $validated['message'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
