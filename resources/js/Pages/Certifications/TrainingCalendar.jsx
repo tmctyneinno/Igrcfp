@@ -97,13 +97,13 @@ export default function Index({ auth, title }) {
                                     <td className="px-4 py-4">Virtual Masterclass</td>
                                     <td className="px-4 py-4">Risk managers, reporting officers</td>
                                 </tr>
-
+                                {/* Q3 2026 */}
                                 <tr>
-                                    <td className="px-4 py-4">Q3 2025</td>
+                                    <td className="px-4 py-4">Q3 2026</td>
                                     <td className="px-4 py-4 font-medium">
                                         Advanced Diploma in GRC & Financial Crime Prevention
                                     </td>
-                                    <td className="px-4 py-4">Jul 7 – Dec 12, 2025</td>
+                                    <td className="px-4 py-4">Jul 7 – Dec 12, 2026</td>
                                     <td className="px-4 py-4">Hybrid (6 months)</td>
                                     <td className="px-4 py-4">Senior leaders & executives</td>
                                 </tr>
@@ -121,9 +121,9 @@ export default function Index({ auth, title }) {
                                     <td className="px-4 py-4 font-medium">
                                         InsurTech, FinTech & Emerging Market Compliance
                                     </td>
-                                    <td className="px-4 py-4">Aug 11 – Aug 15, 2025</td>
+                                    <td className="px-4 py-4">Aug 11 – Aug 15, 2026</td>
                                     <td className="px-4 py-4">In-person (Nairobi, Kenya)</td>
-                                    <td className="px-4 py-4">FinTech operators, InsurTech leaders, regulators</td>
+                                    <td className="px-4 py-4">Compliance leaders, data scientists, risk executives</td>
                                 </tr>
                             </tbody>
                         </table>
