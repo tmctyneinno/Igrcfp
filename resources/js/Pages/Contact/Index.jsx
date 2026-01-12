@@ -369,9 +369,9 @@ export default function Index({ auth, title }) {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <InputField
                                             label="First Name"
-                                            id="firstName"
-                                            name="firstName"
-                                            placeholder="John"
+                                            id="first_name"
+                                            name="first_name"
+                                            placeholder=""
                                             autoComplete="given-name"
                                         />
                                         
