@@ -75,10 +75,13 @@ export default function Index({ auth, title }) {
                     console.log('Flash success message found:', page.props.flash.success);
                 }
                 reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' })
             },
             onError: (errors) => {
                 console.log('Form submission errors:', errors);
                 console.log('Error details:', errors);
+
+                window.scrollTo({ top: 0, behavior: 'smooth' })
             },
             onFinish: () => {
                 console.log('Request finished');
