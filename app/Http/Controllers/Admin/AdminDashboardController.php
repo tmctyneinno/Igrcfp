@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Blog;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Course;
@@ -17,15 +18,10 @@ class AdminDashboardController extends Controller
         $admin = Auth::guard('admin')->user();
         $stats = [
             'total_users' => User::count(),
+            'total_blogs' => Blog::count() ?? 0,
             'total_courses' => Course::count(),
             'total_admins' => Admin::count(),
             'recent_users' => User::latest()->take(5)->get(),
-            'admin_name' => $admin->name,
-            
-            'total_admins' => Admin::count(),
-            'total_users' => User::count(),
-            'total_blogs' => Blog::count() ?? 0,
-            'total_events' => Event::count() ?? 0,
             'admin_name' => $admin->name,
         ];
 
