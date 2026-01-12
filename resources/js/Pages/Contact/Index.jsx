@@ -119,6 +119,7 @@ export default function Index({ auth, title }) {
         post(route('contact.store'), data, {
             onSuccess: (page) => {
                 console.log('Form submitted successfully!');
+                reset();
                 
                 // Show toast notification for success
                 if (page.props.flash?.success) {
@@ -128,7 +129,6 @@ export default function Index({ auth, title }) {
                     });
                 }
                 
-                reset();
                 
                 // Scroll to top to show form is cleared
                 window.scrollTo({ top: 0, behavior: 'smooth' });
