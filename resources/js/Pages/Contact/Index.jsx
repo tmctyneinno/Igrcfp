@@ -289,6 +289,43 @@ export default function Index({ auth, title }) {
                                         </span>
                                     </div>
                                 </div>
+
+                                {/* Google Map Embed */}
+                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                                <div className="p-6 border-b border-gray-200">
+                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                        <MapPinIcon className="h-6 w-6 text-blue-500 mr-2" />
+                                        Our Location
+                                    </h3>
+                                </div>
+                                <div className="relative h-80">
+                                    {/* Google Maps Iframe */}
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.089024865421!2d-1.5337692836437086!3d54.99101198035857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70e3c24a8a2f%3A0x8b4b4b4b4b4b4b4b!2sTyneside%20Innovation%20Centre!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen=""
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title="IGRCFP Office Location"
+                                        className="absolute inset-0"
+                                    ></iframe>
+                                    
+                                    {/* Map Overlay with Logo */}
+                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                                                <MapPinIcon className="h-5 w-5 text-white" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
+                                                <p className="text-xs text-gray-600">Tyneside Innovation Centre</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             </div>
                         </div>
 
