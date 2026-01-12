@@ -24,6 +24,7 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "@iconify/react": "^6.0.2",
         "aos": "^2.3.4",
         "date-fns": "^4.1.0",
