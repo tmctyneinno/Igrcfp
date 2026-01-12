@@ -215,12 +215,12 @@ export default function Index({ auth, title }) {
                 </div>
             )}
 
-            {flash.message && (
+            {flash?.message && (
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                     <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
                         <div className="flex items-center">
                             <ExclamationCircleIcon className="h-5 w-5 text-blue-400 mr-3" />
-                            <p className="text-blue-700">{flash.message}</p>
+                            <p className="text-blue-700">{flash?.message}</p>
                         </div>
                     </div>
                 </div>
