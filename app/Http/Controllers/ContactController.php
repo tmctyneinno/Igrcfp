@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/ContactController.php
 
 namespace App\Http\Controllers;
 
@@ -20,7 +19,7 @@ class ContactController extends Controller
     /**
      * Handle contact form submission.
      */
-    public function store(ContactFormRequest $request): RedirectResponse
+    public function store(ContactFormRequest $request)
     {
          \Log::info('Contact form submission attempt', [
             'data' => $request->all(),
