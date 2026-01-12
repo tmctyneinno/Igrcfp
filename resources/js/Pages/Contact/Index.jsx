@@ -396,7 +396,7 @@ export default function Index({ auth, title }) {
                         </div>
 
                         {/* Right Column - Contact Information & Map */}
-                        <div className="space-y-8">
+                        <div className="space-y-1">
                             {/* Contact Information Cards */}
                             <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl p-8 border border-gray-100">
                                 <div className="text-center mb-10">
