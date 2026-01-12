@@ -52,7 +52,7 @@ class ContactController extends Controller
             ]);
 
             return redirect()
-                ->route('contact.create')
+                ->route('contact')
                 ->with('success', 'Thank you for your message! We\'ll get back to you within 24-48 hours.');
 
         } catch (\Exception $e) {
