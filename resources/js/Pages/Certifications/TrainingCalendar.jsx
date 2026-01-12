@@ -50,11 +50,11 @@ export default function Index({ auth, title }) {
 
                             <tbody className="divide-y divide-gray-200 text-sm text-gray-700">
                                 <tr>
-                                    <td className="px-4 py-4">Q1 2025</td>
+                                    <td className="px-3 py-4">Q1 2025</td>
                                     <td className="px-4 py-4 font-medium">
                                         Certified GRC & Financial Crime Specialist (CGFCS)
                                     </td>
-                                    <td className="px-4 py-4">Jan 20 – Mar 14, 2025</td>
+                                    <td className="px-4 py-4">Jan 20 – Mar 14, 2026</td>
                                     <td className="px-4 py-4">Online (8 weeks)</td>
                                     <td className="px-4 py-4">Compliance officers, AML specialists</td>
                                 </tr>
@@ -99,7 +99,7 @@ export default function Index({ auth, title }) {
                                 </tr>
                                 {/* Q3 2026 */}
                                 <tr>
-                                    <td className="px-4 py-4">Q3 2026</td>
+                                    <td className="px-3 py-4">Q3 2026</td>
                                     <td className="px-4 py-4 font-medium">
                                         Advanced Diploma in GRC & Financial Crime Prevention
                                     </td>
@@ -128,7 +128,7 @@ export default function Index({ auth, title }) {
 
                                  {/* Q4 2026 */}
                                 <tr>
-                                    <td className="px-4 py-7">Q4 2026</td>
+                                    <td className="px-3 py-4">Q4 2026</td>
                                     <td className="px-4 py-4 font-medium">
                                         Cybersecurity & Data Security for Financial Institutions (2nd Run)
                                     </td>
