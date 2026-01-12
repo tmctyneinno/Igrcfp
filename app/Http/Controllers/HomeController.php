@@ -153,6 +153,12 @@ class HomeController extends Controller
             'description' => 'Our friendly team would love to hear from you.',
         ]);
     }
-    
+
+    public function trainingCalendar(){
+        return Inertia::render('Contact/Index', [
+            'title' => 'Training Calendar',
+            'description' => 'Our friendly team would love to hear from you.',
+        ]);
+    }
    
 }
