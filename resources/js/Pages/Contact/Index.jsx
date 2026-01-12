@@ -3,9 +3,9 @@ import { Head, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
-export default function Index({ auth, title }) {
+export default function Index({ auth, title , countryCodes, flash}) {
     const { flash } = usePage().props;
-    const [formData, setFormData] = useState({
+    const { data, setData, post, processing, errors, reset } = useForm({
         firstName: '',
         lastName: '',
         email: '',
@@ -14,6 +14,7 @@ export default function Index({ auth, title }) {
         message: '',
         agree: false,
     });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const [submitStatus, setSubmitStatus] = useState(null);
