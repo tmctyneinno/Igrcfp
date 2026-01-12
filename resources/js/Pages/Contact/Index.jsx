@@ -17,6 +17,17 @@ export default function Index({ auth, title }) {
     const pageProps = usePage().props;
     const flash = pageProps?.flash || {};
 
+    
+    const { data, setData, post, processing, errors, reset } = useForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        countryCode: 'NG',
+        message: '',
+        agree: false,
+    });
+    
     const countryCodes = [
         { code: 'NG', name: 'Nigeria (+234)' },
         { code: 'US', name: 'USA (+1)' },
