@@ -21,6 +21,12 @@ class AdminDashboardController extends Controller
             'total_admins' => Admin::count(),
             'recent_users' => User::latest()->take(5)->get(),
             'admin_name' => $admin->name,
+            
+            'total_admins' => Admin::count(),
+            'total_users' => User::count(),
+            'total_blogs' => Blog::count() ?? 0,
+            'total_events' => Event::count() ?? 0,
+            'admin_name' => $admin->name,
         ];
 
         return view('admin.dashboard', compact('stats'));
