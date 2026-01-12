@@ -31,21 +31,9 @@ export default function Certifications({ auth, title, description }) {
                             <p className="mt-4 text-gray-600">
                                 Our professional certifications are designed to equip individuals and institutions with globally relevant skills to tackle financial crime and compliance risks.
                             </p>
-                            <div className="mt-8 flex items-center justify-start">
-                                <div className="text-lg font-semibold text-blue-600">Trusted by</div>
-                                <div className="ml-4 flex space-x-6">
-                                    <div className="text-center">
-                                        <p className="text-xl text-blue-600 font-bold">40k+</p>
-                                        <p className="text-sm text-gray-500">learners</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-xl text-blue-600 font-bold">100+</p>
-                                        <p className="text-sm text-gray-500">experts</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-16">
-                                <h3 className="text-center text-lg font-semibold text-gray-500 mb-8 uppercase tracking-wider">
+                            
+                            <div className="mb-16 mt-20">
+                                <h3 className="text-start text-lg font-semibold text-gray-500 mb-8 uppercase tracking-wider">
                                     TRUSTED BY
                                 </h3>
                                 
