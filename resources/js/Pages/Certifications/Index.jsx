@@ -80,6 +80,8 @@ export default function Certifications({ auth, title, description }) {
                     </div>
                 </div>
             </section>
+
+            
         </GuestLayout>
     );
 }
