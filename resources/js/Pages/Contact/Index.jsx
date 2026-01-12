@@ -139,12 +139,12 @@ export default function Index({ auth, title }) {
 
             {/* Status Messages with Improved Visibility */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 mb-8 space-y-4">
-                {flash?.success && (
+                {successMessage && (
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-4 rounded-lg shadow-lg animate-fade-in">
                         <div className="flex items-center">
                             <CheckCircleIcon className="h-6 w-6 text-green-500 mr-3 flex-shrink-0 animate-pulse" />
                             <div>
-                                <p className="text-green-800 font-medium">{flash.success}</p>
+                                <p className="text-green-800 font-medium">{successMessage}</p>
                                 <p className="text-green-600 text-sm mt-1">
                                     We'll get back to you within 24-48 hours.
                                 </p>
