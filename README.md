@@ -83,3 +83,16 @@ chmod -R 755 public
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache  
 php artisan key:generate --show
+
+# LOCAL MACHINE
+1. Make code changes
+2. npm run dev (test locally)
+3. git add . (but NOT public/build/)
+4. git commit -m "message"
+5. git push
+
+# SERVER
+1. git pull
+2. npm install --production
+3. npm run build
+4. php artisan optimize:clear
