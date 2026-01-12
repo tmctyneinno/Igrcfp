@@ -22,7 +22,7 @@ export default function Index({ auth, title, description }) {
                                 href="/training-calendar"
                                 className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition"
                             >
-                                Download  
+                                Download Prospectus
                             </Link>
                         </div>
                     </div>
