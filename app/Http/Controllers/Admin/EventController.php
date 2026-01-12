@@ -37,7 +37,7 @@ class EventController extends Controller
     }
 
     public function store(Request $request)
-    {
+    { 
         $request->validate([
             'title' => 'required|string|max:255|unique:events,title',
             'short_description' => 'required|string|max:500',
