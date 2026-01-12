@@ -71,11 +71,19 @@ export default function Index({ auth, title }) {
             onSuccess: (page) => {
                 console.log('Success response:', page);
                 console.log('Flash messages:', page.props.flash);
+                if (page.props.flash?.success) {
+                    console.log('Flash success message found:', page.props.flash.success);
+                }
                 reset();
             },
             onError: (errors) => {
                 console.log('Form submission errors:', errors);
                 console.log('Error details:', errors);
+            },
+            onFinish: () => {
+                console.log('Request finished');
+                // You might want to scroll to top to see the flash message
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
         });
     };
