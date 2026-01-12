@@ -8,49 +8,49 @@ export default function Certifications({ auth, title, description }) {
         title: 'Certified GRC & Financial Crime Specialist (CGFCS)',
         description:
             'Our flagship certification equipping professionals with practical skills in governance, risk, compliance, and financial crime prevention. Globally benchmarked and CPD-accredited.',
-        image: '/images/programs/grc.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'Advanced Diploma in GRC & Financial Crime Prevention',
         description:
             'A deep-dive, multi-disciplinary programme covering advanced governance, risk, compliance, and financial crime prevention with real-world case projects.',
-        image: 'assets/images/programs/diploma.png',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'Cybersecurity & Data Security for Financial Institutions',
         description:
             'Focused training on cyber resilience, data protection, and information governance in the digital-first financial sector.',
-        image: '/images/programs/cyber.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'Monitoring, Reporting & Risk Analytics',
         description:
             'Equips compliance teams with tools to design monitoring frameworks, track key risk indicators, and use analytics for regulatory reporting.',
-        image: '/images/programs/analytics.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'Regulatory Compliance & Supervisory Engagement',
         description:
             'Covers global regulatory requirements, reporting obligations, and effective engagement with supervisors including mock interviews.',
-        image: '/images/programs/regulatory.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'RegTech, SupTech & Innovation in Compliance',
         description:
             'Explores cutting-edge compliance technologies including AI, blockchain, real-time monitoring, and data-driven oversight.',
-        image: '/images/programs/regtech.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'InsurTech, FinTech & Emerging Market Compliance',
         description:
             'Addresses compliance challenges for FinTech and InsurTech models in Africa and global markets, including mobile money and crypto.',
-        image: '/images/programs/fintech.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
     {
         title: 'Executive Masterclasses & Short Courses',
         description:
             'Focused electives on emerging topics including AI, ESG, forensic investigations, sanctions, and leadership in governance.',
-        image: '/images/programs/executive.jpg',
+        image: '/assets/images/programs/diploma.png',
     },
 ];
 
