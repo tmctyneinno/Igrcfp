@@ -21,51 +21,63 @@ class ContactController extends Controller
      */
     public function store(ContactFormRequest $request)
     {
-         \Log::info('Contact form submission attempt', [
-            'data' => $request->all(),
-            'ip' => $request->ip(),
-        ]);
-
+        \Log::info('====== CONTACT FORM SUBMISSION START ======');
+        \Log::info('Request data:', $request->all());
+        \Log::info('Headers:', ['X-Requested-With' => $request->header('X-Requested-With')]);
+        
         try {
+            // Validate and get validated data
+            $validated = $request->validated();
+            \Log::info('Validated data:', $validated);
+            
             // Create contact message
             $contactMessage = ContactMessage::create([
-                'first_name' => $request->validated('first_name'),
-                'last_name' => $request->validated('last_name'),
-                'email' => $request->validated('email'),
-                'phone' => $request->validated('phone'),
-                'country_code' => $request->validated('country_code', 'NG'),
-                'message' => $request->validated('message'),
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'country_code' => $validated['country_code'],
+                'message' => $validated['message'],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'privacy_agreed' => $request->validated('agree', false),
+                'privacy_agreed' => $request->boolean('agree'),
             ]);
 
-            // Send notification to admin
-            $adminEmail = config('mail.from.address'); // Use default from address
-            Mail::to($adminEmail)->send(new ContactFormSubmitted($contactMessage));
+            \Log::info('Contact created:', ['id' => $contactMessage->id]);
+            
+            // Try to send emails
+            try {
+                $adminEmail = config('mail.from.address');
+                \Log::info('Sending emails:', [
+                    'admin_email' => $adminEmail,
+                    'user_email' => $contactMessage->email,
+                ]);
+                
+                Mail::to($adminEmail)->send(new ContactFormSubmitted($contactMessage));
+                Mail::to($contactMessage->email)->send(new ContactFormConfirmation($contactMessage));
+                
+                \Log::info('Emails sent successfully');
+            } catch (\Exception $mailException) {
+                \Log::warning('Email sending failed:', [
+                    'error' => $mailException->getMessage(),
+                    'contact_id' => $contactMessage->id,
+                ]);
+                // Continue even if email fails
+            }
 
-            // Send confirmation to user
-            Mail::to($contactMessage->email)->send(new ContactFormConfirmation($contactMessage));
-
-            // Log successful submission
-            Log::info('Contact form submitted successfully', [
-                'id' => $contactMessage->id,
-                'email' => $contactMessage->email,
-                'ip' => $request->ip(),
-            ]);
-
+            \Log::info('====== CONTACT FORM SUBMISSION END ======');
+            
             return redirect()
                 ->route('contact')
                 ->with('success', 'Thank you for your message! We\'ll get back to you within 24-48 hours.');
 
         } catch (\Exception $e) {
-            // Log error but don't show technical details to user
-            Log::error('Contact form submission failed', [
+            \Log::error('Contact form submission failed:', [
                 'error' => $e->getMessage(),
-                'data' => $request->except(['_token', 'agree']),
-                'ip' => $request->ip(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
             ]);
-
+            
             return back()
                 ->withInput()
                 ->with('error', 'Something went wrong. Please try again or contact us directly.');
