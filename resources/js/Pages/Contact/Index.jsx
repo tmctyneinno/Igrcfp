@@ -80,7 +80,6 @@ export default function Index({ auth, title }) {
             onError: (errors) => {
                 console.log('Form submission errors:', errors);
                 console.log('Error details:', errors);
-
                 window.scrollTo({ top: 0, behavior: 'smooth' })
             },
             onFinish: () => {
