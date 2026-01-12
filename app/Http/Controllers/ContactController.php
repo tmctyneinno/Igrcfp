@@ -12,20 +12,10 @@ use Illuminate\Support\Facades\Log;
 
 class ContactController extends Controller
 {
-    /**
-     * Handle contact form submission.
-     */
+    
     public function store(Request $request)
     {
-        Log::info('====== CONTACT FORM SUBMISSION START ======');
-        Log::info('Request method:', [$request->method()]);
-        Log::info('Request data:', $request->all());
-        Log::info('Headers:', [
-            'X-Requested-With' => $request->header('X-Requested-With'),
-            'X-Inertia' => $request->header('X-Inertia'),
-            'Accept' => $request->header('Accept'),
-            'Content-Type' => $request->header('Content-Type'),
-        ]);
+        
         Log::info('IP Address:', [$request->ip()]);
         Log::info('User Agent:', [$request->userAgent()]);
         
