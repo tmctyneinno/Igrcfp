@@ -26,21 +26,13 @@ class AdminDashboardController extends Controller
         ];
 
         return view('admin.dashboard', compact('stats'));
-        // return inertia('Admin/Dashboard', [
-        //     'stats' => $stats,
-        //     'auth' => [ 
-        //         'admin' => $admin
-        //     ]
-        // ]);
     }
 
     public function users()
     {
         $users = User::with(['courses'])->latest()->paginate(20);
         
-        return inertia('Admin/Users/Index', [
-            'users' => $users,
-        ]);
+        return view('admin.users.index', compact('stats'));
     }
 
     public function courses()
