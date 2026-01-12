@@ -289,45 +289,71 @@ export default function Index({ auth, title }) {
                                         </span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                {/* Google Map Embed */}
-                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
-                                <div className="p-6 border-b border-gray-200">
-                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
-                                        <MapPinIcon className="h-6 w-6 text-blue-500 mr-2" />
-                                        Our Location
-                                    </h3>
-                                </div>
-                                <div className="relative h-80">
-                                    {/* Google Maps Iframe */}
-                                    <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.089024865421!2d-1.5337692836437086!3d54.99101198035857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70e3c24a8a2f%3A0x8b4b4b4b4b4b4b4b!2sTyneside%20Innovation%20Centre!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen=""
-                                        loading="lazy"
-                                        referrerPolicy="no-referrer-when-downgrade"
-                                        title="IGRCFP Office Location"
-                                        className="absolute inset-0"
-                                    ></iframe>
-                                    
-                                    {/* Map Overlay with Logo */}
-                                    <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
-                                                <MapPinIcon className="h-5 w-5 text-white" />
-                                            </div>
-                                            <div>
-                                                <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
-                                                <p className="text-xs text-gray-600">Tyneside Innovation Centre</p>
-                                            </div>
+                        {/* Google Map Embed */}
+                        <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                            <div className="p-6 border-b border-gray-200">
+                                <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                    <MapPinIcon className="h-6 w-6 text-blue-500 mr-2" />
+                                    Our Location
+                                </h3>
+                            </div>
+                            <div className="relative h-80">
+                                {/* Google Maps Iframe */}
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2290.089024865421!2d-1.5337692836437086!3d54.99101198035857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487e70e3c24a8a2f%3A0x8b4b4b4b4b4b4b4b!2sTyneside%20Innovation%20Centre!5e0!3m2!1sen!2suk!4v1638446789056!5m2!1sen!2suk"
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen=""
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    title="IGRCFP Office Location"
+                                    className="absolute inset-0"
+                                ></iframe>
+                                
+                                {/* Map Overlay with Logo */}
+                                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg max-w-xs">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                                            <MapPinIcon className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-gray-900 text-sm">IGRCFP Headquarters</h4>
+                                            <p className="text-xs text-gray-600">Tyneside Innovation Centre</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        {/* Office Image */}
+                            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
+                                <div className="p-6 border-b border-gray-200">
+                                    <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                        <svg className="h-6 w-6 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Our Office Environment
+                                    </h3>
+                                </div>
+                                <div className="relative h-64">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                                        alt="IGRCFP Office Interior"
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
+                                        <div className="p-6 text-white">
+                                            <p className="text-sm opacity-90">Modern workspace designed for innovation and collaboration</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
 
                         {/* Right Column - Contact Form */}
                         <div>
