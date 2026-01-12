@@ -155,7 +155,7 @@ class HomeController extends Controller
     }
 
     public function trainingCalendar(){
-        return Inertia::render('Contact/Index', [
+        return Inertia::render('Certifications/TrainingCalendar', [
             'title' => 'Training Calendar',
             'description' => 'Our friendly team would love to hear from you.',
         ]);
