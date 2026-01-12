@@ -32,7 +32,7 @@ export default function Certifications({ auth, title, description }) {
                                 Our professional certifications are designed to equip individuals and institutions with globally relevant skills to tackle financial crime and compliance risks.
                             </p>
                             
-                            <div className="mb-10 mt-15">
+                            <div className="mb-10 mt-20">
                                 <h3 className="text-start text-lg font-semibold text-gray-500 mb-8 uppercase tracking-wider">
                                     TRUSTED BY
                                 </h3>
@@ -40,7 +40,7 @@ export default function Certifications({ auth, title, description }) {
                                 {/* Stats Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
                                     {/* Learners Stat */}
-                                    <div className="bg-gray-50 rounded-xl p-5 text-center border border-gray-200">
+                                    <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-200">
                                         <div className="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
                                             40k+
                                         </div>
@@ -53,7 +53,7 @@ export default function Certifications({ auth, title, description }) {
                                     </div>
                                     
                                     {/* Experts Stat */}
-                                    <div className="bg-gray-50 rounded-xl p-5 text-center border border-gray-200">
+                                    <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-200">
                                         <div className="text-4xl md:text-5xl font-bold text-green-600 mb-2">
                                             100+
                                         </div>
