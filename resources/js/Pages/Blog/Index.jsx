@@ -96,8 +96,10 @@ export default function Blog({ auth, title, description }) {
             </section>
 
             {/* Newsletter Subscription Section */}
-            <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16 mx-4 md:mx-6 lg:mx-8 py-8 md:py-12 lg:py-16">
-                <div className="max-w-7xl mx-auto text-white text-center">
+           {/* Newsletter Subscription Section */}
+        <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16">
+            <div className="mx-6 md:mx-12 lg:mx-16 xl:mx-24"> {/* Increased margins */}
+                <div className="max-w-7xl mx-auto text-white text-center py-8 md:py-12 lg:py-16">
                     <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
                     <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
 
@@ -114,7 +116,8 @@ export default function Blog({ auth, title, description }) {
 
                     <p className="text-sm">We care about your data in our <Link href="#" className="text-blue-200 hover:text-blue-100">privacy policy</Link>.</p>
                 </div>
-            </section>
+            </div>
+        </section>
             
 
 
