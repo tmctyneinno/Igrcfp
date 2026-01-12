@@ -42,44 +42,43 @@ export default function Index({ auth, title }) {
     ];
 
    const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    console.log('Form submitting...');
-    console.log('Current data:', data);
-    
-    // Convert to snake_case for Laravel
-    const formData = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        country_code: data.countryCode,
-        message: data.message,
-        agree: data.agree,
+        e.preventDefault();
+        
+        console.log('Form submitting...');
+        console.log('Current data:', data);
+        
+        // Convert to snake_case for Laravel
+        const formData = {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            email: data.email,
+            phone: data.phone,
+            country_code: data.countryCode,
+            message: data.message,
+            agree: data.agree,
+        };
+        
+        console.log('Sending snake_case data:', formData);
+        console.log('Route URL:', route('contact.store'));
+        
+        // REMOVE THE .catch() - Inertia handles errors differently
+        post(route('contact.store'), formData, {
+            preserveScroll: true,
+            onStart: () => console.log('Request started'),
+            onProgress: (progress) => console.log('Progress:', progress),
+            onFinish: () => console.log('Request finished'),
+            onCancel: () => console.log('Request cancelled'),
+            onSuccess: (page) => {
+                console.log('Success response:', page);
+                console.log('Flash messages:', page.props.flash);
+                reset();
+            },
+            onError: (errors) => {
+                console.log('Form submission errors:', errors);
+                console.log('Error details:', errors);
+            },
+        });
     };
-    
-    console.log('Sending snake_case data:', formData);
-    console.log('Route URL:', route('contact.store'));
-    
-    post(route('contact.store'), formData, {
-        preserveScroll: true,
-        onStart: () => console.log('Request started'),
-        onProgress: (progress) => console.log('Progress:', progress),
-        onFinish: () => console.log('Request finished'),
-        onCancel: () => console.log('Request cancelled'),
-        onSuccess: (page) => {
-            console.log('Success response:', page);
-            console.log('Flash messages:', page.props.flash);
-            reset();
-        },
-        onError: (errors) => {
-            console.log('Form submission errors:', errors);
-            console.log('Error details:', errors);
-        },
-    }).catch(error => {
-        console.error('Post request failed:', error);
-    });
-};
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
