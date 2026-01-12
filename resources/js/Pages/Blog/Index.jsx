@@ -96,28 +96,27 @@ export default function Blog({ auth, title, description }) {
             </section>
 
             {/* Newsletter Subscription Section */}
-           {/* Newsletter Subscription Section */}
-        <section className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16">
-            <div className="mx-6 md:mx-12 lg:mx-16 xl:mx-24"> {/* Increased margins */}
-                <div className="max-w-7xl mx-auto text-white text-center py-8 md:py-12 lg:py-16">
-                    <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
-                    <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
+            <section className="rounded-lg w-full bg-gradient-to-r from-blue-500 via-blue-600 to-green-500 my-16">
+                <div className="mx-6 md:mx-12 lg:mx-16 xl:mx-24"> {/* Increased margins */}
+                    <div className="max-w-7xl mx-auto text-white text-center py-8 md:py-12 lg:py-16">
+                        <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
+                        <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
 
-                    <div className="flex justify-center mb-4 px-4">
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="w-full max-w-md py-3 px-4 border border-white rounded-md text-black"
-                        />
-                        <button className="ml-4 py-3 px-6 bg-white text-blue-600 font-semibold rounded-md hover:bg-gray-200">
-                            Subscribe
-                        </button>
+                        <div className="flex justify-center mb-4 px-4">
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="w-full max-w-md py-3 px-4 border border-white rounded-md text-black"
+                            />
+                            <button className="ml-4 py-3 px-6 bg-white text-blue-600 font-semibold rounded-md hover:bg-gray-200">
+                                Subscribe
+                            </button>
+                        </div>
+
+                        <p className="text-sm">We care about your data in our <Link href="#" className="text-blue-200 hover:text-blue-100">privacy policy</Link>.</p>
                     </div>
-
-                    <p className="text-sm">We care about your data in our <Link href="#" className="text-blue-200 hover:text-blue-100">privacy policy</Link>.</p>
                 </div>
-            </div>
-        </section>
+            </section>
             
 
 
