@@ -66,7 +66,7 @@ export default function Index({ auth, title }) {
         last_name: '',
         email: '',
         phone: '',
-        country_code: 'NG',
+        country_code: 'GB',
         message: '',
         agree: false,
     });
