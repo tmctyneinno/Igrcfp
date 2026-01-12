@@ -193,12 +193,12 @@ export default function Index({ auth, title }) {
             </section>
 
             {/* Status Messages */}
-            {flash.success && (
+            {flash?.success && (
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
                     <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-r">
                         <div className="flex items-center">
                             <CheckCircleIcon className="h-5 w-5 text-green-400 mr-3" />
-                            <p className="text-green-700">{flash.success}</p>
+                            <p className="text-green-700">{flash?.success}</p>
                         </div>
                     </div>
                 </div>
