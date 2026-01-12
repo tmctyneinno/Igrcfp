@@ -2,13 +2,12 @@
 
 use App\Http\Controllers\Admin\UserManagementController;
 use Illuminate\Support\Facades\Route;
-
+ 
 // User Management Routes (Protected - accessible to all admins)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
     // Users Index
-    Route::get('/users', [UserManagementController::class, 'index'])
-        ->name('users.index');
-    
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+      
     // User Profile
     Route::get('/users/{user}', [UserManagementController::class, 'show'])
         ->name('users.show')
