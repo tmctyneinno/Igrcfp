@@ -183,7 +183,7 @@ export default function Index({ auth, title }) {
                                                 href="mailto:info@igrcfp.org" 
                                                 className="text-blue-600 hover:text-blue-700 font-medium text-lg block mb-1"
                                             >
-                                                info@igrcfp.org
+                                               enquiries@igrfcp.org
                                             </a>
                                             <p className="text-sm text-gray-600">
                                                 We typically respond within 24 hours
@@ -200,12 +200,12 @@ export default function Index({ auth, title }) {
                                         </div>
                                         <div className="ml-5">
                                             <h3 className="font-semibold text-gray-900 mb-1">Call Us</h3>
-                                            <a 
+                                            {/* <a 
                                                 href="tel:+2348000000000" 
                                                 className="text-emerald-600 hover:text-emerald-700 font-medium text-lg block mb-1"
                                             >
                                                 +234 800 000 0000
-                                            </a>
+                                            </a> */}
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <ClockIcon className="h-4 w-4 mr-1.5" />
                                                 Mon-Fri: 9AM-6PM WAT
