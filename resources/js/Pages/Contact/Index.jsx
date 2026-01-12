@@ -110,7 +110,7 @@ export default function Index({ auth, title }) {
                 </div>
             </section>
             <section 
-                className="relative bg-gradient-to-br from-indigo-200 via-white to-blue-200 overflow-hidden"
+                className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200 overflow-hidden"
                 aria-labelledby="page-title"
             >
                 {/* Background Pattern */}
