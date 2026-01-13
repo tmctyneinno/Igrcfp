@@ -25,52 +25,52 @@ class NewsController extends Controller
     }
 
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'slug' => 'required|string|max:255|unique:articles,slug',
-        'excerpt' => 'required|string|max:300',
-        'content' => 'required|string',
-        'category_id' => 'required|exists:categories,id',
-        'author_id' => 'required|exists:users,id',
-        'status' => 'required|in:draft,published,archived',
-        'published_at' => 'nullable|date',
-        'read_time' => 'required|integer|min:1|max:60',
-        'tags' => 'nullable|string|max:500',
-        'is_featured' => 'boolean',
-        'meta_title' => 'nullable|string|max:60',
-        'meta_description' => 'nullable|string|max:160',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-    ]);
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:articles,slug',
+            'excerpt' => 'required|string|max:300',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'author_id' => 'required|exists:users,id',
+            'status' => 'required|in:draft,published,archived',
+            'published_at' => 'nullable|date',
+            'read_time' => 'required|integer|min:1|max:60',
+            'tags' => 'nullable|string|max:500',
+            'is_featured' => 'boolean',
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
 
-    // Handle image upload
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('articles', 'public');
-        $validated['image_path'] = $path;
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('articles', 'public');
+            $validated['image_path'] = $path;
+        }
+
+        // Process tags (remove extra spaces)
+        if ($request->has('tags')) {
+            $tags = array_map('trim', explode(',', $request->tags));
+            $validated['tags'] = implode(',', $tags);
+        }
+
+        // Set default values
+        $validated['is_featured'] = $request->boolean('is_featured');
+
+        // If published status but no published_at date, set to now
+        if ($validated['status'] === 'published' && empty($validated['published_at'])) {
+            $validated['published_at'] = now();
+        }
+
+        // Set views to 0 for new article
+        $validated['views'] = 0;
+
+        Article::create($validated);
+
+        return redirect()->route('admin.articles.index')
+            ->with('success', 'Article created successfully.');
     }
-
-    // Process tags (remove extra spaces)
-    if ($request->has('tags')) {
-        $tags = array_map('trim', explode(',', $request->tags));
-        $validated['tags'] = implode(',', $tags);
-    }
-
-    // Set default values
-    $validated['is_featured'] = $request->boolean('is_featured');
-
-    // If published status but no published_at date, set to now
-    if ($validated['status'] === 'published' && empty($validated['published_at'])) {
-        $validated['published_at'] = now();
-    }
-
-    // Set views to 0 for new article
-    $validated['views'] = 0;
-
-    Article::create($validated);
-
-    return redirect()->route('admin.articles.index')
-        ->with('success', 'Article created successfully.');
-}
 
     public function news(Request $request)
     {
