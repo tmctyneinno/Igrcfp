@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
  
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
+use App\Models\User;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use Illuminate\Http\Request;
