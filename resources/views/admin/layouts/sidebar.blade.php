@@ -54,6 +54,20 @@
          <li class="dropdown">
             <a href="javascript:void(0)">
             <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
+            <span>News</span> 
+            </a>
+            <ul class="sidebar-submenu">
+            <li>
+                <a href="{{ route('admin.news.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
+            </li>
+            <li>
+                <a href="{{ route('admin.news.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>  Add new</a>
+            </li>
+            </ul>
+        </li>
+         <li class="dropdown">
+            <a href="javascript:void(0)">
+            <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
             <span>Courses</span> 
             </a>
             <ul class="sidebar-submenu">
