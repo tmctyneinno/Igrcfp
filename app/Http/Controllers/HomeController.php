@@ -88,10 +88,15 @@ class HomeController extends Controller
     }
 
     public function eventsIndex(){
+        $currentDate = now()->toDateString();
+    
         $events = Event::query()
-        ->where('status', 'published')
-        ->orderBy('start_date', 'asc')
-        ->paginate(10);
+            ->where('status', 'published')
+            ->select('*')
+            ->selectRaw("CASE WHEN start_date >= ? THEN 0 ELSE 1 END as is_upcoming", [$currentDate])
+            ->orderBy('is_upcoming')
+            ->orderByRaw("CASE WHEN start_date >= ? THEN start_date ELSE start_date DESC END", [$currentDate])
+            ->paginate(10);
 
         return Inertia::render('Events/Index', [
             'title' => 'Professional Events & Workshops',
