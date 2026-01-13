@@ -62,52 +62,23 @@
                             </div>
 
                             <div class="col-12">
-    <label class="form-label">Full Description <span class="text-danger">*</span></label>
-    
-    <!-- Hidden input to store the HTML -->
-    <input type="hidden" name="description" id="description" value="{{ old('description') }}">
-    
-    <!-- CKEditor 5 Container -->
-    <div id="editor" class="form-control @error('description') is-invalid @enderror" 
-         style="min-height: 500px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
-        {!! old('description') !!}
-    </div>
-    
-    @error('description')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
+                                <label class="form-label">Full Description <span class="text-danger">*</span></label>
+                                
+                                <!-- Hidden input to store the HTML -->
+                                <input type="hidden" name="description" id="description" value="{{ old('description') }}">
+                                
+                                <!-- CKEditor 5 Container -->
+                                <div id="editor" class="form-control @error('description') is-invalid @enderror" 
+                                    style="min-height: 500px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
+                                    {!! old('description') !!}
+                                </div>
+                                
+                                @error('description')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-@push('scripts')
-<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-<script>
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            // Optional: Basic toolbar configuration
-            toolbar: [
-                'heading', '|',
-                'bold', 'italic', 'underline', 'strikethrough', '|',
-                'bulletedList', 'numberedList', 'blockQuote', '|',
-                'link', 'imageUpload', 'insertTable', '|',
-                'undo', 'redo'
-            ]
-        })
-        .then(editor => {
-            // Update hidden input when editor content changes
-            editor.model.document.on('change:data', () => {
-                document.getElementById('description').value = editor.getData();
-            });
-            
-            // Also update on form submit
-            document.querySelector('form').addEventListener('submit', () => {
-                document.getElementById('description').value = editor.getData();
-            });
-        })
-        .catch(error => {
-            console.error(error);
-        });
-</script>
-@endpush
+                            
 
                             <div class="col-12">
                                 <label class="form-label">Event Image</label>
