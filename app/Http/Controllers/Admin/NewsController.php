@@ -90,7 +90,7 @@ class NewsController extends Controller
     {
         \Log::info(' storeCategory:', [$request]);
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
+            'name' => 'required|string|max:255|unique:article_categories,name',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
