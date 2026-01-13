@@ -21,17 +21,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction']) ->name('dashboard.quick-action');
 
     // Event Management
-    Route::get('/events/index', [EventController::class, 'index'])->name('events.index');
-    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
-    Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
-    Route::get('/events/show/{id}', [EventController::class, 'show'])->name('events.show');
-    Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
-
-    Route::post('/events/update/{id}', [EventController::class, 'update'])->name('events.update');
-    Route::post('/events/bulk-action', [EventController::class, 'bulkAction'])->name('events.bulk-action');
-    Route::patch('/events/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])->name('events.toggle-featured');
-    Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/', [EventController::class, 'index'])->name('index');
+        Route::get('/create', [EventController::class, 'create'])->name('create');
+        Route::post('/', [EventController::class, 'store'])->name('store');
+        Route::get('/{event}', [EventController::class, 'show'])->name('show');  // Changed from {id}
+        Route::get('/{event}/edit', [EventController::class, 'edit'])->name('edit');
+        Route::put('/{event}', [EventController::class, 'update'])->name('update');  // Changed from {id}
+        Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-action', [EventController::class, 'bulkAction'])->name('bulk-action');
+        Route::patch('/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])->name('toggle-featured');
+    });
      // Blog Management
     Route::prefix('blogs')->name('blogs.')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
