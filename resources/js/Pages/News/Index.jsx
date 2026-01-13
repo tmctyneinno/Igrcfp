@@ -1,5 +1,5 @@
 import React from "react";
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { 
   CalendarDaysIcon, 
@@ -7,7 +7,9 @@ import {
   ArrowRightIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
-  TagIcon 
+  TagIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 
 export default function News({ 
@@ -15,9 +17,10 @@ export default function News({
   title, 
   description, 
   featuredArticles = [], 
-  latestArticles = [],
+  latestArticles = { data: [] }, // Changed to object with data property
   categories = [],
-  popularTags = [] 
+  popularTags = [],
+  filters = {}
 }) {
   
   const formatDate = (dateString) => {
@@ -27,6 +30,9 @@ export default function News({
       day: 'numeric'
     });
   };
+
+  // Access pagination links from latestArticles
+  const { data: articles, links, meta } = latestArticles;
 
   return (
     <GuestLayout auth={auth}>
@@ -41,7 +47,7 @@ export default function News({
               Industry Insights & Updates
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               {title}
             </h1>
             
@@ -50,19 +56,24 @@ export default function News({
             </p>
             
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto mb-8">
+            <form method="GET" action="/news" className="max-w-2xl mx-auto mb-8">
               <div className="relative">
                 <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="search"
+                  name="search"
+                  defaultValue={filters.search || ''}
                   placeholder="Search articles, topics, or keywords..."
                   className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
                 />
-                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+                <button 
+                  type="submit"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+                >
                   Search
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
@@ -77,7 +88,7 @@ export default function News({
                 <p className="text-gray-600 mt-2">In-depth analysis and expert commentary</p>
               </div>
               <Link 
-                href="/news/category/featured" 
+                href="/news?filter=featured" 
                 className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
               >
                 View all featured
@@ -129,7 +140,7 @@ export default function News({
                       </p>
                       
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {article.tags.slice(0, 3).map(tag => (
+                        {article.tags?.slice(0, 3).map(tag => (
                           <span 
                             key={tag} 
                             className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
@@ -165,93 +176,132 @@ export default function News({
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 bg-white p-6 rounded-xl border">
                 <div className="mb-4 md:mb-0">
                   <h3 className="text-lg font-semibold text-gray-900">Latest Updates</h3>
-                  <p className="text-gray-600 text-sm">Sorted by most recent</p>
+                  <p className="text-gray-600 text-sm">Showing {meta?.total || 0} articles</p>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
-                  <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                    <FunnelIcon className="w-4 h-4 mr-2" />
-                    Filter
-                  </button>
-                  <select className="px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                    <option>All Categories</option>
-                    {categories.map(cat => (
-                      <option key={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
-                  <select className="px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                    <option>All Years</option>
-                    <option>2024</option>
-                    <option>2023</option>
-                  </select>
+                  <form method="GET" action="/news" className="flex items-center gap-4">
+                    <select 
+                      name="category" 
+                      defaultValue={filters.category || ''}
+                      className="px-4 py-2 border border-gray-300 rounded-lg bg-white"
+                      onChange={(e) => e.target.form.submit()}
+                    >
+                      <option value="">All Categories</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.slug}>{cat.name} ({cat.count})</option>
+                      ))}
+                    </select>
+                  </form>
                 </div>
               </div>
 
               {/* Articles Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {latestArticles.map(article => (
-                  <article key={article.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="relative h-48">
-                      <img 
-                        src={article.image} 
-                        alt={article.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium">
-                          {article.category}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="p-6">
-                      <div className="flex items-center text-sm text-gray-500 mb-3">
-                        <CalendarDaysIcon className="w-4 h-4 mr-1" />
-                        {formatDate(article.published_at)}
+                {articles.length > 0 ? (
+                  articles.map(article => (
+                    <article key={article.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                      <div className="relative h-48">
+                        <img 
+                          src={article.image} 
+                          alt={article.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/400x200?text=Article+Image';
+                          }}
+                        />
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium">
+                            {article.category}
+                          </span>
+                        </div>
                       </div>
                       
-                      <h4 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
-                        <Link href={`/news/${article.slug}`}>
-                          {article.title}
-                        </Link>
-                      </h4>
-                      
-                      <p className="text-gray-600 mb-4 line-clamp-2">
-                        {article.excerpt}
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
-                            <UserIcon className="w-4 h-4 text-gray-500" />
-                          </div>
-                          <span className="text-sm text-gray-700">{article.author}</span>
+                      <div className="p-6">
+                        <div className="flex items-center text-sm text-gray-500 mb-3">
+                          <CalendarDaysIcon className="w-4 h-4 mr-1" />
+                          {formatDate(article.published_at)}
                         </div>
                         
-                        <Link 
-                          href={`/news/${article.slug}`}
-                          className="text-blue-600 text-sm font-medium hover:text-blue-800"
-                        >
-                          Read more →
-                        </Link>
+                        <h4 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
+                          <Link href={`/news/${article.slug}`}>
+                            {article.title}
+                          </Link>
+                        </h4>
+                        
+                        <p className="text-gray-600 mb-4 line-clamp-2">
+                          {article.excerpt}
+                        </p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+                              <UserIcon className="w-4 h-4 text-gray-500" />
+                            </div>
+                            <span className="text-sm text-gray-700">{article.author}</span>
+                          </div>
+                          
+                          <Link 
+                            href={`/news/${article.slug}`}
+                            className="text-blue-600 text-sm font-medium hover:text-blue-800"
+                          >
+                            Read more →
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  ))
+                ) : (
+                  <div className="col-span-2 text-center py-12">
+                    <p className="text-gray-500 text-lg">No articles found. Try a different search or filter.</p>
+                  </div>
+                )}
               </div>
 
               {/* Pagination */}
-              <div className="mt-12 flex justify-center">
-                <nav className="flex items-center space-x-2">
-                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">Previous</button>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">1</button>
-                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">2</button>
-                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">3</button>
-                  <span className="px-2">...</span>
-                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">10</button>
-                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">Next</button>
-                </nav>
-              </div>
+              {meta && meta.total > 0 && (
+                <div className="mt-12">
+                  <nav className="flex items-center justify-between border-t border-gray-200 px-4 py-6">
+                    <div className="flex flex-1 justify-between sm:justify-end">
+                      {links.prev && (
+                        <Link
+                          href={links.prev}
+                          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                          <ChevronLeftIcon className="h-5 w-5 mr-2" />
+                          Previous
+                        </Link>
+                      )}
+                      
+                      <div className="hidden sm:flex items-center space-x-2">
+                        {Array.from({ length: meta.last_page }, (_, i) => i + 1).map(page => (
+                          <Link
+                            key={page}
+                            href={`/news?page=${page}`}
+                            className={`relative inline-flex items-center px-4 py-2 text-sm font-medium ${
+                              meta.current_page === page
+                                ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
+                            } rounded-md`}
+                          >
+                            {page}
+                          </Link>
+                        ))}
+                      </div>
+                      
+                      {links.next && (
+                        <Link
+                          href={links.next}
+                          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                          Next
+                          <ChevronRightIcon className="h-5 w-5 ml-2" />
+                        </Link>
+                      )}
+                    </div>
+                  </nav>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
@@ -263,7 +313,7 @@ export default function News({
                   {categories.map(category => (
                     <li key={category.id}>
                       <Link 
-                        href={`/news/category/${category.slug}`}
+                        href={`/news?category=${category.slug}`}
                         className="flex items-center justify-between py-2 hover:text-blue-600 transition"
                       >
                         <span>{category.name}</span>
@@ -281,7 +331,7 @@ export default function News({
                   {popularTags.map(tag => (
                     <Link
                       key={tag}
-                      href={`/news/tag/${tag}`}
+                      href={`/news?search=${encodeURIComponent(tag)}`}
                       className="px-3 py-1.5 bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 rounded-lg text-sm transition"
                     >
                       {tag}
@@ -296,16 +346,21 @@ export default function News({
                 <p className="text-gray-600 text-sm mb-4">
                   Get weekly insights on regulatory changes and industry trends.
                 </p>
-                <div className="space-y-3">
+                <form method="POST" action="/newsletter/subscribe" className="space-y-3">
                   <input
                     type="email"
+                    name="email"
                     placeholder="Your email address"
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
                   />
-                  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                  <button 
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                  >
                     Subscribe
                   </button>
-                </div>
+                </form>
                 <p className="text-gray-500 text-xs mt-3">
                   No spam. Unsubscribe anytime.
                 </p>
