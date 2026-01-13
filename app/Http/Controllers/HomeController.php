@@ -94,8 +94,9 @@ class HomeController extends Controller
             ->where('status', 'published')
             ->select('*')
             ->selectRaw("CASE WHEN start_date >= '{$currentDate}' THEN 0 ELSE 1 END as is_upcoming")
+            ->selectRaw("CASE WHEN start_date >= '{$currentDate}' THEN start_date ELSE DATE('9999-12-31') - start_date END as sort_date")
             ->orderBy('is_upcoming')
-            ->orderByRaw("CASE WHEN start_date >= '{$currentDate}' THEN start_date ELSE start_date DESC END")
+            ->orderBy('sort_date')
             ->paginate(10);
 
         return Inertia::render('Events/Index', [
