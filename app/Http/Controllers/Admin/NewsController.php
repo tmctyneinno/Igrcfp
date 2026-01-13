@@ -45,7 +45,7 @@ class NewsController extends Controller
             'slug' => 'required|string|max:255|unique:articles,slug',
             'excerpt' => 'required|string|max:300',
             'content' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:article_categories,id',
             'author_id' => 'required|exists:users,id',
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
