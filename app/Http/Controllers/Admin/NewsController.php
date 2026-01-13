@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Cache;
 
 class NewsController extends Controller
 {
+    public function create()
+    {
+        return view('admin.news.create');
+    }
 
     public function news(Request $request)
     {
