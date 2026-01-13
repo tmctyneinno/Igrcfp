@@ -372,7 +372,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {relatedEvents.map((relatedEvent) => (
                                 <div key={relatedEvent.id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
-                                    <div className="relative h-48">
+                                    <div className="relative h-40">
                                         <img
                                             src={getImageUrl(relatedEvent.image)}
                                             alt={relatedEvent.title}
