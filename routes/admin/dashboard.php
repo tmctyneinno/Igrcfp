@@ -16,12 +16,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         ->name('dashboard.stats');
      
     // Recent Activities
-    Route::get('/dashboard/activities', [AdminDashboardController::class, 'activities'])
-        ->name('dashboard.activities');
-    
+    Route::get('/dashboard/activities', [AdminDashboardController::class, 'activities'])->name('dashboard.activities');
     // Quick Actions
-    Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction'])
-        ->name('dashboard.quick-action');
+    Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction']) ->name('dashboard.quick-action');
 
     // Event Management
     Route::get('/events/index', [EventController::class, 'index'])->name('events.index');
@@ -29,9 +26,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/show/{id}', [EventController::class, 'show'])->name('events.show');
     Route::get('/events/edit/{id}', [EventController::class, 'edit'])->name('events.edit');
-    Route::get('admin/events/edit/{event}', [EventController::class, 'edit'])
-    ->name('admin.events.edit');
-    
+
     Route::post('/events/update/{id}', [EventController::class, 'update'])->name('events.update');
     Route::post('/events/bulk-action', [EventController::class, 'bulkAction'])->name('events.bulk-action');
     Route::patch('/events/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])->name('events.toggle-featured');
