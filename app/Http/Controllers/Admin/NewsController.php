@@ -86,6 +86,42 @@ class NewsController extends Controller
             ->with('success', 'Article created successfully.');
     }
 
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+        ]);
+
+        // Generate slug from name
+        $slug = Str::slug($validated['name']);
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        $validated['slug'] = $slug;
+        $validated['is_active'] = $request->boolean('is_active', true);
+
+        $category = Category::create($validated);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                ],
+                'message' => 'Category created successfully'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Category created successfully');
+    }
+
     public function news(Request $request)
     {
         // Featured articles (promoted ones)
