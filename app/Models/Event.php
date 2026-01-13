@@ -31,6 +31,7 @@ class Event extends Model
         'meta_description',
         'meta_keywords',
         'user_id',
+        'registration_status',
     ];
 
     protected $casts = [
