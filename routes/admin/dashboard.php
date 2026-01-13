@@ -57,7 +57,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::delete('/{blog}', [NewsController::class, 'destroy'])->name('destroy');
         Route::patch('/{blog}/toggle-status', [NewsController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/bulk-action', [NewsController::class, 'bulkAction'])->name('bulk-action');
-        Route::post('/categories', [NewsController::class, 'store'])->name('admin.articleCategories.store');
+        Route::post('/categories', [NewsController::class, 'storeCategory'])->name('articleCategories.store');
 
     });
 
