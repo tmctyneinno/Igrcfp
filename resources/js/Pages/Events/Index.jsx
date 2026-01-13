@@ -287,7 +287,7 @@ export default function Events({ auth, title, description, events }) {
                                                                         Available
                                                                     </span>
                                                                 )}
-                                                            </div>
+                                                            </div> 
 
                                                             <div className="flex items-center gap-2">
                                                                 {/* Share Button */}
