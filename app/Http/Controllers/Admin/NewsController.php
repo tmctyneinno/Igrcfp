@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Cache;
 
 class NewsController extends Controller
 {
-    public function index(Request $request)
+
+    public function news(Request $request)
     {
         // Featured articles (promoted ones)
         $featuredArticles = Cache::remember('featured_articles', 3600, function () {
