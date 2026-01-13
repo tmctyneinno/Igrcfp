@@ -62,24 +62,33 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                
-                                <textarea name="description" id="ckeditor" class="form-control @error('description') is-invalid @enderror" 
-                                        rows="8" placeholder="Detailed description of the event..." required>{{ old('description') }}</textarea>
-                                
-                                @error('description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+    <label class="form-label">Full Description <span class="text-danger">*</span></label>
+    
+    <textarea name="description" id="ckeditor" class="form-control @error('description') is-invalid @enderror" 
+              rows="8" placeholder="Detailed description of the event..." required>{{ old('description') }}</textarea>
+    
+    @error('description')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
-                            @push('scripts')
-                            <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
-                            <script>
-                                CKEDITOR.replace('ckeditor', {
-                                    height: 300
-                                });
-                            </script>
-                            @endpush
+@push('scripts')
+<!-- Use the latest LTS version -->
+<script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('ckeditor', {
+        height: 300,
+        // Optional: Basic toolbar configuration
+        toolbar: [
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote'] },
+            { name: 'links', items: ['Link', 'Unlink'] },
+            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
+            { name: 'tools', items: ['Maximize', 'Source'] }
+        ]
+    });
+</script>
+@endpush
 
                             <div class="col-12">
                                 <label class="form-label">Event Image</label>
