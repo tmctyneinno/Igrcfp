@@ -28,7 +28,11 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->name('training.calendar');
 
-Route::get('/news', [NewsController::class, 'news'])->name('news.index');
+Route::prefix('news')->name('news.')->group(function () {
+    Route::get('/', [NewsController::class, 'news'])->name('index');
+    Route::get('/category/{slug}', [NewsController::class, 'category'])->name('category');
+    Route::get('/{slug}', [NewsController::class, 'show'])->name('show');
+});
 
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
