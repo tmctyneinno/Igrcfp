@@ -13,7 +13,14 @@ class NewsController extends Controller
 {
     public function create()
     {
-        return view('admin.news.create');
+        $categories = ArticleCategory::where('is_active', true)->orderBy('name')->get();
+        $authors = User::where('is_active', true)->orderBy('name')->get();
+        $recentArticles = Article::with(['category', 'author'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('admin.articles.create', compact('categories', 'authors', 'recentArticles'));
     }
 
     public function news(Request $request)
