@@ -1,206 +1,345 @@
-<?php
+import React from "react";
+import { Head, Link } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
+import { 
+  CalendarDaysIcon, 
+  UserIcon, 
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  TagIcon 
+} from '@heroicons/react/24/outline';
 
-namespace App\Http\Controllers;
+export default function News({ 
+  auth, 
+  title, 
+  description, 
+  featuredArticles = [], 
+  latestArticles = [],
+  categories = [],
+  popularTags = [] 
+}) {
+  
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
-use Inertia\Inertia;
-use App\Models\Article;
-use App\Models\Category;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+  return (
+    <GuestLayout auth={auth}>
+      <Head title={title} />
+      
+      {/* Hero Section */}
+      <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+              <TagIcon className="w-4 h-4 mr-2" />
+              Industry Insights & Updates
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              {title}
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+              {description}
+            </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="search"
+                  placeholder="Search articles, topics, or keywords..."
+                  className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                />
+                <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">
+                  Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-class NewsController extends Controller
-{
-    public function index(Request $request)
-    {
-        // Featured articles (promoted ones)
-        $featuredArticles = Cache::remember('featured_articles', 3600, function () {
-            return Article::with(['category', 'author'])
-                ->where('is_featured', true)
-                ->where('status', 'published')
-                ->where('published_at', '<=', now())
-                ->orderBy('published_at', 'desc')
-                ->take(3)
-                ->get()
-                ->map(function ($article) {
-                    return [
-                        'id' => $article->id,
-                        'title' => $article->title,
-                        'slug' => $article->slug,
-                        'excerpt' => $article->excerpt,
-                        'image' => $article->image_url,
-                        'category' => $article->category->name,
-                        'category_slug' => $article->category->slug,
-                        'author' => $article->author->name,
-                        'author_title' => $article->author->title,
-                        'published_at' => $article->published_at->toISOString(),
-                        'read_time' => $article->read_time,
-                        'tags' => $article->tags ? explode(',', $article->tags) : [],
-                    ];
-                });
-        });
+      {/* Featured Articles Section */}
+      {featuredArticles.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center mb-12">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Featured Insights</h2>
+                <p className="text-gray-600 mt-2">In-depth analysis and expert commentary</p>
+              </div>
+              <Link 
+                href="/news/category/featured" 
+                className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
+              >
+                View all featured
+                <ArrowRightIcon className="w-4 h-4 ml-2" />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {featuredArticles.slice(0, 2).map((article, index) => (
+                <div 
+                  key={article.id} 
+                  className={`bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 ${
+                    index === 0 ? 'lg:col-span-2' : ''
+                  }`}
+                >
+                  <div className={`flex flex-col ${index === 0 ? 'lg:flex-row' : ''}`}>
+                    <div className={`relative ${index === 0 ? 'lg:w-1/2' : 'h-48'}`}>
+                      <img 
+                        src={article.image} 
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium">
+                          {article.category}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className={`p-8 ${index === 0 ? 'lg:w-1/2 lg:flex lg:flex-col lg:justify-center' : ''}`}>
+                      <div className="flex items-center text-sm text-gray-500 mb-4">
+                        <CalendarDaysIcon className="w-4 h-4 mr-1" />
+                        {formatDate(article.published_at)}
+                        <span className="mx-2">•</span>
+                        <UserIcon className="w-4 h-4 mr-1" />
+                        {article.author}
+                        <span className="mx-2">•</span>
+                        <span className="text-blue-600">{article.read_time} min read</span>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4 hover:text-blue-600 transition">
+                        <Link href={`/news/${article.slug}`}>
+                          {article.title}
+                        </Link>
+                      </h3>
+                      
+                      <p className="text-gray-600 mb-6 line-clamp-3">
+                        {article.excerpt}
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {article.tags.slice(0, 3).map(tag => (
+                          <span 
+                            key={tag} 
+                            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      
+                      <Link 
+                        href={`/news/${article.slug}`}
+                        className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800"
+                      >
+                        Read full analysis
+                        <ArrowRightIcon className="w-4 h-4 ml-2" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-        // Latest articles with pagination
-        $latestArticles = Article::with(['category', 'author'])
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->orderBy('published_at', 'desc')
-            ->paginate(10)
-            ->through(function ($article) {
-                return [
-                    'id' => $article->id,
-                    'title' => $article->title,
-                    'slug' => $article->slug,
-                    'excerpt' => $article->excerpt,
-                    'image' => $article->image_url,
-                    'category' => $article->category->name,
-                    'category_slug' => $article->category->slug,
-                    'author' => $article->author->name,
-                    'author_avatar' => $article->author->avatar_url,
-                    'published_at' => $article->published_at->toISOString(),
-                ];
-            });
+      {/* Main Content with Sidebar */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              {/* Filters */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 bg-white p-6 rounded-xl border">
+                <div className="mb-4 md:mb-0">
+                  <h3 className="text-lg font-semibold text-gray-900">Latest Updates</h3>
+                  <p className="text-gray-600 text-sm">Sorted by most recent</p>
+                </div>
+                
+                <div className="flex flex-wrap gap-4">
+                  <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    <FunnelIcon className="w-4 h-4 mr-2" />
+                    Filter
+                  </button>
+                  <select className="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    <option>All Categories</option>
+                    {categories.map(cat => (
+                      <option key={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                  <select className="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    <option>All Years</option>
+                    <option>2024</option>
+                    <option>2023</option>
+                  </select>
+                </div>
+              </div>
 
-        // Categories with article count
-        $categories = Cache::remember('categories_with_count', 7200, function () {
-            return Category::withCount(['articles' => function ($query) {
-                $query->where('status', 'published')
-                      ->where('published_at', '<=', now());
-            }])
-            ->orderBy('name')
-            ->get()
-            ->map(function ($category) {
-                return [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'count' => $category->articles_count,
-                ];
-            });
-        });
+              {/* Articles Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {latestArticles.map(article => (
+                  <article key={article.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="relative h-48">
+                      <img 
+                        src={article.image} 
+                        alt={article.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium">
+                          {article.category}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6">
+                      <div className="flex items-center text-sm text-gray-500 mb-3">
+                        <CalendarDaysIcon className="w-4 h-4 mr-1" />
+                        {formatDate(article.published_at)}
+                      </div>
+                      
+                      <h4 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
+                        <Link href={`/news/${article.slug}`}>
+                          {article.title}
+                        </Link>
+                      </h4>
+                      
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {article.excerpt}
+                      </p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+                            <UserIcon className="w-4 h-4 text-gray-500" />
+                          </div>
+                          <span className="text-sm text-gray-700">{article.author}</span>
+                        </div>
+                        
+                        <Link 
+                          href={`/news/${article.slug}`}
+                          className="text-blue-600 text-sm font-medium hover:text-blue-800"
+                        >
+                          Read more →
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
 
-        // Popular tags
-        $popularTags = Cache::remember('popular_tags', 10800, function () {
-            return Article::where('status', 'published')
-                ->where('published_at', '<=', now())
-                ->whereNotNull('tags')
-                ->pluck('tags')
-                ->flatMap(function ($tags) {
-                    return explode(',', $tags);
-                })
-                ->filter()
-                ->map(fn($tag) => trim($tag))
-                ->countBy()
-                ->sortDesc()
-                ->take(15)
-                ->keys()
-                ->toArray();
-        });
+              {/* Pagination */}
+              <div className="mt-12 flex justify-center">
+                <nav className="flex items-center space-x-2">
+                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">Previous</button>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">2</button>
+                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">3</button>
+                  <span className="px-2">...</span>
+                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">10</button>
+                  <button className="px-4 py-2 border rounded-lg hover:bg-gray-50">Next</button>
+                </nav>
+              </div>
+            </div>
 
-        return Inertia::render('News/Index', [
-            'title' => 'Industry News & Insights',
-            'description' => 'Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.',
-            'featuredArticles' => $featuredArticles,
-            'latestArticles' => $latestArticles,
-            'categories' => $categories,
-            'popularTags' => $popularTags,
-            'filters' => $request->only(['category', 'search', 'year']),
-        ]);
-    }
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              {/* Categories */}
+              <div className="bg-white rounded-xl border p-6 mb-8">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Browse by Category</h4>
+                <ul className="space-y-3">
+                  {categories.map(category => (
+                    <li key={category.id}>
+                      <Link 
+                        href={`/news/category/${category.slug}`}
+                        className="flex items-center justify-between py-2 hover:text-blue-600 transition"
+                      >
+                        <span>{category.name}</span>
+                        <span className="text-gray-400 text-sm">({category.count})</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-    public function show(string $slug)
-    {
-        $article = Article::with(['category', 'author'])
-            ->where('slug', $slug)
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->firstOrFail();
+              {/* Popular Tags */}
+              <div className="bg-white rounded-xl border p-6 mb-8">
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">Popular Topics</h4>
+                <div className="flex flex-wrap gap-2">
+                  {popularTags.map(tag => (
+                    <Link
+                      key={tag}
+                      href={`/news/tag/${tag}`}
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 rounded-lg text-sm transition"
+                    >
+                      {tag}
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
-        // Increment view count
-        $article->increment('views');
+              {/* Newsletter */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 p-6">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">Stay Updated</h4>
+                <p className="text-gray-600 text-sm mb-4">
+                  Get weekly insights on regulatory changes and industry trends.
+                </p>
+                <div className="space-y-3">
+                  <input
+                    type="email"
+                    placeholder="Your email address"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                    Subscribe
+                  </button>
+                </div>
+                <p className="text-gray-500 text-xs mt-3">
+                  No spam. Unsubscribe anytime.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        // Related articles
-        $relatedArticles = Article::with(['category', 'author'])
-            ->where('category_id', $article->category_id)
-            ->where('id', '!=', $article->id)
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get()
-            ->map(function ($related) {
-                return [
-                    'id' => $related->id,
-                    'title' => $related->title,
-                    'slug' => $related->slug,
-                    'excerpt' => $related->excerpt,
-                    'image' => $related->image_url,
-                    'category' => $related->category->name,
-                    'published_at' => $related->published_at->toISOString(),
-                    'read_time' => $related->read_time,
-                ];
-            });
-
-        return Inertia::render('News/Show', [
-            'title' => $article->title,
-            'article' => [
-                'id' => $article->id,
-                'title' => $article->title,
-                'content' => $article->content,
-                'excerpt' => $article->excerpt,
-                'image' => $article->image_url,
-                'category' => $article->category->name,
-                'category_slug' => $article->category->slug,
-                'author' => [
-                    'name' => $article->author->name,
-                    'title' => $article->author->title,
-                    'bio' => $article->author->bio,
-                    'avatar' => $article->author->avatar_url,
-                    'linkedin' => $article->author->linkedin_url,
-                ],
-                'published_at' => $article->published_at->toISOString(),
-                'updated_at' => $article->updated_at->toISOString(),
-                'read_time' => $article->read_time,
-                'views' => $article->views,
-                'tags' => $article->tags ? explode(',', $article->tags) : [],
-                'meta_title' => $article->meta_title,
-                'meta_description' => $article->meta_description,
-            ],
-            'relatedArticles' => $relatedArticles,
-        ]);
-    }
-
-    public function category(string $slug)
-    {
-        $category = Category::where('slug', $slug)->firstOrFail();
-
-        $articles = Article::with(['category', 'author'])
-            ->where('category_id', $category->id)
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->orderBy('published_at', 'desc')
-            ->paginate(12)
-            ->through(function ($article) {
-                return [
-                    'id' => $article->id,
-                    'title' => $article->title,
-                    'slug' => $article->slug,
-                    'excerpt' => $article->excerpt,
-                    'image' => $article->image_url,
-                    'category' => $article->category->name,
-                    'author' => $article->author->name,
-                    'published_at' => $article->published_at->toISOString(),
-                    'read_time' => $article->read_time,
-                ];
-            });
-
-        return Inertia::render('News/Category', [
-            'title' => $category->name . ' News & Insights',
-            'description' => $category->description,
-            'category' => [
-                'name' => $category->name,
-                'description' => $category->description,
-            ],
-            'articles' => $articles,
-        ]);
-    }
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Need Expert Analysis for Your Organization?
+          </h2>
+          <p className="text-blue-100 text-xl mb-8 max-w-3xl mx-auto">
+            Our team provides customized briefings and regulatory impact assessments tailored to your specific needs.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/contact"
+              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
+            >
+              Request a Consultation
+            </Link>
+            <Link
+              href="/services/advisory"
+              className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition"
+            >
+              View Advisory Services
+            </Link>
+          </div>
+        </div>
+      </section>
+    </GuestLayout>
+  );
 }
