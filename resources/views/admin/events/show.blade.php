@@ -232,9 +232,9 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
-                            <iconify-icon icon="lucide:edit" class="icon"></iconify-icon>
-                            Edit Event
-                        </a>
+                                <iconify-icon icon="lucide:edit" class="icon"></iconify-icon>
+                                Edit Event
+                            </a>
                         
                         <form action="{{ route('admin.events.toggle-featured', $event) }}" method="POST" class="d-grid">
                             @csrf
