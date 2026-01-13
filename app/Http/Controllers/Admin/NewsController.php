@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Cache;
 
 class NewsController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->get('search');
+        $status = $request->get('status');
+        $perPage = $request->get('per_page', 10);
+
+
+        return view('admin.articles.index', compact('events', 'search', 'status', 'perPage'));
+    }
+
     public function create()
     {
         $categories = ArticleCategory::where('is_active', true)->orderBy('name')->get();
