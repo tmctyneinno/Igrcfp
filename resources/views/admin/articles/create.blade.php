@@ -139,9 +139,6 @@
                                     @foreach($authors as $author)
                                         <option value="{{ $author->id }}" {{ old('author_id') == $author->id ? 'selected' : '' }}>
                                             {{ $author->name }}
-                                            @if($author->title)
-                                                ({{ $author->title }})
-                                            @endif
                                         </option>
                                     @endforeach
                                 </select>
@@ -173,7 +170,7 @@
                                 <label class="form-label">Tags</label>
                                 <input type="text" name="tags" class="form-control @error('tags') is-invalid @enderror" 
                                        placeholder="compliance, risk-management, regulatory-updates" value="{{ old('tags') }}">
-                                <small class="text-muted">Separate tags with commas (max 10 tags)</small>
+                                <small class="text-muted">Separate tags with commas</small>
                                 @error('tags')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -214,15 +211,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Focus Keyword</label>
-                                <input type="text" name="focus_keyword" class="form-control @error('focus_keyword') is-invalid @enderror" 
-                                       placeholder="Main keyword for SEO optimization" value="{{ old('focus_keyword') }}">
-                                @error('focus_keyword')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,24 +247,6 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="allow_comments" id="allow_comments" value="1" {{ old('allow_comments', true) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="allow_comments">
-                                        Allow comments
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="enable_social_sharing" id="enable_social_sharing" value="1" {{ old('enable_social_sharing', true) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="enable_social_sharing">
-                                        Enable social sharing
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
@@ -286,12 +256,6 @@
                                         <a href="{{ route('admin.articles.index') }}" class="btn btn-outline-secondary">
                                             Cancel
                                         </a>
-                                    </div>
-                                    <div class="mt-2 text-center">
-                                        <small class="text-muted">
-                                            <iconify-icon icon="mdi:clock-outline" class="icon"></iconify-icon>
-                                            Auto-save every 60 seconds
-                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -530,20 +494,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .trim();
                 slugInput.value = slug;
             }
-        });
-    }
-
-    // Auto-save functionality (optional)
-    let autoSaveTimeout;
-    const form = document.querySelector('form');
-    
-    if (form) {
-        form.addEventListener('input', function() {
-            clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(function() {
-                console.log('Auto-save triggered');
-                // You can implement AJAX auto-save here
-            }, 60000); // 60 seconds
         });
     }
 
