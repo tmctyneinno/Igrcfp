@@ -19,7 +19,7 @@ return new class extends Migration
                 $table->text('excerpt')->nullable();
                 $table->longText('content'); 
                 $table->string('image_path')->nullable();
-                $table->foreignId('category_id')->constrained()->onDelete('cascade');
+                $table->foreignId('article_category_id')->constrained()->onDelete('cascade');
                 $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
                 $table->boolean('is_featured')->default(false);
                 $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
