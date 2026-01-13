@@ -71,7 +71,7 @@ export default function Events({ auth, title, description, events }) {
                         </div>
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
                             {title}
-                        </h1>
+                        </h1> 
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                             {description || 'Join us for our upcoming professional development events, workshops, and seminars.'}
                         </p>
