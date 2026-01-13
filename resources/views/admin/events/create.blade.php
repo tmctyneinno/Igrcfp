@@ -64,8 +64,14 @@
                             <div class="col-12">
     <label class="form-label">Full Description <span class="text-danger">*</span></label>
     
-    <textarea name="description" id="ckeditor" class="form-control @error('description') is-invalid @enderror" 
-              rows="8" placeholder="Detailed description of the event..." required>{{ old('description') }}</textarea>
+    <!-- Hidden input to store the HTML -->
+    <input type="hidden" name="description" id="description" value="{{ old('description') }}">
+    
+    <!-- CKEditor 5 Container -->
+    <div id="editor" class="form-control @error('description') is-invalid @enderror" 
+         style="min-height: 900px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
+        {!! old('description') !!}
+    </div>
     
     @error('description')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -73,20 +79,33 @@
 </div>
 
 @push('scripts')
-<!-- Use the latest LTS version -->
-<script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('ckeditor', {
-        height: 300,
-        // Optional: Basic toolbar configuration
-        toolbar: [
-            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
-            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote'] },
-            { name: 'links', items: ['Link', 'Unlink'] },
-            { name: 'insert', items: ['Image', 'Table', 'HorizontalRule'] },
-            { name: 'tools', items: ['Maximize', 'Source'] }
-        ]
-    });
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            // Optional: Basic toolbar configuration
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough', '|',
+                'bulletedList', 'numberedList', 'blockQuote', '|',
+                'link', 'imageUpload', 'insertTable', '|',
+                'undo', 'redo'
+            ]
+        })
+        .then(editor => {
+            // Update hidden input when editor content changes
+            editor.model.document.on('change:data', () => {
+                document.getElementById('description').value = editor.getData();
+            });
+            
+            // Also update on form submit
+            document.querySelector('form').addEventListener('submit', () => {
+                document.getElementById('description').value = editor.getData();
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
 </script>
 @endpush
 
