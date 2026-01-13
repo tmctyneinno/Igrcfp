@@ -165,7 +165,7 @@ export default function Events({ auth, title, description, events }) {
                                                             }}
                                                             loading="lazy"
                                                             width={400}
-                                                            height={250}
+                                                            height={200}
                                                         />
                                                         {event.is_featured && (
                                                             <div className="absolute top-3 left-3">
