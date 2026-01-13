@@ -206,7 +206,9 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">Created:</span>
-                            <span class="fw-medium">{{ $event->created_at->format('M d, Y') }}</span>
+                            <span class="fw-medium">
+                                {{ $event->created_at ? $event->created_at->format('M d, Y') : 'Not available' }}
+                            </span>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
