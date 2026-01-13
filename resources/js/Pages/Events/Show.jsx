@@ -409,7 +409,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                         </div>
                                         <Link
                                             href={route('events.show', relatedEvent.slug)}
-                                            className="inline-flex items-center justify-center w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+                                            className="inline-flex items-center justify-center w-full py-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
                                         >
                                             View Details
                                         </Link>
