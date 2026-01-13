@@ -107,7 +107,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Category <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                    <select name="article_category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
                                         <option value="">Select Category</option>
                                         @foreach($categories as $category)
                                             <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -119,7 +119,7 @@
                                         <iconify-icon icon="mdi:plus"></iconify-icon>
                                     </button>
                                 </div>
-                                @error('category_id')
+                                @error('article_category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
