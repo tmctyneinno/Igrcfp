@@ -98,7 +98,7 @@ class NewsController extends Controller
         $slug = Str::slug($validated['name']);
         $originalSlug = $slug;
         $counter = 1;
-        while (Category::where('slug', $slug)->exists()) {
+        while (ArticleCategory::where('slug', $slug)->exists()) {
             $slug = $originalSlug . '-' . $counter;
             $counter++;
         }
@@ -106,7 +106,7 @@ class NewsController extends Controller
         $validated['slug'] = $slug;
         $validated['is_active'] = $request->boolean('is_active', true);
 
-        $category = Category::create($validated);
+        $category = ArticleCategory::create($validated);
 
         if ($request->ajax()) {
             return response()->json([
