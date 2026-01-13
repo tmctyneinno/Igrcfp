@@ -88,22 +88,22 @@ class HomeController extends Controller
     }
 
    public function eventsIndex(){
-    $currentDate = now()->toDateString();
-    
-    $events = Event::query()
-        ->where('status', 'published')
-        ->select('*')
-        ->selectRaw("CASE WHEN start_date >= ? THEN 0 ELSE 1 END as is_upcoming", [$currentDate])
-        ->orderBy('is_upcoming')
-        ->orderByRaw("CASE WHEN start_date >= ? THEN start_date ELSE start_date DESC END", [$currentDate])
-        ->paginate(10);
+        $currentDate = now()->toDateString();
+        
+        $events = Event::query()
+            ->where('status', 'published')
+            ->select('*')
+            ->selectRaw("CASE WHEN start_date >= ? THEN 0 ELSE 1 END as is_upcoming", [$currentDate])
+            ->orderBy('is_upcoming')
+            ->orderByRaw("CASE WHEN start_date >= ? THEN start_date ELSE start_date DESC END", [$currentDate])
+            ->paginate(10);
 
-    return Inertia::render('Events/Index', [
-        'title' => 'Professional Events & Workshops',
-        'description' => 'Join IGRCFP for expert-led workshops, seminars, and networking events designed for governance, risk, compliance, and financial crime prevention professionals.',
-        'events' => $events,
-    ]);
-}
+        return Inertia::render('Events/Index', [
+            'title' => 'Professional Events & Workshops',
+            'description' => 'Join IGRCFP for expert-led workshops, seminars, and networking events designed for governance, risk, compliance, and financial crime prevention professionals.',
+            'events' => $events,
+        ]);
+    }
 
     public function eventShow($slug)
     {
