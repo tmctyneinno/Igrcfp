@@ -64,7 +64,7 @@ class NewsController extends Controller
 
         // Categories with article count
         $categories = Cache::remember('categories_with_count', 7200, function () {
-            return Category::withCount(['articles' => function ($query) {
+            return ArticleCategory::withCount(['articles' => function ($query) {
                 $query->where('status', 'published')
                       ->where('published_at', '<=', now());
             }])
