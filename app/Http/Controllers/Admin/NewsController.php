@@ -20,7 +20,7 @@ class NewsController extends Controller
         $perPage = $request->get('per_page', 10);
 
 
-        return view('admin.articles.index', compact('events', 'search', 'status', 'perPage'));
+        return view('admin.articles.index', compact('articles', 'search', 'status', 'perPage'));
     }
 
     public function create()
