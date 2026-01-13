@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminNewsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
@@ -26,7 +27,7 @@ Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->name('training.calendar');
-Route::get('/news', [HomeController::class, 'news'])->name('news.index');
+Route::get('/news', [NewsController::class, 'news'])->name('news.index');
 
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
