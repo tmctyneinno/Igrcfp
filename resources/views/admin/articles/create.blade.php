@@ -52,18 +52,7 @@
                                 @enderror
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label">Slug <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">/news/</span>
-                                    <input type="text" name="slug" class="form-control @error('slug') is-invalid @enderror" 
-                                           placeholder="article-slug-here" value="{{ old('slug') }}" required>
-                                </div>
-                                <small class="text-muted">URL-friendly version of the title (lowercase, hyphens, no spaces)</small>
-                                @error('slug')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                            
 
                             <div class="col-12">
                                 <label class="form-label">Excerpt <span class="text-danger">*</span></label>
