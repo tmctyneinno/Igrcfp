@@ -78,8 +78,6 @@
                                 @enderror
                             </div>
 
-                            
-
                             <div class="col-12">
                                 <label class="form-label">Event Image</label>
                                 <input class="form-control @error('image') is-invalid @enderror" 
