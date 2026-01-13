@@ -173,7 +173,7 @@ class NewsController extends Controller
 
     public function category(string $slug)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
+        $category = ArticleCategory::where('slug', $slug)->firstOrFail();
 
         $articles = Article::with(['category', 'author'])
             ->where('category_id', $category->id)
