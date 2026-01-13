@@ -47,7 +47,7 @@ export default function News({
               Industry Insights & Updates
             </div>
             
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               {title}
             </h1>
             
@@ -68,7 +68,7 @@ export default function News({
                 />
                 <button 
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-900 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
                 >
                   Search
                 </button>
