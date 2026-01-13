@@ -31,6 +31,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-action', [EventController::class, 'bulkAction'])->name('bulk-action');
         Route::patch('/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::patch('/{blog}/toggle-status', [BlogController::class, 'toggleStatus'])->name('toggle-status');
     });
      // Blog Management
     Route::prefix('blogs')->name('blogs.')->group(function () {
