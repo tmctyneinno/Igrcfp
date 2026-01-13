@@ -164,10 +164,12 @@ export default function EventShow({ auth, event, relatedEvents }) {
                             </div>
 
                             {/* Event Description */}
-                            <div className="prose prose-lg max-w-none mb-12">
+                            {/* <div className="prose prose-lg max-w-none mb-12">
+                                <div dangerouslySetInnerHTML={{ __html: event.description }} />
+                            </div> */}
+                            <div className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-strong:font-bold prose-em:italic">
                                 <div dangerouslySetInnerHTML={{ __html: event.description }} />
                             </div>
-
                             {/* Event Highlights */}
                             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Event Highlights</h3>
