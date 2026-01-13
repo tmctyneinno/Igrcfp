@@ -113,7 +113,6 @@ class HomeController extends Controller
             ->with('user')
             ->firstOrFail();
 
-        // Get upcoming events (priority 1)
         $upcomingEvents = Event::where('status', 'published')
             ->where('id', '!=', $event->id)
             ->where('start_date', '>=', now()->toDateString())
@@ -199,6 +198,14 @@ class HomeController extends Controller
         return Inertia::render('Certifications/TrainingCalendar', [
             'title' => 'Training Calendar',
             'description' => 'Our friendly team would love to hear from you.',
+        ]);
+    }
+
+    public function news()
+    {
+        return Inertia::render('News/Index', [
+            'title' => 'News',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
    

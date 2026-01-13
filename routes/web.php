@@ -26,13 +26,14 @@ Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->name('training.calendar');
+Route::get('/news', [HomeController::class, 'news'])->name('news.index');
+
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
 
-Route::get('/news', [CourseController::class, 'index'])->name('news.index');
 
 
 
