@@ -49,8 +49,6 @@
             <li>
                 <a href="{{ route('admin.events.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>  Add new</a>
             </li>
-           
-            
             </ul>
         </li>
          <li class="dropdown">
