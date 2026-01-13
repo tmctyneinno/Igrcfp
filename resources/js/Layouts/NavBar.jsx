@@ -129,7 +129,7 @@ export default function NavBar({ auth }) {
                         Blog
                     </Link>
                     <Link 
-                        href="/about" 
+                        href="/news" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         News
