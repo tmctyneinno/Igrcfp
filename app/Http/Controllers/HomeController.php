@@ -113,20 +113,55 @@ class HomeController extends Controller
             ->with('user')
             ->firstOrFail();
 
-        $relatedEvents = Event::where('status', 'published')
+        // Get upcoming events (priority 1)
+        $upcomingEvents = Event::where('status', 'published')
             ->where('id', '!=', $event->id)
-            ->where(function($query) use ($event) {
-                $query->where('venue', $event->venue)
-                    ->orWhere('location', $event->location)
-                    ->orWhere('start_date', '>=', now());
-            })
-            ->inRandomOrder()
+            ->where('start_date', '>=', now()->toDateString())
+            ->orderBy('start_date', 'asc')
             ->limit(3)
             ->get();
 
+        // If we don't have enough upcoming events, get events from same venue
+        if ($upcomingEvents->count() < 3 && $event->venue) {
+            $venueEvents = Event::where('status', 'published')
+                ->where('id', '!=', $event->id)
+                ->where('venue', $event->venue)
+                ->whereNotIn('id', $upcomingEvents->pluck('id'))
+                ->inRandomOrder()
+                ->limit(3 - $upcomingEvents->count())
+                ->get();
+            
+            $upcomingEvents = $upcomingEvents->merge($venueEvents);
+        }
+
+        // If still not enough, get events from same location
+        if ($upcomingEvents->count() < 3 && $event->location) {
+            $locationEvents = Event::where('status', 'published')
+                ->where('id', '!=', $event->id)
+                ->where('location', $event->location)
+                ->whereNotIn('id', $upcomingEvents->pluck('id'))
+                ->inRandomOrder()
+                ->limit(3 - $upcomingEvents->count())
+                ->get();
+            
+            $upcomingEvents = $upcomingEvents->merge($locationEvents);
+        }
+
+        // Final fallback: random events
+        if ($upcomingEvents->count() < 3) {
+            $randomEvents = Event::where('status', 'published')
+                ->where('id', '!=', $event->id)
+                ->whereNotIn('id', $upcomingEvents->pluck('id'))
+                ->inRandomOrder()
+                ->limit(3 - $upcomingEvents->count())
+                ->get();
+            
+            $upcomingEvents = $upcomingEvents->merge($randomEvents);
+        }
+
         return Inertia::render('Events/Show', [
             'event' => $event,
-            'relatedEvents' => $relatedEvents,
+            'relatedEvents' => $upcomingEvents,
         ]);
     }
 
