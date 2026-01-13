@@ -63,12 +63,23 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" 
-                                          rows="8" placeholder="Detailed description of the event..." required>{{ old('description') }}</textarea>
+                                
+                                <textarea name="description" id="ckeditor" class="form-control @error('description') is-invalid @enderror" 
+                                        rows="8" placeholder="Detailed description of the event..." required>{{ old('description') }}</textarea>
+                                
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            @push('scripts')
+                            <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+                            <script>
+                                CKEDITOR.replace('ckeditor', {
+                                    height: 300
+                                });
+                            </script>
+                            @endpush
 
                             <div class="col-12">
                                 <label class="form-label">Event Image</label>
