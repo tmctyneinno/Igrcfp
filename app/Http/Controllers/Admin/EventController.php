@@ -135,6 +135,7 @@ class EventController extends Controller
             'is_featured' => $request->is_featured ?? false,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
+            'registration_status' => 'Not Available',
         ];
 
         // Update available seats if capacity changed
