@@ -58,10 +58,10 @@
             </a>
             <ul class="sidebar-submenu">
             <li>
-                <a href="{{ route('admin.news.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
+                <a href="{{ route('admin.articles.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
             </li>
             <li>
-                <a href="{{ route('admin.news.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>  Add new</a>
+                <a href="{{ route('admin.articles.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>  Add new</a>
             </li>
             </ul>
         </li>

@@ -47,7 +47,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::post('/bulk-action', [BlogController::class, 'bulkAction'])->name('bulk-action');
     });
      // News Management
-    Route::prefix('news')->name('news.')->group(function () {
+    Route::prefix('news')->name('articles.')->group(function () {
         Route::get('/', [NewsController::class, 'index'])->name('index');
         Route::get('/create', [NewsController::class, 'create'])->name('create');
         Route::post('/', [NewsController::class, 'store'])->name('store');
