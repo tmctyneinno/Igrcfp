@@ -52,8 +52,6 @@
                                 @enderror
                             </div>
 
-                            
-
                             <div class="col-12">
                                 <label class="form-label">Excerpt <span class="text-danger">*</span></label>
                                 <textarea name="excerpt" class="form-control @error('excerpt') is-invalid @enderror" 
@@ -108,14 +106,19 @@
                         <div class="row gy-3">
                             <div class="col-md-6">
                                 <label class="form-label">Category <span class="text-danger">*</span></label>
-                                <select name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
-                                    <option value="">Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="input-group">
+                                    <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                        <option value="">Select Category</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                                        <iconify-icon icon="mdi:plus"></iconify-icon>
+                                    </button>
+                                </div>
                                 @error('category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -344,6 +347,45 @@
         </div>
     </form>
 </div>
+
+<!-- Create Category Modal -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="createCategoryForm" method="POST" action="{{ route('admin.categories.store') }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="category_name" class="form-label">Category Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="category_name" name="name" required>
+                        <div class="invalid-feedback" id="category_name_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="category_description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="category_is_active" name="is_active" value="1" checked>
+                        <label class="form-check-label" for="category_is_active">
+                            Active
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveCategoryBtn">
+                        <span id="categorySaveText">Save Category</span>
+                        <span id="categoryLoadingSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -468,25 +510,163 @@ document.addEventListener('DOMContentLoaded', function() {
         metaDescription.dispatchEvent(new Event('input'));
     }
 
-    // Auto-generate slug from title
-    const titleInput = document.querySelector('input[name="title"]');
-    const slugInput = document.querySelector('input[name="slug"]');
+    // Create Category Modal functionality
+    const createCategoryForm = document.getElementById('createCategoryForm');
+    const categorySelect = document.getElementById('category_id');
+    const createCategoryModal = document.getElementById('createCategoryModal');
+    const saveCategoryBtn = document.getElementById('saveCategoryBtn');
+    const categorySaveText = document.getElementById('categorySaveText');
+    const categoryLoadingSpinner = document.getElementById('categoryLoadingSpinner');
 
-    if (titleInput && slugInput && !slugInput.value) {
-        titleInput.addEventListener('blur', function() {
-            if (!slugInput.value) {
-                const slug = this.value
-                    .toLowerCase()
-                    .replace(/[^\w\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/--+/g, '-')
-                    .trim();
-                slugInput.value = slug;
-            }
+    if (createCategoryForm) {
+        createCategoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            saveCategoryBtn.disabled = true;
+            categorySaveText.classList.add('d-none');
+            categoryLoadingSpinner.classList.remove('d-none');
+            
+            // Clear previous errors
+            document.getElementById('category_name_error').textContent = '';
+            document.getElementById('category_name').classList.remove('is-invalid');
+            
+            // Submit form via AJAX
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add new category to select
+                    const newOption = new Option(data.category.name, data.category.id, true, true);
+                    categorySelect.appendChild(newOption);
+                    
+                    // Reset form
+                    createCategoryForm.reset();
+                    document.getElementById('category_is_active').checked = true;
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(createCategoryModal);
+                    modal.hide();
+                    
+                    // Show success message
+                    showToast('success', 'Category created successfully!');
+                } else {
+                    // Show validation errors
+                    if (data.errors && data.errors.name) {
+                        document.getElementById('category_name').classList.add('is-invalid');
+                        document.getElementById('category_name_error').textContent = data.errors.name[0];
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('error', 'An error occurred. Please try again.');
+            })
+            .finally(() => {
+                // Reset button state
+                saveCategoryBtn.disabled = false;
+                categorySaveText.classList.remove('d-none');
+                categoryLoadingSpinner.classList.add('d-none');
+            });
         });
     }
 
-    
+    // Reset modal when closed
+    if (createCategoryModal) {
+        createCategoryModal.addEventListener('hidden.bs.modal', function () {
+            createCategoryForm.reset();
+            document.getElementById('category_is_active').checked = true;
+            document.getElementById('category_name').classList.remove('is-invalid');
+            document.getElementById('category_name_error').textContent = '';
+        });
+    }
+
+    // Toast notification function
+    function showToast(type, message) {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            // Create toast container if it doesn't exist
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1055';
+            document.body.appendChild(container);
+        }
+        
+        const toastId = 'toast-' + Date.now();
+        const toastHtml = `
+            <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('toast-container').insertAdjacentHTML('beforeend', toastHtml);
+        const toastElement = document.getElementById(toastId);
+        const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+        toast.show();
+        
+        // Remove toast from DOM after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', function () {
+            this.remove();
+        });
+    }
+
+    // Initialize CKEditor 5
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'alignment', '|',
+                    'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
+                    'undo', 'redo', '|',
+                    'codeBlock', 'highlight', '|',
+                    'fontSize', 'fontColor', 'fontBackgroundColor'
+                ]
+            },
+            language: 'en',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            },
+            licenseKey: '',
+        })
+        .then(editor => {
+            window.editor = editor;
+            
+            // Update hidden input when editor content changes
+            editor.model.document.on('change:data', () => {
+                document.getElementById('content').value = editor.getData();
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
 });
 </script>
 @endpush
@@ -511,6 +691,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 #removeImage {
     width: 100%;
+}
+
+.input-group .btn-outline-primary {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.toast-container {
+    z-index: 1056;
 }
 </style>
 @endpush
