@@ -231,7 +231,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="{{ route('admin.events.edit', $event) }}" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
                             <iconify-icon icon="lucide:edit" class="icon"></iconify-icon>
                             Edit Event
                         </a>
