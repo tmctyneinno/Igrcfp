@@ -26,6 +26,19 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        $slug = Str::slug($request->title);
+        
+        // Ensure slug is unique
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Article::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Add slug to request data
+        $request->merge(['slug' => $slug]);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:articles,slug',
