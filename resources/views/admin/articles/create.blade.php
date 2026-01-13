@@ -356,7 +356,7 @@
                 <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="createCategoryForm" method="POST" action="{{ route('admin.articleCategories.store') }}">
+            <form id="createCategoryForm" method="POST" action="{{ route('articleCategories.store') }}">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

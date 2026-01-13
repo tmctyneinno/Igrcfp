@@ -86,7 +86,7 @@ class NewsController extends Controller
             ->with('success', 'Article created successfully.');
     }
 
-    public function store(Request $request)
+    public function storeCategory(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
