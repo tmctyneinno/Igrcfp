@@ -69,7 +69,7 @@
     
     <!-- CKEditor 5 Container -->
     <div id="editor" class="form-control @error('description') is-invalid @enderror" 
-         style="min-height: 900px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
+         style="min-height: 500px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
         {!! old('description') !!}
     </div>
     
