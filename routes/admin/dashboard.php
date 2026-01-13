@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\NewsController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Dashboard Routes (Protected)
@@ -46,16 +47,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::post('/bulk-action', [BlogController::class, 'bulkAction'])->name('bulk-action');
     });
      // News Management
-    Route::prefix('blogs')->name('blogs.')->group(function () {
-        Route::get('/', [BlogController::class, 'index'])->name('index');
-        Route::get('/create', [BlogController::class, 'create'])->name('create');
-        Route::post('/', [BlogController::class, 'store'])->name('store');
-        Route::get('/{blog}', [BlogController::class, 'show'])->name('show');
-        Route::get('/{blog}/edit', [BlogController::class, 'edit'])->name('edit');
-        Route::put('/{blog}', [BlogController::class, 'update'])->name('update');
-        Route::delete('/{blog}', [BlogController::class, 'destroy'])->name('destroy');
-        Route::patch('/{blog}/toggle-status', [BlogController::class, 'toggleStatus'])->name('toggle-status');
-        Route::post('/bulk-action', [BlogController::class, 'bulkAction'])->name('bulk-action');
+    Route::prefix('news')->name('news.')->group(function () {
+        Route::get('/', [NewsController::class, 'index'])->name('index');
+        Route::get('/create', [NewsController::class, 'create'])->name('create');
+        Route::post('/', [NewsController::class, 'store'])->name('store');
+        Route::get('/{blog}', [NewsController::class, 'show'])->name('show');
+        Route::get('/{blog}/edit', [NewsController::class, 'edit'])->name('edit');
+        Route::put('/{blog}', [NewsController::class, 'update'])->name('update');
+        Route::delete('/{blog}', [NewsController::class, 'destroy'])->name('destroy');
+        Route::patch('/{blog}/toggle-status', [NewsController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/bulk-action', [NewsController::class, 'bulkAction'])->name('bulk-action');
     });
 
 });
