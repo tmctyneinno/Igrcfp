@@ -16,7 +16,7 @@ class Article extends Model
         'excerpt',
         'content',
         'image_path',
-        'category_id',
+        'article_category_id',
         'author_id',
         'is_featured',
         'status',
@@ -35,7 +35,7 @@ class Article extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(ArticleCategory::class);
     }
 
     public function author()
