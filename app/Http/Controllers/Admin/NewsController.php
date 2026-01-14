@@ -75,6 +75,7 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('IP request:', [$request->all()]);
         $slug = Str::slug($request->title);
         
         // Ensure slug is unique
