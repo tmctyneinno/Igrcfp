@@ -623,50 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize CKEditor 5
-    ClassicEditor
-        .create(document.querySelector('#editor'), {
-            toolbar: {
-                items: [
-                    'heading', '|',
-                    'bold', 'italic', 'underline', 'strikethrough', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'alignment', '|',
-                    'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
-                    'undo', 'redo', '|',
-                    'codeBlock', 'highlight', '|',
-                    'fontSize', 'fontColor', 'fontBackgroundColor'
-                ]
-            },
-            language: 'en',
-            image: {
-                toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:inline',
-                    'imageStyle:block',
-                    'imageStyle:side'
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
-            },
-            licenseKey: '',
-        })
-        .then(editor => {
-            window.editor = editor;
-            
-            // Update hidden input when editor content changes
-            editor.model.document.on('change:data', () => {
-                document.getElementById('content').value = editor.getData();
-            });
-        })
-        .catch(error => {
-            console.error(error);
-        });
+   
 });
 </script>
 @endpush
