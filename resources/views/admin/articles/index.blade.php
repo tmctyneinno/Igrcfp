@@ -145,7 +145,7 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-info">
-                                        {{ $article->category->name ?? 'Uncategorized' }}
+                                        {{ $article->category-> ?? 'Uncategorized' }}
                                     </span>
                                 </td>
                                 <td>
