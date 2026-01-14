@@ -49,7 +49,7 @@ class NewsController extends Controller
         $articles = $query->paginate($perPage);
 
         // Get categories for filter dropdown
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = ArticleCategory::where('is_active', true)->orderBy('name')->get();
 
         return view('admin.articles.index', compact(
             'articles', 
