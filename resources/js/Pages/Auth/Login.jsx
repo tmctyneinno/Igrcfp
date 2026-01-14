@@ -13,7 +13,7 @@ export default function Login({ status, canResetPassword }) {
         email: '',
         password: '',
         remember: false,
-    });
+    }); 
   
     const [showPassword, setShowPassword] = useState(false);
 
