@@ -143,6 +143,42 @@ class NewsController extends Controller
         return view('admin.articles.edit', compact('article', 'categories', 'authors'));
     }
 
+    public function update(Request $request, Article $article)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:articles,slug',
+            'excerpt' => 'required|string|max:300',
+            'content' => 'required|string',
+            'article_category_id' => 'required|exists:article_categories,id',
+            'author_id' => 'required|exists:users,id',
+            'status' => 'required|in:draft,published,archived',
+            'published_at' => 'nullable|date',
+            'read_time' => 'required|integer|min:1|max:60',
+            'tags' => 'nullable|string|max:500',
+            'is_featured' => 'boolean',
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+        
+        // Handle image upload if new image provided
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($article->image_path) {
+                Storage::delete($article->image_path);
+            }
+            
+            $imagePath = $request->file('image')->store('articles', 'public');
+            $validated['image_path'] = $imagePath;
+        }
+        
+        $article->update($validated);
+        
+        return redirect()->route('admin.articles.index')
+            ->with('success', 'Article updated successfully.');
+    }
+
     public function storeCategory(Request $request)
     {
         \Log::info(' storeCategory:', [$request]);
