@@ -138,7 +138,7 @@ class NewsController extends Controller
     public function edit(Article $article)
     {
         $categories = ArticleCategory::all();
-        $authors = Author::all(); // or User::where('role', 'author')->get()
+        $authors = User::where('role', 'author')->get();
         
         return view('admin.articles.edit', compact('article', 'categories', 'authors'));
     }
