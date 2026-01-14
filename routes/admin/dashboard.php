@@ -60,5 +60,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::post('/categories', [NewsController::class, 'storeCategory'])->name('articleCategories.store');
 
     });
-
+ 
 });
