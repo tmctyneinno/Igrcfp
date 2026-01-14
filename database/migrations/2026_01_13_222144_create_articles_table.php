@@ -36,7 +36,7 @@ return new class extends Migration
                 $table->index('slug');
                 $table->index('status');
                 $table->index('published_at');
-                $table->index(['category_id', 'published_at']);
+                $table->index(['article_category_id', 'published_at']);
                 $table->index(['is_featured', 'published_at']);
             });
         }
