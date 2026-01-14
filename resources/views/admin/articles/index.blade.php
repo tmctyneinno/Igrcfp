@@ -196,11 +196,11 @@
                                 <td class="text-center"> 
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
                                         <!-- View Article -->
-                                        <a href="{{ route('news.show', $article->slug) }}" target="_blank"
+                                        {{-- <a href="{{ route('news.show', $article->slug) }}" target="_blank"
                                            class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="View">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
-                                        </a>
+                                        </a> --}}
                                         
                                         <!-- Edit Article -->
                                         <a href="{{ route('admin.articles.edit', $article) }}" 
