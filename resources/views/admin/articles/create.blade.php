@@ -367,7 +367,7 @@
                     <div class="mb-3">
                         <label for="category_description" class="form-label">Description</label>
                         <textarea class="form-control" id="category_description" name="description" rows="3"></textarea>
-                    </div>
+                    </div> 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="category_is_active" name="is_active" value="1" checked>
                         <label class="form-check-label" for="category_is_active">

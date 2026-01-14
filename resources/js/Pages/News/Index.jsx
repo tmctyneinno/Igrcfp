@@ -357,7 +357,7 @@ export default function News({
                       </article>
                     ))}
                   </div>
-
+ 
                   {/* Pagination */}
                   {meta.total > meta.per_page && (
                     <div className="mt-12">
