@@ -135,6 +135,14 @@ class NewsController extends Controller
             ->with('success', 'Article created successfully.');
     }
 
+    public function edit(Article $article)
+    {
+        $categories = ArticleCategory::all();
+        $authors = Author::all(); // or User::where('role', 'author')->get()
+        
+        return view('admin.articles.edit', compact('article', 'categories', 'authors'));
+    }
+
     public function storeCategory(Request $request)
     {
         \Log::info(' storeCategory:', [$request]);
