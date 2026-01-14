@@ -210,7 +210,7 @@ export default function Login({ status, canResetPassword }) {
                                     Don't have an account?{' '}
                                     <Link
                                         href={route('register')}
-                                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                                        className="font-medium text-blue-900 hover:text-indigo-500"
                                     >
                                         Sign up
                                     </Link>
@@ -218,12 +218,7 @@ export default function Login({ status, canResetPassword }) {
                             </div>
                         )}
 
-                        {/* Copyright */}
-                        <div className="mt-12 text-center">
-                            <p className="text-xs text-gray-500">
-                                © {new Date().getFullYear()} Your Company. All rights reserved.
-                            </p>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
