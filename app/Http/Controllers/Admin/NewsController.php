@@ -137,17 +137,19 @@ class NewsController extends Controller
 
     public function edit(Article $article)
     {
-        $categories = ArticleCategory::all();
-        $authors = User::where('role', 'author')->get();
+        $categories = ArticleCategory::all(); 
+        $authors = User::where('role', 'learner')->get();
         
         return view('admin.articles.edit', compact('article', 'categories', 'authors'));
     }
 
     public function update(Request $request, Article $article)
     {
+        $slug = Str::slug($request->title);
+        $request->merge(['slug' => $slug]);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:articles,slug',
+            'slug' => 'required|string',
             'excerpt' => 'required|string|max:300',
             'content' => 'required|string',
             'article_category_id' => 'required|exists:article_categories,id',
@@ -216,102 +218,6 @@ class NewsController extends Controller
         return redirect()->back()->with('success', 'Category created successfully');
     }
 
-    public function news(Request $request)
-    {
-        // Featured articles (promoted ones)
-        $featuredArticles = Cache::remember('featured_articles', 3600, function () {
-            return Article::with(['category', 'author'])
-                ->where('is_featured', true)
-                ->where('status', 'published')
-                ->where('published_at', '<=', now())
-                ->orderBy('published_at', 'desc')
-                ->take(3)
-                ->get()
-                ->map(function ($article) {
-                    return [
-                        'id' => $article->id,
-                        'title' => $article->title,
-                        'slug' => $article->slug,
-                        'excerpt' => $article->excerpt,
-                        'image' => $article->image_url,
-                        'category' => $article->category->name,
-                        'category_slug' => $article->category->slug,
-                        'author' => $article->author->name,
-                        'author_title' => $article->author->title,
-                        'published_at' => $article->published_at->toISOString(),
-                        'read_time' => $article->read_time,
-                        'tags' => $article->tags ? explode(',', $article->tags) : [],
-                    ];
-                });
-        });
-
-        // Latest articles with pagination
-        $latestArticles = Article::with(['category', 'author'])
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->orderBy('published_at', 'desc')
-            ->paginate(10)
-            ->through(function ($article) {
-                return [
-                    'id' => $article->id,
-                    'title' => $article->title,
-                    'slug' => $article->slug,
-                    'excerpt' => $article->excerpt,
-                    'image' => $article->image_url,
-                    'category' => $article->category->name,
-                    'category_slug' => $article->category->slug,
-                    'author' => $article->author->name,
-                    'author_avatar' => $article->author->avatar_url,
-                    'published_at' => $article->published_at->toISOString(),
-                ];
-            });
-
-        // Categories with article count
-        $categories = Cache::remember('categories_with_count', 7200, function () {
-            return ArticleCategory::withCount(['articles' => function ($query) {
-                $query->where('status', 'published')
-                      ->where('published_at', '<=', now());
-            }])
-            ->orderBy('name')
-            ->get()
-            ->map(function ($category) {
-                return [
-                    'id' => $category->id,
-                    'name' => $category->name,
-                    'slug' => $category->slug,
-                    'count' => $category->articles_count,
-                ];
-            });
-        });
-
-        // Popular tags
-        $popularTags = Cache::remember('popular_tags', 10800, function () {
-            return Article::where('status', 'published')
-                ->where('published_at', '<=', now())
-                ->whereNotNull('tags')
-                ->pluck('tags')
-                ->flatMap(function ($tags) {
-                    return explode(',', $tags);
-                })
-                ->filter()
-                ->map(fn($tag) => trim($tag))
-                ->countBy()
-                ->sortDesc()
-                ->take(15)
-                ->keys()
-                ->toArray();
-        });
-
-        return Inertia::render('News/Index', [
-            'title' => 'Industry News & Insights',
-            'description' => 'Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.',
-            'featuredArticles' => $featuredArticles,
-            'latestArticles' => $latestArticles,
-            'categories' => $categories,
-            'popularTags' => $popularTags,
-            'filters' => $request->only(['category', 'search', 'year']),
-        ]);
-    }
 
     public function show(string $slug)
     {
@@ -408,6 +314,429 @@ class NewsController extends Controller
             ],
             'articles' => $articles,
         ]);
+    }
+
+     public function news(Request $request)
+    {
+        // Get filter parameters
+        $search = $request->input('search');
+        $categorySlug = $request->input('category');
+        $tag = $request->input('tag');
+        $year = $request->input('year');
+
+        // Featured articles (promoted ones)
+        $featuredArticles = Cache::remember('featured_articles', 3600, function () {
+            return Article::with(['category', 'author'])
+                ->where('is_featured', true)
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get()
+                ->map(function ($article) {
+                    return [
+                        'id' => $article->id,
+                        'title' => $article->title,
+                        'slug' => $article->slug,
+                        'excerpt' => $article->excerpt,
+                        'image' => $article->image_url,
+                        'category' => $article->category->name,
+                        'category_slug' => $article->category->slug,
+                        'author' => $article->author->name,
+                        'author_title' => $article->author->title,
+                        'published_at' => $article->published_at->toISOString(),
+                        'read_time' => $article->read_time,
+                        'tags' => $article->tags ? explode(',', $article->tags) : [],
+                    ];
+                });
+        });
+
+        // Build query for latest articles with pagination
+        $articlesQuery = Article::with(['category', 'author'])
+            ->where('status', 'published')
+            ->where('published_at', '<=', now());
+
+        // Apply search filter
+        if ($search) {
+            $articlesQuery->where(function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('excerpt', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%")
+                    ->orWhere('tags', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply category filter
+        if ($categorySlug) {
+            $articlesQuery->whereHas('category', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            });
+        }
+
+        // Apply tag filter
+        if ($tag) {
+            $articlesQuery->where('tags', 'like', "%{$tag}%");
+        }
+
+        // Apply year filter
+        if ($year) {
+            $articlesQuery->whereYear('published_at', $year);
+        }
+
+        // Get available years for filter (for sidebar)
+        $availableYears = Cache::remember('article_years', 7200, function () {
+            return Article::selectRaw('YEAR(published_at) as year')
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->groupBy('year')
+                ->orderBy('year', 'desc')
+                ->pluck('year')
+                ->filter()
+                ->values();
+        });
+
+        // Paginate results
+        $perPage = $request->input('per_page', 9); // Changed to 9 for better grid layout
+        $latestArticles = $articlesQuery
+            ->orderBy('published_at', 'desc')
+            ->paginate($perPage)
+            ->through(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'image' => $article->image_url,
+                    'category' => $article->category->name,
+                    'category_slug' => $article->category->slug,
+                    'author' => $article->author->name,
+                    'author_avatar' => $article->author->avatar_url ?? null,
+                    'author_title' => $article->author->title ?? null,
+                    'published_at' => $article->published_at->toISOString(),
+                    'read_time' => $article->read_time,
+                    'tags' => $article->tags ? array_map('trim', explode(',', $article->tags)) : [],
+                    'is_featured' => $article->is_featured,
+                    'views' => $article->views,
+                ];
+            });
+
+        // Categories with article count (considering current filters)
+        $categoriesQuery = ArticleCategory::withCount(['articles' => function ($query) use ($search, $year) {
+            $query->where('status', 'published')
+                ->where('published_at', '<=', now());
+            
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('excerpt', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+                });
+            }
+            
+            if ($year) {
+                $query->whereYear('published_at', $year);
+            }
+        }]);
+
+        $categories = $categoriesQuery
+            ->orderBy('name')
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'count' => $category->articles_count,
+                ];
+            });
+
+        // Popular tags (considering current filters)
+        $tagsQuery = Article::where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->whereNotNull('tags');
+
+        if ($search) {
+            $tagsQuery->where(function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('excerpt', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        if ($categorySlug) {
+            $tagsQuery->whereHas('category', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            });
+        }
+
+        if ($year) {
+            $tagsQuery->whereYear('published_at', $year);
+        }
+
+        $popularTags = $tagsQuery
+            ->pluck('tags')
+            ->flatMap(function ($tags) {
+                return explode(',', $tags);
+            })
+            ->filter()
+            ->map(fn($tag) => trim($tag))
+            ->countBy()
+            ->sortDesc()
+            ->take(15)
+            ->keys()
+            ->toArray();
+
+        // Most read articles (for sidebar)
+        $mostReadArticles = Cache::remember('most_read_articles', 1800, function () {
+            return Article::with(['category'])
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->orderBy('views', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($article) {
+                    return [
+                        'id' => $article->id,
+                        'title' => $article->title,
+                        'slug' => $article->slug,
+                        'category' => $article->category->name,
+                        'views' => $article->views,
+                        'published_at' => $article->published_at->toISOString(),
+                    ];
+                });
+        });
+
+        return Inertia::render('News/Index', [
+            'title' => 'Industry News & Insights',
+            'description' => 'Stay updated with the latest regulatory developments, industry trends, and thought leadership in governance, risk, compliance, and financial crime prevention. Our insights help professionals anticipate change, manage risk, and lead with confidence.',
+            'featuredArticles' => $featuredArticles,
+            'latestArticles' => $latestArticles,
+            'categories' => $categories,
+            'popularTags' => $popularTags,
+            'mostReadArticles' => $mostReadArticles,
+            'availableYears' => $availableYears,
+            'filters' => $request->only(['category', 'search', 'tag', 'year', 'per_page']),
+            'meta' => [
+                'current_page' => $latestArticles->currentPage(),
+                'last_page' => $latestArticles->lastPage(),
+                'per_page' => $latestArticles->perPage(),
+                'total' => $latestArticles->total(),
+                'from' => $latestArticles->firstItem(),
+                'to' => $latestArticles->lastItem(),
+            ],
+            'links' => [
+                'first' => $latestArticles->url(1),
+                'last' => $latestArticles->url($latestArticles->lastPage()),
+                'prev' => $latestArticles->previousPageUrl(),
+                'next' => $latestArticles->nextPageUrl(),
+            ],
+        ]);
+    }
+
+    public function showNews(Request $request, $slug)
+    {
+        $article = Article::with(['category', 'author'])
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->firstOrFail();
+
+        // Increment views
+        $article->increment('views');
+
+        // Get related articles (same category, exclude current)
+        $relatedArticles = Cache::remember("related_articles_{$article->id}", 3600, function () use ($article) {
+            return Article::with(['category'])
+                ->where('article_category_id', $article->article_category_id)
+                ->where('id', '!=', $article->id)
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get()
+                ->map(function ($related) {
+                    return [
+                        'id' => $related->id,
+                        'title' => $related->title,
+                        'slug' => $related->slug,
+                        'excerpt' => $related->excerpt,
+                        'image' => $related->image_url,
+                        'category' => $related->category->name,
+                        'category_slug' => $related->category->slug,
+                        'published_at' => $related->published_at->toISOString(),
+                        'read_time' => $related->read_time,
+                    ];
+                });
+        });
+
+        // Get next article (newer)
+        $nextArticle = Article::with(['category'])
+            ->where('published_at', '>', $article->published_at)
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'asc')
+            ->first();
+
+        // Get previous article (older)
+        $prevArticle = Article::with(['category'])
+            ->where('published_at', '<', $article->published_at)
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->first();
+
+        // Prepare article data for frontend
+        $articleData = [
+            'id' => $article->id,
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'content' => $article->content,
+            'excerpt' => $article->excerpt,
+            'image' => $article->image_url,
+            'image_path' => $article->image_path,
+            'category' => [
+                'id' => $article->category->id,
+                'name' => $article->category->name,
+                'slug' => $article->category->slug,
+            ],
+            'author' => [
+                'id' => $article->author->id,
+                'name' => $article->author->name,
+                'title' => $article->author->title,
+                'bio' => $article->author->bio,
+                'avatar' => $article->author->avatar_url,
+                'social_links' => $article->author->social_links ?? [],
+            ],
+            'meta' => [
+                'title' => $article->meta_title,
+                'description' => $article->meta_description,
+                'keywords' => $article->tags,
+            ],
+            'published_at' => $article->published_at->toISOString(),
+            'updated_at' => $article->updated_at->toISOString(),
+            'read_time' => $article->read_time,
+            'tags' => $article->tags ? array_map('trim', explode(',', $article->tags)) : [],
+            'views' => $article->views,
+            'is_featured' => $article->is_featured,
+            'status' => $article->status,
+        ];
+
+        // Navigation articles
+        $navigation = [
+            'next' => $nextArticle ? [
+                'title' => $nextArticle->title,
+                'slug' => $nextArticle->slug,
+                'category' => $nextArticle->category->name,
+            ] : null,
+            'prev' => $prevArticle ? [
+                'title' => $prevArticle->title,
+                'slug' => $prevArticle->slug,
+                'category' => $prevArticle->category->name,
+            ] : null,
+        ];
+
+        // Get popular articles for sidebar
+        $popularArticles = Cache::remember('popular_articles_sidebar', 1800, function () {
+            return Article::with(['category'])
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->orderBy('views', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($article) {
+                    return [
+                        'id' => $article->id,
+                        'title' => $article->title,
+                        'slug' => $article->slug,
+                        'image' => $article->image_url,
+                        'category' => $article->category->name,
+                        'views' => $article->views,
+                        'published_at' => $article->published_at->toISOString(),
+                    ];
+                });
+        });
+
+        // Get recent articles for sidebar
+        $recentArticles = Cache::remember('recent_articles_sidebar', 1800, function () {
+            return Article::with(['category'])
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($article) {
+                    return [
+                        'id' => $article->id,
+                        'title' => $article->title,
+                        'slug' => $article->slug,
+                        'image' => $article->image_url,
+                        'category' => $article->category->name,
+                        'published_at' => $article->published_at->toISOString(),
+                    ];
+                });
+        });
+
+        return Inertia::render('News/Show', [
+            'title' => $article->meta_title ?: $article->title,
+            'description' => $article->meta_description ?: $article->excerpt,
+            'keywords' => $article->tags,
+            'article' => $articleData,
+            'relatedArticles' => $relatedArticles,
+            'popularArticles' => $popularArticles,
+            'recentArticles' => $recentArticles,
+            'navigation' => $navigation,
+            'canonicalUrl' => route('news.show', $article->slug),
+        ]);
+    }
+
+    /**
+     * API endpoint to increment views (for real-time updates)
+     */
+    public function incrementViews($id)
+    {
+        $article = Article::findOrFail($id);
+        $article->increment('views');
+        
+        return response()->json([
+            'success' => true,
+            'views' => $article->views,
+        ]);
+    }
+
+    /**
+     * Search articles for autocomplete
+     */
+    public function search(Request $request)
+    {
+        $search = $request->input('q', '');
+        
+        if (strlen($search) < 2) {
+            return response()->json([]);
+        }
+
+        $articles = Article::with(['category'])
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->where(function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                      ->orWhere('excerpt', 'like', "%{$search}%")
+                      ->orWhere('tags', 'like', "%{$search}%");
+            })
+            ->orderBy('published_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'category' => $article->category->name,
+                    'published_at' => $article->published_at->toISOString(),
+                ];
+            });
+
+        return response()->json($articles);
     }
 
     

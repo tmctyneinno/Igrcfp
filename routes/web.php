@@ -31,7 +31,8 @@ Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->n
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [NewsController::class, 'news'])->name('index');
     Route::get('/category/{slug}', [NewsController::class, 'category'])->name('category');
-    Route::get('/{slug}', [NewsController::class, 'show'])->name('show');
+    Route::get('/{slug}/show', [NewsController::class, 'showNews'])->name('show');
+
 });
 
 
