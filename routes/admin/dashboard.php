@@ -54,7 +54,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::get('/{article}', [NewsController::class, 'show'])->name('show');
         Route::get('/{article}/edit', [NewsController::class, 'edit'])->name('edit');
         Route::put('/{article}', [NewsController::class, 'update'])->name('update');
-        Route::put('/{article}', [NewsController::class, 'updateStatus'])->name('update-update-status');
+        Route::put('/{article}', [NewsController::class, 'updateStatus'])->name('update-status');
         Route::delete('/{article}', [NewsController::class, 'destroy'])->name('destroy');
         Route::patch('/{article}/toggle-status', [NewsController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/bulk-action', [NewsController::class, 'bulkAction'])->name('bulk-action');
