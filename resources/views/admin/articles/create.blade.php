@@ -107,10 +107,10 @@
                             <div class="col-md-6">
                                 <label class="form-label">Category <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <select name="article_category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                    <select name="article_category_id" id="article_category_id" class="form-select @error('article_category_id') is-invalid @enderror" required>
                                         <option value="">Select Category</option>
                                         @foreach($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                            <option value="{{ $category->id }}" {{ old('article_category_id') == $category->id ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create Category Modal functionality
     const createCategoryForm = document.getElementById('createCategoryForm');
-    const categorySelect = document.getElementById('category_id');
+    const categorySelect = document.getElementById('article_category_id');
     const createCategoryModal = document.getElementById('createCategoryModal');
     const saveCategoryBtn = document.getElementById('saveCategoryBtn');
     const categorySaveText = document.getElementById('categorySaveText');
