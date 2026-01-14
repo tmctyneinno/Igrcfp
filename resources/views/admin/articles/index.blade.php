@@ -3,7 +3,7 @@
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Event Management</h6>
+        <h6 class="fw-semibold mb-0">Article Management</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -44,7 +44,7 @@
                 </form>
                 
                 <form class="navbar-search" method="GET">
-                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search events..." value="{{ request('search') }}">
+                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search articles..." value="{{ request('search') }}">
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                 </form>
                 
@@ -53,20 +53,32 @@
                         <option value="">All Status</option>
                         <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
                         <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>Archived</option>
                     </select>
-                    @if(request('search') || request('status') || request('per_page') != 10)
-                        <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
-                    @endif
                 </form>
+                
+                <form method="GET" class="d-inline d-flex">
+                    <select name="category" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        @foreach($categories as $categoryItem)
+                            <option value="{{ $categoryItem->id }}" {{ request('category') == $categoryItem->id ? 'selected' : '' }}>
+                                {{ $categoryItem->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+                
+                @if(request('search') || request('status') || request('category') || request('per_page') != 10)
+                    <a href="{{ route('admin.articles.index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
+                @endif
             </div>
-            <a href="{{ route('admin.events.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"> 
+            <a href="{{ route('admin.articles.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2"> 
                 <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                Add New Event
+                Add New Article
             </a>
         </div>
 
-        <form id="bulk-action-form" action="{{ route('admin.events.bulk-action') }}" method="POST">
+        <form id="bulk-action-form" action="{{ route('admin.articles.bulk-action') }}" method="POST">
             @csrf
             <div class="card-body p-24">
                 <div class="d-flex align-items-center gap-3 mb-3">
@@ -74,7 +86,9 @@
                         <option value="">Bulk Actions</option>
                         <option value="publish">Publish</option>
                         <option value="draft">Move to Draft</option>
-                        <option value="cancel">Cancel</option>
+                        <option value="archive">Archive</option>
+                        <option value="feature">Feature</option>
+                        <option value="unfeature">Remove Featured</option>
                         <option value="delete">Delete</option>
                     </select>
                     <button type="submit" class="btn btn-sm btn-outline-primary">Apply</button>
@@ -92,69 +106,88 @@
                                         S.L
                                     </div>
                                 </th>
-                                <th scope="col">Event Image</th>
-                                <th scope="col">Event Title</th>
-                                <th scope="col">Date & Time</th>
-                                <th scope="col">Location</th>
-                                <th scope="col" class="text-center">Price</th>
-                                <th scope="col" class="text-center">Seats</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Author</th>
+                                <th scope="col" class="text-center">Publish Date</th>
+                                <th scope="col" class="text-center">Views</th>
+                                <th scope="col" class="text-center">Read Time</th>
                                 <th scope="col" class="text-center">Status</th>
                                 <th scope="col" class="text-center">Featured</th>
                                 <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($events as $event)
+                            @forelse($articles as $article)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-10">
                                         <div class="form-check style-check d-flex align-items-center">
-                                            <input class="form-check-input radius-4 border border-neutral-400 event-checkbox" type="checkbox" name="event_ids[]" value="{{ $event->id }}">
+                                            <input class="form-check-input radius-4 border border-neutral-400 article-checkbox" type="checkbox" name="article_ids[]" value="{{ $article->id }}">
                                         </div>
-                                        {{ $loop->iteration + ($events->currentPage() - 1) * $events->perPage() }}
+                                        {{ $loop->iteration + ($articles->currentPage() - 1) * $articles->perPage() }}
                                     </div>
                                 </td>
                                 <td>
                                     <div class="featured-image-container"> 
-                                        <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" style="max-height: 20px;"
-                                             class="featured-image rounded-8" 
-                                             onerror="this.src='{{ asset('images/default-event.jpg') }}'">
+                                        <img src="{{ $article->image_url }}" alt="{{ $article->title }}" style="max-height: 20px;"
+                                             class="featured-image rounded-8">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column">
-                                        <span class="text-md fw-medium text-secondary-light mb-1">{{ Str::limit($event->title, 40) }}</span>
-                                        <small class="text-muted">{{ Str::limit($event->short_description, 60) }}</small>
+                                        <a href="{{ route('admin.articles.edit', $article) }}" class="text-md fw-medium text-secondary-light mb-1 hover-text-primary">
+                                            {{ Str::limit($article->title, 40) }}
+                                        </a>
+                                        <small class="text-muted">{{ Str::limit($article->excerpt, 60) }}</small>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex flex-column">
-                                        <small class="fw-medium">{{ $event->event_date }}</small>
-                                        <small class="text-muted">{{ $event->event_time }}</small>
-                                    </div>
+                                    <span class="badge bg-info">
+                                        {{ $article->category->name ?? 'Uncategorized' }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <span class="text-sm fw-normal text-secondary-light">{{ Str::limit($event->location, 30) }}</span>
+                                    <span class="text-sm fw-normal text-secondary-light">
+                                        {{ $article->author->name ?? 'Unknown' }}
+                                    </span>
                                 </td>
                                 <td class="text-center">
-                                    @if($event->price > 0)
-                                        <span class="badge bg-success">${{ number_format($event->price, 2) }}</span>
+                                    @if($article->published_at)
+                                        <div class="d-flex flex-column">
+                                            <small class="fw-medium">{{ $article->published_at->format('M d, Y') }}</small>
+                                            <small class="text-muted">{{ $article->published_at->format('h:i A') }}</small>
+                                        </div>
                                     @else
-                                        <span class="badge bg-info">Free</span>
+                                        <span class="badge bg-secondary">Draft</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-{{ $event->registration_status === 'sold_out' ? 'danger' : ($event->registration_status === 'few_seats' ? 'warning' : 'primary') }}">
-                                        {{ $event->available_seats }}/{{ $event->capacity }}
+                                    <span class="badge bg-secondary">
+                                        {{ number_format($article->views) }}
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-{{ $event->status === 'published' ? 'success' : ($event->status === 'cancelled' ? 'danger' : 'warning') }}">
-                                        {{ ucfirst($event->status) }}
+                                    <span class="badge bg-light text-dark">
+                                        {{ $article->read_time }} min
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    @if($event->is_featured)
+                                    @php
+                                        $statusColors = [
+                                            'published' => 'success',
+                                            'draft' => 'warning',
+                                            'archived' => 'secondary'
+                                        ];
+                                        $statusColor = $statusColors[$article->status] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $statusColor }}">
+                                        {{ ucfirst($article->status) }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if($article->is_featured)
                                         <iconify-icon icon="mdi:star" class="icon text-warning"></iconify-icon>
                                     @else
                                         <iconify-icon icon="mdi:star-outline" class="icon text-muted"></iconify-icon>
@@ -162,35 +195,80 @@
                                 </td>
                                 <td class="text-center"> 
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <a href="{{ route('admin.events.show', $event) }}" 
+                                        <!-- View Article -->
+                                        <a href="{{ route('news.show', $article->slug) }}" target="_blank"
                                            class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="View">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
-                                        <a href="{{ route('admin.events.edit', $event) }}" 
+                                        
+                                        <!-- Edit Article -->
+                                        <a href="{{ route('admin.articles.edit', $article) }}" 
                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="Edit">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
                                         
-                                        <!-- Toggle Featured Form -->
-                                        <form action="{{ route('admin.events.toggle-featured', $event) }}" method="POST" class="d-inline">
+                                        <!-- Toggle Featured -->
+                                        <form action="{{ route('admin.articles.toggle-featured', $article) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" 
-                                                    class="bg-{{ $event->is_featured ? 'warning' : 'secondary' }}-focus bg-hover-{{ $event->is_featured ? 'warning' : 'secondary' }}-200 text-{{ $event->is_featured ? 'warning' : 'secondary' }}-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
-                                                    title="{{ $event->is_featured ? 'Remove Featured' : 'Mark as Featured' }}">
+                                                    class="bg-{{ $article->is_featured ? 'warning' : 'secondary' }}-focus bg-hover-{{ $article->is_featured ? 'warning' : 'secondary' }}-200 text-{{ $article->is_featured ? 'warning' : 'secondary' }}-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
+                                                    title="{{ $article->is_featured ? 'Remove Featured' : 'Mark as Featured' }}">
                                                 <iconify-icon icon="mdi:star" class="menu-icon"></iconify-icon>
                                             </button>
                                         </form>
                                         
-                                        <!-- Delete Form -->
-                                        <form action="{{ route('admin.events.destroy', $event) }}" method="POST" class="d-inline">
+                                        <!-- Quick Status Toggle -->
+                                        <div class="dropdown d-inline">
+                                            <button class="bg-primary-focus bg-hover-primary-200 text-primary-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
+                                                    type="button" 
+                                                    data-bs-toggle="dropdown" 
+                                                    title="Change Status">
+                                                <iconify-icon icon="mdi:swap-vertical" class="menu-icon"></iconify-icon>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <form action="{{ route('admin.articles.update-status', $article) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="published">
+                                                        <button type="submit" class="dropdown-item {{ $article->status == 'published' ? 'active' : '' }}">
+                                                            <iconify-icon icon="mdi:check-circle-outline"></iconify-icon> Publish
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('admin.articles.update-status', $article) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="draft">
+                                                        <button type="submit" class="dropdown-item {{ $article->status == 'draft' ? 'active' : '' }}">
+                                                            <iconify-icon icon="mdi:pencil-outline"></iconify-icon> Draft
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('admin.articles.update-status', $article) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <input type="hidden" name="status" value="archived">
+                                                        <button type="submit" class="dropdown-item {{ $article->status == 'archived' ? 'active' : '' }}">
+                                                            <iconify-icon icon="mdi:archive-outline"></iconify-icon> Archive
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <!-- Delete Article -->
+                                        <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
                                                     class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
-                                                    onclick="return confirm('Are you sure you want to delete this event?')" 
+                                                    onclick="return confirm('Are you sure you want to delete this article?')" 
                                                     title="Delete">
                                                 <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                             </button>
@@ -200,14 +278,14 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="10" class="text-center py-4">
+                                <td colspan="11" class="text-center py-4">
                                     <div class="text-muted">
-                                        <iconify-icon icon="mdi:calendar-blank-outline" class="icon-3x mb-2"></iconify-icon>
-                                        <p>No events found.</p>
-                                        @if(request('search') || request('status'))
-                                            <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-primary">Clear Filters</a>
+                                        <iconify-icon icon="mdi:newspaper-variant-outline" class="icon-3x mb-2"></iconify-icon>
+                                        <p>No articles found.</p>
+                                        @if(request('search') || request('status') || request('category'))
+                                            <a href="{{ route('admin.articles.index') }}" class="btn btn-sm btn-primary">Clear Filters</a>
                                         @else
-                                            <a href="{{ route('admin.events.create') }}" class="btn btn-sm btn-primary">Create Your First Event</a>
+                                            <a href="{{ route('admin.articles.create') }}" class="btn btn-sm btn-primary">Create Your First Article</a>
                                         @endif
                                     </div>
                                 </td>
@@ -218,8 +296,8 @@
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-                    <span>Showing {{ $events->firstItem() }} to {{ $events->lastItem() }} of {{ $events->total() }} entries</span>
-                    {{ $events->links('vendor.pagination.custom') }}
+                    <span>Showing {{ $articles->firstItem() }} to {{ $articles->lastItem() }} of {{ $articles->total() }} entries</span>
+                    {{ $articles->links('vendor.pagination.custom') }}
                 </div>
             </div>
         </form>
@@ -240,6 +318,9 @@
     height: 100%;
     object-fit: cover;
 }
+.dropdown-menu {
+    min-width: 180px;
+}
 </style>
 @endpush
 
@@ -248,11 +329,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Select all checkboxes
     const selectAll = document.getElementById('selectAll');
-    const eventCheckboxes = document.querySelectorAll('.event-checkbox');
+    const articleCheckboxes = document.querySelectorAll('.article-checkbox');
     
     if (selectAll) {
         selectAll.addEventListener('change', function() {
-            eventCheckboxes.forEach(checkbox => {
+            articleCheckboxes.forEach(checkbox => {
                 checkbox.checked = selectAll.checked;
             });
         });
@@ -262,14 +343,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const bulkForm = document.getElementById('bulk-action-form');
     if (bulkForm) {
         bulkForm.addEventListener('submit', function(e) {
-            const checkedBoxes = document.querySelectorAll('.event-checkbox:checked');
+            const checkedBoxes = document.querySelectorAll('.article-checkbox:checked');
             if (checkedBoxes.length === 0) {
                 e.preventDefault();
-                alert('Please select at least one event.');
+                alert('Please select at least one article.');
+                return false;
+            }
+            
+            const action = this.querySelector('select[name="action"]').value;
+            if (!action) {
+                e.preventDefault();
+                alert('Please select a bulk action.');
                 return false;
             }
         });
     }
+    
+    // Update select all checkbox state
+    articleCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const allChecked = Array.from(articleCheckboxes).every(cb => cb.checked);
+            selectAll.checked = allChecked;
+            selectAll.indeterminate = !allChecked && Array.from(articleCheckboxes).some(cb => cb.checked);
+        });
+    });
 });
 </script>
 @endpush

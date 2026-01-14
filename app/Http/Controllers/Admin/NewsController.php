@@ -17,10 +17,48 @@ class NewsController extends Controller
     {
         $search = $request->get('search');
         $status = $request->get('status');
+        $category = $request->get('category');
         $perPage = $request->get('per_page', 10);
 
+        $query = Article::with(['category', 'author'])
+            ->orderBy('published_at', 'desc')
+            ->orderBy('created_at', 'desc');
 
-        return view('admin.articles.index', compact('articles', 'search', 'status', 'perPage'));
+        // Apply search filter
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('excerpt', 'like', "%{$search}%")
+                ->orWhere('content', 'like', "%{$search}%")
+                ->orWhere('tags', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply status filter
+        if ($status && in_array($status, ['draft', 'published', 'archived'])) {
+            $query->where('status', $status);
+        }
+
+        // Apply category filter
+        if ($category) {
+            $query->whereHas('category', function ($q) use ($category) {
+                $q->where('id', $category);
+            });
+        }
+
+        $articles = $query->paginate($perPage);
+
+        // Get categories for filter dropdown
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.articles.index', compact(
+            'articles', 
+            'categories',
+            'search', 
+            'status', 
+            'category',
+            'perPage'
+        ));
     }
 
     public function create()
