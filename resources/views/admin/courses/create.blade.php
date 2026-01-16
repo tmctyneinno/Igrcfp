@@ -539,7 +539,7 @@ Commit to continuous learning') }}</textarea>
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
                                 <input type="text" name="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
-                                       placeholder="grc certification, financial crime prevention, compliance training, risk management" value="{{ old('meta_keywords', 'grc certification, financial crime prevention, compliance training, risk management, aml certification, fraud prevention, corporate governance, regulatory compliance') }}">
+                                    value="{{ old('meta_keywords', 'grc certification, financial crime prevention, compliance training, risk management, aml certification, fraud prevention, corporate governance, regulatory compliance') }}">
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
                                     <div class="invalid-feedback">{{ $message }}</div>
