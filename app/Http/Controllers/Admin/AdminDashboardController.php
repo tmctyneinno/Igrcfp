@@ -19,7 +19,8 @@ class AdminDashboardController extends Controller
         $stats = [
             'total_users' => User::count(),
             'total_blogs' => Blog::count() ?? 0,
-            'total_courses' => Course::count(),
+            // 'total_courses' => Course::count(),
+            'total_courses' => 1,
             'total_events' => Event::count() ?? 0,
             'recent_users' => User::latest()->take(5)->get(),
             'admin_name' => $admin->name,
