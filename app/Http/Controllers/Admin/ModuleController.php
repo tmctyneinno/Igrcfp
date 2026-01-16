@@ -24,9 +24,9 @@ class ModuleController extends Controller
     /**
      * Store a newly created module in storage.
      */
-    public function store(Request $request, Course $course)
+    public function store(Request $request, )
     {
-         \Log::info(' storeCategory:', [$request]);
+         \Log::info(' course:', Course $course);
          dd('module');
         $validated = $request->validate([
             'title' => 'required|string|max:255',
