@@ -131,7 +131,7 @@
                                         <div class="text-info mb-2">
                                             <iconify-icon icon="mdi:certificate-outline" class="icon-2x"></iconify-icon>
                                         </div>
-                                        <h6 class="mb-1">{{ $course->format }}</h6>
+                                        <p class="mb-1 bold">{{ $course->format }}</p>
                                         <small class="text-muted">Format</small>
                                     </div>
                                 </div>
