@@ -133,11 +133,16 @@
                         <h6 class="card-title mb-0">Learning Objectives</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
-                                  rows="5" placeholder="List the learning objectives (one per line or bullet points)">{!!  $module->learning_objectives !!}</textarea>
-                        @error('learning_objectives')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                        <textarea id="learning_objectives" name="learning_objectives" class="form-control">
+                            {!! $module->learning_objectives !!}
+                        </textarea>
+
+                        <script>
+                            ClassicEditor
+                                .create(document.querySelector('#learning_objectives'))
+                                .catch(error => console.error(error));
+                        </script>
+
                     </div>
                 </div>
 
