@@ -1500,6 +1500,9 @@ document.addEventListener('DOMContentLoaded', function() {
     updateModuleCount();
 
     console.log('All event listeners attached');
+
+    
 });
 </script>
 @endpush
+
