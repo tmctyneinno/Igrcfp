@@ -405,11 +405,8 @@ Regulatory Advisor') }}</textarea>
                                 <label class="form-label">Assessment Structure (one per line)</label>
                                 <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
                                           placeholder="Module quizzes
-Practical assignments
-Final examination">{{ old('assessment_structure', 'Module quizzes
-Practical assignments
-Final examination
-Capstone project') }}</textarea>
+                                    Practical assignments
+                                    Final examination"></textarea>
                                 @error('assessment_structure')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -419,13 +416,8 @@ Capstone project') }}</textarea>
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
                                 <textarea name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
                                           placeholder="CGFCS holders must:
-- Act with integrity
-- Maintain confidentiality">{{ old('code_of_conduct', 'CGFCS holders must:
-Act with integrity
-Maintain confidentiality
-Avoid conflicts of interest
-Uphold laws and ethics
-Commit to continuous learning') }}</textarea>
+                                            - Act with integrity
+                                            - Maintain confidentiality"></textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
