@@ -145,7 +145,7 @@
                         <h6 class="card-title mb-0">Topics Covered</h6>
                     </div>
                     <div class="card-body">
-                        <textarea id name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
+                        <textarea id="topics_Covered" name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
                                   rows="5" placeholder="List the topics that will be covered">{{ old('topics_covered', $module->topics_covered) }}</textarea>
                         @error('topics_covered')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -159,7 +159,7 @@
                         <h6 class="card-title mb-0">Key Concepts</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
+                        <textarea id="key_concepts" name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
                                   rows="5" placeholder="List the key concepts students should understand">{{ old('key_concepts', $module->key_concepts) }}</textarea>
                         @error('key_concepts')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -422,6 +422,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error(error));
     ClassicEditor
         .create(document.querySelector('#topics_Covered'))
+        .catch(error => console.error(error));
+    ClassicEditor
+        .create(document.querySelector('#key_concepts'))
         .catch(error => console.error(error));
                       
     // Character count functionality
