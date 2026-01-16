@@ -221,19 +221,19 @@
                                 </td>
                                 <td class="text-center"> 
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <a href="{{ route('admin.courses.show', $course->id) }}" 
+                                        <a href="{{ route('admin.courses.show', $course->slug) }}" 
                                            class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="View" data-bs-toggle="tooltip">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
-                                        <a href="{{ route('admin.courses.edit', $course->id) }}" 
+                                        <a href="{{ route('admin.courses.edit', $course->slug) }}" 
                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="Edit" data-bs-toggle="tooltip">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
                                         
                                         <!-- Delete Form -->
-                                        <form action="{{ route('admin.courses.destroy', $course->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('admin.courses.destroy', $course->slug) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
