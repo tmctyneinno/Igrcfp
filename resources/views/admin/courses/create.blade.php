@@ -324,20 +324,31 @@
                                 @enderror
                             </div>
                             
-                            <div class="col-12">
-                                <label class="form-label">Programme Architecture</label>
-                                <textarea id="editor1"  name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6" 
-                                          placeholder="Describe the programme tiers and structure...">
-                                          {{ old('programme_architecture', 
-                                          'The CGFCS is delivered in three tiers:
-                                            Tier 1: Foundation CGFCS - Core professional grounding in GRC and Financial Crime.
-                                            Tier 2: Advanced CGFCS - Technical, regulatory and cross-border mastery for complex organisations.
-                                            Tier 3: Specialist Pathways - Focused depth in high-demand domains (AML, ESG, Cyber, Public Sector, Fintech, Sanctions, Investigations).') }}
-                                            </textarea>
-                                @error('programme_architecture')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                           <div class="col-12">
+    <label class="form-label">Programme Architecture</label>
+
+    <textarea 
+        id="editor1"
+        name="programme_architecture"
+        class="form-control @error('programme_architecture') is-invalid @enderror"
+        rows="6"
+        placeholder="Describe the programme tiers and structure..."
+    >{{ old('programme_architecture', 'The CGFCS programme is delivered in three tiers:
+
+Tier 1: Foundation CGFCS
+Provides core professional grounding in Governance, Risk, Compliance, and Financial Crime.
+
+Tier 2: Advanced CGFCS
+Delivers technical, regulatory, and cross-border mastery for complex organisations.
+
+Tier 3: Specialist Pathways
+Offers focused, in-depth expertise in high-demand domains such as AML, ESG, Cybersecurity, Public Sector, Fintech, Sanctions, and Investigations.') }}</textarea>
+
+    @error('programme_architecture')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
+
                             
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
@@ -1042,48 +1053,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
      // Initialize CKEditor 5
     ClassicEditor
-        .create(document.querySelector('#editor1'), {
-            toolbar: {
-                items: [
-                    'heading', '|',
-                    'bold', 'italic', 'underline', 'strikethrough', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'alignment', '|',
-                    'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
-                    'undo', 'redo', '|',
-                    'codeBlock', 'highlight', '|',
-                    'fontSize', 'fontColor', 'fontBackgroundColor'
-                ]
-            },
-            language: 'en',
-            image: {
-                toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:inline',
-                    'imageStyle:block',
-                    'imageStyle:side'
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
-            },
-            licenseKey: '',
-        })
-        .then(editor => {
-            window.editor = editor;
-            
-            // Update hidden input when editor content changes
-            editor.model.document.on('change:data', () => {
-                document.getElementById('content').value = editor.getData();
-            });
-        })
-        .catch(error => {
-            console.error(error);
-        });
+    .create(document.querySelector('#editor1'), {
+        toolbar: {
+            items: [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'strikethrough', '|',
+                'bulletedList', 'numberedList', '|',
+                'alignment', '|',
+                'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
+                'undo', 'redo', '|',
+                'codeBlock', 'highlight', '|',
+                'fontSize', 'fontColor', 'fontBackgroundColor'
+            ]
+        },
+        language: 'en',
+        image: {
+            toolbar: [
+                'imageTextAlternative',
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side'
+            ]
+        },
+        table: {
+            contentToolbar: [
+                'tableColumn',
+                'tableRow',
+                'mergeTableCells'
+            ]
+        }
+    })
+    .catch(error => {
+        console.error(error);
+    });
+
 
     
         // Image preview functionality
