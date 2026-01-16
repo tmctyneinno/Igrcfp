@@ -27,6 +27,7 @@ class CourseModule extends Model
     protected $casts = [
         'estimated_hours' => 'integer',
         'is_active' => 'boolean',
+        'sort_order' => 'integer',
     ];
 
     /**
@@ -48,6 +49,24 @@ class CourseModule extends Model
     }
 
     /**
+     * Scopes
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('module_number')->orderBy('sort_order');
+    }
+
+    /**
      * Attributes
      */
     public function getModuleCodeAttribute()
@@ -58,5 +77,22 @@ class CourseModule extends Model
     public function getFormattedNumberAttribute()
     {
         return "Module {$this->module_number}";
+    }
+
+    public function getDurationAttribute()
+    {
+        return $this->estimated_hours . ' hour' . ($this->estimated_hours > 1 ? 's' : '');
+    }
+
+    /**
+     * Get next module number for the course
+     */
+    public static function getNextModuleNumber($courseId)
+    {
+        $lastModule = self::where('course_id', $courseId)
+            ->orderBy('module_number', 'desc')
+            ->first();
+        
+        return $lastModule ? $lastModule->module_number + 1 : 1;
     }
 }
