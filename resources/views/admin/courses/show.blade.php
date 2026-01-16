@@ -285,7 +285,10 @@
                                                 
                                                 <div class="d-flex gap-2">
                                                     <!-- Toggle Active Status -->
-                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->slug]) }}" 
+                                                    <form ction="{{ route('admin.courses.modules.toggle-active', [
+                                                        'course' => $course,
+                                                        'module' => $module
+                                                    ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
@@ -295,7 +298,11 @@
                                                     </form>
                                                     
                                                     <!-- Duplicate Module -->
-                                                    <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->slug, 'module' => $module->slug]) }}" 
+                                                    <form 
+                                                        action="{{ route('admin.courses.modules.duplicate', [
+                                                            'course' => $course,
+                                                            'module' => $module
+                                                        ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-info" 
