@@ -209,7 +209,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Real-world case study for this module</label>
-                            <textarea name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
+                            <textarea id="editor4" name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
                                       rows="5" placeholder="Provide a relevant case study">
                                 {{ old('case_study', 'Case Study: A multinational bank fails due to weak board oversight
 
@@ -239,7 +239,7 @@ Students will analyze this case to identify where governance failed and propose 
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Practical exercise for students</label>
-                            <textarea name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
+                            <textarea id="editor5" name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
                                       rows="5" placeholder="Design a practical exercise for this module">
                                 {{ old('exercise', 'Exercise: Map GRC Responsibilities in Your Organization
 
@@ -280,7 +280,7 @@ Submit your completed matrix and analysis (500-800 words).') }}
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Any additional notes or instructions</label>
-                            <textarea name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
+                            <textarea id="editor5" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
                                       rows="5" placeholder="Additional information for instructors or students">
                                 {{ old('additional_notes', 'Instructor Notes:
 • Recommended reading: "Enterprise Governance, Risk, and Compliance" by Anthony Tarantino
