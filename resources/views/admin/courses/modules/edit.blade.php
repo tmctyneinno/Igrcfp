@@ -173,7 +173,7 @@
                         <h6 class="card-title mb-0">Case Study</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
+                        <textarea id="case_study" name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
                                   rows="5" placeholder="Provide a relevant case study">{{ old('case_study', $module->case_study) }}</textarea>
                         @error('case_study')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -187,7 +187,7 @@
                         <h6 class="card-title mb-0">Practical Exercise</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
+                        <textarea id="exercise" name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
                                   rows="5" placeholder="Design a practical exercise for this module">{{ old('exercise', $module->exercise) }}</textarea>
                         @error('exercise')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -425,6 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error(error));
     ClassicEditor
         .create(document.querySelector('#key_concepts'))
+        .catch(error => console.error(error));
+    ClassicEditor
+        .create(document.querySelector('#case_study'))
+        .catch(error => console.error(error));
+    ClassicEditor
+        .create(document.querySelector('#exercise'))
         .catch(error => console.error(error));
                       
     // Character count functionality
