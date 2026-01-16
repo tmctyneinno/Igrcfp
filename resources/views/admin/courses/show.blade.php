@@ -147,12 +147,12 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">Course Modules ({{ $course->modules->count() }})</h6>
                         <div class="d-flex justify-content-center">
-    <a href="{{ route('admin.courses.modules.create', $course->id) }}"
-       class="btn btn-primary d-flex align-items-center gap-1">
-        <iconify-icon icon="mdi:plus"></iconify-icon>
-        Add First Module
-    </a>
-</div>
+                            <a href="{{ route('admin.courses.modules.create', $course->id) }}"
+                            class="btn btn-primary d-flex align-items-center gap-1">
+                                <iconify-icon icon="mdi:plus"></iconify-icon>
+                                Add First Module
+                            </a>
+                        </div>
 
                     </div>
                 </div>
