@@ -15,7 +15,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     
     // Show Course
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
-    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
+    Route::g('/courses/module', [CourseController::class, 'showModules'])->name('courses.modules.create');
     
     // Edit Course
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
