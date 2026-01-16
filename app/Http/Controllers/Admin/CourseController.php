@@ -17,11 +17,37 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::withCount('modules')
-            ->latest()
-            ->paginate(10);
+        $query = Course::withCount('modules');
+        
+        // Search functionality
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('short_title', 'LIKE', "%{$search}%")
+                  ->orWhere('code', 'LIKE', "%{$search}%")
+                  ->orWhere('short_description', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        // Filter by status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        
+        // Filter by level
+        if ($request->has('level') && $request->level != '') {
+            $query->where('level', $request->level);
+        }
+        
+        // Order by
+        $query->latest();
+        
+        // Pagination
+        $perPage = $request->get('per_page', 10);
+        $courses = $query->paginate($perPage);
         
         return view('admin.courses.index', compact('courses'));
     }
