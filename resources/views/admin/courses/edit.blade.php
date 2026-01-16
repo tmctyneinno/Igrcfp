@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.update', $course->id) }}" method="POST" enctype="multipart/form-data" id="courseForm">
+    <form action="{{ route('admin.courses.update', $course->slug) }}" method="POST" enctype="multipart/form-data" id="courseForm">
         @csrf
         @method('PUT')
         <div class="row gy-4">
