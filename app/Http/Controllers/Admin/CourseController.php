@@ -181,8 +181,13 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (is_numeric($id)) {
         $course = Course::findOrFail($id);
-        dd($id);
+        } else {
+            $course = Course::where('slug', $id)->firstOrFail();
+        }
+       
+        // dd($id);
       
         $validated = $this->validateRequest($request, $course);
 
