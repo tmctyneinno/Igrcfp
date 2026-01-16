@@ -128,7 +128,7 @@
                                 <td>
                                     <div class="featured-image-container">
                                         @if($course->image)
-                                            <img src="{{ asset($course->image) }}" alt="{{ $course->title }}" 
+                                            <img src="{{ asset('storage/'.$course->image) }}" alt="{{ $course->title }}" 
                                                  class="featured-image rounded-8" style="max-height: 40px; object-fit: cover;"
                                                  onerror="this.src='{{ asset('images/default-course.jpg') }}'">
                                         @else
