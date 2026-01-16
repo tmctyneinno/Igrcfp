@@ -42,7 +42,7 @@ class ModuleController extends Controller
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
-
+        dd('module');
         try {
             // Set course_id
             $validated['course_id'] = $course->id;
