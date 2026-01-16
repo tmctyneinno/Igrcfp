@@ -27,13 +27,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
         ->name('courses.edit');
     
     Route::put('/courses/{course}', [CourseController::class, 'update'])
-        ->name('courses.update')
-        ->whereNumber('course');
+        ->name('courses.update');
     
     // Delete Course
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
-        ->name('courses.destroy')
-        ->whereNumber('course');
+        ->name('courses.destroy');
     
     // Course Categories
     Route::get('/course-categories', [CourseController::class, 'categories'])
