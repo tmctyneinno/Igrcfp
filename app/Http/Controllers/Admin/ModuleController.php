@@ -26,7 +26,10 @@ class ModuleController extends Controller
      */
     public function store(Request $request, )
     {
-         \Log::info(' course:', Course $course);
+        \Log::info('Creating module for course', [
+            'course_id' => $course->id,
+            'course_title' => $course->title
+        ]);
          dd('module');
         $validated = $request->validate([
             'title' => 'required|string|max:255',
