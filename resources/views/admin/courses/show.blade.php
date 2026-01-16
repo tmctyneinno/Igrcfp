@@ -285,7 +285,7 @@
                                                 
                                                 <div class="d-flex gap-2">
                                                     <!-- Toggle Active Status -->
-                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
@@ -295,7 +295,7 @@
                                                     </form>
                                                     
                                                     <!-- Duplicate Module -->
-                                                    <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                    <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-info" 
@@ -306,14 +306,14 @@
                                                     </form>
                                                     
                                                     <!-- Edit Module -->
-                                                    <a href="{{ route('admin.courses.modules.edit', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                    <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                     class="btn btn-sm btn-outline-primary">
                                                         <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                         Edit
                                                     </a>
                                                     
                                                     <!-- Delete Module -->
-                                                    <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                    <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
@@ -381,7 +381,7 @@
                             <h5 class="text-muted">No modules added yet</h5>
                             <p class="text-muted mb-4">Start by adding your first module</p>
                             <div class="d-flex justify-content-center">
-                                <a href="{{ route('admin.courses.modules.create', $course->id) }}"
+                                <a href="{{ route('admin.courses.modules.create', $course->slug) }}"
                                 class="btn btn-primary d-flex align-items-center gap-1">
                                     <iconify-icon icon="mdi:plus"></iconify-icon>
                                     Add First Module
