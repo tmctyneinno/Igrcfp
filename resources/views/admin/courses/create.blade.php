@@ -1085,7 +1085,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error(error);
         });
 
-    // Image preview functionality
+    
+        // Image preview functionality
     const imageInput = document.getElementById('imageInput');
     const bannerImageInput = document.getElementById('bannerImageInput');
     const imagePreview = document.getElementById('imagePreview');
