@@ -313,14 +313,21 @@
                                                     </form>
                                                     
                                                     <!-- Edit Module -->
-                                                    <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->slug]) }}" 
-                                                    class="btn btn-sm btn-outline-primary">
+                                                    <a href="{{ route('admin.courses.modules.edit', [
+                                                            'course' => $course,
+                                                            'module' => $module
+                                                        ]) }}" 
+                                                    
+                                                        class="btn btn-sm btn-outline-primary">
                                                         <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                         Edit
                                                     </a>
                                                     
                                                     <!-- Delete Module -->
-                                                    <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->slug]) }}" 
+                                                    <form action="{{ route('admin.courses.modules.destroy', [
+                                                            'course' => $course,
+                                                            'module' => $module
+                                                        ]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
