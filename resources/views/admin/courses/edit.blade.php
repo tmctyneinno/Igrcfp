@@ -1131,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
             console.log('Course image input changed');
-            handleImagePreview(this, previewImage, imagePreview, 2);
+            handleImagePreview(this, previewImage, imagePreview, 5);
         });
     }
 
