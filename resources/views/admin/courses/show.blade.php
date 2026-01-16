@@ -188,7 +188,7 @@
                                                 <div class="mb-3">
                                                     <strong>Learning Objectives:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->learning_objectives)) !!}
+                                                        {!! ($module->learning_objectives) !!}
                                                     </div>
                                                 </div>
                                             @endif
@@ -197,7 +197,7 @@
                                                 <div class="mb-3">
                                                     <strong>Topics Covered:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->topics_covered)) !!}
+                                                        {!! ($module->topics_covered) !!}
                                                     </div>
                                                 </div>
                                             @endif
@@ -206,7 +206,7 @@
                                                 <div class="mb-3">
                                                     <strong>Key Concepts:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->key_concepts)) !!}
+                                                        {!! ($module->key_concepts) !!}
                                                     </div>
                                                 </div>
                                             @endif
@@ -215,7 +215,7 @@
                                                 <div class="mb-3">
                                                     <strong>Case Study:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->case_study)) !!}
+                                                        {!! ($module->case_study) !!}
                                                     </div>
                                                 </div>
                                             @endif
@@ -224,7 +224,7 @@
                                                 <div class="mb-3">
                                                     <strong>Exercise:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->exercise)) !!}
+                                                        {!! ($module->exercise) !!}
                                                     </div>
                                                 </div>
                                             @endif
