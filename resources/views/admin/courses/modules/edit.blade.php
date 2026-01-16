@@ -201,7 +201,7 @@
                         <h6 class="card-title mb-0">Additional Notes</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
+                        <textarea id="additional_notes" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
                                   rows="5" placeholder="Additional information for instructors or students">{{ old('additional_notes', $module->additional_notes) }}</textarea>
                         @error('additional_notes')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -431,6 +431,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error(error));
     ClassicEditor
         .create(document.querySelector('#exercise'))
+        .catch(error => console.error(error));
+    ClassicEditor
+        .create(document.querySelector('#additional_notes'))
         .catch(error => console.error(error));
                       
     // Character count functionality
