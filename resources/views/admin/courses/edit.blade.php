@@ -761,7 +761,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                                      class="img-fluid rounded-8 border" style="max-height: 150px;">
                                 <small class="text-muted d-block mt-1">New image preview</small>
                             </div>
-                        </div>
+                        </div>  
                         
                         <hr class="my-3">
                         
