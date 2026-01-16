@@ -52,6 +52,43 @@ class CourseController extends Controller
         return view('admin.courses.index', compact('courses'));
     }
 
+    public function bulkAction(Request $request)
+    {
+        $request->validate([
+            'action' => 'required|in:publish,draft,archive,delete',
+            'course_ids' => 'required|array',
+            'course_ids.*' => 'exists:courses,id'
+        ]);
+        
+        $action = $request->action;
+        $courseIds = $request->course_ids;
+        
+        switch ($action) {
+            case 'publish':
+                Course::whereIn('id', $courseIds)->update(['status' => 'published']);
+                $message = count($courseIds) . ' course(s) published successfully';
+                break;
+                
+            case 'draft':
+                Course::whereIn('id', $courseIds)->update(['status' => 'draft']);
+                $message = count($courseIds) . ' course(s) moved to draft';
+                break;
+                
+            case 'archive':
+                Course::whereIn('id', $courseIds)->update(['status' => 'archived']);
+                $message = count($courseIds) . ' course(s) archived successfully';
+                break;
+                
+            case 'delete':
+                Course::whereIn('id', $courseIds)->delete();
+                $message = count($courseIds) . ' course(s) deleted successfully';
+                break;
+        }
+        
+        return redirect()->route('admin.courses.index')
+            ->with('success', $message);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
