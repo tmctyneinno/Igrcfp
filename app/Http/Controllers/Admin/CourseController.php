@@ -181,7 +181,7 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     { 
-        dd('');
+        dd('update_Course');
         if (is_numeric($id)) {
         $course = Course::findOrFail($id);
         } else {

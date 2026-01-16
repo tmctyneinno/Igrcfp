@@ -45,7 +45,7 @@
 
     <form action="{{ route('admin.courses.update', $course->slug) }}" method="POST" enctype="multipart/form-data" id="courseForm">
         @csrf
-        @method('PUT')
+        @method('PUT') 
         <div class="row gy-4">
             <div class="col-lg-8">
                 <!-- Course Basic Information -->
