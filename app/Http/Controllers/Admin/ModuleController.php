@@ -16,6 +16,7 @@ class ModuleController extends Controller
      */
     public function create(Course $course)
     {
+        dd('dd');
         $nextModuleNumber = CourseModule::getNextModuleNumber($course->id);
         
         return view('admin.courses.modules.create', compact('course', 'nextModuleNumber'));
