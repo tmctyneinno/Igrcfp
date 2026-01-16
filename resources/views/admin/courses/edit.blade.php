@@ -746,7 +746,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                             <h6 class="mb-3">Course Image</h6>
                             @if($course->image)
                                 <div id="currentImagePreview" class="mb-3">
-                                    <img src="{{ asset($course->image) }}" alt="Current course image" 
+                                    <img src="{{ asset('storage/' . $course->image) }}" alt="Current course image" 
                                          class="img-fluid rounded-8 border" style="max-height: 150px;">
                                 </div>
                                 <small class="text-muted d-block mb-3">Current image</small>
@@ -769,7 +769,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                             <h6 class="mb-3">Banner Image</h6>
                             @if($course->banner_image) 
                                 <div id="currentBannerPreview" class="mb-3">
-                                    <img src="{{ asset($course->banner_image) }}" alt="Current banner image" 
+                                    <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Current banner image" 
                                          class="img-fluid rounded-8 border" style="max-height: 100px;">
                                 </div>
                                 <small class="text-muted d-block mb-3">Current banner</small>
