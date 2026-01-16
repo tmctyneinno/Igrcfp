@@ -75,7 +75,7 @@ class CourseController extends Controller
                 $this->uploadMaterials($course, $request->file('materials'));
             }
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Course created successfully!');
 
         } catch (\Exception $e) {
