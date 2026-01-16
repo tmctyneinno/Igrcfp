@@ -15,7 +15,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     
     // Show Course
-    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
     Route::get('/courses/status', [CourseController::class, 'showStatus'])->name('courses.status');
     Route::get('/courses/toggle-featured', [CourseController::class, 'toggleFeatured'])->name('courses.toggle-featured');
     Route::get('/courses/toggle-popular', [CourseController::class, 'togglePopular'])->name('courses.toggle-popular');
@@ -24,8 +24,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     
     // Edit Course
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
-        ->name('courses.edit')
-        ->whereNumber('course');
+        ->name('courses.edit');
     
     Route::put('/courses/{course}', [CourseController::class, 'update'])
         ->name('courses.update')

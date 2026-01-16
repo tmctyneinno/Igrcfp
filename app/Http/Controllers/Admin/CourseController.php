@@ -161,9 +161,8 @@ class CourseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Course $course)
     {
-        dd($course);
         $course->load(['modules.sections', 'materials']);
         return view('admin.courses.show', compact('course'));
     }
