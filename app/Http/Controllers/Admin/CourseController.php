@@ -20,7 +20,7 @@ class CourseController extends Controller
     public function index(Request $request)
 {
     $query = Course::withCount('modules');
-    
+    dd($query);
     // Search functionality
     if ($request->has('search') && $request->search != '') {
         $search = $request->search;
@@ -171,6 +171,7 @@ class CourseController extends Controller
     public function update(Request $request, $id)
     {
         $course = Course::findOrFail($id);
+      
         $validated = $this->validateRequest($request, $course);
 
         try {
