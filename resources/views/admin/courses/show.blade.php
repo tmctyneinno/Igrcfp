@@ -600,7 +600,7 @@
                     @if($course->banner_image)
                         <div class="mb-4">
                             <h6 class="mb-2">Banner Image</h6>
-                            <img src="{{ asset($course->banner_image) }}" alt="Course banner" 
+                            <img src="{{ asset('storage/'. $course->banner_image) }}" alt="Course banner" 
                                  class="img-fluid rounded-8 border" style="max-height: 150px;">
                         </div>
                     @endif
