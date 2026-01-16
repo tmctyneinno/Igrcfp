@@ -280,7 +280,7 @@ Submit your completed matrix and analysis (500-800 words).') }}
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Any additional notes or instructions</label>
-                            <textarea id="editor5" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
+                            <textarea id="editor6" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
                                       rows="5" placeholder="Additional information for instructors or students">
                                 {{ old('additional_notes', 'Instructor Notes:
 • Recommended reading: "Enterprise Governance, Risk, and Compliance" by Anthony Tarantino
@@ -490,6 +490,12 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => { console.error(error); });
     ClassicEditor
     .create(document.querySelector('#editor4'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor5'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor6'))
     .catch(error => { console.error(error); });
    
 
