@@ -122,7 +122,7 @@
                                         <div class="text-warning mb-2">
                                             <iconify-icon icon="mdi:school-outline" class="icon-2x"></iconify-icon>
                                         </div>
-                                        <h5 class="mb-1">{{ ucfirst($course->level) }}</h5>
+                                        <h6 class="mb-1">{{ ucfirst($course->level) }}</h>
                                         <small class="text-muted">Level</small>
                                     </div>
                                 </div>
