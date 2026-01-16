@@ -170,7 +170,7 @@ class Course extends Model
     }
 
     public function hasVideo(): bool
-{
-    return !empty($this->video_type) && !empty($this->video_url);
-}
+    {
+        return !empty($this->video_type) && !empty($this->video_url);
+    }
 }
