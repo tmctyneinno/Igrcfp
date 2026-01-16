@@ -769,27 +769,13 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                             <h6 class="mb-3">Banner Image</h6>
                             @if($course->banner_image) 
                                 <div id="currentBannerPreview" class="mb-3">
-                                    @if($course->banner_image)
-                                        @php
-                                            $fullPath = storage_path('app/private/' . $course->banner_image);
-                                            $exists = file_exists($fullPath);
-                                        @endphp
-                                        
-                                        @if($exists)
-                                            @php
-                                                $imageData = base64_encode(file_get_contents($fullPath));
-                                                $src = 'data:image/jpeg;base64,' . $imageData;
-                                            @endphp
-                                            <img src="{{ $src }}" 
-                                                alt="Current banner image" 
-                                                class="img-fluid rounded-8 border" 
-                                                style="max-height: 100px;">
-                                        @else
-                                            <div class="alert alert-warning p-2">
-                                                File not found: {{ $course->banner_image }}
-                                            </div>
-                                        @endif
-                                    @endif
+                                    @php
+                                        $fullPath = storage_path('app/privat/' . $course->banner_image);
+                                        $exists = file_exists($fullPath);
+                                        $url = asset('storage/' . $course->banner_image);
+                                    @endphp
+                                    <img src="{{ $fullPath }}" alt="Current banner image" 
+                                         class="img-fluid rounded-8 border" style="max-height: 100px;">
                                 </div>
                                 <small class="text-muted d-block mb-3">Current banner</small>
                             @else
