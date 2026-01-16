@@ -22,11 +22,12 @@ class CourseController extends Controller
         $query = Course::withCount('modules');
         $courses = $query->get();
 
-        \Log::info('DB name', [
-            'database' => \DB::connection()->getDatabaseName()
-        ]);
-        \Log::info('Courses count', ['count' => $courses->count()]);
-       \Log::info(' query:', [$query]);
+        dd(
+            \DB::connection()->getDatabaseName(),
+            \DB::table('courses')->count(),
+            Course::withoutGlobalScopes()->withTrashed()->count()
+        );
+
         
         // Search functionality
         if ($request->has('search') && $request->search != '') {
