@@ -134,7 +134,7 @@
                     </div>
                     <div class="card-body">
                         <textarea name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
-                                  rows="5" placeholder="List the learning objectives (one per line or bullet points)">{{ old('learning_objectives', $module->learning_objectives) }}</textarea>
+                                  rows="5" placeholder="List the learning objectives (one per line or bullet points)">{!!  $module->learning_objectives !!}</textarea>
                         @error('learning_objectives')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
