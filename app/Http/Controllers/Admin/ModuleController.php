@@ -26,7 +26,7 @@ class ModuleController extends Controller
      */
     public function store(Request $request, Course $course)
     {
-        
+         \Log::info(' storeCategory:', [$request]);
          dd('module');
         $validated = $request->validate([
             'title' => 'required|string|max:255',
