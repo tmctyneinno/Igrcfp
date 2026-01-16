@@ -168,4 +168,9 @@ class Course extends Model
         
         return null;
     }
+
+    public function hasVideo(): bool
+{
+    return !empty($this->video_type) && !empty($this->video_url);
+}
 }
