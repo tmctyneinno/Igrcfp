@@ -163,7 +163,7 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        
+        dd($course);
         $course->load(['modules.sections', 'materials']);
         return view('admin.courses.show', compact('course'));
     }
