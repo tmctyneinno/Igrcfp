@@ -462,7 +462,7 @@ class CourseController extends Controller
         return $filename;
     }
 
-    /**
+    /**  
      * Additional methods for module management
      */
     public function createModule(Course $course)
