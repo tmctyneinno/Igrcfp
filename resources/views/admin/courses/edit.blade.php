@@ -750,7 +750,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                                          class="img-fluid rounded-8 border" style="max-height: 150px;">
                                 </div>
                                 <small class="text-muted d-block mb-3">Current image</small>
-                            @else
+                            @else   
                                 <div id="noImagePlaceholder" class="text-muted py-2">
                                     <iconify-icon icon="mdi:image-outline" class="icon-2x mb-2"></iconify-icon>
                                     <p class="mb-0 small">No image set</p>
