@@ -137,7 +137,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What will students learn in this module?</label>
-                            <textarea name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
+                            <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
                                       rows="5" placeholder="List the learning objectives (one per line or bullet points)">
                                 {{ old('learning_objectives', 'By the end of this module, participants will be able to:
 • Understand GRC concepts and history
@@ -161,7 +161,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What topics will be covered in this module?</label>
-                            <textarea name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
+                            <textarea id="editor2" name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
                                       rows="5" placeholder="List the topics that will be covered">
                                 {{ old('topics_covered', '• Evolution of GRC
 • Integrated GRC model
@@ -186,7 +186,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What are the key concepts in this module?</label>
-                            <textarea name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
+                            <textarea id="editor3" name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
                                       rows="5" placeholder="List the key concepts students should understand">
                                 {{ old('key_concepts', '• Governance: direction, accountability, oversight
 • Risk: uncertainty affecting objectives
