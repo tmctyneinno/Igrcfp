@@ -39,7 +39,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.store') }}" 
+    <form action="{{ route('admin.courses.store') }}" 
       method="POST" enctype="multipart/form-data" id="courseForm">
     {{-- <form action="{{ route('admin.courses.modules.store') }}" method="POST" enctype="multipart/form-data" id="courseForm"> --}}
         @csrf
