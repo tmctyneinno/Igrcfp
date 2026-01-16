@@ -26,6 +26,8 @@ class ModuleController extends Controller
      */
     public function store(Request $request, Course $course)
     {
+        
+         dd('module');
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'code' => 'nullable|string|max:20|unique:course_modules,code,NULL,id,course_id,' . $course->id,
