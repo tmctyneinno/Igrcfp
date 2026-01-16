@@ -258,7 +258,7 @@
                             <iconify-icon icon="mdi:book-education-outline" class="icon-4x text-muted mb-3"></iconify-icon>
                             <h5 class="text-muted">No modules added yet</h5>
                             <p class="text-muted mb-4">Start by adding your first module</p>
-                            <a href="{{ route('admin.courses.modules.create', $course->id) }}" class=" flex d-flex w-25 justify-center  btn btn-primary">
+                            <a href="{{ route('admin.courses.modules.create', $course->id) }}" class=" flex d-flex w-30 justify-contain-center  btn btn-primary">
                                 <iconify-icon icon="mdi:plus"></iconify-icon>
                                 Add First Module
                             </a>
