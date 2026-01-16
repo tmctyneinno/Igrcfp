@@ -325,31 +325,20 @@
                             </div>
                             
                            <div class="col-12">
-    <label class="form-label">Programme Architecture</label>
+                                <label class="form-label">Programme Architecture</label>
+                                <textarea 
+                                    id="editor1"
+                                    name="programme_architecture"
+                                    class="form-control @error('programme_architecture') is-invalid @enderror"
+                                    rows="6"
+                                    placeholder="Describe the programme tiers and structure..."
+                                ></textarea>
 
-    <textarea 
-        id="editor1"
-        name="programme_architecture"
-        class="form-control @error('programme_architecture') is-invalid @enderror"
-        rows="6"
-        placeholder="Describe the programme tiers and structure..."
-    >{{ old('programme_architecture', 'The CGFCS programme is delivered in three tiers:
+                                @error('programme_architecture')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-Tier 1: Foundation CGFCS
-Provides core professional grounding in Governance, Risk, Compliance, and Financial Crime.
-
-Tier 2: Advanced CGFCS
-Delivers technical, regulatory, and cross-border mastery for complex organisations.
-
-Tier 3: Specialist Pathways
-Offers focused, in-depth expertise in high-demand domains such as AML, ESG, Cybersecurity, Public Sector, Fintech, Sanctions, and Investigations.') }}</textarea>
-
-    @error('programme_architecture')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
-</div>
-
-                            
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
                                 <textarea name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
