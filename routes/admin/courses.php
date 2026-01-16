@@ -9,16 +9,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     
     // Create Course
-    Route::get('/courses/create', [CourseController::class, 'create'])
-        ->name('courses.create');
+    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
     
-    Route::post('/courses', [CourseController::class, 'store'])
-        ->name('courses.store');
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
     
     // Show Course
-    Route::get('/courses/{course}', [CourseController::class, 'show'])
-        ->name('courses.show')
-        ->whereNumber('course');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
     
     // Edit Course
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
