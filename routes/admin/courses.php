@@ -16,7 +16,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     
     // Show Course
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show')->whereNumber('course');
-    // Route::get('/courses/module', [CourseController::class, 'showModules'])->name('courses.modules.create');
     Route::get('/courses/status', [CourseController::class, 'showStatus'])->name('courses.status');
     Route::get('/courses/toggle-featured', [CourseController::class, 'toggleFeatured'])->name('courses.toggle-featured');
     Route::get('/courses/toggle-popular', [CourseController::class, 'togglePopular'])->name('courses.toggle-popular');
@@ -72,7 +71,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
 });
 
 // Module Management Routes
-Route::prefix('courses/{course}/modules')->name('courses.modules.')->group(function () {
+Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')->group(function () {
     Route::get('create', [ModuleController::class, 'create'])->name('create');
     Route::post('/', [ModuleController::class, 'store'])->name('store');
     Route::get('{module}/edit', [ModuleController::class, 'edit'])->name('edit');
@@ -82,3 +81,4 @@ Route::prefix('courses/{course}/modules')->name('courses.modules.')->group(funct
     Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
     Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
 });
+   
