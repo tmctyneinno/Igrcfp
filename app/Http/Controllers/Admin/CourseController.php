@@ -120,9 +120,21 @@ class CourseController extends Controller
             if ($request->hasFile('image')) {
                 $validated['image'] = $this->uploadFile($request->file('image'), 'courses/images');
             }
+             if ($request->hasFile('image')) {
+                if ($course->image) {
+                    Storage::delete($course->image);
+                }
+                $validated['image'] = $request->file('image')->store('courses/images', 'public');
+            }
             
             if ($request->hasFile('banner_image')) {
                 $validated['banner_image'] = $this->uploadFile($request->file('banner_image'), 'courses/banners');
+            }
+             if ($request->hasFile('image')) {
+                if ($course->image) {
+                    Storage::delete($course->image);
+                }
+                $validated['image'] = $request->file('image')->store('courses/images', 'public');
             }
 
             // Handle video upload
@@ -194,30 +206,19 @@ class CourseController extends Controller
 
         try {
             // Handle image uploads
+           
             if ($request->hasFile('image')) {
                 if ($course->image) {
                     Storage::delete($course->image);
                 }
-                $validated['image'] = $this->uploadFile($request->file('image'), 'courses/images');
-            }
-            if ($request->hasFile('image')) {
-                if ($course->banner_image) {
-                    Storage::delete($course->banner_image);
-                }
-                $validated['banner_image'] = $request->file('banner_image')->store('courses', 'public');
+                $validated['image'] = $request->file('image')->store('courses/images', 'public');
             }
             
-            // if ($request->hasFile('banner_image')) {
-            //     if ($course->banner_image) {
-            //         Storage::delete($course->banner_image);
-            //     }
-            //     $validated['banner_image'] = $this->uploadFile($request->file('banner_image'), 'courses/banners');
-            // }
             if ($request->hasFile('banner_image')) {
                 if ($course->banner_image) {
                     Storage::delete($course->banner_image);
                 }
-                $validated['banner_image'] = $request->file('banner_image')->store('courses', 'public');
+                $validated['banner_image'] = $request->file('banner_image')->store('courses/banner', 'public');
             }
 
             // Handle video upload
