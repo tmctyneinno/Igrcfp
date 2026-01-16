@@ -326,9 +326,8 @@ Assessment:
 
                             <div class="col-12">
                                 <div class="border-top pt-3 mt-3">
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex justify-content-center">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
-                                            <iconify-icon icon="mdi:content-save" class="icon"></iconify-icon>
                                             Create Module
                                         </button>
                                         <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
