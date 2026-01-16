@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.update', ['course' => $course->id, 'module' => $module->id]) }}" method="POST" id="moduleForm">
+    <form action="{{ route('admin.courses.modules.update', ['course' => $course->slug, 'module' => $module->id]) }}" method="POST" id="moduleForm">
         @csrf
         @method('PUT')
         <div class="row gy-4">
