@@ -453,7 +453,7 @@ Commit to continuous learning') }}</textarea>
                         
                         <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20" 
+                            <textarea id='editor2' name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20" 
                                       placeholder="Example:
 Module 1: Foundations of Governance, Risk and Compliance
 This module provides the fundamental understanding of GRC concepts...
@@ -1042,46 +1042,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
      // Initialize CKEditor 5
     ClassicEditor
-    .create(document.querySelector('#editor2'))
+    .create(document.querySelector('#editor1'))
     .catch(error => { console.error(error); });
     ClassicEditor
-    .create(document.querySelector('#editor1'), {
-        toolbar: {
-            items: [
-                'heading', '|',
-                'bold', 'italic', 'underline', 'strikethrough', '|',
-                'bulletedList', 'numberedList', '|',
-                'alignment', '|',
-                'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
-                'undo', 'redo', '|',
-                'codeBlock', 'highlight', '|',
-                'fontSize', 'fontColor', 'fontBackgroundColor'
-            ]
-        },
-        language: 'en',
-        image: {
-            toolbar: [
-                'imageTextAlternative',
-                'imageStyle:inline',
-                'imageStyle:block',
-                'imageStyle:side'
-            ]
-        },
-        table: {
-            contentToolbar: [
-                'tableColumn',
-                'tableRow',
-                'mergeTableCells'
-            ]
-        }
-    })
-    .catch(error => {
-        console.error(error);
-    });
+    .create(document.querySelector('#editor2'))
+    .catch(error => { console.error(error); });
+   
 
 
     
-        // Image preview functionality
+    // Image preview functionality
     const imageInput = document.getElementById('imageInput');
     const bannerImageInput = document.getElementById('bannerImageInput');
     const imagePreview = document.getElementById('imagePreview');
