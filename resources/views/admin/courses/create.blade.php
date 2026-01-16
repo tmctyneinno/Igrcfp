@@ -453,9 +453,8 @@ Commit to continuous learning') }}</textarea>
                         
                         <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea id='editor2' name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20" 
-                                      placeholder="Example:
-') }}</textarea>
+                            <textarea id='editor2' name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20"> 
+                            </textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
