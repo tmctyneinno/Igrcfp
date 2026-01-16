@@ -478,6 +478,21 @@ Assessment:
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+     // Initialize CKEditor 5
+    ClassicEditor
+    .create(document.querySelector('#editor1'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor2'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor3'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor4'))
+    .catch(error => { console.error(error); });
+   
+
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
