@@ -26,8 +26,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
         ->name('courses.edit');
     
-    Route::put('/courses/{course}', [CourseController::class, 'update'])
-        ->name('courses.update');
+    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     
     // Delete Course
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
