@@ -136,13 +136,6 @@
                         <textarea id="learning_objectives" name="learning_objectives" class="form-control">
                             {!! $module->learning_objectives !!}
                         </textarea>
-
-                        <script>
-                            ClassicEditor
-                                .create(document.querySelector('#learning_objectives'))
-                                .catch(error => console.error(error));
-                        </script>
-
                     </div>
                 </div>
 
@@ -423,6 +416,14 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  
+    ClassicEditor
+        .create(document.querySelector('#learning_objectives'))
+        .catch(error => console.error(error));
+    ClassicEditor
+        .create(document.querySelector('#learning_objectives'))
+        .catch(error => console.error(error));
+                      
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
