@@ -69,3 +69,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
         ->name('courses.publish')
         ->whereNumber('course');
 });
+
+// Module Management Routes
+Route::prefix('courses/{course}/modules')->name('courses.modules.')->group(function () {
+    Route::get('create', [ModuleController::class, 'create'])->name('create');
+    Route::post('/', [ModuleController::class, 'store'])->name('store');
+    Route::get('{module}/edit', [ModuleController::class, 'edit'])->name('edit');
+    Route::put('{module}', [ModuleController::class, 'update'])->name('update');
+    Route::delete('{module}', [ModuleController::class, 'destroy'])->name('destroy');
+    Route::post('{module}/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
+    Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
+    Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
+});
