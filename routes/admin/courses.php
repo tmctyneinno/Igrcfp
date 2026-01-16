@@ -6,8 +6,7 @@ use Illuminate\Support\Facades\Route;
 // Course Management Routes (Protected - admin & super_admin)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:admin,super_admin'])->group(function () {
     // Courses Index
-    Route::get('/courses', [CourseController::class, 'index'])
-        ->name('courses.index');
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     
     // Create Course
     Route::get('/courses/create', [CourseController::class, 'create'])
