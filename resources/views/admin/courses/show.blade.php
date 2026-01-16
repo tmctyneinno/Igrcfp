@@ -233,7 +233,7 @@
                                                 <div class="mb-3">
                                                     <strong>Additional Notes:</strong>
                                                     <div class="ms-3">
-                                                        {!! nl2br(e($module->additional_notes)) !!}
+                                                        {!! ($module->additional_notes) !!}
                                                     </div>
                                                 </div>
                                             @endif
