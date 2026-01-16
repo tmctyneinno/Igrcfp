@@ -235,7 +235,7 @@ class CourseController extends Controller
                 $this->processBulkModules($course, $request->bulk_modules, true);
             }
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Course updated successfully!');
 
         } catch (\Exception $e) {
