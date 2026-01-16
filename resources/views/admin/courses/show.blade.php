@@ -63,7 +63,7 @@
                         <div class="col-12">
                             <div class="d-flex align-items-center gap-3 mb-4">
                                 @if($course->image)
-                                    <img src="{{ asset($course->image) }}" alt="{{ $course->title }}" 
+                                    <img src="{{ asset('storage/'.$course->image) }}" alt="{{ $course->title }}" 
                                          class="rounded-8" style="width: 80px; height: 60px; object-fit: cover;">
                                 @endif
                                 <div>
