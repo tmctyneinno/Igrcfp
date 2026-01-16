@@ -769,6 +769,11 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                             <h6 class="mb-3">Banner Image</h6>
                             @if($course->banner_image) 
                                 <div id="currentBannerPreview" class="mb-3">
+                                    @php
+                                        $fullPath = storage_path('app/public/' . $course->image);
+                                        $exists = file_exists($fullPath);
+                                        $url = asset('storage/' . $course->banner_image);
+                                    @endphp
                                     <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Current banner image" 
                                          class="img-fluid rounded-8 border" style="max-height: 100px;">
                                 </div>
