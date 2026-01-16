@@ -20,6 +20,9 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $query = Course::withCount('modules');
+        $courses = $query->get();
+
+        \Log::info('Courses count', ['count' => $courses->count()]);
        \Log::info(' query:', [$query]);
         
         // Search functionality
