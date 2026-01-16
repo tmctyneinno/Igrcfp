@@ -388,7 +388,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Programme Architecture</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->programme_architecture)) !!}
+                                    {!! ($course->programme_architecture) !!}
                                 </div>
                             </div>
                         @endif
