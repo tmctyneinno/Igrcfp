@@ -200,6 +200,12 @@ class CourseController extends Controller
                 }
                 $validated['image'] = $this->uploadFile($request->file('image'), 'courses/images');
             }
+            if ($request->hasFile('image')) {
+                if ($course->banner_image) {
+                    Storage::delete($course->banner_image);
+                }
+                $validated['banner_image'] = $request->file('banner_image')->store('courses', 'public');
+            }
             
             // if ($request->hasFile('banner_image')) {
             //     if ($course->banner_image) {
