@@ -184,4 +184,9 @@ class Course extends Model
     {
         return !empty($this->video_type) && !empty($this->video_url);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }
