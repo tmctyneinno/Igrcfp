@@ -1040,6 +1040,51 @@ Evaluate a GRC technology tool.') }}</textarea>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
 
+     // Initialize CKEditor 5
+    ClassicEditor
+        .create(document.querySelector('#editor1'), {
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'alignment', '|',
+                    'link', 'imageUpload', 'blockQuote', 'insertTable', '|',
+                    'undo', 'redo', '|',
+                    'codeBlock', 'highlight', '|',
+                    'fontSize', 'fontColor', 'fontBackgroundColor'
+                ]
+            },
+            language: 'en',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            },
+            licenseKey: '',
+        })
+        .then(editor => {
+            window.editor = editor;
+            
+            // Update hidden input when editor content changes
+            editor.model.document.on('change:data', () => {
+                document.getElementById('content').value = editor.getData();
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
     const bannerImageInput = document.getElementById('bannerImageInput');
@@ -1501,7 +1546,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('All event listeners attached');
 
-    
+
 });
 </script>
 @endpush
