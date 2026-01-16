@@ -24,7 +24,7 @@ class ModuleController extends Controller
     /**
      * Store a newly created module in storage.
      */
-    public function store(Request $request, )
+    public function store(Request $request, $course)
     {
         \Log::info('Creating module for course', [
             'course_id' => $course->id,
