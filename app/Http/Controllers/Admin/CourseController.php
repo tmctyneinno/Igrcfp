@@ -18,40 +18,39 @@ class CourseController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $query = Course::withCount('modules');
-        $courses = $query->get();
-        
-        // Search functionality
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('short_title', 'LIKE', "%{$search}%")
-                  ->orWhere('slug', 'LIKE', "%{$search}%")
-                  ->orWhere('short_description', 'LIKE', "%{$search}%");
-            });
-        }
-        
-        // Filter by status
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-        
-        // Filter by level
-        if ($request->has('level') && $request->level != '') {
-            $query->where('level', $request->level);
-        }
-        
-        // Order by
-        $query->latest();
-        
-        // Pagination
-        $perPage = $request->get('per_page', 10);
-        $courses = $query->paginate($perPage);
-        
-        return view('admin.courses.index', compact('courses'));
+{
+    $query = Course::withCount('modules');
+    
+    // Search functionality
+    if ($request->has('search') && $request->search != '') {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('short_title', 'LIKE', "%{$search}%")
+              ->orWhere('slug', 'LIKE', "%{$search}%")
+              ->orWhere('short_description', 'LIKE', "%{$search}%");
+        });
     }
+    
+    // Filter by status
+    if ($request->has('status') && $request->status != '') {
+        $query->where('status', $request->status);
+    }
+    
+    // Filter by level
+    if ($request->has('level') && $request->level != '') {
+        $query->where('level', $request->level);
+    }
+    
+    // Order by
+    $query->latest();
+    
+    // Pagination - REMOVED the early $query->get() call
+    $perPage = $request->get('per_page', 10);
+    $courses = $query->paginate($perPage);
+    
+    return view('admin.courses.index', compact('courses'));
+}
 
     public function bulkAction(Request $request)
     {
