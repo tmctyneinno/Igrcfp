@@ -766,7 +766,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                         <hr class="my-3">
                         
                         <div class="text-center">
-                            <h6 class="mb-3">Banner Image2</h6>
+                            <h6 class="mb-3">Banner Image</h6>
                             @if($course->banner_image) 
                                 <div id="currentBannerPreview" class="mb-3">
                                     @php
