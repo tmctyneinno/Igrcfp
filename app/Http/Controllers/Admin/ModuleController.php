@@ -54,7 +54,7 @@ class ModuleController extends Controller
             // Create the module
             $module = CourseModule::create($validated);
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Module created successfully!');
 
         } catch (\Exception $e) {
@@ -88,7 +88,7 @@ class ModuleController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'code' => 'nullable|string|max:20|unique:course_modules,code,' . $module->id . ',id,course_id,' . $course->id,
+            'slug' => 'nullable|string|max:20|unique:course_modules,code,' . $module->id . ',id,course_id,' . $course->id,
             'module_number' => 'required|integer|min:1',
             'short_description' => 'required|string|max:500',
             'full_content' => 'required|string',
