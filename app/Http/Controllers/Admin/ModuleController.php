@@ -74,7 +74,7 @@ class ModuleController extends Controller
             abort(404);
         }
 
-        return view('admin.modules.edit', compact('course', 'module'));
+        return view('admin.courses.modules.edit', compact('course', 'module'));
     }
 
     /**
