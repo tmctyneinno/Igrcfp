@@ -3,7 +3,7 @@
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Create New Course</h6>
+        <h6 class="fw-semibold mb-0">Create New Module for: {{ $course->title }}</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -16,7 +16,11 @@
                 <a href="{{ route('admin.courses.index') }}" class="hover-text-primary">Courses</a>
             </li>
             <li>-</li>
-            <li class="fw-medium">Create Course</li>
+            <li class="fw-medium">
+                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+            </li>
+            <li>-</li>
+            <li class="fw-medium">Create Module</li>
         </ul>
     </div>
 
@@ -39,40 +43,43 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.store') }}" method="POST" enctype="multipart/form-data" id="courseForm">
+    <form action="{{ route('admin.courses.modules.store', $course->id) }}" method="POST" id="moduleForm">
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
-                <!-- Course Basic Information -->
+                <!-- Module Basic Information -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Course Information</h6>
+                        <h6 class="card-title mb-0">Module Information</h6>
                     </div>
                     <div class="card-body">
                         <div class="row gy-3">
-                            <div class="col-12">
-                                <label class="form-label">Course Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
-                                       placeholder="Enter course title" value="{{ old('title') }}" required>
-                                @error('title')
+                            <div class="col-md-6">
+                                <label class="form-label">Module Number <span class="text-danger">*</span></label>
+                                <input type="number" name="module_number" class="form-control @error('module_number') is-invalid @enderror" 
+                                       value="{{ old('module_number', $nextModuleNumber) }}" min="1" required>
+                                <p class="text-sm mt-1 mb-0 text-muted">Auto-generated: {{ $nextModuleNumber }}</p>
+                                @error('module_number')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Course Code <span class="text-danger">*</span></label>
+                                <label class="form-label">Module Code</label>
                                 <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" 
-                                       placeholder="e.g., CGFCS" value="{{ old('code') }}" required>
+                                       placeholder="e.g., MOD1, FOUNDATIONS" value="{{ old('code') }}">
+                                <p class="text-sm mt-1 mb-0 text-muted">Optional: Custom module identifier</p>
                                 @error('code')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Short Title <span class="text-danger">*</span></label>
-                                <input type="text" name="short_title" class="form-control @error('short_title') is-invalid @enderror" 
-                                       placeholder="e.g., Certified GRC & Financial Crime Specialist" value="{{ old('short_title') }}" required>
-                                @error('short_title')
+                            <div class="col-12">
+                                <label class="form-label">Module Title <span class="text-danger">*</span></label>
+                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
+                                       placeholder="e.g., Foundations of Governance, Risk and Compliance" 
+                                       value="{{ old('title') }}" required>
+                                @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -80,7 +87,8 @@
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
                                 <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description of the course (max 500 characters)" required maxlength="500">{{ old('short_description') }}</textarea>
+                                          rows="3" placeholder="Brief description of the module (max 500 characters)" 
+                                          required maxlength="500">{{ old('short_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Maximum 500 characters</small>
                                     <small class="character-count" data-target="short_description">0/500</small>
@@ -91,38 +99,29 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
-                                          rows="8" placeholder="Detailed description of the course...">{{ old('full_description') }}</textarea>
-                                @error('full_description')
+                                <label class="form-label">Full Content <span class="text-danger">*</span></label>
+                                <textarea name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
+                                          rows="10" placeholder="Detailed content for the module...">{{ old('full_content') }}</textarea>
+                                @error('full_content')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Course Image</label>
-                                <div class="file-upload-container">
-                                    <input class="form-control @error('image') is-invalid @enderror" 
-                                           type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp">
-                                    <p class="text-sm mt-1 mb-0 text-muted">
-                                        Recommended size: 400x300px. Supported formats: JPG, PNG, GIF, WEBP. Max size: 2MB
-                                    </p>
-                                </div>
-                                @error('image')
+                                <label class="form-label">Estimated Hours <span class="text-danger">*</span></label>
+                                <input type="number" name="estimated_hours" class="form-control @error('estimated_hours') is-invalid @enderror" 
+                                       placeholder="2" value="{{ old('estimated_hours', 2) }}" min="1" max="100" required>
+                                @error('estimated_hours')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Banner Image</label>
-                                <div class="file-upload-container">
-                                    <input class="form-control @error('banner_image') is-invalid @enderror" 
-                                           type="file" name="banner_image" id="bannerImageInput" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp">
-                                    <p class="text-sm mt-1 mb-0 text-muted">
-                                        Recommended size: 1200x400px. Max size: 5MB
-                                    </p>
-                                </div>
-                                @error('banner_image')
+                                <label class="form-label">Sort Order</label>
+                                <input type="number" name="sort_order" class="form-control @error('sort_order') is-invalid @enderror" 
+                                       placeholder="{{ $nextModuleNumber * 10 }}" value="{{ old('sort_order', $nextModuleNumber * 10) }}">
+                                <p class="text-sm mt-1 mb-0 text-muted">Lower numbers appear first</p>
+                                @error('sort_order')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -130,445 +129,198 @@
                     </div>
                 </div>
 
-                <!-- Video Upload Section -->
+                <!-- Learning Objectives -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Course Video</h6>
+                        <h6 class="card-title mb-0">Learning Objectives</h6>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
-                            <strong>Upload Limits:</strong>
-                            <ul class="mb-0 mt-2">
-                                <li>Maximum video size: 20MB</li>
-                                <li>Allowed formats: MP4, MOV, AVI, WMV, MKV</li>
-                                <li>Server limit: {{ ini_get('upload_max_filesize') }}</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="row gy-3">
-                            <div class="col-12">
-                                <label class="form-label">Video Type</label>
-                                <select name="video_type" class="form-select @error('video_type') is-invalid @enderror" id="videoTypeSelect">
-                                    <option value="none" {{ old('video_type') == 'none' ? 'selected' : '' }}>No Video</option>
-                                    <option value="upload" {{ old('video_type') == 'upload' ? 'selected' : '' }}>Upload Video</option>
-                                    <option value="youtube" {{ old('video_type') == 'youtube' ? 'selected' : '' }}>YouTube Video</option>
-                                    <option value="vimeo" {{ old('video_type') == 'vimeo' ? 'selected' : '' }}>Vimeo Video</option>
-                                </select>
-                                @error('video_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Upload Video Field -->
-                            <div class="col-12 video-upload-field" style="display: {{ old('video_type') == 'upload' ? 'block' : 'none' }};">
-                                <label class="form-label">Upload Video File</label>
-                                <input class="form-control @error('video') is-invalid @enderror" 
-                                    type="file" name="video" id="videoFileInput" accept="video/mp4,video/mov,video/avi,video/wmv,video/mkv">
-                                <p class="text-sm mt-1 mb-0 text-muted">
-                                    Supported formats: MP4, MOV, AVI, WMV, MKV. Max size: 20MB
-                                </p>
-                                @error('video')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- YouTube/Vimeo URL Field -->
-                            <div class="col-12 video-url-field" style="display: {{ in_array(old('video_type'), ['youtube', 'vimeo']) ? 'block' : 'none' }};">
-                                <label class="form-label">Video URL</label>
-                                <input type="url" name="video_url" id="videoUrlInput" class="form-control @error('video_url') is-invalid @enderror" 
-                                    placeholder="https://www.youtube.com/watch?v=..." value="{{ old('video_url') }}">
-                                <p class="text-sm mt-1 mb-0 text-muted" id="videoUrlHelp">
-                                    Enter the full YouTube or Vimeo video URL
-                                </p>
-                                @error('video_url')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Video Preview -->
-                            <div class="col-12">
-                                <div id="videoPreview" class="mt-3" style="display: none;">
-                                    <div class="video-preview-container">
-                                        <div id="videoPlayer"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Course Details -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Course Details</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Level <span class="text-danger">*</span></label>
-                                <select name="level" class="form-select @error('level') is-invalid @enderror" required>
-                                    <option value="beginner" {{ old('level') == 'beginner' ? 'selected' : '' }}>Beginner</option>
-                                    <option value="intermediate" {{ old('level') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
-                                    <option value="advanced" {{ old('level') == 'advanced' ? 'selected' : '' }}>Advanced</option>
-                                    <option value="expert" {{ old('level') == 'expert' ? 'selected' : '' }}>Expert</option>
-                                </select>
-                                @error('level')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Format <span class="text-danger">*</span></label>
-                                <select name="format" class="form-select @error('format') is-invalid @enderror" required>
-                                    <option value="self_paced" {{ old('format') == 'self_paced' ? 'selected' : '' }}>Self-Paced</option>
-                                    <option value="instructor_led" {{ old('format') == 'instructor_led' ? 'selected' : '' }}>Instructor-Led</option>
-                                    <option value="hybrid" {{ old('format') == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
-                                </select>
-                                @error('format')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Duration <span class="text-danger">*</span></label>
-                                <input type="text" name="duration" class="form-control @error('duration') is-invalid @enderror" 
-                                       placeholder="e.g., 6 weeks, 40 hours" value="{{ old('duration') }}" required>
-                                @error('duration')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Total Modules <span class="text-danger">*</span></label>
-                                <input type="number" name="total_modules" id="totalModules" class="form-control @error('total_modules') is-invalid @enderror" 
-                                       placeholder="10" value="{{ old('total_modules') }}" min="1" required>
-                                @error('total_modules')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Total Hours <span class="text-danger">*</span></label>
-                                <input type="number" name="total_hours" id="totalHours" class="form-control @error('total_hours') is-invalid @enderror" 
-                                       placeholder="40" value="{{ old('total_hours') }}" min="1" required>
-                                @error('total_hours')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Certification Name <span class="text-danger">*</span></label>
-                                <input type="text" name="certification_name" class="form-control @error('certification_name') is-invalid @enderror" 
-                                       placeholder="e.g., Certified GRC & Financial Crime Specialist" value="{{ old('certification_name') }}" required>
-                                @error('certification_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Certifying Body <span class="text-danger">*</span></label>
-                                <input type="text" name="certifying_body" class="form-control @error('certifying_body') is-invalid @enderror" 
-                                       placeholder="e.g., Institute of GRC and Financial Crime Prevention (IGRCFP)" value="{{ old('certifying_body') }}" required>
-                                @error('certifying_body')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pricing Information -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Pricing Information</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Regular Price ($)</label>
-                                <input type="number" name="price" id="priceInput" class="form-control @error('price') is-invalid @enderror" 
-                                       placeholder="0.00" value="{{ old('price') }}" step="0.01" min="0">
-                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for free courses</p>
-                                @error('price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Discount Price ($)</label>
-                                <input type="number" name="discount_price" id="discountPrice" class="form-control @error('discount_price') is-invalid @enderror" 
-                                       placeholder="0.00" value="{{ old('discount_price') }}" step="0.01" min="0">
-                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for no discount</p>
-                                @error('discount_price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed Course Information -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Detailed Course Information</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-12">
-                                <label class="form-label">Programme Overview</label>
-                                <textarea name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
-                                          placeholder="Detailed programme overview...">{{ old('programme_overview', 'The Certified GRC & Financial Crime Specialist (CGFCS) is a professional certification designed to equip practitioners with deep, practical, and strategic knowledge across Governance, Risk, Compliance (GRC) and Financial Crime Prevention.') }}</textarea>
-                                @error('programme_overview')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                           <div class="col-12">
-                                <label class="form-label">Programme Architecture</label>
-                                <textarea 
-                                    id="editor1"
-                                    name="programme_architecture"
-                                    class="form-control @error('programme_architecture') is-invalid @enderror"
-                                    rows="6"
-                                    placeholder="Describe the programme tiers and structure..."
-                                ></textarea>
-
-                                @error('programme_architecture')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
-                                          placeholder="By the end of this course, participants will be able to:
-                                - Design and manage GRC frameworks
-                                - Identify and assess enterprise and financial crime risks
-                                - Implement compliance and AML programmes" required></textarea>
-                                @error('learning_outcomes')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
-                                          placeholder="Compliance Officers
-                                Risk Managers
-                                Fraud & Financial Crime Analysts" required></textarea>
-                                @error('target_audience')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Prerequisites</label>
-                                <textarea name="prerequisites" class="form-control @error('prerequisites') is-invalid @enderror" 
-                                          rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites') }}</textarea>
-                                @error('prerequisites')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
-                                          placeholder="Graduates may work as:
-                                    - Compliance Officer
-                                    - Risk Manager
-                                    - AML Analyst"></textarea>
-                                @error('career_pathways')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
-                                          placeholder="Module quizzes
-                                    Practical assignments
-                                    Final examination"></textarea>
-                                @error('assessment_structure')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-12">
-                                <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
-                                          placeholder="CGFCS holders must:
-                                            - Act with integrity
-                                            - Maintain confidentiality"></textarea>
-                                @error('code_of_conduct')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bulk Modules Upload -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Course Modules (Bulk Upload)</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
-                            <strong>Format Instructions:</strong>
-                            <ul class="mb-0 mt-2">
-                                <li>Use the format: "Module X: Title" on a new line</li>
-                                <li>Follow with module description</li>
-                                <li>Add sections like "Objectives:", "Topics:", "Case Study:", "Exercise:"</li>
-                                <li>Separate modules with a blank line</li>
-                            </ul>
-                        </div>
-                        
                         <div class="mb-3">
-                            <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea id='editor2' name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20"> 
+                            <label class="form-label">What will students learn in this module?</label>
+                            <textarea name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
+                                      rows="5" placeholder="List the learning objectives (one per line or bullet points)">
+                                {{ old('learning_objectives', 'By the end of this module, participants will be able to:
+• Understand GRC concepts and history
+• Explain the purpose of governance
+• Define risk and compliance roles
+• Identify key stakeholders in GRC
+• Apply integrated GRC principles') }}
                             </textarea>
-                            @error('bulk_modules')
+                            @error('learning_objectives')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+                    </div>
+                </div>
+
+                <!-- Topics Covered -->
+                <div class="card mt-24">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Topics Covered</h6>
+                    </div>
+                    <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label">Or Upload Document</label>
-                            <input type="file" name="document" class="form-control" accept=".txt,.doc,.docx,.pdf">
-                            <small class="text-muted">Supported formats: TXT, DOC, DOCX, PDF (Max: 10MB)</small>
-                        </div>
-                        
-                        <div class="form-text">
-                            <strong>Quick Format Tips:</strong>
-                            <div class="d-flex flex-wrap gap-2 mt-2">
-                                <span class="badge bg-light text-dark">Module X: Title</span>
-                                <span class="badge bg-light text-dark">Objectives:</span>
-                                <span class="badge bg-light text-dark">Topics:</span>
-                                <span class="badge bg-light text-dark">Case Study:</span>
-                                <span class="badge bg-light text-dark">Exercise:</span>
-                            </div>
+                            <label class="form-label">What topics will be covered in this module?</label>
+                            <textarea name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
+                                      rows="5" placeholder="List the topics that will be covered">
+                                {{ old('topics_covered', '• Evolution of GRC
+• Integrated GRC model
+• Stakeholder theory
+• Role of boards and executives
+• Governance structures and processes
+• Risk management frameworks
+• Compliance requirements') }}
+                            </textarea>
+                            @error('topics_covered')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- Course Materials Upload -->
+                <!-- Key Concepts -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Course Materials</h6>
+                        <h6 class="card-title mb-0">Key Concepts</h6>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label">Upload Materials</label>
-                            <input type="file" name="materials[]" class="form-control" multiple 
-                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar">
-                            <small class="text-muted">Supported formats: PDF, DOC, DOCX, PPT, XLS, TXT, ZIP, RAR (Max: 10MB each)</small>
-                        </div>
-                        
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Material Type</label>
-                                <select name="material_type" class="form-select">
-                                    <option value="manual">Course Manual</option>
-                                    <option value="presentation">Presentation</option>
-                                    <option value="worksheet">Worksheet</option>
-                                    <option value="template">Template</option>
-                                    <option value="reference">Reference Material</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="form-check mt-4 pt-2">
-                                    <input class="form-check-input" type="checkbox" name="is_downloadable" id="is_downloadable" value="1" checked>
-                                    <label class="form-check-label" for="is_downloadable">
-                                        Allow students to download
-                                    </label>
-                                </div>
-                            </div>
+                            <label class="form-label">What are the key concepts in this module?</label>
+                            <textarea name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
+                                      rows="5" placeholder="List the key concepts students should understand">
+                                {{ old('key_concepts', '• Governance: direction, accountability, oversight
+• Risk: uncertainty affecting objectives
+• Compliance: adherence to laws, rules, standards
+• Integrated GRC: alignment of governance, risk, and compliance
+• Stakeholder management: identifying and engaging key stakeholders') }}
+                            </textarea>
+                            @error('key_concepts')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- SEO Settings -->
+                <!-- Case Study -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">SEO Settings</h6>
+                        <h6 class="card-title mb-0">Case Study</h6>
                     </div>
                     <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-12">
-                                <label class="form-label">Meta Description</label>
-                                <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description for search engines (max 160 characters)" maxlength="160">{{ old('meta_description') }}</textarea>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">Recommended: 150-160 characters</small>
-                                    <small class="character-count" data-target="meta_description">0/160</small>
-                                </div>
-                                @error('meta_description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Real-world case study for this module</label>
+                            <textarea name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
+                                      rows="5" placeholder="Provide a relevant case study">
+                                {{ old('case_study', 'Case Study: A multinational bank fails due to weak board oversight
 
-                            <div class="col-12">
-                                <label class="form-label">Meta Keywords</label>
-                                <input type="text" name="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
-                                    value="{{ old('meta_keywords', 'grc certification, financial crime prevention, compliance training, risk management, aml certification, fraud prevention, corporate governance, regulatory compliance') }}">
-                                <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
-                                @error('meta_keywords')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+A major international bank experienced a catastrophic failure due to inadequate governance structures. The board failed to exercise proper oversight, leading to risky investments and regulatory violations.
+
+Key Issues:
+1. Lack of independent directors on the board
+2. Insufficient risk management oversight
+3. Failure to monitor compliance with regulations
+4. Poor communication between board and management
+5. Inadequate whistleblower protection
+
+Students will analyze this case to identify where governance failed and propose solutions to prevent similar failures in the future.') }}
+                            </textarea>
+                            @error('case_study')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercise -->
+                <div class="card mt-24">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Practical Exercise</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Practical exercise for students</label>
+                            <textarea name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
+                                      rows="5" placeholder="Design a practical exercise for this module">
+                                {{ old('exercise', 'Exercise: Map GRC Responsibilities in Your Organization
+
+Instructions:
+1. Identify your organization (or use a hypothetical organization)
+2. Create a matrix showing GRC responsibilities for:
+   - Board of Directors
+   - Executive Management
+   - Risk Management Function
+   - Compliance Function
+   - Internal Audit
+   - Line Managers
+   - Individual Employees
+
+3. For each role, specify:
+   - Key GRC responsibilities
+   - Accountability measures
+   - Reporting relationships
+   - Performance indicators
+
+4. Analyze gaps or overlaps in responsibilities
+5. Propose improvements to the GRC structure
+
+Submit your completed matrix and analysis (500-800 words).') }}
+                            </textarea>
+                            @error('exercise')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="card mt-24">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Additional Notes</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Any additional notes or instructions</label>
+                            <textarea name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
+                                      rows="5" placeholder="Additional information for instructors or students">
+                                {{ old('additional_notes', 'Instructor Notes:
+• Recommended reading: "Enterprise Governance, Risk, and Compliance" by Anthony Tarantino
+• Duration: 2-3 hours for content delivery, 1-2 hours for exercises
+• Key discussion points: The evolution from siloed approaches to integrated GRC
+• Common misconceptions: Risk as purely negative, compliance as only rule-following
+
+Student Preparation:
+• Review basic business organization structures
+• Familiarize with common governance frameworks (COSO, ISO)
+• Bring examples from their own work experience
+
+Assessment:
+• Participation in case study discussion: 30%
+• Completion of exercise: 50%
+• Module quiz: 20%') }}
+                            </textarea>
+                            @error('additional_notes')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4">
-                <!-- Course Settings -->
+                <!-- Module Settings -->
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Course Settings</h6>
+                        <h6 class="card-title mb-0">Module Settings</h6>
                     </div>
                     <div class="card-body">
                         <div class="row gy-3">
                             <div class="col-12">
-                                <label class="form-label">Status <span class="text-danger">*</span></label>
-                                <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
-                                    <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archived</option>
-                                </select>
-                                @error('status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label">Sort Order</label>
-                                <input type="number" name="sort_order" class="form-control @error('sort_order') is-invalid @enderror" 
-                                       placeholder="0" value="{{ old('sort_order', 0) }}">
-                                <p class="text-sm mt-1 mb-0 text-muted">Lower numbers appear first</p>
-                                @error('sort_order')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="is_featured">
-                                        Feature this course
+                                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_active">
+                                        Active Module
                                     </label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="is_popular" id="is_popular" value="1" {{ old('is_popular') ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="is_popular">
-                                        Mark as popular course
-                                    </label>
+                                    <p class="text-sm text-muted mb-0">Inactive modules are hidden from students</p>
                                 </div>
                             </div>
 
@@ -577,9 +329,9 @@
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
                                             <iconify-icon icon="mdi:content-save" class="icon"></iconify-icon>
-                                            Create Course
+                                            Create Module
                                         </button>
-                                        <a href="{{ route('admin.courses.index') }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
                                             Cancel
                                         </a>
                                     </div>
@@ -589,35 +341,39 @@
                     </div>
                 </div>
 
-                <!-- Image Preview -->
+                <!-- Course Information -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Image Previews</h6>
+                        <h6 class="card-title mb-0">Course Information</h6>
                     </div>
                     <div class="card-body">
-                        <div class="text-center">
-                            <h6 class="mb-3">Course Image</h6>
-                            <div id="imagePreview" class="mb-3" style="display: none;">
-                                <img id="previewImage" src="#" alt="Course image preview" 
-                                     class="img-fluid rounded-8 border" style="max-height: 150px;">
-                            </div>
-                            <div id="noImagePlaceholder" class="text-muted py-2">
-                                <iconify-icon icon="mdi:image-outline" class="icon-2x mb-2"></iconify-icon>
-                                <p class="mb-0 small">No image selected</p>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            @if($course->image)
+                                <img src="{{ asset($course->image) }}" alt="{{ $course->title }}" 
+                                     class="rounded-8" style="width: 40px; height: 40px; object-fit: cover;">
+                            @endif
+                            <div>
+                                <h6 class="mb-0">{{ Str::limit($course->title, 30) }}</h6>
+                                <small class="text-muted">{{ $course->code }}</small>
                             </div>
                         </div>
                         
-                        <hr class="my-3">
-                        
-                        <div class="text-center">
-                            <h6 class="mb-3">Banner Image</h6>
-                            <div id="bannerImagePreview" class="mb-3" style="display: none;">
-                                <img id="previewBannerImage" src="#" alt="Banner image preview" 
-                                     class="img-fluid rounded-8 border" style="max-height: 100px;">
+                        <div class="d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Total Modules:</span>
+                                <span class="fw-medium">{{ $course->modules->count() }}</span>
                             </div>
-                            <div id="noBannerImagePlaceholder" class="text-muted py-2">
-                                <iconify-icon icon="mdi:image-outline" class="icon-2x mb-2"></iconify-icon>
-                                <p class="mb-0 small">No banner selected</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Level:</span>
+                                <span class="fw-medium">{{ ucfirst($course->level) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Format:</span>
+                                <span class="fw-medium">{{ ucfirst(str_replace('_', ' ', $course->format)) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Duration:</span>
+                                <span class="fw-medium">{{ $course->duration }}</span>
                             </div>
                         </div>
                     </div>
@@ -631,10 +387,10 @@
                     <div class="card-body">
                         <div class="text-center">
                             <div class="mb-3">
-                                <iconify-icon icon="mdi:book-education" class="icon-3x text-primary"></iconify-icon>
+                                <iconify-icon icon="mdi:book-open-page-variant" class="icon-3x text-primary"></iconify-icon>
                             </div>
-                            <h6 id="moduleCountPreview">Total Modules: 10</h6>
-                            <p class="text-sm text-muted mb-0">Modules will be created from the bulk upload</p>
+                            <h6 id="previewModuleNumber">Module {{ $nextModuleNumber }}</h6>
+                            <p class="text-sm text-muted mb-0" id="previewEstimatedHours">2 hours</p>
                         </div>
                     </div>
                 </div>
@@ -648,55 +404,47 @@
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Pre-filled with CGFCS content - modify as needed</small>
+                                <small class="text-muted">Keep learning objectives clear and measurable</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">All 10 modules are pre-loaded in the correct format</small>
+                                <small class="text-muted">Use real-world case studies for better engagement</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Upload course manual PDF in the materials section</small>
+                                <small class="text-muted">Include practical exercises to reinforce learning</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Review module content before creating the course</small>
+                                <small class="text-muted">2-4 hours per module is ideal for online learning</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Set to "Draft" first, then publish when ready</small>
+                                <small class="text-muted">Pre-filled with sample content - modify as needed</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Progress Stats -->
+                <!-- Module Templates -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <h6 class="card-title mb-0">Course Stats</h6>
+                        <h6 class="card-title mb-0">Quick Templates</h6>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex flex-column gap-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Modules:</span>
-                                <span class="fw-medium" id="statsModules">10</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Total Hours:</span>
-                                <span class="fw-medium" id="statsHours">40</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Level:</span>
-                                <span class="fw-medium" id="statsLevel">Expert</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Format:</span>
-                                <span class="fw-medium" id="statsFormat">Self-Paced</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Certification:</span>
-                                <span class="fw-medium">CGFCS</span>
-                            </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadTemplate('foundations')">
+                                Foundations Module
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadTemplate('technical')">
+                                Technical Module
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="loadTemplate('case_study')">
+                                Case Study Module
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="loadTemplate('practical')">
+                                Practical Module
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -708,159 +456,36 @@
 
 @push('styles')
 <style>
-    .file-upload-container {
-        position: relative;
-    }
-    .character-count {
-        font-size: 0.75rem;
-        color: #6c757d;
-    }
-    #imagePreview, #bannerImagePreview {
-        transition: all 0.3s ease;
-    }
-    .video-preview-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-        height: 0;
-        overflow: hidden;
-        border-radius: 8px;
-        background: #f8f9fa;
-    }
-
-    .video-preview-container iframe,
-    .video-preview-container video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-
-    .current-video video {
-        max-height: 200px;
-        width: 100%;
-        object-fit: contain;
-        background: #000;
-    }
-
-    .invalid-feedback {
-        display: block;
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.875em;
-        color: #dc3545;
-    }
-
-    .form-control.is-invalid, .form-select.is-invalid {
-        border-color: #dc3545;
-        padding-right: calc(1.5em + 0.75rem);
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right calc(0.375em + 0.1875rem) center;
-        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-    }
-    
-    textarea.form-control {
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-    
-    #bulkModulesPreview {
-        max-height: 400px;
-        overflow-y: auto;
-    }
+.character-count {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+.icon-3x {
+    font-size: 3rem;
+}
 </style>
 @endpush
 
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Document loaded - initializing course form');
-
-     // Initialize CKEditor 5
-    ClassicEditor
-    .create(document.querySelector('#editor1'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor2'))
-    .catch(error => { console.error(error); });
-   
-
-
-    
-    // Image preview functionality
-    const imageInput = document.getElementById('imageInput');
-    const bannerImageInput = document.getElementById('bannerImageInput');
-    const imagePreview = document.getElementById('imagePreview');
-    const bannerImagePreview = document.getElementById('bannerImagePreview');
-    const previewImage = document.getElementById('previewImage');
-    const previewBannerImage = document.getElementById('previewBannerImage');
-    const noImagePlaceholder = document.getElementById('noImagePlaceholder');
-    const noBannerImagePlaceholder = document.getElementById('noBannerImagePlaceholder');
-
-    // Handle course image preview
-    if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            console.log('Course image input changed');
-            handleImagePreview(this, previewImage, imagePreview, noImagePlaceholder, 2);
-        });
-    }
-
-    // Handle banner image preview
-    if (bannerImageInput) {
-        bannerImageInput.addEventListener('change', function(e) {
-            console.log('Banner image input changed');
-            handleImagePreview(this, previewBannerImage, bannerImagePreview, noBannerImagePlaceholder, 5);
-        });
-    }
-
-    // Generic image preview handler
-    function handleImagePreview(input, previewElement, previewContainer, placeholder, maxSizeMB) {
-        const file = input.files[0];
-        if (file) {
-            // Validate file size
-            if (file.size > maxSizeMB * 1024 * 1024) {
-                alert(`Image size should be less than ${maxSizeMB}MB`);
-                input.value = '';
-                return;
-            }
-            
-            // Validate file type
-            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                alert('Please select a valid image file (JPG, PNG, GIF, WEBP)');
-                input.value = '';
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewElement.src = e.target.result;
-                previewContainer.style.display = 'block';
-                placeholder.style.display = 'none';
-            }
-            reader.onerror = function() {
-                alert('Error reading the image file');
-                previewContainer.style.display = 'none';
-                placeholder.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        } else {
-            previewContainer.style.display = 'none';
-            placeholder.style.display = 'block';
-        }
-    }
-
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
         const counter = document.querySelector(counterSelector);
         
         if (textarea && counter) {
-            const maxLength = textarea.getAttribute('maxlength') || 160;
+            const maxLength = textarea.getAttribute('maxlength') || 500;
             
             function updateCount() {
                 const length = textarea.value.length;
@@ -880,380 +505,139 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Set up character counters
+    // Set up character counter
     setupCharacterCount('textarea[name="short_description"]', '.character-count[data-target="short_description"]');
-    setupCharacterCount('#metaDescription', '.character-count[data-target="meta_description"]');
 
-    // Update stats in real-time
-    const totalModulesInput = document.getElementById('totalModules');
-    const totalHoursInput = document.getElementById('totalHours');
-    const levelSelect = document.querySelector('select[name="level"]');
-    const formatSelect = document.querySelector('select[name="format"]');
-    const moduleCountPreview = document.getElementById('moduleCountPreview');
-    const statsModules = document.getElementById('statsModules');
-    const statsHours = document.getElementById('statsHours');
-    const statsLevel = document.getElementById('statsLevel');
-    const statsFormat = document.getElementById('statsFormat');
+    // Update preview in real-time
+    const moduleNumberInput = document.querySelector('input[name="module_number"]');
+    const estimatedHoursInput = document.querySelector('input[name="estimated_hours"]');
+    const moduleTitleInput = document.querySelector('input[name="title"]');
+    const previewModuleNumber = document.getElementById('previewModuleNumber');
+    const previewEstimatedHours = document.getElementById('previewEstimatedHours');
 
-    function updateStats() {
-        const modules = parseInt(totalModulesInput.value) || 10;
-        const hours = parseInt(totalHoursInput.value) || 40;
-        const level = levelSelect ? levelSelect.options[levelSelect.selectedIndex].text : 'Expert';
-        const format = formatSelect ? formatSelect.options[formatSelect.selectedIndex].text : 'Self-Paced';
+    function updatePreview() {
+        const moduleNumber = moduleNumberInput ? moduleNumberInput.value : {{ $nextModuleNumber }};
+        const estimatedHours = estimatedHoursInput ? estimatedHoursInput.value : 2;
         
-        if (moduleCountPreview) {
-            moduleCountPreview.textContent = `Total Modules: ${modules}`;
+        if (previewModuleNumber) {
+            previewModuleNumber.textContent = `Module ${moduleNumber}`;
         }
-        if (statsModules) {
-            statsModules.textContent = modules;
-        }
-        if (statsHours) {
-            statsHours.textContent = hours;
-        }
-        if (statsLevel) {
-            statsLevel.textContent = level;
-        }
-        if (statsFormat) {
-            statsFormat.textContent = format;
+        if (previewEstimatedHours) {
+            previewEstimatedHours.textContent = `${estimatedHours} hour${estimatedHours > 1 ? 's' : ''}`;
         }
     }
 
-    if (totalModulesInput) totalModulesInput.addEventListener('input', updateStats);
-    if (totalHoursInput) totalHoursInput.addEventListener('input', updateStats);
-    if (levelSelect) levelSelect.addEventListener('change', updateStats);
-    if (formatSelect) formatSelect.addEventListener('change', updateStats);
-    updateStats(); // Initial update
-
-    // Price validation
-    const priceInput = document.getElementById('priceInput');
-    const discountInput = document.getElementById('discountPrice');
-
-    if (priceInput && discountInput) {
-        discountInput.addEventListener('input', function() {
-            const price = parseFloat(priceInput.value) || 0;
-            const discount = parseFloat(this.value) || 0;
-            
-            if (discount > price) {
-                this.setCustomValidity('Discount price cannot be higher than regular price');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    }
-
-    // VIDEO FUNCTIONALITY
-    const videoTypeSelect = document.getElementById('videoTypeSelect');
-    const videoUploadField = document.querySelector('.video-upload-field');
-    const videoUrlField = document.querySelector('.video-url-field');
-    const videoUrlHelp = document.getElementById('videoUrlHelp');
-    const videoPreview = document.getElementById('videoPreview');
-    const videoPlayer = document.getElementById('videoPlayer');
-    const videoFileInput = document.getElementById('videoFileInput');
-    const videoUrlInput = document.getElementById('videoUrlInput');
-
-    console.log('Video elements:', {
-        videoTypeSelect: !!videoTypeSelect,
-        videoUploadField: !!videoUploadField,
-        videoUrlField: !!videoUrlField,
-        videoPreview: !!videoPreview,
-        videoPlayer: !!videoPlayer,
-        videoFileInput: !!videoFileInput,
-        videoUrlInput: !!videoUrlInput
-    });
-
-    // Function to show/hide video fields based on selection
-    function updateVideoFields() {
-        if (!videoTypeSelect) return;
-        
-        const selectedType = videoTypeSelect.value;
-        console.log('Video type selected:', selectedType);
-        
-        // Always hide both fields first
-        if (videoUploadField) videoUploadField.style.display = 'none';
-        if (videoUrlField) videoUrlField.style.display = 'none';
-        if (videoPreview) videoPreview.style.display = 'none';
-        if (videoPlayer) videoPlayer.innerHTML = '';
-        
-        // Show appropriate field based on selection
-        if (selectedType === 'upload') {
-            if (videoUploadField) {
-                videoUploadField.style.display = 'block';
-                console.log('Showing upload field');
-            }
-        } else if (selectedType === 'youtube' || selectedType === 'vimeo') {
-            if (videoUrlField) {
-                videoUrlField.style.display = 'block';
-                console.log('Showing URL field');
-            }
-            
-            // Update help text
-            if (videoUrlHelp) {
-                if (selectedType === 'youtube') {
-                    videoUrlHelp.textContent = 'Enter the full YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)';
-                } else {
-                    videoUrlHelp.textContent = 'Enter the full Vimeo video URL (e.g., https://vimeo.com/VIDEO_ID)';
-                }
-            }
-        }
-    }
-
-    // Initialize video fields on page load
-    updateVideoFields();
-
-    // Handle video type change
-    if (videoTypeSelect) {
-        videoTypeSelect.addEventListener('change', function() {
-            console.log('Video type changed to:', this.value);
-            updateVideoFields();
-            
-            // Clear any existing preview
-            if (videoPlayer) {
-                videoPlayer.innerHTML = '';
-            }
-        });
-    }
-
-    // Handle video URL input for YouTube/Vimeo
-    if (videoUrlInput) {
-        videoUrlInput.addEventListener('input', function() {
-            const url = this.value.trim();
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            
-            if (!url || videoType === 'none' || videoType === 'upload') {
-                if (videoPlayer) videoPlayer.innerHTML = '';
-                if (videoPreview) videoPreview.style.display = 'none';
-                return;
-            }
-            
-            // Wait a bit before processing to avoid too many updates
-            setTimeout(() => {
-                updateVideoPreview(url, videoType);
-            }, 500);
-        });
-        
-        // Also handle blur event for immediate update
-        videoUrlInput.addEventListener('blur', function() {
-            const url = this.value.trim();
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            
-            if (url && (videoType === 'youtube' || videoType === 'vimeo')) {
-                updateVideoPreview(url, videoType);
-            }
-        });
-    }
-
-    // Handle video file input
-    if (videoFileInput) {
-        videoFileInput.addEventListener('change', function(e) {
-            console.log('Video file selected');
-            const file = e.target.files[0];
-            
-            if (!file) {
-                if (videoPlayer) videoPlayer.innerHTML = '';
-                if (videoPreview) videoPreview.style.display = 'none';
-                return;
-            }
-            
-            // Show file info
-            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-            console.log(`File: ${file.name}, Size: ${fileSizeMB}MB, Type: ${file.type}`);
-            
-            // Validate file size (20MB max)
-            if (file.size > 20 * 1024 * 1024) {
-                alert(`File is too large (${fileSizeMB}MB). Maximum size is 20MB.`);
-                this.value = '';
-                return;
-            }
-            
-            // Validate file type
-            const validTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv', 'video/x-matroska'];
-            if (!validTypes.includes(file.type)) {
-                alert('Please select a valid video file (MP4, MOV, AVI, WMV, MKV)');
-                this.value = '';
-                return;
-            }
-            
-            // Show preview
-            try {
-                const url = URL.createObjectURL(file);
-                if (videoPlayer) {
-                    videoPlayer.innerHTML = `
-                        <div class="text-center p-3">
-                            <div class="mb-2">
-                                <iconify-icon icon="mdi:video" class="icon-2x text-primary"></iconify-icon>
-                            </div>
-                            <div class="mb-2">
-                                <strong>${file.name}</strong>
-                            </div>
-                            <div class="text-muted small mb-3">
-                                ${fileSizeMB} MB • ${file.type}
-                            </div>
-                            <video controls style="width: 100%; max-height: 200px; border-radius: 8px;">
-                                <source src="${url}" type="${file.type}">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    `;
-                }
-                
-                if (videoPreview) {
-                    videoPreview.style.display = 'block';
-                }
-                
-                console.log('Video preview created successfully');
-                
-            } catch (error) {
-                console.error('Error creating preview:', error);
-                alert('Error previewing video. Please try a different file.');
-                this.value = '';
-            }
-        });
-    }
-
-    // Function to update video preview
-    function updateVideoPreview(url, videoType) {
-        if (!videoPlayer) return;
-        
-        let embedUrl = null;
-        
-        if (videoType === 'youtube') {
-            const videoId = extractYouTubeId(url);
-            if (videoId) {
-                embedUrl = `https://www.youtube.com/embed/${videoId}`;
-            }
-        } else if (videoType === 'vimeo') {
-            const videoId = extractVimeoId(url);
-            if (videoId) {
-                embedUrl = `https://player.vimeo.com/video/${videoId}`;
-            }
-        }
-        
-        if (embedUrl) {
-            videoPlayer.innerHTML = `
-                <iframe src="${embedUrl}" 
-                        width="100%" 
-                        height="100%" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen 
-                        style="border-radius: 8px;">
-                </iframe>
-            `;
-            
-            // Show preview container
-            if (videoPreview) {
-                videoPreview.style.display = 'block';
-            }
-            
-            console.log('Video preview updated:', embedUrl);
-        } else {
-            videoPlayer.innerHTML = '<p class="text-center text-muted py-4">Enter a valid video URL to see preview</p>';
-            if (videoPreview) {
-                videoPreview.style.display = 'block';
-            }
-        }
-    }
-
-    // Helper functions to extract video IDs
-    function extractYouTubeId(url) {
-        // Handle various YouTube URL formats
-        const patterns = [
-            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?\/]+)/,
-            /youtube\.com\/.*[?&]v=([^&]+)/,
-            /youtu\.be\/([^?]+)/
-        ];
-        
-        for (const pattern of patterns) {
-            const match = url.match(pattern);
-            if (match && match[1]) {
-                return match[1];
-            }
-        }
-        return null;
-    }
-
-    function extractVimeoId(url) {
-        const pattern = /vimeo\.com\/(?:video\/)?(\d+)/;
-        const match = url.match(pattern);
-        return match ? match[1] : null;
-    }
+    if (moduleNumberInput) moduleNumberInput.addEventListener('input', updatePreview);
+    if (estimatedHoursInput) estimatedHoursInput.addEventListener('input', updatePreview);
+    updatePreview(); // Initial update
 
     // Form validation
-    const courseForm = document.getElementById('courseForm');
-    if (courseForm) {
-        courseForm.addEventListener('submit', function(e) {
-            console.log('Form submitted');
-            
+    const moduleForm = document.getElementById('moduleForm');
+    if (moduleForm) {
+        moduleForm.addEventListener('submit', function(e) {
             // Clear previous custom validity messages
             const inputs = this.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.setCustomValidity('');
             });
 
-            // Validate discount price
-            if (discountInput && priceInput) {
-                const price = parseFloat(priceInput.value) || 0;
-                const discount = parseFloat(discountInput.value) || 0;
-                if (discount > price) {
-                    discountInput.setCustomValidity('Discount price cannot be higher than regular price');
+            // Validate estimated hours
+            if (estimatedHoursInput) {
+                const hours = parseInt(estimatedHoursInput.value) || 0;
+                if (hours < 1 || hours > 100) {
+                    estimatedHoursInput.setCustomValidity('Estimated hours must be between 1 and 100');
                     e.preventDefault();
-                    discountInput.reportValidity();
+                    estimatedHoursInput.reportValidity();
                     return;
                 }
             }
 
-            // Validate video fields
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            if (videoType === 'youtube' || videoType === 'vimeo') {
-                if (!videoUrlInput || !videoUrlInput.value.trim()) {
-                    e.preventDefault();
-                    alert('Please enter a video URL for the selected video type');
-                    if (videoUrlInput) videoUrlInput.focus();
-                    return;
-                }
-            }
-            
-            // Validate bulk modules
-            const bulkModulesTextarea = document.querySelector('textarea[name="bulk_modules"]');
-            if (bulkModulesTextarea && !bulkModulesTextarea.value.trim()) {
-                e.preventDefault();
-                alert('Please enter module content in the bulk modules section');
-                bulkModulesTextarea.focus();
-                return;
-            }
-            
             // Confirm before submitting
-            if (!confirm('Are you sure you want to create this course? This will create all modules from the bulk content.')) {
+            if (!confirm('Are you sure you want to create this module?')) {
                 e.preventDefault();
                 return;
             }
-            
-            console.log('Form validation passed');
         });
     }
 
-    // Module preview count
-    function updateModuleCount() {
-        const bulkModulesTextarea = document.querySelector('textarea[name="bulk_modules"]');
-        if (bulkModulesTextarea) {
-            bulkModulesTextarea.addEventListener('input', function() {
-                const content = this.value;
-                const moduleCount = (content.match(/Module\s+\d+:/gi) || []).length;
-                if (moduleCount > 0) {
-                    document.getElementById('moduleCountPreview').textContent = `Total Modules: ${moduleCount}`;
-                    document.getElementById('statsModules').textContent = moduleCount;
-                    document.getElementById('totalModules').value = moduleCount;
-                }
-            });
+    // Template loading functionality
+    window.loadTemplate = function(templateType) {
+        if (!confirm('Load template? This will replace current content in some fields.')) {
+            return;
         }
-    }
-    
-    updateModuleCount();
 
-    console.log('All event listeners attached');
+        const templates = {
+            foundations: {
+                title: 'Foundations of Governance, Risk and Compliance',
+                short_description: 'This module introduces the core concepts of Governance, Risk, and Compliance (GRC) as an integrated framework for organizational success.',
+                learning_objectives: 'By the end of this module, participants will be able to:\n• Understand GRC concepts and history\n• Explain the purpose of governance\n• Define risk and compliance roles\n• Identify key stakeholders in GRC\n• Apply integrated GRC principles',
+                topics_covered: '• Evolution of GRC\n• Integrated GRC model\n• Stakeholder theory\n• Role of boards and executives\n• Governance structures and processes\n• Risk management frameworks\n• Compliance requirements',
+                key_concepts: '• Governance: direction, accountability, oversight\n• Risk: uncertainty affecting objectives\n• Compliance: adherence to laws, rules, standards\n• Integrated GRC: alignment of governance, risk, and compliance\n• Stakeholder management',
+                case_study: 'Case Study: A multinational bank fails due to weak board oversight\n\nAnalyze where governance failed and propose solutions to prevent similar failures.',
+                exercise: 'Exercise: Map GRC Responsibilities in Your Organization\n\nCreate a responsibility matrix and analyze gaps in GRC oversight.'
+            },
+            technical: {
+                title: 'Technical Implementation and Frameworks',
+                short_description: 'This module covers technical implementation of GRC frameworks and compliance systems.',
+                learning_objectives: '• Implement COSO and ISO 31000 frameworks\n• Design risk assessment methodologies\n• Develop compliance monitoring systems\n• Apply technology in GRC implementation\n• Measure GRC program effectiveness',
+                topics_covered: '• COSO ERM Framework\n• ISO 31000 Risk Management\n• Compliance program design\n• Risk assessment techniques\n• Control implementation\n• Monitoring and testing\n• Reporting and documentation',
+                key_concepts: '• Risk assessment methodologies\n• Control frameworks\n• Compliance monitoring\n• Technology integration\n• Performance metrics',
+                case_study: 'Case Study: Implementing GRC in a FinTech startup\n\nAnalyze challenges and solutions for implementing GRC in a fast-growing technology company.',
+                exercise: 'Exercise: Design a Risk Assessment Framework\n\nCreate a comprehensive risk assessment methodology for a hypothetical organization.'
+            },
+            case_study: {
+                title: 'Case Studies in GRC Failures and Successes',
+                short_description: 'Analyze real-world GRC failures and successes to learn practical lessons.',
+                learning_objectives: '• Analyze GRC failures in major organizations\n• Identify root causes of GRC breakdowns\n• Extract lessons from GRC successes\n• Apply case study insights to real situations\n• Develop preventive measures',
+                topics_covered: '• Major corporate failures\n• Regulatory enforcement cases\n• Successful GRC implementations\n• Root cause analysis\n• Preventive controls\n• Recovery strategies',
+                key_concepts: '• Root cause analysis\n• Preventive controls\n• Regulatory compliance\n• Corporate governance\n• Risk mitigation',
+                case_study: 'Case Study: Corporate collapse due to governance failure\n\nDetailed analysis of how poor governance led to organizational failure.',
+                exercise: 'Exercise: Conduct a Root Cause Analysis\n\nAnalyze a GRC failure case and develop a comprehensive improvement plan.'
+            },
+            practical: {
+                title: 'Practical Application and Implementation',
+                short_description: 'Hands-on module focusing on practical GRC implementation and application.',
+                learning_objectives: '• Develop GRC implementation plans\n• Create risk registers and assessments\n• Design compliance monitoring programs\n• Implement GRC technology solutions\n• Measure program effectiveness',
+                topics_covered: '• GRC implementation planning\n• Risk register development\n• Compliance program design\n• Technology implementation\n• Performance measurement\n• Continuous improvement',
+                key_concepts: '• Implementation planning\n• Practical application\n• Technology solutions\n• Performance metrics\n• Continuous improvement',
+                case_study: 'Case Study: Successful GRC implementation in a multinational corporation\n\nAnalyze the implementation process and key success factors.',
+                exercise: 'Exercise: Develop a GRC Implementation Plan\n\nCreate a comprehensive implementation plan for a hypothetical organization.'
+            }
+        };
 
+        const template = templates[templateType];
+        if (!template) return;
 
+        // Update form fields
+        if (moduleTitleInput) moduleTitleInput.value = template.title;
+        
+        const shortDescTextarea = document.querySelector('textarea[name="short_description"]');
+        if (shortDescTextarea) shortDescTextarea.value = template.short_description;
+        
+        const learningObjTextarea = document.querySelector('textarea[name="learning_objectives"]');
+        if (learningObjTextarea) learningObjTextarea.value = template.learning_objectives;
+        
+        const topicsTextarea = document.querySelector('textarea[name="topics_covered"]');
+        if (topicsTextarea) topicsTextarea.value = template.topics_covered;
+        
+        const conceptsTextarea = document.querySelector('textarea[name="key_concepts"]');
+        if (conceptsTextarea) conceptsTextarea.value = template.key_concepts;
+        
+        const caseStudyTextarea = document.querySelector('textarea[name="case_study"]');
+        if (caseStudyTextarea) caseStudyTextarea.value = template.case_study;
+        
+        const exerciseTextarea = document.querySelector('textarea[name="exercise"]');
+        if (exerciseTextarea) exerciseTextarea.value = template.exercise;
+
+        // Trigger character count update
+        if (shortDescTextarea) {
+            shortDescTextarea.dispatchEvent(new Event('input'));
+        }
+
+        alert(`"${templateType.replace('_', ' ')}" template loaded successfully!`);
+    };
+
+    console.log('Module creation form initialized');
 });
 </script>
 @endpush
-
