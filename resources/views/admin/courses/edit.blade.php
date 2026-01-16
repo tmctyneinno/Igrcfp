@@ -379,13 +379,14 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
-                                          placeholder="Compliance Officers
-Risk Managers
-Fraud & Financial Crime Analysts" required>{{ old('target_audience', $course->target_audience) }}</textarea>
-                                @error('target_audience')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <textarea name="target_audience"
+                                    class="form-control @error('target_audience') is-invalid @enderror"
+                                    rows="5"
+                                    placeholder="Compliance Officers
+                                Risk Managers
+                                Fraud & Financial Crime Analysts"
+                                    required>{{ old('target_audience', is_array($course->target_audience) ? implode("\n", $course->target_audience) : $course->target_audience) }}</textarea>
+
                             </div>
                             
                             <div class="col-12">
@@ -723,7 +724,6 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
-                                            <iconify-icon icon="mdi:content-save" class="icon"></iconify-icon>
                                             Update Course
                                         </button>
                                         <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
