@@ -157,239 +157,239 @@
                     </div>
                 </div>
                 <div class="card-body">
-    @if($course->modules->count() > 0)
-        <div class="accordion" id="modulesAccordion">
-            @foreach($course->modules->sortBy('module_number') as $module)
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading{{ $module->id }}">
-                        <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" type="button" 
-                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $module->id }}" 
-                                aria-expanded="{{ $loop->first ? 'true' : 'false' }}" aria-controls="collapse{{ $module->id }}">
-                            <div class="d-flex justify-content-between align-items-center w-100">
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-primary me-2">Module {{ $module->module_number }}</span>
-                                    <div>
-                                        <div class="fw-medium">{{ $module->title }}</div>
-                                        @if($module->code)
-                                            <small class="text-muted">{{ $module->code }}</small>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    @if($module->is_active)
-                                        <span class="badge bg-success">Active</span>
-                                    @else
-                                        <span class="badge bg-secondary">Inactive</span>
-                                    @endif
-                                    <div class="text-muted small">
-                                        {{ $module->estimated_hours }} hour{{ $module->estimated_hours > 1 ? 's' : '' }}
-                                    </div>
-                                </div>
-                            </div>
-                        </button>
-                    </h2>
-                    <div id="collapse{{ $module->id }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" 
-                         aria-labelledby="heading{{ $module->id }}" data-bs-parent="#modulesAccordion">
-                        <div class="accordion-body">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <strong>Description:</strong>
-                                        <p class="mb-2">{{ $module->short_description }}</p>
-                                    </div>
-                                    
-                                    @if($module->learning_objectives)
-                                        <div class="mb-3">
-                                            <strong>Learning Objectives:</strong>
-                                            <div class="ms-3">
-                                                {!! nl2br(e($module->learning_objectives)) !!}
+                    @if($course->modules->count() > 0)
+                        <div class="accordion" id="modulesAccordion">
+                            @foreach($course->modules->sortBy('module_number') as $module)
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ $module->id }}">
+                                        <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" type="button" 
+                                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $module->id }}" 
+                                                aria-expanded="{{ $loop->first ? 'true' : 'false' }}" aria-controls="collapse{{ $module->id }}">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge bg-primary me-2">Module {{ $module->module_number }}</span>
+                                                    <div>
+                                                        <div class="fw-medium">{{ $module->title }}</div>
+                                                        @if($module->code)
+                                                            <small class="text-muted">{{ $module->code }}</small>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    @if($module->is_active)
+                                                        <span class="badge bg-success">Active</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">Inactive</span>
+                                                    @endif
+                                                    <div class="text-muted small">
+                                                        {{ $module->estimated_hours }} hour{{ $module->estimated_hours > 1 ? 's' : '' }}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    @if($module->topics_covered)
-                                        <div class="mb-3">
-                                            <strong>Topics Covered:</strong>
-                                            <div class="ms-3">
-                                                {!! nl2br(e($module->topics_covered)) !!}
-                                            </div>
-                                        </div>
-                                    @endif
-                                    
-                                    @if($module->key_concepts)
-                                        <div class="mb-3">
-                                            <strong>Key Concepts:</strong>
-                                            <div class="ms-3">
-                                                {!! nl2br(e($module->key_concepts)) !!}
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                @if($module->case_study)
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <strong>Case Study:</strong>
-                                            <div class="ms-3 bg-light p-3 rounded-8">
-                                                {!! nl2br(e($module->case_study)) !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                                
-                                @if($module->exercise)
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <strong>Exercise:</strong>
-                                            <div class="ms-3 bg-light p-3 rounded-8">
-                                                {!! nl2br(e($module->exercise)) !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                            
-                            @if($module->additional_notes)
-                                <div class="mb-3">
-                                    <strong>Additional Notes:</strong>
-                                    <div class="ms-3 bg-light p-3 rounded-8">
-                                        {!! nl2br(e($module->additional_notes)) !!}
-                                    </div>
-                                </div>
-                            @endif
-                            
-                            @if($module->full_content)
-                                <div class="mb-3">
-                                    <strong>Full Content:</strong>
-                                    <div class="ms-3 bg-light p-3 rounded-8">
-                                        {!! nl2br(e($module->full_content)) !!}
-                                    </div>
-                                </div>
-                            @endif
-                            
-                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-                                <div class="text-muted small">
-                                    <span class="me-3">
-                                        <iconify-icon icon="mdi:calendar" class="icon"></iconify-icon>
-                                        Created: {{ $module->created_at->format('M d, Y') }}
-                                    </span>
-                                    <span>
-                                        <iconify-icon icon="mdi:update" class="icon"></iconify-icon>
-                                        Updated: {{ $module->updated_at->format('M d, Y') }}
-                                    </span>
-                                </div>
-                                
-                                <div class="d-flex gap-2">
-                                    <!-- Toggle Active Status -->
-                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->id]) }}" 
-                                          method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
-                                            <iconify-icon icon="mdi:power"></iconify-icon>
-                                            {{ $module->is_active ? 'Deactivate' : 'Activate' }}
                                         </button>
-                                    </form>
-                                    
-                                    <!-- Duplicate Module -->
-                                    <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->id, 'module' => $module->id]) }}" 
-                                          method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-info" 
-                                                onclick="return confirm('Duplicate this module?')">
-                                            <iconify-icon icon="mdi:content-copy"></iconify-icon>
-                                            Duplicate
-                                        </button>
-                                    </form>
-                                    
-                                    <!-- Edit Module -->
-                                    <a href="{{ route('admin.courses.modules.edit', ['course' => $course->id, 'module' => $module->id]) }}" 
-                                       class="btn btn-sm btn-outline-primary">
-                                        <iconify-icon icon="mdi:pencil"></iconify-icon>
-                                        Edit
-                                    </a>
-                                    
-                                    <!-- Delete Module -->
-                                    <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->id, 'module' => $module->id]) }}" 
-                                          method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                onclick="return confirm('Are you sure you want to delete this module? This action cannot be undone.')">
-                                            <iconify-icon icon="mdi:trash"></iconify-icon>
-                                            Delete
-                                        </button>
-                                    </form>
+                                    </h2>
+                                    <div id="collapse{{ $module->id }}" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" 
+                                        aria-labelledby="heading{{ $module->id }}" data-bs-parent="#modulesAccordion">
+                                        <div class="accordion-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <strong>Description:</strong>
+                                                        <p class="mb-2">{{ $module->short_description }}</p>
+                                                    </div>
+                                                    
+                                                    @if($module->learning_objectives)
+                                                        <div class="mb-3">
+                                                            <strong>Learning Objectives:</strong>
+                                                            <div class="ms-3">
+                                                                {!! ($module->learning_objectives) !!}
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                    @if($module->topics_covered)
+                                                        <div class="mb-3">
+                                                            <strong>Topics Covered:</strong>
+                                                            <div class="ms-3">
+                                                                {!! ($module->topics_covered) !!}
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    
+                                                    @if($module->key_concepts)
+                                                        <div class="mb-3">
+                                                            <strong>Key Concepts:</strong>
+                                                            <div class="ms-3">
+                                                                {!! ($module->key_concepts) !!}
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                @if($module->case_study)
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <strong>Case Study:</strong>
+                                                            <div class="ms-3 bg-light p-3 rounded-8">
+                                                                {!! ($module->case_study) !!}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                
+                                                @if($module->exercise)
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <strong>Exercise:</strong>
+                                                            <div class="ms-3 bg-light p-3 rounded-8">
+                                                                {!! ($module->exercise) !!}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            
+                                            @if($module->additional_notes)
+                                                <div class="mb-3">
+                                                    <strong>Additional Notes:</strong>
+                                                    <div class="ms-3 bg-light p-3 rounded-8">
+                                                        {!! ($module->additional_notes) !!}
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            
+                                            @if($module->full_content)
+                                                <div class="mb-3">
+                                                    <strong>Full Content:</strong>
+                                                    <div class="ms-3 bg-light p-3 rounded-8">
+                                                        {!! ($module->full_content) !!}
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            
+                                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                                                <div class="text-muted small">
+                                                    <span class="me-3">
+                                                        <iconify-icon icon="mdi:calendar" class="icon"></iconify-icon>
+                                                        Created: {{ $module->created_at->format('M d, Y') }}
+                                                    </span>
+                                                    <span>
+                                                        <iconify-icon icon="mdi:update" class="icon"></iconify-icon>
+                                                        Updated: {{ $module->updated_at->format('M d, Y') }}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div class="d-flex gap-2">
+                                                    <!-- Toggle Active Status -->
+                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
+                                                            <iconify-icon icon="mdi:power"></iconify-icon>
+                                                            {{ $module->is_active ? 'Deactivate' : 'Activate' }}
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <!-- Duplicate Module -->
+                                                    <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-info" 
+                                                                onclick="return confirm('Duplicate this module?')">
+                                                            <iconify-icon icon="mdi:content-copy"></iconify-icon>
+                                                            Duplicate
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <!-- Edit Module -->
+                                                    <a href="{{ route('admin.courses.modules.edit', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                    class="btn btn-sm btn-outline-primary">
+                                                        <iconify-icon icon="mdi:pencil"></iconify-icon>
+                                                        Edit
+                                                    </a>
+                                                    
+                                                    <!-- Delete Module -->
+                                                    <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                        method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                onclick="return confirm('Are you sure you want to delete this module? This action cannot be undone.')">
+                                                            <iconify-icon icon="mdi:trash"></iconify-icon>
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <!-- Module Statistics -->
+                        <div class="card mt-24">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 col-6">
+                                        <div class="text-center">
+                                            <div class="text-primary mb-2">
+                                                <iconify-icon icon="mdi:book-open-page-variant" class="icon-2x"></iconify-icon>
+                                            </div>
+                                            <h5 class="mb-1">{{ $course->modules->count() }}</h5>
+                                            <small class="text-muted">Total Modules</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="text-center">
+                                            <div class="text-success mb-2">
+                                                <iconify-icon icon="mdi:clock-outline" class="icon-2x"></iconify-icon>
+                                            </div>
+                                            <h5 class="mb-1">{{ $course->modules->sum('estimated_hours') }}</h5>
+                                            <small class="text-muted">Total Hours</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="text-center">
+                                            <div class="text-info mb-2">
+                                                <iconify-icon icon="mdi:check-circle" class="icon-2x"></iconify-icon>
+                                            </div>
+                                            <h5 class="mb-1">{{ $course->modules->where('is_active', true)->count() }}</h5>
+                                            <small class="text-muted">Active Modules</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="text-center">
+                                            <div class="text-warning mb-2">
+                                                <iconify-icon icon="mdi:star" class="icon-2x"></iconify-icon>
+                                            </div>
+                                            <h5 class="mb-1">{{ $course->modules->avg('estimated_hours') }}</h5>
+                                            <small class="text-muted">Avg Hours/Module</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        
+                    @else
+                        <div class="text-center py-5">
+                            <iconify-icon icon="mdi:book-education-outline" class="icon-4x text-muted mb-3"></iconify-icon>
+                            <h5 class="text-muted">No modules added yet</h5>
+                            <p class="text-muted mb-4">Start by adding your first module</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ route('admin.courses.modules.create', $course->id) }}"
+                                class="btn btn-primary d-flex align-items-center gap-1">
+                                    <iconify-icon icon="mdi:plus"></iconify-icon>
+                                    Add First Module
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
-            @endforeach
-        </div>
-        
-        <!-- Module Statistics -->
-        <div class="card mt-24">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 col-6">
-                        <div class="text-center">
-                            <div class="text-primary mb-2">
-                                <iconify-icon icon="mdi:book-open-page-variant" class="icon-2x"></iconify-icon>
-                            </div>
-                            <h5 class="mb-1">{{ $course->modules->count() }}</h5>
-                            <small class="text-muted">Total Modules</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="text-center">
-                            <div class="text-success mb-2">
-                                <iconify-icon icon="mdi:clock-outline" class="icon-2x"></iconify-icon>
-                            </div>
-                            <h5 class="mb-1">{{ $course->modules->sum('estimated_hours') }}</h5>
-                            <small class="text-muted">Total Hours</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="text-center">
-                            <div class="text-info mb-2">
-                                <iconify-icon icon="mdi:check-circle" class="icon-2x"></iconify-icon>
-                            </div>
-                            <h5 class="mb-1">{{ $course->modules->where('is_active', true)->count() }}</h5>
-                            <small class="text-muted">Active Modules</small>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <div class="text-center">
-                            <div class="text-warning mb-2">
-                                <iconify-icon icon="mdi:star" class="icon-2x"></iconify-icon>
-                            </div>
-                            <h5 class="mb-1">{{ $course->modules->avg('estimated_hours') }}</h5>
-                            <small class="text-muted">Avg Hours/Module</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    @else
-        <div class="text-center py-5">
-            <iconify-icon icon="mdi:book-education-outline" class="icon-4x text-muted mb-3"></iconify-icon>
-            <h5 class="text-muted">No modules added yet</h5>
-            <p class="text-muted mb-4">Start by adding your first module</p>
-            <div class="d-flex justify-content-center">
-                <a href="{{ route('admin.courses.modules.create', $course->id) }}"
-                class="btn btn-primary d-flex align-items-center gap-1">
-                    <iconify-icon icon="mdi:plus"></iconify-icon>
-                    Add First Module
-                </a>
-            </div>
-        </div>
-    @endif
-</div>
             </div>
 
             <!-- Course Materials -->
