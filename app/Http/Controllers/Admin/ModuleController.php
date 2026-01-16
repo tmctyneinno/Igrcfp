@@ -40,7 +40,7 @@ class ModuleController extends Controller
             'exercise' => 'nullable|string',
             'additional_notes' => 'nullable|string',
             'estimated_hours' => 'required|integer|min:1|max:100',
-            'sort_order' => 'nullable|integer',
+            'sort_ordxer' => 'nullable|integer',
             'is_active' => 'boolean',
         ]);
        
