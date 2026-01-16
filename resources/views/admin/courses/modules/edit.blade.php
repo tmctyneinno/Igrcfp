@@ -233,7 +233,6 @@
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
-                                            <iconify-icon icon="mdi:content-save" class="icon"></iconify-icon>
                                             Update Module
                                         </button>
                                         <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
