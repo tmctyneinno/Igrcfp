@@ -768,7 +768,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                         <div class="text-center">
                             <h6 class="mb-3">Banner Image</h6>
                             @if($course->banner_image) 
-                               <div id="currentBannerPreview" class="mb-3">
+                                <div id="currentBannerPreview" class="mb-3">
                                     @if($course->banner_image)
                                         @php
                                             $exists = file_exists(storage_path('app/private/' . $course->banner_image));
