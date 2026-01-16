@@ -327,10 +327,8 @@
                             <div class="col-12">
                                 <label class="form-label">Programme Architecture</label>
                                 <textarea id="editor"  name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6" 
-                                          placeholder="Describe the programme tiers and structure...">{{ old('programme_architecture', 'The CGFCS is delivered in three tiers:
-Tier 1: Foundation CGFCS - Core professional grounding in GRC and Financial Crime.
-Tier 2: Advanced CGFCS - Technical, regulatory and cross-border mastery for complex organisations.
-Tier 3: Specialist Pathways - Focused depth in high-demand domains (AML, ESG, Cyber, Public Sector, Fintech, Sanctions, Investigations).') }}</textarea>
+                                          placeholder="Describe the programme tiers and structure...">
+                                          </textarea>
                                 @error('programme_architecture')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
