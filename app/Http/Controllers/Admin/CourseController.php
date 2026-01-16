@@ -207,6 +207,9 @@ class CourseController extends Controller
                 }
                 $validated['banner_image'] = $this->uploadFile($request->file('banner_image'), 'courses/banners');
             }
+            if ($request->hasFile('banner_image')) {
+                $validated['banner_image'] = $request->file('banner_image')->store('events', 'public');
+            }
 
             // Handle video upload
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
@@ -409,7 +412,7 @@ class CourseController extends Controller
             'short_title' => 'required|string|max:100',
             'short_description' => 'required|string|max:500',
             'full_description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:6048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5048',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'video_type' => 'nullable|in:none,upload,youtube,vimeo',
             'video' => 'nullable|file|mimes:mp4,mov,avi,wmv,mkv|max:20480',
