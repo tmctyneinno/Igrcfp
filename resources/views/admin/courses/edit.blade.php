@@ -774,7 +774,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                                         $exists = file_exists($fullPath);
                                         $url = asset('storage/app/private/public' . $course->banner_image);
                                     @endphp
-                                    <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Current banner image" 
+                                    <img src="{{ $ }}" alt="Current banner image" 
                                          class="img-fluid rounded-8 border" style="max-height: 100px;">
                                 </div>
                                 <small class="text-muted d-block mb-3">Current banner</small>
