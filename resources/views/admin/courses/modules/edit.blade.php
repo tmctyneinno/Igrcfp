@@ -145,7 +145,7 @@
                         <h6 class="card-title mb-0">Topics Covered</h6>
                     </div>
                     <div class="card-body">
-                        <textarea name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
+                        <textarea id name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
                                   rows="5" placeholder="List the topics that will be covered">{{ old('topics_covered', $module->topics_covered) }}</textarea>
                         @error('topics_covered')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .create(document.querySelector('#learning_objectives'))
         .catch(error => console.error(error));
     ClassicEditor
-        .create(document.querySelector('#learning_objectives'))
+        .create(document.querySelector('#topics_Covered'))
         .catch(error => console.error(error));
                       
     // Character count functionality
