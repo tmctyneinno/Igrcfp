@@ -2,255 +2,179 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Course extends Model
 {
-    use HasFactory;
- 
+    //<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+
+class Course extends Model
+{
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
-        'slug',
+        'code',
         'short_title',
-        'description',
         'short_description',
-        'image', 
-        'video', // Add this
-        'video_type', // Add this (upload, youtube, vimeo)
-        'video_url', // Add this for embedded videos
-        'delivery_method',
-        'category',
+        'full_description',
+        'image',
+        'banner_image',
+        'video_type',
+        'video',
+        'video_url',
         'level',
         'format',
         'duration',
-        'modules_count',
-        'completed_modules',
+        'total_modules',
+        'total_hours',
+        'certification_name',
+        'certifying_body',
         'price',
         'discount_price',
-        'status',
-        'course_user',
-        'is_featured',
-        'is_popular',
-        'meta_description',
-        'meta_keywords',
+        'target_audience',
         'learning_outcomes',
         'prerequisites',
-        'target_audience',
-        'certification',
-        'user_id',
+        'career_pathways',
+        'assessment_structure',
+        'code_of_conduct',
+        'programme_overview',
+        'programme_architecture',
+        'meta_description',
+        'meta_keywords',
+        'status',
+        'is_featured',
+        'is_popular',
+        'sort_order',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
-        'modules_count' => 'integer',
-        'completed_modules' => 'integer',
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
+        'target_audience' => 'array',
+        'total_modules' => 'integer',
+        'total_hours' => 'integer',
     ];
 
-   
-     /**
-     * Get the users enrolled in this course
+    /**
+     * Relationships
      */
-    public function users()
-    {
-        return $this->belongsToMany(User::class)
-                    ->withPivot('progress', 'completed_modules', 'enrolled_at', 'completed_at')
-                    ->withTimestamps();
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function modules()
     {
-        return $this->hasMany(Module::class)->orderBy('order');
+        return $this->hasMany(CourseModule::class)->orderBy('module_number');
     }
 
-    public function lessons()
+    public function materials()
     {
-        return $this->hasManyThrough(Lesson::class, Module::class);
+        return $this->hasMany(CourseMaterial::class)->orderBy('sort_order');
     }
 
-    public function getModulesCountAttribute()
+    /**
+     * Scopes
+     */
+    public function scopePublished($query)
     {
-        return $this->modules()->count();
+        return $query->where('status', 'published');
     }
 
-    public function getExcerptAttribute()
+    public function scopeFeatured($query)
     {
-        return Str::limit(strip_tags($this->description), 150);
+        return $query->where('is_featured', true);
     }
 
-    public function getImageUrlAttribute()
+    public function scopePopular($query)
     {
-        if (!$this->image) {
-            return asset('assets/images/home-three/service/service-img1.png');
-        }
-        
-        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
-            return $this->image;
-        }
-        
-        return asset('storage/' . $this->image);
+        return $query->where('is_popular', true);
     }
 
-    public function getProgressPercentageAttribute()
+    public function scopeWithCode($query, $code)
     {
-        if ($this->modules_count == 0) return 0;
-        return round(($this->completed_modules / $this->modules_count) * 100);
-    }
- 
-    public function getCurrentPriceAttribute()
-    {
-        return $this->discount_price > 0 ? $this->discount_price : $this->price;
+        return $query->where('code', $code);
     }
 
-    public function getHasDiscountAttribute()
+    /**
+     * Attributes
+     */
+    public function getTargetAudienceListAttribute()
     {
-        return $this->discount_price > 0 && $this->discount_price < $this->price;
+        return $this->target_audience ? implode("\n", $this->target_audience) : '';
+    }
+
+    public function getLearningOutcomesListAttribute()
+    {
+        if (!$this->learning_outcomes) return '';
+        $lines = explode("\n", $this->learning_outcomes);
+        return array_filter($lines, fn($line) => trim($line));
     }
 
     public function getDiscountPercentageAttribute()
     {
-        if (!$this->has_discount) {
-            return 0;
+        if ($this->price > 0 && $this->discount_price > 0) {
+            return round((($this->price - $this->discount_price) / $this->price) * 100);
         }
-        return round((($this->price - $this->discount_price) / $this->price) * 100);
+        return 0;
     }
 
-    public function getStatusBadgeAttribute()
+    public function getImageUrlAttribute()
     {
-        $statuses = [
-            'published' => ['class' => 'bg-success', 'text' => 'Published'],
-            'draft' => ['class' => 'bg-warning', 'text' => 'Draft'],
-            'archived' => ['class' => 'bg-secondary', 'text' => 'Archived']
-        ];
-
-        $status = $statuses[$this->status] ?? $statuses['draft'];
-        
-        return '<span class="badge ' . $status['class'] . '">' . $status['text'] . '</span>';
+        return $this->image ? Storage::url($this->image) : null;
     }
 
-    public function getLevelBadgeAttribute()
+    public function getBannerImageUrlAttribute()
     {
-        $levels = [
-            'beginner' => ['class' => 'bg-primary', 'text' => 'Beginner'],
-            'intermediate' => ['class' => 'bg-info', 'text' => 'Intermediate'],
-            'advanced' => ['class' => 'bg-warning', 'text' => 'Advanced'],
-            'expert' => ['class' => 'bg-danger', 'text' => 'Expert']
-        ];
-
-        $level = $levels[$this->level] ?? $levels['beginner'];
-        
-        return '<span class="badge ' . $level['class'] . '">' . $level['text'] . '</span>';
+        return $this->banner_image ? Storage::url($this->banner_image) : null;
     }
 
-    public function getFormatBadgeAttribute()
-    {
-        $formats = [
-            'self_paced' => ['class' => 'bg-info', 'text' => 'Self-Paced'],
-            'instructor_led' => ['class' => 'bg-success', 'text' => 'Instructor-Led'],
-            'hybrid' => ['class' => 'bg-warning', 'text' => 'Hybrid']
-        ];
-
-        $format = $formats[$this->format] ?? $formats['self_paced'];
-        
-        return '<span class="badge ' . $format['class'] . '">' . $format['text'] . '</span>';
-    }
-
-    public function getVideoUrlAttribute()
-    {
-        if ($this->video_type === 'upload' && $this->video) {
-            return asset('storage/' . $this->video);
-        } elseif ($this->video_type === 'youtube' && $this->video_url) {
-            return $this->video_url;
-        } elseif ($this->video_type === 'vimeo' && $this->video_url) {
-            return $this->video_url;
-        }
-        return null;
-    }
-
-    public function getVideoEmbedCodeAttribute()
+    /**
+     * Get video embed URL
+     */
+    public function getVideoEmbedUrlAttribute()
     {
         if ($this->video_type === 'youtube' && $this->video_url) {
-            // Extract YouTube video ID from URL
-            preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $this->video_url, $matches);
-            if (isset($matches[1])) {
-                return 'https://www.youtube.com/embed/' . $matches[1];
-            }
-        } elseif ($this->video_type === 'vimeo' && $this->video_url) {
-            // Extract Vimeo video ID from URL
-            preg_match('/vimeo.com\/(?:video\/)?(\d+)/', $this->video_url, $matches);
-            if (isset($matches[1])) {
-                return 'https://player.vimeo.com/video/' . $matches[1];
-            }
+            $videoId = $this->extractYouTubeId($this->video_url);
+            return $videoId ? "https://www.youtube.com/embed/{$videoId}" : null;
         }
+
+        if ($this->video_type === 'vimeo' && $this->video_url) {
+            $videoId = $this->extractVimeoId($this->video_url);
+            return $videoId ? "https://player.vimeo.com/video/{$videoId}" : null;
+        }
+
         return null;
     }
 
-    public function reviews()
+    private function extractYouTubeId($url)
     {
-        return $this->hasMany(CourseReview::class);
-    }
-
-    public function averageRating()
-    {
-        return $this->reviews()->avg('rating');
-    }
-
-    public function reviewsCount()
-    {
-        return $this->reviews()->count();
-    }
-
-    public function enrollments()
-    {
-        return $this->hasMany(Enrollment::class);
-    }
-
-    public function activeEnrollments()
-    {
-        return $this->enrollments()->where('status', 'active');
-    }
-
-    public function getEnrollmentsCountAttribute()
-    {
-        return $this->enrollments()->count();
-    }
-
-    public function getActiveEnrollmentsCountAttribute()
-    {
-        return $this->activeEnrollments()->count();
-    }
-
-    public function isEnrolledByUser($userId)
-    {
-        return $this->enrollments()
-            ->where('user_id', $userId)
-            ->where('status', 'active')
-            ->exists();
-    }
-
-    public function getUserEnrollment($userId)
-    {
-        return $this->enrollments()
-            ->where('user_id', $userId)
-            ->first();
-    }
-
-    public function instructor()
-    {
-        // If you have an instructor_id column, use that
-        return $this->belongsTo(User::class, 'instructor_id');
+        $patterns = [
+            '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?\/]+)/',
+            '/youtube\.com\/.*[?&]v=([^&]+)/',
+            '/youtu\.be\/([^?]+)/'
+        ];
         
-        // Otherwise, use the user_id as instructor
-        // return $this->belongsTo(User::class, 'user_id');
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
+        }
+        
+        return null;
     }
 
+    private function extractVimeoId($url)
+    {
+        if (preg_match('/vimeo\.com\/(?:video\/)?(\d+)/', $url, $matches)) {
+            return $matches[1];
+        }
+        
+        return null;
+    }
+}
 }
