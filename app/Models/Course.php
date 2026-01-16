@@ -73,7 +73,7 @@ class Course extends Model
     public function modules()
     {
         return $this->hasMany(CourseModule::class)->orderBy('module_number');
-    }
+    } 
 
     public function materials()
     {
