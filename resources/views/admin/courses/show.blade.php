@@ -285,7 +285,7 @@
                                                 
                                                 <div class="d-flex gap-2">
                                                     <!-- Toggle Active Status -->
-                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->slug, 'module' => $module->slug]) }}" 
+                                                    <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->slug]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
