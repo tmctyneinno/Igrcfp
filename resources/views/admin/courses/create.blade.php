@@ -343,15 +343,9 @@
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
                                 <textarea name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
                                           placeholder="By the end of this course, participants will be able to:
-- Design and manage GRC frameworks
-- Identify and assess enterprise and financial crime risks
-- Implement compliance and AML programmes" required>{{ old('learning_outcomes', 'By the end of this course, participants will be able to:
-Design and manage GRC frameworks
-Identify and assess enterprise and financial crime risks
-Implement compliance and AML programmes
-Investigate and prevent financial crime
-Apply technology in GRC and crime prevention
-Uphold ethical governance and accountability') }}</textarea>
+                                - Design and manage GRC frameworks
+                                - Identify and assess enterprise and financial crime risks
+                                - Implement compliance and AML programmes" required></textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -361,14 +355,8 @@ Uphold ethical governance and accountability') }}</textarea>
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
                                 <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
                                           placeholder="Compliance Officers
-Risk Managers
-Fraud & Financial Crime Analysts" required>{{ old('target_audience', 'Compliance Officers
-Risk Managers
-Fraud & Financial Crime Analysts
-Internal Auditors
-Regulators & Supervisors
-Fintech & RegTech Professionals
-Consultants and Advisors') }}</textarea>
+                                Risk Managers
+                                Fraud & Financial Crime Analysts" required></textarea>
                                 @error('target_audience')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -387,15 +375,9 @@ Consultants and Advisors') }}</textarea>
                                 <label class="form-label">Career Pathways (one per line)</label>
                                 <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
                                           placeholder="Graduates may work as:
-- Compliance Officer
-- Risk Manager
-- AML Analyst">{{ old('career_pathways', 'Graduates may work as:
-Compliance Officer
-Risk Manager
-AML Analyst
-Fraud Investigator
-GRC Consultant
-Regulatory Advisor') }}</textarea>
+                                    - Compliance Officer
+                                    - Risk Manager
+                                    - AML Analyst"></textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
