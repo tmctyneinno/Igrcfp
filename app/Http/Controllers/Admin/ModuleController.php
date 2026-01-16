@@ -64,9 +64,6 @@ class ModuleController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified module.
-     */
     public function edit(Course $course, CourseModule $module)
     {
         // Ensure the module belongs to the course
@@ -109,7 +106,7 @@ class ModuleController extends Controller
             $validated['is_active'] = $request->has('is_active');
             $module->update($validated);
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Module updated successfully!');
 
         } catch (\Exception $e) {
