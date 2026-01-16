@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\CourseManagementController;
+use App\Http\Controllers\Admin\CourseController;
 use Illuminate\Support\Facades\Route;
 
 // Course Management Routes (Protected - admin & super_admin)
