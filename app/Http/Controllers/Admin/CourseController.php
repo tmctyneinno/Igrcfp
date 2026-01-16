@@ -180,7 +180,8 @@ class CourseController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
+    { 
+        dd('');
         if (is_numeric($id)) {
         $course = Course::findOrFail($id);
         } else {
