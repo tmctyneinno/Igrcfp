@@ -21,13 +21,6 @@ class CourseController extends Controller
     {
         $query = Course::withCount('modules');
         $courses = $query->get();
-
-        dd(
-            \DB::connection()->getDatabaseName(),
-            \DB::table('courses')->count(),
-            Course::withoutGlobalScopes()->withTrashed()->count()
-        );
-
         
         // Search functionality
         if ($request->has('search') && $request->search != '') {
