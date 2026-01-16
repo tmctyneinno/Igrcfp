@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.store', $course->id) }}" method="POST" id="moduleForm">
+    <form action="{{ route('admin.courses.modules.store', $course->slug) }}" method="POST" id="moduleForm">
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
