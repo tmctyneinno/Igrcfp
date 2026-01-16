@@ -409,7 +409,7 @@ class CourseController extends Controller
             'short_title' => 'required|string|max:100',
             'short_description' => 'required|string|max:500',
             'full_description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:6048',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'video_type' => 'nullable|in:none,upload,youtube,vimeo',
             'video' => 'nullable|file|mimes:mp4,mov,avi,wmv,mkv|max:20480',
