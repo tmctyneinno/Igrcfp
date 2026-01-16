@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('code')->unique(); // e.g., CGFCS
+            $table->string('slug')->unique(); // e.g., CGFCS
             $table->string('short_title');
             $table->text('short_description');
             $table->longText('full_description');
