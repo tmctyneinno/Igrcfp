@@ -181,10 +181,10 @@ class CourseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($id);
         $course = Course::findOrFail($id);
+        dd($id);
       
-        // $validated = $this->validateRequest($request, $course);
+        $validated = $this->validateRequest($request, $course);
 
         try {
             // Handle image uploads
