@@ -323,12 +323,6 @@ class CourseController extends Controller
     {
         $rules = [
             'title' => 'required|string|max:255',
-            'code' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('courses')->ignore($course?->id),
-            ],
             'short_title' => 'required|string|max:100',
             'short_description' => 'required|string|max:500',
             'full_description' => 'required|string',
@@ -395,7 +389,6 @@ class CourseController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'code' => 'nullable|string|max:20',
             'module_number' => 'required|integer|min:1',
             'short_description' => 'required|string',
             'full_content' => 'required|string',
@@ -467,7 +460,6 @@ class CourseController extends Controller
         // This is a simplified parser - you'll need to customize based on your document format
         $data = [
             'title' => '',
-            'code' => '',
             'modules' => [],
             'programme_overview' => '',
             'learning_outcomes' => [],
@@ -484,7 +476,6 @@ class CourseController extends Controller
             // Extract course title and code
             if (str_contains($line, 'Certified GRC & Financial Crime Specialist')) {
                 $data['title'] = $line;
-                $data['code'] = 'CGFCS';
             }
             
             // Extract programme overview
