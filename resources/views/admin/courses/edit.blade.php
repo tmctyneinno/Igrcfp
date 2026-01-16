@@ -767,7 +767,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                         
                         <div class="text-center">
                             <h6 class="mb-3">Banner Image</h6>
-                            @if($course->banner_image)
+                            @if($course->banner_image) 
                                 <div id="currentBannerPreview" class="mb-3">
                                     <img src="{{ asset($course->banner_image) }}" alt="Current banner image" 
                                          class="img-fluid rounded-8 border" style="max-height: 100px;">
