@@ -20,16 +20,16 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $allCourses = Course::all();
-        dd('All courses from database:', $allCourses->toArray());
+        // dd('All courses from database:', $allCourses->toArray());
 
         $query = Course::withCount('modules');
     
         // Step 2: Check query after building
         $courses = $query->get();
-        dd('Courses after basic query:', $courses->toArray());
+        // dd('Courses after basic query:', $courses->toArray());
 
         $totalCourses = Course::count();
-        dd('Total courses in database:', $totalCourses);
+        // dd('Total courses in database:', $totalCourses);
         $query = Course::withCount('modules');
        
         // Search functionality
