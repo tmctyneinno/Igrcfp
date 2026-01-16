@@ -6,65 +6,65 @@ use Illuminate\Support\Facades\Route;
 // Course Management Routes (Protected - admin & super_admin)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:admin,super_admin'])->group(function () {
     // Courses Index
-    Route::get('/courses', [CourseManagementController::class, 'index'])
+    Route::get('/courses', [CourseController::class, 'index'])
         ->name('courses.index');
     
     // Create Course
-    Route::get('/courses/create', [CourseManagementController::class, 'create'])
+    Route::get('/courses/create', [CourseController::class, 'create'])
         ->name('courses.create');
     
-    Route::post('/courses', [CourseManagementController::class, 'store'])
+    Route::post('/courses', [CourseController::class, 'store'])
         ->name('courses.store');
     
     // Show Course
-    Route::get('/courses/{course}', [CourseManagementController::class, 'show'])
+    Route::get('/courses/{course}', [CourseController::class, 'show'])
         ->name('courses.show')
         ->whereNumber('course');
     
     // Edit Course
-    Route::get('/courses/{course}/edit', [CourseManagementController::class, 'edit'])
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
         ->name('courses.edit')
         ->whereNumber('course');
     
-    Route::put('/courses/{course}', [CourseManagementController::class, 'update'])
+    Route::put('/courses/{course}', [CourseController::class, 'update'])
         ->name('courses.update')
         ->whereNumber('course');
     
     // Delete Course
-    Route::delete('/courses/{course}', [CourseManagementController::class, 'destroy'])
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
         ->name('courses.destroy')
         ->whereNumber('course');
     
     // Course Categories
-    Route::get('/course-categories', [CourseManagementController::class, 'categories'])
+    Route::get('/course-categories', [CourseController::class, 'categories'])
         ->name('courses.categories.index');
     
-    Route::post('/course-categories', [CourseManagementController::class, 'storeCategory'])
+    Route::post('/course-categories', [CourseController::class, 'storeCategory'])
         ->name('courses.categories.store');
     
-    Route::put('/course-categories/{category}', [CourseManagementController::class, 'updateCategory'])
+    Route::put('/course-categories/{category}', [CourseController::class, 'updateCategory'])
         ->name('courses.categories.update');
     
-    Route::delete('/course-categories/{category}', [CourseManagementController::class, 'destroyCategory'])
+    Route::delete('/course-categories/{category}', [CourseController::class, 'destroyCategory'])
         ->name('courses.categories.destroy');
     
     // Course Enrollments
-    Route::get('/courses/{course}/enrollments', [CourseManagementController::class, 'enrollments'])
+    Route::get('/courses/{course}/enrollments', [CourseController::class, 'enrollments'])
         ->name('courses.enrollments')
         ->whereNumber('course');
     
     // Course Reviews/Feedback
-    Route::get('/courses/{course}/reviews', [CourseManagementController::class, 'reviews'])
+    Route::get('/courses/{course}/reviews', [CourseController::class, 'reviews'])
         ->name('courses.reviews')
         ->whereNumber('course');
     
     // Course Analytics
-    Route::get('/courses/{course}/analytics', [CourseManagementController::class, 'analytics'])
+    Route::get('/courses/{course}/analytics', [CourseController::class, 'analytics'])
         ->name('courses.analytics')
         ->whereNumber('course');
     
     // Course Publish/Unpublish
-    Route::put('/courses/{course}/publish', [CourseManagementController::class, 'publish'])
+    Route::put('/courses/{course}/publish', [CourseController::class, 'publish'])
         ->name('courses.publish')
         ->whereNumber('course');
 });
