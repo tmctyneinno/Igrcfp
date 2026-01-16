@@ -146,10 +146,14 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">Course Modules ({{ $course->modules->count() }})</h6>
-                        <a href="{{ route('admin.courses.modules.create', $course->id) }}" class="btn btn-sm btn-primary">
-                            <iconify-icon icon="mdi:plus"></iconify-icon>
-                            Add Module
-                        </a>
+                        <div class="d-flex justify-content-center">
+    <a href="{{ route('admin.courses.modules.create', $course->id) }}"
+       class="btn btn-primary d-flex align-items-center gap-1">
+        <iconify-icon icon="mdi:plus"></iconify-icon>
+        Add First Module
+    </a>
+</div>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -258,10 +262,14 @@
                             <iconify-icon icon="mdi:book-education-outline" class="icon-4x text-muted mb-3"></iconify-icon>
                             <h5 class="text-muted">No modules added yet</h5>
                             <p class="text-muted mb-4">Start by adding your first module</p>
-                            <a href="{{ route('admin.courses.modules.create', $course->id) }}" class=" flex d-flex w-30 justify-contain-center  btn btn-primary">
-                                <iconify-icon icon="mdi:plus"></iconify-icon>
-                                Add First Module
-                            </a>
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ route('admin.courses.modules.create', $course->id) }}"
+                                class="btn btn-primary d-flex align-items-center gap-1">
+                                    <iconify-icon icon="mdi:plus"></iconify-icon>
+                                    Add First Module
+                                </a>
+                            </div>
+
                         </div>
                     @endif
                 </div>
