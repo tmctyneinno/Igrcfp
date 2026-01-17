@@ -1111,6 +1111,10 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing edit form');
 
+    ClassicEditor
+    .create(document.querySelector('#full_description'))
+    .catch(error => { console.error(error); });
+
     // Initialize CKEditor 5 if needed
     if (typeof ClassicEditor !== 'undefined') {
         // You can initialize CKEditor here if needed
