@@ -467,6 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const moduleForm = document.getElementById('moduleForm');
     if (moduleForm) {
         moduleForm.addEventListener('submit', function(e) {
+            
             // Clear previous custom validity messages
             const inputs = this.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
