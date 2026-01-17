@@ -344,10 +344,7 @@
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
                                 <textarea id="learning_outcomes" name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
-                                          placeholder="By the end of this course, participants will be able to:
-                                - Design and manage GRC frameworks
-                                - Identify and assess enterprise and financial crime risks
-                                - Implement compliance and AML programmes" required></textarea>
+                                          placeholder="" required></textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
