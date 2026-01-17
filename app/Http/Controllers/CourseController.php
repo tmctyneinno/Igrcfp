@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a list of courses for the frontend.
-     */
+  
     public function index()
     {
         // Fetch courses with instructor and reviews count
