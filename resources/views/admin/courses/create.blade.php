@@ -319,7 +319,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
-                                <textarea id="programme_overview" name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_overview" name="programme_overview" class="form-control rich-editor @error('programme_overview') is-invalid @enderror" rows="6" 
                                           placeholder="Detailed programme overview...">{{ old('programme_overview', 'The Certified GRC & Financial Crime Specialist (CGFCS) is a professional certification designed to equip practitioners with deep, practical, and strategic knowledge across Governance, Risk, Compliance (GRC) and Financial Crime Prevention.') }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -331,7 +331,7 @@
                                 <textarea 
                                     id="editor1"
                                     name="programme_architecture"
-                                    class="form-control @error('programme_architecture') is-invalid @enderror"
+                                    class="form-control rich-editor @error('programme_architecture') is-invalid @enderror"
                                     rows="6"
                                     placeholder="Describe the programme tiers and structure..."
                                 ></textarea>
@@ -343,7 +343,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
-                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
+                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control rich-editor @error('learning_outcomes') is-invalid @enderror" rows="8" 
                                           placeholder="" required></textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -352,7 +352,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
+                                <textarea name="target_audience" class="form-control rich-editor @error('target_audience') is-invalid @enderror" rows="5" 
                                           placeholder="Compliance Officers
                                 Risk Managers
                                 Fraud & Financial Crime Analysts" required></textarea>
@@ -363,7 +363,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Prerequisites</label>
-                                <textarea name="prerequisites" class="form-control @error('prerequisites') is-invalid @enderror" 
+                                <textarea name="prerequisites" class="form-control rich-editor @error('prerequisites') is-invalid @enderror" 
                                           rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites') }}</textarea>
                                 @error('prerequisites')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -372,11 +372,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
-                                          placeholder="Graduates may work as:
-                                    - Compliance Officer
-                                    - Risk Manager
-                                    - AML Analyst"></textarea>
+                                <textarea name="career_pathways" class="form-control rich-editor @error('career_pathways') is-invalid @enderror" rows="4" 
+                                          ></textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -384,10 +381,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
-                                          placeholder="Module quizzes
-                                    Practical assignments
-                                    Final examination"></textarea>
+                                <textarea name="assessment_structure" class="form-control rich-editor @error('assessment_structure') is-invalid @enderror" rows="4" 
+                                          ></textarea>
                                 @error('assessment_structure')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -395,7 +390,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
+                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control rich-editor @error('code_of_conduct') is-invalid @enderror" rows="4" 
                                           ></textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -424,7 +419,7 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea id='editor2' name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20"> 
+                            <textarea id='editor2' name="bulk_modules" class="form-control rich-editor @error('bulk_modules') is-invalid @enderror" rows="20"> 
                             </textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
