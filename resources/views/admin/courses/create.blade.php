@@ -795,9 +795,15 @@ document.addEventListener('DOMContentLoaded', function() {
     ClassicEditor
     .create(document.querySelector('#code_of_conduct'))
     .catch(error => { console.error(error); });
-     ClassicEditor
+    ClassicEditor
     .create(document.querySelector('#assessment_structure'))
     .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#career_pathways'))
+    .catch(error => { console.error(error); });prerequisites
+    ClassicEditor
+    .create(document.querySelector('#career_pathways'))
+    .catch(error => { console.error(error); });prerequisites
    
 
 
