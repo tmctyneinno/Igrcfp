@@ -633,8 +633,8 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                    <textarea name="meta_keywords" id="meta_keywords" class="form-control rich-editor @error('meta_description') is-invalid @enderror" 
-                                          rows="3"  maxlength="160">{{ old('meta_description', $course->meta_keywords) }}</textarea>
+                                    <textarea name="meta_keywords" id="meta_keywords" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
+                                          rows="3"  maxlength="160">{{ old('meta_keywords', $course->meta_keywords) }}</textarea>
 
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
