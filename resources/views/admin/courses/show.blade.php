@@ -818,7 +818,7 @@
                                 <label class="form-label small text-muted">Meta Description</label>
                                 <p class="mb-0 small">{{ $course->meta_description }}</p>
                                 <div class="text-end">
-                                    <small class="text-muted">{!! strlen($course->meta_description) }}/160 characters</small>
+                                    <small class="text-muted">{!! strlen($course->meta_description) !!}/160 characters</small>
                                 </div>
                             </div>
                         @endif
