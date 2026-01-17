@@ -21,10 +21,9 @@ class CourseController extends Controller
     {
         $allCourses = Course::all();
         dd($allCourses);
-        $query = Course::withCount('modules');
     
-        $courses = $query->get();
-        $totalCourses = Course::count();
+        // $courses = $query->get();
+        // $totalCourses = Course::count();
         $query = Course::withCount('modules');
        
         // Search functionality
