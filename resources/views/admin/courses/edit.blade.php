@@ -423,7 +423,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                             
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
+                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
                                           placeholder="CGFCS holders must:
 - Act with integrity
 - Maintain confidentiality">{{ old('code_of_conduct', $course->code_of_conduct) }}</textarea>
