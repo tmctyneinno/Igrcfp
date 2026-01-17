@@ -84,7 +84,7 @@
 
                         <div class="col-12">
                             <h6 class="mb-2">Short Description</h6>
-                            <p class="text-muted">{ $course->short_description }}</p>
+                            <p class="text-muted">{!! $course->short_description !!}</p>
                         </div>
 
                         <div class="col-12">
