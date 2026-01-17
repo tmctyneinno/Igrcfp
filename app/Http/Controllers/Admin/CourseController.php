@@ -289,8 +289,8 @@ class CourseController extends Controller
             $uploaded = [];
             
             foreach ($request->file('materials') as $file) {
-                $path = $this->uploadFile($file, 'courses/materials');
-                
+                // $path = $this->uploadFile($file, 'courses/materials');
+                $path = $request->file('video')->store('courses/materials', 'public');
                 
                 $material = $course->materials()->create([
                     'module_id' => $request->module_id,
