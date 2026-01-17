@@ -122,6 +122,8 @@ class CourseController extends Controller
 
             // Handle video upload
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
+                $validated['video'] = $request->file('banner_image')->store('courses/banner', 'public');
+            
                 $validated['video'] = $this->uploadFile($request->file('video'), 'courses/videos');
             }
 
