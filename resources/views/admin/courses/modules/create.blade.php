@@ -172,13 +172,7 @@
                         <div class="mb-3">
                             <label class="form-label">What are the key concepts in this module?</label>
                             <textarea id="editor3" name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
-                                      rows="5" placeholder="List the key concepts students should understand">
-                                {{ old('key_concepts', '• Governance: direction, accountability, oversight
-• Risk: uncertainty affecting objectives
-• Compliance: adherence to laws, rules, standards
-• Integrated GRC: alignment of governance, risk, and compliance
-• Stakeholder management: identifying and engaging key stakeholders') }}
-                            </textarea>
+                                      rows="5" placeholder="List the key concepts students should understand"></textarea>
                             @error('key_concepts')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -195,20 +189,7 @@
                         <div class="mb-3">
                             <label class="form-label">Real-world case study for this module</label>
                             <textarea id="editor4" name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
-                                      rows="5" placeholder="Provide a relevant case study">
-                                {{ old('case_study', 'Case Study: A multinational bank fails due to weak board oversight
-
-A major international bank experienced a catastrophic failure due to inadequate governance structures. The board failed to exercise proper oversight, leading to risky investments and regulatory violations.
-
-Key Issues:
-1. Lack of independent directors on the board
-2. Insufficient risk management oversight
-3. Failure to monitor compliance with regulations
-4. Poor communication between board and management
-5. Inadequate whistleblower protection
-
-Students will analyze this case to identify where governance failed and propose solutions to prevent similar failures in the future.') }}
-                            </textarea>
+                                      rows="5" placeholder="Provide a relevant case study"></textarea>
                             @error('case_study')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -226,29 +207,6 @@ Students will analyze this case to identify where governance failed and propose 
                             <label class="form-label">Practical exercise for students</label>
                             <textarea id="editor5" name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
                                       rows="5" placeholder="Design a practical exercise for this module">
-                                {{ old('exercise', 'Exercise: Map GRC Responsibilities in Your Organization
-
-Instructions:
-1. Identify your organization (or use a hypothetical organization)
-2. Create a matrix showing GRC responsibilities for:
-   - Board of Directors
-   - Executive Management
-   - Risk Management Function
-   - Compliance Function
-   - Internal Audit
-   - Line Managers
-   - Individual Employees
-
-3. For each role, specify:
-   - Key GRC responsibilities
-   - Accountability measures
-   - Reporting relationships
-   - Performance indicators
-
-4. Analyze gaps or overlaps in responsibilities
-5. Propose improvements to the GRC structure
-
-Submit your completed matrix and analysis (500-800 words).') }}
                             </textarea>
                             @error('exercise')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -266,23 +224,7 @@ Submit your completed matrix and analysis (500-800 words).') }}
                         <div class="mb-3">
                             <label class="form-label">Any additional notes or instructions</label>
                             <textarea id="editor6" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
-                                      rows="5" placeholder="Additional information for instructors or students">
-                                {{ old('additional_notes', 'Instructor Notes:
-• Recommended reading: "Enterprise Governance, Risk, and Compliance" by Anthony Tarantino
-• Duration: 2-3 hours for content delivery, 1-2 hours for exercises
-• Key discussion points: The evolution from siloed approaches to integrated GRC
-• Common misconceptions: Risk as purely negative, compliance as only rule-following
-
-Student Preparation:
-• Review basic business organization structures
-• Familiarize with common governance frameworks (COSO, ISO)
-• Bring examples from their own work experience
-
-Assessment:
-• Participation in case study discussion: 30%
-• Completion of exercise: 50%
-• Module quiz: 20%') }}
-                            </textarea>
+                                      rows="5" placeholder="Additional information for instructors or students"></textarea>
                             @error('additional_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
