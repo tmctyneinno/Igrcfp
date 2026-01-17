@@ -20,6 +20,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $allCourses = Course::all();
+        dd($allCourses);
         $query = Course::withCount('modules');
     
         $courses = $query->get();
