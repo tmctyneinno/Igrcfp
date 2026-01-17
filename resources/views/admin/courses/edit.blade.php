@@ -1082,20 +1082,18 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
 @push('scripts')
 <script>
-// Initialize CKEditor for all textareas with rich-editor class
-document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
-    ClassicEditor
-        .create(textarea)
-        .catch(error => {
-            console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
-        });
-});
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing edit form');
 
-    ClassicEditor
-    .create(document.querySelector('#full_description'))
-    .catch(error => { console.error(error); });
+    // Initialize CKEditor for all textareas with rich-editor class
+    document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
+        ClassicEditor
+            .create(textarea)
+            .catch(error => {
+                console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
+            });
+    });
 
     // Initialize CKEditor 5 if needed
     if (typeof ClassicEditor !== 'undefined') {
