@@ -502,7 +502,7 @@
                             <div class="col-12">
                                 <label class="form-label">Meta Description</label>
                                 <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description for search engines (max 160 characters)" maxlength="180">{{ old('meta_description') }}</textarea>
+                                          rows="3" placeholder="Brief description for search engines (max 160 characters)" maxlength="200">{{ old('meta_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Recommended: 150-160 characters</small>
                                     <small class="character-count" data-target="meta_description">0/160</small>
@@ -515,7 +515,7 @@
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
                                  <textarea name="meta_keywords" id="metaDescription" class="form-control @error('meta_keywords') is-invalid @enderror" 
-                                          rows="3" placeholder="" maxlength="180">{{ old('meta_description') }}</textarea>
+                                          rows="3" placeholder="" maxlength="200">{{ old('meta_description') }}</textarea>
                                 
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
