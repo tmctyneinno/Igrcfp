@@ -510,7 +510,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Programme Overview</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->programme_overview)) !!}
+                                    {!! ($course->programme_overview) !!}
                                 </div>
                             </div>
                         @endif
@@ -528,7 +528,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Learning Outcomes</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->learning_outcomes)) !!}
+                                    {!! $course->learning_outcomes !!}
                                 </div>
                             </div>
                         @endif
@@ -537,7 +537,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Target Audience</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e(implode("\n", $course->target_audience))) !!}
+                                    {!!  $course->target_audience !!}
                                 </div>
                             </div>
                         @endif
@@ -546,7 +546,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Prerequisites</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->prerequisites)) !!}
+                                    {!! ($course->prerequisites) !!}
                                 </div>
                             </div>
                         @endif
@@ -555,7 +555,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Career Pathways</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->career_pathways)) !!}
+                                    {!! ($course->career_pathways) !!}
                                 </div>
                             </div>
                         @endif
@@ -564,7 +564,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Assessment Structure</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                    {!! nl2br(e($course->assessment_structure)) !!}
+                                    {!! ($course->assessment_structure) !!}
                                 </div>
                             </div>
                         @endif
