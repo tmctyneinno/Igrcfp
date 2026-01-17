@@ -333,20 +333,6 @@ class CourseController extends Controller
         }
     }
 
-    /**
-     * Parse bulk modules from text format
-     * Expected format:
-     * Module X: Title
-     * Description...
-     * 
-     * Objectives:
-     * - Objective 1
-     * - Objective 2
-     * 
-     * Topics:
-     * - Topic 1
-     * - Topic 2
-     */
     private function parseBulkModules(string $content): array
     {
         $modules = [];
@@ -674,7 +660,7 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     // Determine storage path
     $year = date('Y');
     $month = date('m');
-    $storagePath = "course_materials/{$course->id}/{$year}/{$month}";
+    $storagePath = "courses/materials/{$course->id}/{$year}/{$month}";
     
     // Store file
     $path = $file->storeAs($storagePath, $newFilename, 'public');
