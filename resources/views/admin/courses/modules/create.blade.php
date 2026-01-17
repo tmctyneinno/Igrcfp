@@ -275,7 +275,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             @if($course->image)
-                                <img src="{{ asset($course->image) }}" alt="{{ $course->title }}" 
+                                <img src="{{ asset(''$course->image) }}" alt="{{ $course->title }}" 
                                      class="rounded-8" style="width: 40px; height: 40px; object-fit: cover;">
                             @endif
                             <div>
@@ -352,28 +352,7 @@
                     </div>
                 </div>
 
-                <!-- Module Templates -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Quick Templates</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadTemplate('foundations')">
-                                Foundations Module
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="loadTemplate('technical')">
-                                Technical Module
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-success" onclick="loadTemplate('case_study')">
-                                Case Study Module
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="loadTemplate('practical')">
-                                Practical Module
-                            </button>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </form>
@@ -507,82 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Template loading functionality
-    window.loadTemplate = function(templateType) {
-        if (!confirm('Load template? This will replace current content in some fields.')) {
-            return;
-        }
-
-        const templates = {
-            foundations: {
-                title: 'Foundations of Governance, Risk and Compliance',
-                short_description: 'This module introduces the core concepts of Governance, Risk, and Compliance (GRC) as an integrated framework for organizational success.',
-                learning_objectives: 'By the end of this module, participants will be able to:\n• Understand GRC concepts and history\n• Explain the purpose of governance\n• Define risk and compliance roles\n• Identify key stakeholders in GRC\n• Apply integrated GRC principles',
-                topics_covered: '• Evolution of GRC\n• Integrated GRC model\n• Stakeholder theory\n• Role of boards and executives\n• Governance structures and processes\n• Risk management frameworks\n• Compliance requirements',
-                key_concepts: '• Governance: direction, accountability, oversight\n• Risk: uncertainty affecting objectives\n• Compliance: adherence to laws, rules, standards\n• Integrated GRC: alignment of governance, risk, and compliance\n• Stakeholder management',
-                case_study: 'Case Study: A multinational bank fails due to weak board oversight\n\nAnalyze where governance failed and propose solutions to prevent similar failures.',
-                exercise: 'Exercise: Map GRC Responsibilities in Your Organization\n\nCreate a responsibility matrix and analyze gaps in GRC oversight.'
-            },
-            technical: {
-                title: 'Technical Implementation and Frameworks',
-                short_description: 'This module covers technical implementation of GRC frameworks and compliance systems.',
-                learning_objectives: '• Implement COSO and ISO 31000 frameworks\n• Design risk assessment methodologies\n• Develop compliance monitoring systems\n• Apply technology in GRC implementation\n• Measure GRC program effectiveness',
-                topics_covered: '• COSO ERM Framework\n• ISO 31000 Risk Management\n• Compliance program design\n• Risk assessment techniques\n• Control implementation\n• Monitoring and testing\n• Reporting and documentation',
-                key_concepts: '• Risk assessment methodologies\n• Control frameworks\n• Compliance monitoring\n• Technology integration\n• Performance metrics',
-                case_study: 'Case Study: Implementing GRC in a FinTech startup\n\nAnalyze challenges and solutions for implementing GRC in a fast-growing technology company.',
-                exercise: 'Exercise: Design a Risk Assessment Framework\n\nCreate a comprehensive risk assessment methodology for a hypothetical organization.'
-            },
-            case_study: {
-                title: 'Case Studies in GRC Failures and Successes',
-                short_description: 'Analyze real-world GRC failures and successes to learn practical lessons.',
-                learning_objectives: '• Analyze GRC failures in major organizations\n• Identify root causes of GRC breakdowns\n• Extract lessons from GRC successes\n• Apply case study insights to real situations\n• Develop preventive measures',
-                topics_covered: '• Major corporate failures\n• Regulatory enforcement cases\n• Successful GRC implementations\n• Root cause analysis\n• Preventive controls\n• Recovery strategies',
-                key_concepts: '• Root cause analysis\n• Preventive controls\n• Regulatory compliance\n• Corporate governance\n• Risk mitigation',
-                case_study: 'Case Study: Corporate collapse due to governance failure\n\nDetailed analysis of how poor governance led to organizational failure.',
-                exercise: 'Exercise: Conduct a Root Cause Analysis\n\nAnalyze a GRC failure case and develop a comprehensive improvement plan.'
-            },
-            practical: {
-                title: 'Practical Application and Implementation',
-                short_description: 'Hands-on module focusing on practical GRC implementation and application.',
-                learning_objectives: '• Develop GRC implementation plans\n• Create risk registers and assessments\n• Design compliance monitoring programs\n• Implement GRC technology solutions\n• Measure program effectiveness',
-                topics_covered: '• GRC implementation planning\n• Risk register development\n• Compliance program design\n• Technology implementation\n• Performance measurement\n• Continuous improvement',
-                key_concepts: '• Implementation planning\n• Practical application\n• Technology solutions\n• Performance metrics\n• Continuous improvement',
-                case_study: 'Case Study: Successful GRC implementation in a multinational corporation\n\nAnalyze the implementation process and key success factors.',
-                exercise: 'Exercise: Develop a GRC Implementation Plan\n\nCreate a comprehensive implementation plan for a hypothetical organization.'
-            }
-        };
-
-        const template = templates[templateType];
-        if (!template) return;
-
-        // Update form fields
-        if (moduleTitleInput) moduleTitleInput.value = template.title;
-        
-        const shortDescTextarea = document.querySelector('textarea[name="short_description"]');
-        if (shortDescTextarea) shortDescTextarea.value = template.short_description;
-        
-        const learningObjTextarea = document.querySelector('textarea[name="learning_objectives"]');
-        if (learningObjTextarea) learningObjTextarea.value = template.learning_objectives;
-        
-        const topicsTextarea = document.querySelector('textarea[name="topics_covered"]');
-        if (topicsTextarea) topicsTextarea.value = template.topics_covered;
-        
-        const conceptsTextarea = document.querySelector('textarea[name="key_concepts"]');
-        if (conceptsTextarea) conceptsTextarea.value = template.key_concepts;
-        
-        const caseStudyTextarea = document.querySelector('textarea[name="case_study"]');
-        if (caseStudyTextarea) caseStudyTextarea.value = template.case_study;
-        
-        const exerciseTextarea = document.querySelector('textarea[name="exercise"]');
-        if (exerciseTextarea) exerciseTextarea.value = template.exercise;
-
-        // Trigger character count update
-        if (shortDescTextarea) {
-            shortDescTextarea.dispatchEvent(new Event('input'));
-        }
-
-        alert(`"${templateType.replace('_', ' ')}" template loaded successfully!`);
-    };
+    
 
     console.log('Module creation form initialized');
 });
