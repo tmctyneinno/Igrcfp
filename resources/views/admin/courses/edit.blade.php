@@ -17,7 +17,7 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+                <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
             </li>
             <li>-</li>
             <li class="fw-medium">Edit</li>
@@ -431,7 +431,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="card-title mb-0">Course Modules</h6>
                             <div class="d-flex gap-2">
-                                <a href="{{ route('admin.courses.modules.create', $course->id) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('admin.courses.modules.create', $course->slug) }}" class="btn btn-sm btn-primary">
                                     <iconify-icon icon="mdi:plus"></iconify-icon>
                                     Add Module
                                 </a>
@@ -463,7 +463,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                                                    class="btn btn-sm btn-outline-primary">
                                                     <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                 </a>
-                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->i]) }}" 
+                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                       method="POST" class="d-inline"
                                                       onsubmit="return confirm('Delete this module?')">
                                                     @csrf
