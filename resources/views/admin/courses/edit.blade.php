@@ -75,7 +75,7 @@
 
                             <div class="col-md-12">
                                 <label class="form-label">Short Title <span class="text-danger">*</span></label>
-                                <input type="text" name="short_title" class="form-control @error('short_title') is-invalid @enderror" 
+                                <input type="text" name="short_title" class="form-control rich-editor @error('short_title') is-invalid @enderror" 
                                        placeholder="e.g., Certified GRC & Financial Crime Specialist" value="{{ old('short_title', $course->short_title) }}" required>
                                 @error('short_title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -84,7 +84,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required maxlength="500">{{ old('short_description', $course->short_description) }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Maximum 500 characters</small>
@@ -97,7 +97,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea id="full_description" name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
+                                <textarea id="full_description" name="full_description" class="form-control rich-editor @error('full_description') is-invalid @enderror" 
                                           rows="8" placeholder="Detailed description of the course...">{{ old('full_description', $course->full_description) }}</textarea>
                                 @error('full_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -349,7 +349,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
-                                <textarea id="programme_overview" name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_overview" name="programme_overview" class="form-control rich-editor @error('programme_overview') is-invalid @enderror" rows="6" 
                                           placeholder="Detailed programme overview...">{{ old('programme_overview', $course->programme_overview) }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -358,7 +358,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Programme Architecture</label>
-                                <textarea id="programme_architecture" name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_architecture" name="programme_architecture" class="form-control rich-editor @error('programme_architecture') is-invalid @enderror" rows="6" 
                                           placeholder="Describe the programme tiers and structure...">{{ old('programme_architecture', $course->programme_architecture) }}</textarea>
                                 @error('programme_architecture')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -367,7 +367,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
-                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
+                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control rich-editor  @error('learning_outcomes') is-invalid @enderror" rows="8" 
                                            required>{{ old('learning_outcomes', $course->learning_outcomes) }}</textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -377,7 +377,7 @@
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
                                 <textarea name="target_audience"
-                                    class="form-control @error('target_audience') is-invalid @enderror"
+                                    class="form-control rich-editor @error('target_audience') is-invalid @enderror"
                                     rows="5"
                                     placeholder=""
                                     required>{{ old('target_audience', is_array($course->target_audience) ? implode("\n", $course->target_audience) : $course->target_audience) }}</textarea>
