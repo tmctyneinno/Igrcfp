@@ -386,7 +386,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Prerequisites</label>
-                                <textarea id="prerequisites" name="prerequisites" class="form-control @error('prerequisites') is-invalid @enderror" 
+                                <textarea id="prerequisites" name="prerequisites" class="form-control rich-editor @error('prerequisites') is-invalid @enderror" 
                                           rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites', $course->prerequisites) }}</textarea>
                                 @error('prerequisites')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -395,7 +395,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea id="career_pathways" name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
+                                <textarea id="career_pathways" name="career_pathways" class="form-control rich-editor @error('career_pathways') is-invalid @enderror" rows="4" 
                                           >{{ old('career_pathways', $course->career_pathways) }}</textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -404,7 +404,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea id="assessment_structure" name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
+                                <textarea id="assessment_structure" name="assessment_structure" class="form-control rich-editor @error('assessment_structure') is-invalid @enderror" rows="4" 
                                           placeholder="Module quizzes
 Practical assignments
 Final examination">{{ old('assessment_structure', $course->assessment_structure) }}</textarea>
@@ -486,7 +486,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         
                         <div class="mb-3">
                             <label class="form-label">Bulk Module Update Content</label>
-                            <textarea name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="15" 
+                            <textarea name="bulk_modules" class="form-control rich-editor @error('bulk_modules') is-invalid @enderror" rows="15" 
                                       >{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -620,7 +620,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Meta Description</label>
-                                <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
+                                <textarea name="meta_description" id="metaDescription" class="form-control rich-editor @error('meta_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description for search engines (max 160 characters)" maxlength="160">{{ old('meta_description', $course->meta_description) }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Recommended: 150-160 characters</small>
