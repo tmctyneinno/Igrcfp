@@ -292,7 +292,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             @if($course->image)
-                                <img src="{{ asset($course->image) }}" alt="{{ $course->title }}" 
+                                <img src="{{ asset('storage/'.$course->image) }}" alt="{{ $course->title }}" 
                                      class="rounded-8" style="width: 40px; height: 40px; object-fit: cover;">
                             @endif
                             <div>
