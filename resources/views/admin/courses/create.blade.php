@@ -396,9 +396,7 @@
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
                                 <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
-                                          placeholder="CGFCS holders must:
-                                            - Act with integrity
-                                            - Maintain confidentiality"></textarea>
+                                          ></textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
