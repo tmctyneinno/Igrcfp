@@ -799,8 +799,7 @@
 
                         <div class="border-top pt-3">
                             <div class="d-grid gap-2">
-                                <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-primary">
-                                    <iconify-icon icon="mdi:pencil"></iconify-icon>
+                                <a href="{{ route('admin.courses.edit', $course->slug) }}" class="btn btn-primary">
                                     Edit Course
                                 </a>
                                 <a href="#" class="btn btn-outline-secondary" onclick="window.print()">
