@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CoursMaterial;
 use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\CourseMaterial;
