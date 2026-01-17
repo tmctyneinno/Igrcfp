@@ -467,6 +467,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const moduleForm = document.getElementById('moduleForm');
     if (moduleForm) {
         moduleForm.addEventListener('submit', function(e) {
+            // Sync all CKEditor instances before submission
+            for (let i = 1; i <= 8; i++) {
+                const editorId = 'editor' + i;
+                if (ClassicEditor && ClassicEditor.instances[editorId]) {
+                    ClassicEditor.instances[editorId].updateSourceElement();
+                }
+            }
             
             // Clear previous custom validity messages
             const inputs = this.querySelectorAll('input, select, textarea');
