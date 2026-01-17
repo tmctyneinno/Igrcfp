@@ -404,7 +404,6 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">Course Materials ({{ $course->materials->count() }})</h6>
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">
-                            <iconify-icon icon="mdi:upload"></iconify-icon>
                             Upload Materials
                         </button>
                     </div>
@@ -491,8 +490,7 @@
                             <h5 class="text-muted">No materials uploaded yet</h5>
                             <p class="text-muted mb-4">Upload course materials like PDFs, presentations, and worksheets</p>
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">
-                                <iconify-icon icon="mdi:upload"></iconify-icon>
-                                Upload Materials
+                                 Upload Materials
                             </button>
                         </div>
                     @endif
