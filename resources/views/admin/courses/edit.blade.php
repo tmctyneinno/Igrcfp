@@ -487,24 +487,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         <div class="mb-3">
                             <label class="form-label">Bulk Module Update Content</label>
                             <textarea name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="15" 
-                                      placeholder="Example:
-Module 1: Foundations of Governance, Risk and Compliance
-This module provides the fundamental understanding of GRC concepts...
-
-Objectives:
-- Understand GRC concepts and history
-- Explain the purpose of governance
-
-Topics:
-- Evolution of GRC
-- Integrated GRC model
-- Stakeholder theory
-
-Case Study:
-A multinational bank fails due to weak board oversight. Analyse where governance failed.
-
-Exercise:
-Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</textarea>
+                                      >{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
