@@ -86,7 +86,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea id="editor8" name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the module (max 500 characters)" 
                                           required maxlength="500">{{ old('short_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
@@ -100,7 +100,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Content <span class="text-danger">*</span></label>
-                                <textarea id="editor" name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
+                                <textarea id="editor7" name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
                                           rows="10" placeholder="Detailed content for the module...">{{ old('full_content') }}</textarea>
                                 @error('full_content')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -405,6 +405,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => { console.error(error); });
     ClassicEditor
     .create(document.querySelector('#editor7'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor8'))
     .catch(error => { console.error(error); });
    
 
