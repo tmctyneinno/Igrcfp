@@ -459,11 +459,11 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                                                 <strong>{{ $module->title }}</strong>
                                             </div>
                                             <div class="d-flex gap-1">
-                                                <a href="{{ route('admin.courses.modules.edit', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                    class="btn btn-sm btn-outline-primary">
                                                     <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                 </a>
-                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->i]) }}" 
                                                       method="POST" class="d-inline"
                                                       onsubmit="return confirm('Delete this module?')">
                                                     @csrf
@@ -791,11 +791,11 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-primary">
+                            <a href="{{ route('admin.courses.show', $course->slug) }}" class="btn btn-outline-primary">
                                 <iconify-icon icon="mdi:eye"></iconify-icon>
                                 View Course
                             </a>
-                            <a href="{{ route('admin.courses.modules.create', $course->id) }}" class="btn btn-outline-success">
+                            <a href="{{ route('admin.courses.modules.create', $course->slug) }}" class="btn btn-outline-success">
                                 <iconify-icon icon="mdi:plus"></iconify-icon>
                                 Add New Module
                             </a>
@@ -916,7 +916,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         <select name="module_id" class="form-select">
                             <option value="">-- None (General Course Material) --</option>
                             @foreach($course->modules as $module)
-                                <option value="{{ $module->id }}">Module {{ $module->module_number }}: {{ $module->title }}</option>
+                                <option value="{{ $module->slug }}">Module {{ $module->module_number }}: {{ $module->title }}</option>
                             @endforeach
                         </select>
                     </div>
