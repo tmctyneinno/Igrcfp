@@ -24,7 +24,7 @@ class CourseController extends Controller
     
         // $courses = $query->get();
         // $totalCourses = Course::count();
-        $query = Course::withTrashed()->withCount('modules');
+        $query = Course::withCount('modules');
        
         // Search functionality
         if ($request->has('search') && $request->search != '') {
