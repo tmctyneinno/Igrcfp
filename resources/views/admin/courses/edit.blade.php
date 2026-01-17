@@ -748,7 +748,7 @@ Map GRC responsibilities in your organisation.">{{ old('bulk_modules') }}</texta
                                 <div id="currentImagePreview" class="mb-3">
                                     <img src="{{ asset('storage/' . $course->image) }}" alt="Current course image" 
                                          class="img-fluid rounded-8 border" style="max-height: 150px;">
-                                </div>
+                                </div> 
                                 <small class="text-muted d-block mb-3">Current image</small>
                             @else   
                                 <div id="noImagePlaceholder" class="text-muted py-2">
