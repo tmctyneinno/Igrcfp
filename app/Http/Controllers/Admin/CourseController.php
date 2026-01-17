@@ -710,35 +710,35 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     ]);
 }
 
-private function handleUploadResponse($request, $results, $course)
-{
-    $successCount = count($results['success']);
-    $failedCount = count($results['failed']);
-    
-    // If AJAX request (for progress bar)
-    if ($request->ajax()) {
-        return response()->json([
-            'success' => true,
-            'message' => "{$successCount} file(s) uploaded successfully",
-            'success_count' => $successCount,
-            'failed_count' => $failedCount,
-            'failed_files' => $results['failed'],
-            'redirect' => route('admin.courses.show', $course->slug)
-        ]);
-    }
-    
-    // Regular HTTP request
-    $message = "{$successCount} file(s) uploaded successfully!";
-    
-    if ($failedCount > 0) {
-        $failedNames = implode(', ', array_column($results['failed'], 'name'));
-        $message .= " {$failedCount} file(s) failed: {$failedNames}";
+    private function handleUploadResponse($request, $results, $course)
+    {
+        $successCount = count($results['success']);
+        $failedCount = count($results['failed']);
+        
+        // If AJAX request (for progress bar)
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "{$successCount} file(s) uploaded successfully",
+                'success_count' => $successCount,
+                'failed_count' => $failedCount,
+                'failed_files' => $results['failed'],
+                'redirect' => route('admin.courses.show', $course->slug)
+            ]);
+        }
+        
+        // Regular HTTP request
+        $message = "{$successCount} file(s) uploaded successfully!";
+        
+        if ($failedCount > 0) {
+            $failedNames = implode(', ', array_column($results['failed'], 'name'));
+            $message .= " {$failedCount} file(s) failed: {$failedNames}";
+            
+            return redirect()->route('admin.courses.show', $course->slug)
+                ->with('warning', $message);
+        }
         
         return redirect()->route('admin.courses.show', $course->slug)
-            ->with('warning', $message);
+            ->with('success', $message);
     }
-    
-    return redirect()->route('admin.courses.show', $course->slug)
-        ->with('success', $message);
-}
 }
