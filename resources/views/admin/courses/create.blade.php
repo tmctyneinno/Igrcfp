@@ -803,10 +803,14 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => { console.error(error); });
     ClassicEditor
     .create(document.querySelector('#prerequisites'))
-    .catch(error => { console.error(error); });target_audience
+    .catch(error => { console.error(error); });
     ClassicEditor
     .create(document.querySelector('#target_audience'))
     .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#learning_outcomes'))
+    .catch(error => { console.error(error); });
+    
    
 
 
