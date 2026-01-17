@@ -100,7 +100,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Content <span class="text-danger">*</span></label>
-                                <textarea name="editor7" class="form-control @error('full_content') is-invalid @enderror" 
+                                <textarea id="editor" name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
                                           rows="10" placeholder="Detailed content for the module...">{{ old('full_content') }}</textarea>
                                 @error('full_content')
                                     <div class="invalid-feedback">{{ $message }}</div>
