@@ -272,11 +272,9 @@
                                             <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                                                 <div class="text-muted small">
                                                     <span class="me-3">
-                                                        <iconify-icon icon="mdi:calendar" class="icon"></iconify-icon>
                                                         Created: {{ $module->created_at->format('M d, Y') }}
                                                     </span>
                                                     <span>
-                                                        <iconify-icon icon="mdi:update" class="icon"></iconify-icon>
                                                         Updated: {{ $module->updated_at->format('M d, Y') }}
                                                     </span>
                                                 </div>
@@ -290,8 +288,7 @@
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }}">
-                                                            <iconify-icon icon="mdi:power"></iconify-icon>
-                                                            {{ $module->is_active ? 'Deactivate' : 'Activate' }}
+                                                             {{ $module->is_active ? 'Deactivate' : 'Activate' }}
                                                         </button>
                                                     </form>
                                                     
@@ -305,8 +302,7 @@
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-outline-info" 
                                                                 onclick="return confirm('Duplicate this module?')">
-                                                            <iconify-icon icon="mdi:content-copy"></iconify-icon>
-                                                            Duplicate
+                                                             Duplicate
                                                         </button>
                                                     </form>
                                                     
