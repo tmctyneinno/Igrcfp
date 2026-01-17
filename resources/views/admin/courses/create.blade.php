@@ -514,8 +514,9 @@
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                <input type="text" name="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
-                                    value="">
+                                 <textarea name="meta_keywords" id="metaDescription" class="form-control @error('meta_keywords') is-invalid @enderror" 
+                                          rows="3" placeholder="" maxlength="180">{{ old('meta_description') }}</textarea>
+                                
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
                                     <div class="invalid-feedback">{{ $message }}</div>
