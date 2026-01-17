@@ -382,9 +382,7 @@
                                 <textarea name="target_audience"
                                     class="form-control @error('target_audience') is-invalid @enderror"
                                     rows="5"
-                                    placeholder="Compliance Officers
-                                Risk Managers
-                                Fraud & Financial Crime Analysts"
+                                    placeholder=""
                                     required>{{ old('target_audience', is_array($course->target_audience) ? implode("\n", $course->target_audience) : $course->target_audience) }}</textarea>
 
                             </div>

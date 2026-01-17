@@ -800,10 +800,13 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => { console.error(error); });
     ClassicEditor
     .create(document.querySelector('#career_pathways'))
-    .catch(error => { console.error(error); });prerequisites
+    .catch(error => { console.error(error); });
     ClassicEditor
-    .create(document.querySelector('#career_pathways'))
-    .catch(error => { console.error(error); });prerequisites
+    .create(document.querySelector('#prerequisites'))
+    .catch(error => { console.error(error); });target_audience
+    ClassicEditor
+    .create(document.querySelector('#target_audience'))
+    .catch(error => { console.error(error); });
    
 
 
