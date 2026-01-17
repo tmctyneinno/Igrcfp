@@ -122,9 +122,7 @@ class CourseController extends Controller
 
             // Handle video upload
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
-                $validated['video'] = $request->file('banner_image')->store('courses/banner', 'public');
-            
-                $validated['video'] = $this->uploadFile($request->file('video'), 'courses/videos');
+                $validated['video'] = $request->file('video')->store('courses/videos', 'public');
             }
 
             // Convert target audience from textarea to array
@@ -292,6 +290,7 @@ class CourseController extends Controller
             
             foreach ($request->file('materials') as $file) {
                 $path = $this->uploadFile($file, 'courses/materials');
+                
                 
                 $material = $course->materials()->create([
                     'module_id' => $request->module_id,
