@@ -776,41 +776,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
-
-     // Initialize CKEditor 5
-    ClassicEditor
-    .create(document.querySelector('#editor1'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor2'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#full_description'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#code_of_conduct'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#assessment_structure'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#career_pathways'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#prerequisites'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#target_audience'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#learning_outcomes'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#programme_architecture'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#programme_overview'))
-    .catch(error => { console.error(error); });
+ // Initialize CKEditor for all textareas with rich-editor class
+    document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
+        ClassicEditor
+            .create(textarea)
+            .catch(error => {
+                console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
+            });
+    });
    
 
 
