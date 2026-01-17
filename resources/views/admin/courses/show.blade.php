@@ -828,7 +828,7 @@
                                 <label class="form-label small text-muted">Meta Keywords</label>
                                 <div class="d-flex flex-wrap gap-1">
                                     @foreach(explode(',', $course->meta_keywords) as $keyword)
-                                        <span class="badge bg-light text-dark">{{ trim($keyword) }}</span>
+                                        <span class="badge bg-light text-dark">{{trim($keyword) }}</span>
                                     @endforeach
                                 </div>
                             </div>
