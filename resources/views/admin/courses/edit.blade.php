@@ -520,7 +520,6 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="card-title mb-0">Course Materials ({{ $course->materials->count() }})</h6>
                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadMaterialModal">
-                                <iconify-icon icon="mdi:upload"></iconify-icon>
                                 Upload Materials
                             </button>
                         </div>
