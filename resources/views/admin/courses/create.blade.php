@@ -491,7 +491,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Meta Description</label>
-                                <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
+                                <textarea name="meta_description" id="metaDescription" class="form-control rich-editor @error('meta_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description for search engines (max 160 characters)" maxlength="200">{{ old('meta_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Recommended: 150-160 characters</small>
@@ -504,7 +504,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                 <textarea name="meta_keywords" id="metaDescription" class="form-control @error('meta_keywords') is-invalid @enderror" 
+                                 <textarea name="meta_keywords" id="metaDescription" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
                                           rows="3" placeholder="" maxlength="200">{{ old('meta_description') }}</textarea>
                                 
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
@@ -539,7 +539,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Sort Order</label>
-                                <input type="number" name="sort_order" class="form-control @error('sort_order') is-invalid @enderror" 
+                                <input type="number" name="sort_order" class="form-control rich-editor @error('sort_order') is-invalid @enderror" 
                                        placeholder="0" value="{{ old('sort_order', 0) }}">
                                 <p class="text-sm mt-1 mb-0 text-muted">Lower numbers appear first</p>
                                 @error('sort_order')
