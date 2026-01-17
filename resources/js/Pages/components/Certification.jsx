@@ -3,6 +3,22 @@ import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 
 export default function Certification({ courses = [] }) {
+
+    // Format price safely
+    const formatPrice = (price) => {
+        if (!price && price !== 0) return null;
+        const numPrice = parseFloat(price);
+        return isNaN(numPrice) ? null : `$${numPrice.toFixed(2)}`;
+    };
+
+    // Check if course has discount
+    const hasDiscount = (course) => {
+        if (!course.discount_price || !course.price) return false;
+        const price = parseFloat(course.price);
+        const discountPrice = parseFloat(course.discount_price);
+        return !isNaN(price) && !isNaN(discountPrice) && discountPrice < price;
+    };
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* HEADER */}
