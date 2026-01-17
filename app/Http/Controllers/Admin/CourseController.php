@@ -431,7 +431,7 @@ class CourseController extends Controller
             'code_of_conduct' => 'nullable|string',
             'programme_overview' => 'nullable|string',
             'programme_architecture' => 'nullable|string',
-            'meta_description' => 'nullable|string|max:160',
+            'meta_description' => 'nullable|string|max:200',
             'meta_keywords' => 'nullable|string|max:255',
             'status' => 'required|in:draft,published,archived',
             'is_featured' => 'boolean',
