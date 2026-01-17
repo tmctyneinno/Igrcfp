@@ -20,6 +20,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::get('/courses/toggle-featured', [CourseController::class, 'toggleFeatured'])->name('courses.toggle-featured');
     Route::get('/courses/toggle-popular', [CourseController::class, 'togglePopular'])->name('courses.toggle-popular');
     Route::get('/courses/materials-uploadr', [CourseController::class, 'materialsUpload'])->name('courses.materials.upload');
+    Route::get('/courses/materials-uploadr', [CourseController::class, 'materialsUpload'])->name('courses.materials.upload');
     Route::get('/courses/bulk-action', [CourseController::class, 'bulkAction'])->name('courses.bulk-action');
     
     // Edit Course
