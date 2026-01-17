@@ -97,7 +97,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
+                                <textarea id="full_description" name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
                                           rows="8" placeholder="Detailed description of the course...">{{ old('full_description', $course->full_description) }}</textarea>
                                 @error('full_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
