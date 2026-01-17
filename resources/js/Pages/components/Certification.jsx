@@ -198,7 +198,7 @@ export default function Certification({ courses = [] }) {
                 <div className="text-center mt-12">
                     <Link
                         href="/courses"
-                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+                        className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
                     >
                         View All Courses →
                     </Link>
