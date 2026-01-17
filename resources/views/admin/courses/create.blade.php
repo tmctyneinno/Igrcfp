@@ -810,7 +810,9 @@ document.addEventListener('DOMContentLoaded', function() {
     ClassicEditor
     .create(document.querySelector('#learning_outcomes'))
     .catch(error => { console.error(error); });
-    
+    ClassicEditor
+    .create(document.querySelector('#programme_architecture'))
+    .catch(error => { console.error(error); });
    
 
 

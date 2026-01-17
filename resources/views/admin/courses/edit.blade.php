@@ -349,7 +349,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
-                                <textarea name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_overview" name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
                                           placeholder="Detailed programme overview...">{{ old('programme_overview', $course->programme_overview) }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -358,7 +358,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Programme Architecture</label>
-                                <textarea name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_architecture" name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6" 
                                           placeholder="Describe the programme tiers and structure...">{{ old('programme_architecture', $course->programme_architecture) }}</textarea>
                                 @error('programme_architecture')
                                     <div class="invalid-feedback">{{ $message }}</div>
