@@ -1115,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof ClassicEditor !== 'undefined') {
         // You can initialize CKEditor here if needed
         // ClassicEditor.create(document.querySelector('#editor1')).catch(error => { console.error(error); });
-    }
+    } 
 
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
