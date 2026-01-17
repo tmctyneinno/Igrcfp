@@ -793,7 +793,10 @@ document.addEventListener('DOMContentLoaded', function() {
     .create(document.querySelector('#full_description'))
     .catch(error => { console.error(error); });
     ClassicEditor
-    .create(document.querySelector('#full_description'))
+    .create(document.querySelector('#code_of_conduct'))
+    .catch(error => { console.error(error); });
+     ClassicEditor
+    .create(document.querySelector('#assessment_structure'))
     .catch(error => { console.error(error); });
    
 
