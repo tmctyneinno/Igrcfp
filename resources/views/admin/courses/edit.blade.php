@@ -73,7 +73,7 @@
                                 @enderror
                             </div> --}}
 
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="form-label">Short Title <span class="text-danger">*</span></label>
                                 <input type="text" name="short_title" class="form-control @error('short_title') is-invalid @enderror" 
                                        placeholder="e.g., Certified GRC & Financial Crime Specialist" value="{{ old('short_title', $course->short_title) }}" required>
