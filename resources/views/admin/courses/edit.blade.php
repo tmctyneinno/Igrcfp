@@ -1081,6 +1081,14 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
 @push('scripts')
 <script>
+// Initialize CKEditor for all textareas with rich-editor class
+document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
+    ClassicEditor
+        .create(textarea)
+        .catch(error => {
+            console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
+        });
+});
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing edit form');
 
