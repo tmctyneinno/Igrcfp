@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CoursMaterial;
 use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\CourseMaterial;
@@ -678,7 +677,7 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     }
     
     // Create material record
-    return Material::create([
+    return CourseMaterial::create([
         'course_id' => $course->id,
         'module_id' => $request->module_id,
         'title' => $request->input("titles.{$index}", $filename),
