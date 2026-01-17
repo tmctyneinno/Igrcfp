@@ -264,7 +264,6 @@
                                                 <a href="{{ route('admin.courses.index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
                                             @endif
                                             <a href="{{ route('admin.courses.create') }}" class="btn btn-sm btn-primary">
-                                                <iconify-icon icon="ic:baseline-plus" class="icon"></iconify-icon>
                                                 Create New Course
                                             </a>
                                         </div>
