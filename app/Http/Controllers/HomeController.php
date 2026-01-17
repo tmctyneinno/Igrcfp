@@ -17,7 +17,26 @@ class HomeController extends Controller
 {
     public function index()
     {
-       
+        $courses = Course::query()
+            ->withCount('modules') // If you need module count
+            ->where('status', 'published') // Only show published courses
+            ->orderBy('created_at', 'desc')
+            ->take(6) // Limit to 6 courses for the homepage
+            ->get()
+            ->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'slug' => $course->slug,
+                    'short_description' => $course->short_description,
+                    'description' => $course->description,
+                    'image_url' => $course->image_url, // Make sure this accessor exists
+                    'level' => $course->level,
+                    'duration' => $course->duration,
+                    'modules_count' => $course->modules_count,
+                    'created_at' => $course->created_at->format('M d, Y'),
+                ];
+            });
 
         return Inertia::render('Welcome', [
             'canLogin' => \Route::has('login'),

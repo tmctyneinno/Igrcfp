@@ -3,7 +3,7 @@ import { Link } from "@inertiajs/react";
 import React from "react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
-
+ 
 export default function Certification({ courses = [] }) {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
