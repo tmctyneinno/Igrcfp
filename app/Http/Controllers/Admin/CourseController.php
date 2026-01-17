@@ -20,10 +20,10 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $allCourses = Course::all();
-        // dd($allCourses);
+        $query = Course::withCount('modules');
     
-        // $courses = $query->get();
-        // $totalCourses = Course::count();
+        $courses = $query->get();
+        $totalCourses = Course::count();
         $query = Course::withCount('modules');
        
         // Search functionality
@@ -177,15 +177,18 @@ class CourseController extends Controller
     public function update(Request $request, $id)
     { 
         // dd('update_Course');
-         if (is_numeric($id)) {
-        $course = Course::findOrFail($id); // REMOVE withTrashed()
+        if (is_numeric($id)) {
+        $course = Course::findOrFail($id);
         } else {
-            $course = Course::where('slug', $id)->firstOrFail(); // REMOVE withTrashed()
+            $course = Course::where('slug', $id)->firstOrFail();
         }
        
         // dd($id);
       
         $validated = $this->validateRequest($request, $course);
+        // ⚠️ CRITICAL: Remove deleted_at from validated data
+        unset($validated['deleted_at']);
+
 
         try {
             // Handle image uploads
