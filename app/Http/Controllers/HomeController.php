@@ -17,11 +17,12 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $courses = Course::query()
-            ->withCount('modules') // If you need module count
-            ->where('status', 'published') // Only show published courses
-            ->orderBy('created_at', 'desc')
-            ->take(6) // Limit to 6 courses for the homepage
+        $courses = Course::published() // Using the published scope from your model
+            ->withCount('modules')
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('is_popular', 'desc')
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
             ->get()
             ->map(function ($course) {
                 return [
@@ -29,12 +30,13 @@ class HomeController extends Controller
                     'title' => $course->title,
                     'slug' => $course->slug,
                     'short_description' => $course->short_description,
-                    'description' => $course->description,
-                    'image_url' => $course->image_url, // Make sure this accessor exists
+                    'banner_image' => $course->banner_image, 
+                    'image_url' => $course->image_url, 
                     'level' => $course->level,
                     'duration' => $course->duration,
+                    'price' => $course->price,
+                    'discount_price' => $course->discount_price,
                     'modules_count' => $course->modules_count,
-                    'created_at' => $course->created_at->format('M d, Y'),
                 ];
             });
 
