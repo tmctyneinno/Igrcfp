@@ -415,7 +415,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                             
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
+                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control rich-editor @error('code_of_conduct') is-invalid @enderror" rows="4" 
                                           >{!!  $course->code_of_conduct !!}</textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -633,7 +633,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                <input type="text" name="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
+                                <input type="text" name="meta_keywords" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
                                        placeholder="keyword1, keyword2, keyword3" value="{{ old('meta_keywords', $course->meta_keywords) }}">
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
