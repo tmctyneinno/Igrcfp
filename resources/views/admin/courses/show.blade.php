@@ -90,7 +90,7 @@
                         <div class="col-12">
                             <h6 class="mb-2">Full Description</h6>
                             <div class="course-description">
-                                {!! nl2br(e($course->full_description)) !!}
+                                {!! ($course->full_description) !!}
                             </div>
                         </div>
 
