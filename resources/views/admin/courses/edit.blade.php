@@ -432,11 +432,9 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                             <h6 class="card-title mb-0">Course Modules</h6>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('admin.courses.modules.create', $course->slug) }}" class="btn btn-sm btn-primary">
-                                    <iconify-icon icon="mdi:plus"></iconify-icon>
                                     Add Module
                                 </a>
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#bulkUpdateModal">
-                                    <iconify-icon icon="mdi:upload"></iconify-icon>
                                     Bulk Update
                                 </button>
                             </div>
