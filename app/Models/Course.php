@@ -72,8 +72,8 @@ class Course extends Model
      */
     public function modules()
     {
-        return $this->hasMany(CourseModule::class)->orderBy('module_number');
-    } 
+        return $this->hasMany(CourseModule::class);
+    }  
 
     public function materials()
     {
