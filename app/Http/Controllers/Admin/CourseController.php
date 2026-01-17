@@ -177,10 +177,10 @@ class CourseController extends Controller
     public function update(Request $request, $id)
     { 
         // dd('update_Course');
-        if (is_numeric($id)) {
-        $course = Course::findOrFail($id);
+         if (is_numeric($id)) {
+        $course = Course::findOrFail($id); // REMOVE withTrashed()
         } else {
-            $course = Course::where('slug', $id)->firstOrFail();
+            $course = Course::where('slug', $id)->firstOrFail(); // REMOVE withTrashed()
         }
        
         // dd($id);
