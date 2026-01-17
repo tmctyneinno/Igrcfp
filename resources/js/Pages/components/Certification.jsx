@@ -1,18 +1,12 @@
-import { motion } from "framer-motion";
-import { Link } from "@inertiajs/react";
-import React from "react";
-import { fadeLeft, scaleIn } from "@/utils/motionPresets";
+import React from 'react';
+import { Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 
- 
 export default function Certification({ courses = [] }) {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
             {/* HEADER */}
-            <div
-                className="flex flex-col md:flex-row md:justify-between md:items-center mb-12"
-                data-aos="fade-up"
-            >      
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-12">
                 <div>
                     <div className="relative inline-flex items-center mb-3">
                         <motion.span
@@ -43,7 +37,7 @@ export default function Certification({ courses = [] }) {
                     View All Courses →
                 </Link>
             </div>
- 
+
             {/* COURSES */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {courses.length > 0 ? (
@@ -54,48 +48,132 @@ export default function Certification({ courses = [] }) {
                             data-aos="fade-up"
                             data-aos-delay={index * 150}
                         >
-                            {/* IMAGE */}
+                            {/* IMAGE - Using image_url from model accessor */}
                             <div className="h-48 overflow-hidden">
                                 <img
-                                    src={course.image_url || '/fallback-image.png'}
-                                    alt={course.title} 
+                                    src={course.image_url || '/images/fallback-course.jpg'}
+                                    alt={course.title}
                                     className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.src = '/images/fallback-course.jpg';
+                                    }}
                                 />
                             </div>
 
                             {/* CONTENT */}
-                            <div className="p-2">
-                                <Link href={`/courses/${course.id}`} >
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                    {course.title}
-                                </h3>
+                            <div className="p-6">
+                                <Link href={`/courses/${course.slug}`}>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
+                                        {course.title}
+                                    </h3>
                                 </Link>
+                                
                                 <p className="text-gray-600 text-sm mb-4">
-                                {course.description.length > 400
-                                    ? `${course.description.slice(0, 50)}...`
-                                    : course.description
-                                }
+                                    {course.short_description || 
+                                     (course.description && course.description.length > 100 
+                                        ? `${course.description.substring(0, 100)}...` 
+                                        : course.description || 'No description available')}
                                 </p>
 
+                                {/* COURSE METADATA */}
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                        {course.level || 'All Levels'}
+                                    </span>
+                                    
+                                    <div className="flex items-center space-x-3">
+                                        {course.duration && (
+                                            <span className="text-sm text-gray-500">
+                                                ⏱️ {course.duration}
+                                            </span>
+                                        )}
+                                        {course.modules_count > 0 && (
+                                            <span className="text-sm text-gray-500">
+                                                📚 {course.modules_count} modules
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
 
-                                <div className="flex items-center justify-start">
+                                {/* PRICE SECTION */}
+                                <div className="flex items-center justify-between pt-4 border-t">
                                     <Link
-                                        href={`/courses/${course.id}`} // assuming you have a course detail page
+                                        href={`/courses/${course.slug}`}
                                         className="text-blue-950 font-bold hover:underline transition duration-200"
                                     >
                                         Learn More →
                                     </Link>
+                                    
+                                    {course.price > 0 && (
+                                        <div className="text-right">
+                                            {course.has_discount ? (
+                                                <>
+                                                    <span className="text-lg font-bold text-gray-900">
+                                                        ${course.discount_price.toFixed(2)}
+                                                    </span>
+                                                    <span className="text-sm text-gray-500 line-through ml-2">
+                                                        ${course.price.toFixed(2)}
+                                                    </span>
+                                                    <span className="text-xs font-semibold text-red-600 ml-2">
+                                                        -{course.discount_percentage}%
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <span className="text-lg font-bold text-gray-900">
+                                                    ${course.price.toFixed(2)}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
+                                {/* BADGES */}
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    {course.is_featured && (
+                                        <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
+                                            ⭐ Featured
+                                        </span>
+                                    )}
+                                    {course.is_popular && (
+                                        <span className="text-xs font-semibold px-2 py-1 bg-green-100 text-green-800 rounded">
+                                            🔥 Popular
+                                        </span>
+                                    )}
+                                    {course.format && (
+                                        <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
+                                            {course.format}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p className="col-span-3 text-center text-gray-500">
-                        No courses available at the moment.
-                    </p>
+                    <div className="col-span-3 text-center py-12">
+                        <p className="text-gray-500 text-lg mb-4">
+                            No courses available at the moment.
+                        </p>
+                        <Link
+                            href="/courses"
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        >
+                            Browse All Courses
+                        </Link>
+                    </div>
                 )}
             </div>
+
+            {/* VIEW ALL BUTTON */}
+            {courses.length > 0 && (
+                <div className="text-center mt-12">
+                    <Link
+                        href="/courses"
+                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+                    >
+                        View All Courses →
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
