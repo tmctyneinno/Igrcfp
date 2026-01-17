@@ -400,11 +400,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
-                                          placeholder="Graduates may work as:
-- Compliance Officer
-- Risk Manager
-- AML Analyst">{{ old('career_pathways', $course->career_pathways) }}</textarea>
+                                <textarea id="career_pathways" name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
+                                          >{{ old('career_pathways', $course->career_pathways) }}</textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -412,7 +409,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
+                                <textarea id="assessment_structure" name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
                                           placeholder="Module quizzes
 Practical assignments
 Final examination">{{ old('assessment_structure', $course->assessment_structure) }}</textarea>
