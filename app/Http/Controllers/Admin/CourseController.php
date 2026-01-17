@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\ActivityLog;
 use App\Models\CourseModule;
 use App\Models\CourseMaterial;
 use Illuminate\Http\Request;
