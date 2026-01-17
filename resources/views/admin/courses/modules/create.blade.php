@@ -138,14 +138,7 @@
                         <div class="mb-3">
                             <label class="form-label">What will students learn in this module?</label>
                             <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
-                                      rows="5" placeholder="List the learning objectives (one per line or bullet points)">
-                                {{ old('learning_objectives', 'By the end of this module, participants will be able to:
-• Understand GRC concepts and history
-• Explain the purpose of governance
-• Define risk and compliance roles
-• Identify key stakeholders in GRC
-• Apply integrated GRC principles') }}
-                            </textarea>
+                            rows="5" placeholder="List the learning objectives (one per line or bullet points)"></textarea>
                             @error('learning_objectives')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -162,15 +155,7 @@
                         <div class="mb-3">
                             <label class="form-label">What topics will be covered in this module?</label>
                             <textarea id="editor2" name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
-                                      rows="5" placeholder="List the topics that will be covered">
-                                {{ old('topics_covered', '• Evolution of GRC
-• Integrated GRC model
-• Stakeholder theory
-• Role of boards and executives
-• Governance structures and processes
-• Risk management frameworks
-• Compliance requirements') }}
-                            </textarea>
+                                      rows="5" placeholder="List the topics that will be covered"></textarea>
                             @error('topics_covered')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
