@@ -54,7 +54,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Course Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
+                                <input type="text" name="title" class="form-control rich-editor @error('title') is-invalid @enderror" 
                                        placeholder="Enter course title" value="{{ old('title') }}" required>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -63,7 +63,7 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Course Code <span class="text-danger">*</span></label>
-                                <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" 
+                                <input type="text" name="code" class="form-control rich-editor @error('code') is-invalid @enderror" 
                                        placeholder="e.g., CGFCS" value="{{ old('code') }}" required>
                                 @error('code')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -81,7 +81,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required maxlength="500">{{ old('short_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">Maximum 500 characters</small>
@@ -94,7 +94,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea id="full_description" name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
+                                <textarea id="full_description" name="full_description" class="form-control rich-editor @error('full_description') is-invalid @enderror" 
                                           rows="8" placeholder="Detailed description of the course...">{{ old('full_description') }}</textarea>
                                 @error('full_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -776,7 +776,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
- // Initialize CKEditor for all textareas with rich-editor class
+    
+    // Initialize CKEditor for all textareas with rich-editor class
     document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
         ClassicEditor
             .create(textarea)
