@@ -656,9 +656,9 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     $extension = $file->getClientOriginalExtension();
     $filename = pathinfo($originalName, PATHINFO_FILENAME);
     $safeFilename = Str::slug($filename);
-     dd('materiL33');
     // Create unique filename
     $newFilename = $safeFilename . '_' . time() . '_' . Str::random(5) . '.' . $extension;
+     dd('materiL22');
     
     // Determine storage path
     $year = date('Y');
