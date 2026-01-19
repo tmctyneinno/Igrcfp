@@ -40,7 +40,7 @@
     @endif
 
     <form action="{{ route('admin.courses.store') }}" 
-      method="POST" enctype="multipart/form-data" id="courseForm">
+      method="POST" enctype="multipart/form-data" id="courseForm" novalidate>
     {{-- <form action="{{ route('admin.courses.modules.store') }}" method="POST" enctype="multipart/form-data" id="courseForm"> --}}
         @csrf
         <div class="row gy-4">
@@ -766,15 +766,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize CKEditor for all textareas with rich-editor class
     document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
-        ClassicEditor
-            .create(textarea)
-            .catch(error => {
-                console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
-            });
+        // Check if textarea exists and hasn't been initialized already
+        if (textarea && !textarea.classList.contains('ck-initialized')) {
+            ClassicEditor
+                .create(textarea)
+                .then(editor => {
+                    console.log(`CKEditor initialized for ${textarea.name || textarea.id}`);
+                    textarea.classList.add('ck-initialized');
+                })
+                .catch(error => {
+                    console.error(`Error initializing CKEditor:`, error);
+                    // Don't block form submission if CKEditor fails
+                });
+        }
     });
    
-
-
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
