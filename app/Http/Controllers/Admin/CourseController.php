@@ -595,18 +595,19 @@ class CourseController extends Controller
             'is_downloadable' => 'boolean',
             'description' => 'nullable|string|max:500'
         ]);
-               dd('materiL');
+          
         // Handle uploads
         $results = [
             'success' => [],
             'failed' => []
         ];
-        
+           
         DB::beginTransaction();
         
         try {
             foreach ($request->file('materials') as $index => $file) {
                 try {
+                     
                     // Process each file
                     $material = $this->processMaterialUpload($file, $course, $request, $index);
                     
@@ -655,7 +656,7 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     $extension = $file->getClientOriginalExtension();
     $filename = pathinfo($originalName, PATHINFO_FILENAME);
     $safeFilename = Str::slug($filename);
-    
+     dd('materiL33');
     // Create unique filename
     $newFilename = $safeFilename . '_' . time() . '_' . Str::random(5) . '.' . $extension;
     
