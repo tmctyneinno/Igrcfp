@@ -312,7 +312,7 @@
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
                                 <textarea id="programme_overview" name="programme_overview" class="form-control rich-editor @error('programme_overview') is-invalid @enderror" rows="6" 
-                                          placeholder="Detailed programme overview...">{{ old('programme_overview', 'The Certified GRC & Financial Crime Specialist (CGFCS) is a professional certification designed to equip practitioners with deep, practical, and strategic knowledge across Governance, Risk, Compliance (GRC) and Financial Crime Prevention.') }}</textarea>
+                                          placeholder="Detailed programme overview...">{{ old('programme_overview', '') }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
