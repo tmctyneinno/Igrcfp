@@ -384,49 +384,88 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-     // Initialize CKEditor 5
-    // Initialize CKEditor with delay to ensure DOM is ready
-    setTimeout(() => {
-        initializeCKEditors();
-    }, 100);
     
+    // Store CKEditor instances
+    const ckEditors = {};
+    let isCkEditorLoaded = false;
+    
+    // Check if CKEditor is loaded
+    function checkCKEditor() {
+        if (typeof ClassicEditor !== 'undefined') {
+            console.log('CKEditor loaded successfully');
+            isCkEditorLoaded = true;
+            initializeCKEditors();
+        } else {
+            console.error('CKEditor not loaded. Please check the CDN.');
+            // Remove rich-editor class to use plain textareas
+            document.querySelectorAll('.rich-editor').forEach(textarea => {
+                textarea.classList.remove('rich-editor');
+            });
+        }
+    }
+    
+    // Initialize CKEditor
     function initializeCKEditors() {
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        const editorTextareas = document.querySelectorAll('textarea.rich-editor');
         
-        if (editors.length === 0) return;
+        console.log('Found rich-editor textareas:', editorTextareas.length);
         
-        // Load CKEditor dynamically if not loaded
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded');
+        if (!isCkEditorLoaded || editorTextareas.length === 0) {
             return;
         }
         
-        editors.forEach(textarea => {
+        // Initialize each CKEditor
+        editorTextareas.forEach((textarea, index) => {
+            const editorId = textarea.id || `editor-${index}`;
+            
+            // Skip if already initialized
+            if (ckEditors[editorId]) {
+                console.log(`Editor ${editorId} already initialized`);
+                return;
+            }
+            
+            console.log(`Initializing CKEditor for: ${editorId} (${textarea.name})`);
+            
             try {
                 ClassicEditor
-                    .create(textarea)
+                    .create(textarea, {
+                        // Simple configuration to avoid conflicts
+                        toolbar: {
+                            items: [
+                                'heading', '|',
+                                'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                                'undo', 'redo'
+                            ]
+                        },
+                        // Disable features that might cause issues
+                        removePlugins: ['MediaEmbed', 'Table', 'ImageUpload', 'Image', 'ImageToolbar', 'ImageCaption']
+                    })
                     .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
+                        console.log(`CKEditor ${editorId} initialized successfully`);
+                        ckEditors[editorId] = editor;
                         
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            form.addEventListener('submit', function() {
-                                textarea.value = editor.getData();
-                            });
-                        }
+                        // Update the textarea when editor changes
+                        editor.model.document.on('change:data', () => {
+                            const data = editor.getData();
+                            textarea.value = data;
+                        });
                     })
                     .catch(error => {
-                        console.error('CKEditor error:', error);
-                        // Don't break the form
+                        console.error(`Failed to initialize CKEditor ${editorId}:`, error);
+                        // If CKEditor fails, remove the rich-editor class
+                        textarea.classList.remove('rich-editor');
                         textarea.style.display = 'block';
                     });
             } catch (error) {
-                console.error('CKEditor initialization error:', error);
+                console.error(`Error creating CKEditor ${editorId}:`, error);
+                textarea.classList.remove('rich-editor');
             }
         });
     }
-   
+    
+    // Wait for CKEditor to load
+    setTimeout(checkCKEditor, 100);
+    
 
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
