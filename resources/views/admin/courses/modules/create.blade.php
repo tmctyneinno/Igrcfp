@@ -386,46 +386,7 @@
 document.addEventListener('DOMContentLoaded', function() {
      // Initialize CKEditor 5
     // Initialize CKEditor with delay to ensure DOM is ready
-    setTimeout(() => {
-        initializeCKEditors();
-    }, 100);
-    
-    function initializeCKEditors() {
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
-        
-        if (editors.length === 0) return;
-        
-        // Load CKEditor dynamically if not loaded
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded');
-            return;
-        }
-        
-        editors.forEach(textarea => {
-            try {
-                ClassicEditor
-                    .create(textarea)
-                    .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
-                        
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            form.addEventListener('submit', function() {
-                                textarea.value = editor.getData();
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('CKEditor error:', error);
-                        // Don't break the form
-                        textarea.style.display = 'block';
-                    });
-            } catch (error) {
-                console.error('CKEditor initialization error:', error);
-            }
-        });
-    }
+   
    
 
     // Character count functionality
