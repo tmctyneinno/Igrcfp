@@ -762,44 +762,56 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Document loaded - initializing course form');
+    // Your other code first...
     
-    // Only initialize CKEditor for specific textareas that need it
-   const ckeditorFields = [
-        '#full_description',
-        '#programme_overview',
-        '#editor1',
-        '#learning_outcomes',
-        '#code_of_conduct','#meta_keywords'
-        '#metaDescription'
-    ];
+    // Initialize CKEditor with delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCKEditors();
+    }, 100);
     
-    if (typeof ClassicEditor !== 'undefined') {
-        ckeditorFields.forEach(selector => {
-            const textarea = document.querySelector(selector);
-            if (textarea) {
+    function initializeCKEditors() {
+        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        
+        if (editors.length === 0) return;
+        
+        // Load CKEditor dynamically if not loaded
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        editors.forEach(textarea => {
+            try {
                 ClassicEditor
-                    .create(textarea, {
-                        simpleUpload: {
-                            uploadUrl: '{{ route("admin.upload") }}',
-                            withCredentials: true,
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
+                    .create(textarea)
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        
+                        // Update form on submit
+                        const form = textarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                textarea.value = editor.getData();
+                            });
                         }
                     })
-                    .then(editor => {
-                        console.log(`${selector} CKEditor initialized`);
-                    })
                     .catch(error => {
-                        console.error(`Failed to initialize ${selector}:`, error);
-                        // Remove the class so it doesn't block form
-                        textarea.classList.remove('rich-editor');
+                        console.error('CKEditor error:', error);
+                        // Don't break the form
+                        textarea.style.display = 'block';
                     });
+            } catch (error) {
+                console.error('CKEditor initialization error:', error);
             }
         });
     }
-   
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Document loaded - initializing course form');
+    
+  
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
