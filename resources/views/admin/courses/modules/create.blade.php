@@ -100,7 +100,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Content <span class="text-danger">*</span></label>
-                                <textarea id="editor7" name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
+                                <textarea id="editor7" name="full_content" class="form-control rich-editor @error('full_content') is-invalid @enderror" 
                                           rows="10" placeholder="Detailed content for the module...">{{ old('full_content') }}</textarea>
                                 @error('full_content')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -137,7 +137,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What will students learn in this module?</label>
-                            <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
+                            <textarea id="editor1" name="learning_objectives" class="form-control rich-editor @error('learning_objectives') is-invalid @enderror" 
                             rows="5" placeholder="List the learning objectives (one per line or bullet points)"></textarea>
                             @error('learning_objectives')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -154,7 +154,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What topics will be covered in this module?</label>
-                            <textarea id="editor2" name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
+                            <textarea id="editor2" name="topics_covered" class="form-control rich-editor @error('topics_covered') is-invalid @enderror" 
                                       rows="5" placeholder="List the topics that will be covered"></textarea>
                             @error('topics_covered')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -171,7 +171,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What are the key concepts in this module?</label>
-                            <textarea id="editor3" name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
+                            <textarea id="editor3" name="key_concepts" class="form-control rich-editor @error('key_concepts') is-invalid @enderror" 
                                       rows="5" placeholder="List the key concepts students should understand"></textarea>
                             @error('key_concepts')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -188,7 +188,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Real-world case study for this module</label>
-                            <textarea id="editor4" name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
+                            <textarea id="editor4" name="case_study" class="form-control rich-editor @error('case_study') is-invalid @enderror" 
                                       rows="5" placeholder="Provide a relevant case study"></textarea>
                             @error('case_study')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -205,7 +205,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Practical exercise for students</label>
-                            <textarea id="editor5" name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
+                            <textarea id="editor5" name="exercise" class="form-control rich-editor @error('exercise') is-invalid @enderror" 
                                       rows="5" placeholder="Design a practical exercise for this module">
                             </textarea>
                             @error('exercise')
@@ -223,7 +223,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Any additional notes or instructions</label>
-                            <textarea id="editor6" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
+                            <textarea id="editor6" name="additional_notes" class="form-control rich-editor @error('additional_notes') is-invalid @enderror" 
                                       rows="5" placeholder="Additional information for instructors or students"></textarea>
                             @error('additional_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
