@@ -670,13 +670,13 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     // Get additional file info
     $fileType = $file->getClientMimeType();
     $fileSize = $file->getSize();
-     dd('materiL22');
     
     // Generate thumbnail for images
     $thumbnailPath = null;
     if (str_contains($fileType, 'image')) {
         $thumbnailPath = $this->generateThumbnail($file, $storagePath, $newFilename);
     }
+     dd('materiL22');
     
     // Create material record
     return CourseMaterial::create([
