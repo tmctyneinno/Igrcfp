@@ -650,54 +650,54 @@ class CourseController extends Controller
         }
     }
 
-private function processMaterialUpload($file, $course, $request, $index = 0)
-{
-    $originalName = $file->getClientOriginalName();
-    $extension = $file->getClientOriginalExtension();
-    $filename = pathinfo($originalName, PATHINFO_FILENAME);
-    $safeFilename = Str::slug($filename);
-    // Create unique filename
-    $newFilename = $safeFilename . '_' . time() . '_' . Str::random(5) . '.' . $extension;
-    
-    // Determine storage path
-    $year = date('Y');
-    $month = date('m');
-    $storagePath = "courses/materials/{$course->id}/{$year}/{$month}";
-    
-    // Store file
-    $path = $file->storeAs($storagePath, $newFilename, 'public');
-    
-    // Get additional file info
-    $fileType = $file->getClientMimeType();
-    $fileSize = $file->getSize();
-    
-    // Generate thumbnail for images
-    $thumbnailPath = null;
-    if (str_contains($fileType, 'image')) {
-        $thumbnailPath = $this->generateThumbnail($file, $storagePath, $newFilename);
+    private function processMaterialUpload($file, $course, $request, $index = 0)
+    {
+        $originalName = $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        $filename = pathinfo($originalName, PATHINFO_FILENAME);
+        $safeFilename = Str::slug($filename);
+        // Create unique filename
+        $newFilename = $safeFilename . '_' . time() . '_' . Str::random(5) . '.' . $extension;
+        
+        // Determine storage path
+        $year = date('Y');
+        $month = date('m');
+        $storagePath = "courses/materials/{$course->id}/{$year}/{$month}";
+        
+        // Store file
+        $path = $file->storeAs($storagePath, $newFilename, 'public');
+        
+        // Get additional file info
+        $fileType = $file->getClientMimeType();
+        $fileSize = $file->getSize();
+        
+        // Generate thumbnail for images
+        $thumbnailPath = null;
+        if (str_contains($fileType, 'image')) {
+            $thumbnailPath = $this->generateThumbnail($file, $storagePath, $newFilename);
+        }
+        
+        
+        // Create material record
+        return CourseMaterial::create([
+            'course_id' => $course->id,
+            'module_id' => $request->module_id,
+            'title' => $request->input("titles.{$index}", $filename),
+            'description' => $request->input("descriptions.{$index}", ''),
+            'original_filename' => $originalName,
+            'file_path' => $path,
+            'thumbnail_path' => $thumbnailPath,
+            'file_size' => $fileSize,
+            'file_type' => $fileType,
+            'extension' => $extension,
+            'material_type' => $request->material_type,
+            'is_downloadable' => $request->boolean('is_downloadable'),
+            'uploaded_by' => auth()->id(),
+            'uploaded_at' => now(),
+            'download_count' => 0,
+            'view_count' => 0,
+        ]);
     }
-     dd('materiL22');
-    
-    // Create material record
-    return CourseMaterial::create([
-        'course_id' => $course->id,
-        'module_id' => $request->module_id,
-        'title' => $request->input("titles.{$index}", $filename),
-        'description' => $request->input("descriptions.{$index}", ''),
-        'original_filename' => $originalName,
-        'file_path' => $path,
-        'thumbnail_path' => $thumbnailPath,
-        'file_size' => $fileSize,
-        'file_type' => $fileType,
-        'extension' => $extension,
-        'material_type' => $request->material_type,
-        'is_downloadable' => $request->boolean('is_downloadable'),
-        'uploaded_by' => auth()->id(),
-        'uploaded_at' => now(),
-        'download_count' => 0,
-        'view_count' => 0,
-    ]);
-}
 
     private function handleUploadResponse($request, $results, $course)
     {
