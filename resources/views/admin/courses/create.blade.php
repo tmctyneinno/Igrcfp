@@ -263,10 +263,8 @@
                             <div class="col-12">
                                 <label class="form-label">Certifying Body <span class="text-danger">*</span></label>
                                 <textarea id="certifying_body" name="certifying_body" class="form-control rich-editor @error('certifying_body') is-invalid @enderror" rows="6" 
-                                          placeholder="Detailed programme overview...">{{ old('certifying_body', '') }}</textarea>
+                                          placeholder="Certifying Body...">{{ old('certifying_body', '') }}</textarea>
 
-                                <input type="text" name="certifying_body" class="form-control rich-editor @error('certifying_body') is-invalid @enderror" 
-                                       placeholder="e.g., Institute of GRC and Financial Crime Prevention (IGRCFP)" value="{{ old('certifying_body') }}" required>
                                 @error('certifying_body')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
