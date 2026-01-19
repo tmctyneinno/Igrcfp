@@ -496,8 +496,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                 <textarea name="meta_keywords" id="metaDescription" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
-                                          rows="3" placeholder="" maxlength="200">{{ old('meta_description') }}</textarea>
+                                 <textarea name="meta_keywords" id="meta_keywords" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
+                                          rows="3" placeholder="" maxlength="200">{{ old('meta_keywords') }}</textarea>
                                 
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
@@ -770,7 +770,8 @@ document.addEventListener('DOMContentLoaded', function() {
         '#programme_overview',
         '#editor1',
         '#learning_outcomes',
-        '#code_of_conduct'
+        '#code_of_conduct','#meta_keywords'
+        '#metaDescription'
     ];
     
     if (typeof ClassicEditor !== 'undefined') {
