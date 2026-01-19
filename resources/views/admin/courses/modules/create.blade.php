@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.store', $course->slug) }}" method="POST" id="moduleForm" novalidate>
+    <form action="{{ route('admin.courses.modules.store', $course->slug) }}" method="POST" id="moduleForm">
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
@@ -86,7 +86,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea id="editor8" name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
+                                <textarea id="editor8" name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the module (max 500 characters)" 
                                           required maxlength="500">{{ old('short_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
@@ -100,7 +100,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Content <span class="text-danger">*</span></label>
-                                <textarea id="editor7" name="full_content" class="form-control rich-editor @error('full_content') is-invalid @enderror" 
+                                <textarea id="editor7" name="full_content" class="form-control @error('full_content') is-invalid @enderror" 
                                           rows="10" placeholder="Detailed content for the module...">{{ old('full_content') }}</textarea>
                                 @error('full_content')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -137,7 +137,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What will students learn in this module?</label>
-                            <textarea id="editor1" name="learning_objectives" class="form-control rich-editor @error('learning_objectives') is-invalid @enderror" 
+                            <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
                             rows="5" placeholder="List the learning objectives (one per line or bullet points)"></textarea>
                             @error('learning_objectives')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -154,7 +154,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What topics will be covered in this module?</label>
-                            <textarea id="editor2" name="topics_covered" class="form-control rich-editor @error('topics_covered') is-invalid @enderror" 
+                            <textarea id="editor2" name="topics_covered" class="form-control @error('topics_covered') is-invalid @enderror" 
                                       rows="5" placeholder="List the topics that will be covered"></textarea>
                             @error('topics_covered')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -171,7 +171,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">What are the key concepts in this module?</label>
-                            <textarea id="editor3" name="key_concepts" class="form-control rich-editor @error('key_concepts') is-invalid @enderror" 
+                            <textarea id="editor3" name="key_concepts" class="form-control @error('key_concepts') is-invalid @enderror" 
                                       rows="5" placeholder="List the key concepts students should understand"></textarea>
                             @error('key_concepts')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -188,7 +188,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Real-world case study for this module</label>
-                            <textarea id="editor4" name="case_study" class="form-control rich-editor @error('case_study') is-invalid @enderror" 
+                            <textarea id="editor4" name="case_study" class="form-control @error('case_study') is-invalid @enderror" 
                                       rows="5" placeholder="Provide a relevant case study"></textarea>
                             @error('case_study')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -205,8 +205,9 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Practical exercise for students</label>
-                            <textarea id="editor5" name="exercise" class="form-control rich-editor @error('exercise') is-invalid @enderror" 
-                                      rows="5" placeholder="Design a practical exercise for this module"></textarea>
+                            <textarea id="editor5" name="exercise" class="form-control @error('exercise') is-invalid @enderror" 
+                                      rows="5" placeholder="Design a practical exercise for this module">
+                            </textarea>
                             @error('exercise')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -222,7 +223,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Any additional notes or instructions</label>
-                            <textarea id="editor6" name="additional_notes" class="form-control rich-editor @error('additional_notes') is-invalid @enderror" 
+                            <textarea id="editor6" name="additional_notes" class="form-control @error('additional_notes') is-invalid @enderror" 
                                       rows="5" placeholder="Additional information for instructors or students"></textarea>
                             @error('additional_notes')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -253,7 +254,7 @@
                             <div class="col-12">
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <button type="submit" class="btn btn-primary flex-grow-1" id="submitBtn">
+                                        <button type="submit" class="btn btn-primary flex-grow-1">
                                             Create Module
                                         </button>
                                         <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
@@ -350,6 +351,8 @@
                         </div>
                     </div>
                 </div>
+
+               
             </div>
         </div>
     </form>
@@ -375,96 +378,39 @@
 .icon-3x {
     font-size: 3rem;
 }
-/* CKEditor styling */
-.ck-editor__editable {
-    min-height: 200px;
-    max-height: 500px;
-    overflow-y: auto;
-}
 </style>
 @endpush
 
 @push('scripts')
-<!-- Load CKEditor from CDN -->
-<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Module creation form loading...');
-    
-    // Store CKEditor instances
-    const ckEditors = {};
-    let isFormSubmitting = false;
-    
-    // Initialize CKEditor for all rich-editor textareas
-    function initializeCKEditors() {
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded. Please check the CDN.');
-            // Remove rich-editor class to use plain textareas
-            document.querySelectorAll('.rich-editor').forEach(textarea => {
-                textarea.classList.remove('rich-editor');
-            });
-            return;
-        }
-        
-        const editorTextareas = document.querySelectorAll('textarea.rich-editor');
-        console.log('Found rich-editor textareas:', editorTextareas.length);
-        
-        if (editorTextareas.length === 0) {
-            return;
-        }
-        
-        // Initialize each CKEditor
-        editorTextareas.forEach((textarea, index) => {
-            const editorId = textarea.id || `editor-${index}`;
-            
-            // Skip if already initialized
-            if (ckEditors[editorId]) {
-                console.log(`Editor ${editorId} already initialized`);
-                return;
-            }
-            
-            console.log(`Initializing CKEditor for: ${editorId} (${textarea.name})`);
-            
-            // Create CKEditor instance
-            ClassicEditor
-                .create(textarea, {
-                    // Simple configuration
-                    toolbar: {
-                        items: [
-                            'heading', '|',
-                            'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
-                            'undo', 'redo'
-                        ]
-                    },
-                    // Remove problematic plugins
-                    removePlugins: ['MediaEmbed', 'Table', 'ImageUpload', 'Image', 'ImageToolbar', 'ImageCaption'],
-                   
-                })
-                .then(editor => {
-                    console.log(`CKEditor ${editorId} initialized successfully`);
-                    ckEditors[editorId] = editor;
-                    
-                    // Update the textarea when editor changes
-                    editor.model.document.on('change:data', () => {
-                        textarea.value = editor.getData();
-                    });
-                    
-                    // Set initial value
-                    textarea.value = editor.getData();
-                })
-                .catch(error => {
-                    console.error(`Failed to initialize CKEditor ${editorId}:`, error);
-                    // If CKEditor fails, remove the rich-editor class
-                    textarea.classList.remove('rich-editor');
-                    textarea.style.display = 'block';
-                });
-        });
-    }
-    
-    // Wait a bit before initializing CKEditor
-    setTimeout(initializeCKEditors, 300);
-    
+     // Initialize CKEditor 5
+    ClassicEditor
+    .create(document.querySelector('#editor1'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor2'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor3'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor4'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor5'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor6'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor7'))
+    .catch(error => { console.error(error); });
+    ClassicEditor
+    .create(document.querySelector('#editor8'))
+    .catch(error => { console.error(error); });
+   
+
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
@@ -490,16 +436,17 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCount(); // Initial count
         }
     }
-    
+
     // Set up character counter
     setupCharacterCount('textarea[name="short_description"]', '.character-count[data-target="short_description"]');
-    
+
     // Update preview in real-time
     const moduleNumberInput = document.querySelector('input[name="module_number"]');
     const estimatedHoursInput = document.querySelector('input[name="estimated_hours"]');
+    const moduleTitleInput = document.querySelector('input[name="title"]');
     const previewModuleNumber = document.getElementById('previewModuleNumber');
     const previewEstimatedHours = document.getElementById('previewEstimatedHours');
-    
+
     function updatePreview() {
         const moduleNumber = moduleNumberInput ? moduleNumberInput.value : {{ $nextModuleNumber }};
         const estimatedHours = estimatedHoursInput ? estimatedHoursInput.value : 2;
@@ -508,205 +455,54 @@ document.addEventListener('DOMContentLoaded', function() {
             previewModuleNumber.textContent = `Module ${moduleNumber}`;
         }
         if (previewEstimatedHours) {
-            previewEstimatedHours.textContent = `${estimatedHours} hour${estimatedHours != 1 ? 's' : ''}`;
+            previewEstimatedHours.textContent = `${estimatedHours} hour${estimatedHours > 1 ? 's' : ''}`;
         }
     }
-    
+
     if (moduleNumberInput) moduleNumberInput.addEventListener('input', updatePreview);
     if (estimatedHoursInput) estimatedHoursInput.addEventListener('input', updatePreview);
     updatePreview(); // Initial update
-    
-    // Form validation and submission
+
+    // Form validation
     const moduleForm = document.getElementById('moduleForm');
-    const submitBtn = document.getElementById('submitBtn');
-    
     if (moduleForm) {
-        console.log('Form found, attaching submit handler');
-        
-        // Handle form submission
-        moduleForm.addEventListener('submit', async function(e) {
-            console.log('Form submit event triggered');
-            
-            // Prevent double submission
-            if (isFormSubmitting) {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Prevent default to handle validation first
-            e.preventDefault();
-            
-            // Set submitting flag
-            isFormSubmitting = true;
-            
-            // Update submit button state
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
-            }
-            
-            try {
-                // Sync CKEditor data
-                console.log('Syncing CKEditor data...');
-                Object.keys(ckEditors).forEach(editorId => {
-                    const editor = ckEditors[editorId];
-                    if (editor && typeof editor.getData === 'function') {
-                        const textarea = editor.sourceElement;
-                        if (textarea) {
-                            const data = editor.getData();
-                            textarea.value = data;
-                            console.log(`Synced ${editorId}: ${data.length} chars`);
-                        }
-                    }
-                });
-                
-                // Validate form
-                console.log('Validating form...');
-                if (!validateForm()) {
-                    resetSubmitButton();
-                    isFormSubmitting = false;
-                    return false;
+        moduleForm.addEventListener('submit', function(e) {
+            // Sync all CKEditor instances before submission
+            for (let i = 1; i <= 8; i++) {
+                const editorId = 'editor' + i;
+                if (ClassicEditor && ClassicEditor.instances[editorId]) {
+                    ClassicEditor.instances[editorId].updateSourceElement();
                 }
-                
-                // Confirm before submitting
-                if (!confirm('Are you sure you want to create this module?')) {
-                    resetSubmitButton();
-                    isFormSubmitting = false;
-                    return false;
-                }
-                
-                console.log('Form validation passed, submitting...');
-                
-                // Submit form programmatically
-                this.submit();
-                
-            } catch (error) {
-                console.error('Error during form submission:', error);
-                alert('An error occurred. Please try again.');
-                resetSubmitButton();
-                isFormSubmitting = false;
             }
-        });
-        
-        // Reset submit button
-        function resetSubmitButton() {
-            if (submitBtn) {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Create Module';
-            }
-        }
-        
-        // Form validation function
-        function validateForm() {
-            let isValid = true;
-            let errorMessage = '';
-            let firstInvalidField = null;
             
-            // Validate required fields
-            const requiredFields = moduleForm.querySelectorAll('[required]');
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.classList.add('is-invalid');
-                    
-                    if (!firstInvalidField) {
-                        firstInvalidField = field;
-                        const fieldName = field.name.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        errorMessage = `Please fill in "${fieldName}"`;
-                    }
-                } else {
-                    field.classList.remove('is-invalid');
-                }
+            // Clear previous custom validity messages
+            const inputs = this.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.setCustomValidity('');
             });
-            
+
             // Validate estimated hours
             if (estimatedHoursInput) {
                 const hours = parseInt(estimatedHoursInput.value) || 0;
                 if (hours < 1 || hours > 100) {
-                    isValid = false;
-                    estimatedHoursInput.classList.add('is-invalid');
-                    errorMessage = 'Estimated hours must be between 1 and 100';
-                    if (!firstInvalidField) firstInvalidField = estimatedHoursInput;
-                } else {
-                    estimatedHoursInput.classList.remove('is-invalid');
+                    estimatedHoursInput.setCustomValidity('Estimated hours must be between 1 and 100');
+                    e.preventDefault();
+                    estimatedHoursInput.reportValidity();
+                    return;
                 }
             }
-            
-            // Validate short description length
-            const shortDesc = moduleForm.querySelector('textarea[name="short_description"]');
-            if (shortDesc) {
-                const maxLength = shortDesc.getAttribute('maxlength') || 500;
-                if (shortDesc.value.length > maxLength) {
-                    isValid = false;
-                    shortDesc.classList.add('is-invalid');
-                    errorMessage = `Short description must be ${maxLength} characters or less`;
-                    if (!firstInvalidField) firstInvalidField = shortDesc;
-                } else if (shortDesc.value.length === 0) {
-                    isValid = false;
-                    shortDesc.classList.add('is-invalid');
-                    errorMessage = 'Short description is required';
-                    if (!firstInvalidField) firstInvalidField = shortDesc;
-                } else {
-                    shortDesc.classList.remove('is-invalid');
-                }
+
+            // Confirm before submitting
+            if (!confirm('Are you sure you want to create this module?')) {
+                e.preventDefault();
+                return;
             }
-            
-            // Show error if validation fails
-            if (!isValid && errorMessage) {
-                alert(errorMessage);
-                if (firstInvalidField) {
-                    firstInvalidField.focus();
-                }
-                return false;
-            }
-            
-            return true;
-        }
-        
-        // Real-time validation
-        moduleForm.querySelectorAll('input[required], textarea[required]').forEach(field => {
-            field.addEventListener('blur', function() {
-                if (!this.value.trim()) {
-                    this.classList.add('is-invalid');
-                } else {
-                    this.classList.remove('is-invalid');
-                }
-            });
-            
-            field.addEventListener('input', function() {
-                if (this.value.trim()) {
-                    this.classList.remove('is-invalid');
-                }
-            });
         });
-        
-    } else {
-        console.error('Form not found! Check the form ID "moduleForm"');
     }
+
     
-    // Add a test button for debugging
-    const debugButton = document.createElement('button');
-    debugButton.type = 'button';
-    debugButton.className = 'btn btn-sm btn-warning position-fixed';
-    debugButton.style.bottom = '20px';
-    debugButton.style.right = '20px';
-    debugButton.style.zIndex = '9999';
-    debugButton.textContent = 'Test Submit';
-    debugButton.onclick = function() {
-        console.log('Test button clicked');
-        console.log('CKEditor instances:', Object.keys(ckEditors).length);
-        console.log('Form action:', moduleForm ? moduleForm.action : 'No form');
-        
-        // Test form submission
-        if (moduleForm) {
-            // Trigger form submit
-            const submitEvent = new Event('submit', { cancelable: true });
-            moduleForm.dispatchEvent(submitEvent);
-        }
-    };
-    document.body.appendChild(debugButton);
-    
-    console.log('Module creation form initialized successfully');
+
+    console.log('Module creation form initialized');
 });
 </script>
 @endpush
