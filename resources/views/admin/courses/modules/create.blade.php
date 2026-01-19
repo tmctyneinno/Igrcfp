@@ -86,7 +86,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea id="editor8" name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea id="editor8" name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the module (max 500 characters)" 
                                           required maxlength="500">{{ old('short_description') }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
@@ -385,30 +385,47 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
      // Initialize CKEditor 5
-    ClassicEditor
-    .create(document.querySelector('#editor1'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor2'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor3'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor4'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor5'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor6'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor7'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor8'))
-    .catch(error => { console.error(error); });
+    // Initialize CKEditor with delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCKEditors();
+    }, 100);
+    
+    function initializeCKEditors() {
+        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        
+        if (editors.length === 0) return;
+        
+        // Load CKEditor dynamically if not loaded
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        editors.forEach(textarea => {
+            try {
+                ClassicEditor
+                    .create(textarea)
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        
+                        // Update form on submit
+                        const form = textarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                textarea.value = editor.getData();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('CKEditor error:', error);
+                        // Don't break the form
+                        textarea.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('CKEditor initialization error:', error);
+            }
+        });
+    }
    
 
     // Character count functionality
