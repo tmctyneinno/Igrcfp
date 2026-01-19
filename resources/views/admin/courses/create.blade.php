@@ -345,9 +345,7 @@
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
                                 <textarea name="target_audience" class="form-control rich-editor @error('target_audience') is-invalid @enderror" rows="5" 
-                                          placeholder="Compliance Officers
-                                Risk Managers
-                                Fraud & Financial Crime Analysts" required></textarea>
+                                          placeholder="" required></textarea>
                                 @error('target_audience')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
