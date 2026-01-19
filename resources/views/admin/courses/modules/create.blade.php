@@ -382,35 +382,44 @@
 @endpush
 
 @push('scripts')
+<!-- Load CKEditor from CDN FIRST -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-     // Initialize CKEditor 5
-    ClassicEditor
-    .create(document.querySelector('#editor1'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor2'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor3'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor4'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor5'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor6'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor7'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor8'))
-    .catch(error => { console.error(error); });
-   
-
+    console.log('Module form loaded');
+    
+    // Initialize CKEditor for each textarea
+    function initializeCKEditors() {
+        const editors = [
+            'editor1', 'editor2', 'editor3', 'editor4',
+            'editor5', 'editor6', 'editor7', 'editor8'
+        ];
+        
+        editors.forEach(editorId => {
+            const element = document.querySelector('#' + editorId);
+            if (element) {
+                ClassicEditor
+                    .create(element)
+                    .then(editor => {
+                        console.log(`CKEditor ${editorId} initialized`);
+                    })
+                    .catch(error => {
+                        console.error(`Failed to initialize ${editorId}:`, error);
+                        // Don't break the form if CKEditor fails
+                    });
+            }
+        });
+    }
+    
+    // Initialize CKEditor only if it's loaded
+    if (typeof ClassicEditor !== 'undefined') {
+        // Delay initialization to ensure DOM is ready
+        setTimeout(initializeCKEditors, 100);
+    } else {
+        console.error('CKEditor not loaded! Check the CDN.');
+    }
+    
     // Character count functionality
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
@@ -443,7 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update preview in real-time
     const moduleNumberInput = document.querySelector('input[name="module_number"]');
     const estimatedHoursInput = document.querySelector('input[name="estimated_hours"]');
-    const moduleTitleInput = document.querySelector('input[name="title"]');
     const previewModuleNumber = document.getElementById('previewModuleNumber');
     const previewEstimatedHours = document.getElementById('previewEstimatedHours');
 
@@ -463,44 +471,69 @@ document.addEventListener('DOMContentLoaded', function() {
     if (estimatedHoursInput) estimatedHoursInput.addEventListener('input', updatePreview);
     updatePreview(); // Initial update
 
-    // Form validation
+    // Form validation - SIMPLE VERSION THAT WORKS
     const moduleForm = document.getElementById('moduleForm');
     if (moduleForm) {
         moduleForm.addEventListener('submit', function(e) {
-            // Sync all CKEditor instances before submission
-            for (let i = 1; i <= 8; i++) {
-                const editorId = 'editor' + i;
-                if (ClassicEditor && ClassicEditor.instances[editorId]) {
-                    ClassicEditor.instances[editorId].updateSourceElement();
-                }
+            console.log('Form submission started');
+            
+            // Don't try to access ClassicEditor.instances - it doesn't exist
+            // Instead, use the fact that CKEditor automatically updates textarea values
+            
+            // Simple validation
+            const title = this.querySelector('input[name="title"]');
+            const shortDesc = this.querySelector('textarea[name="short_description"]');
+            const fullContent = this.querySelector('textarea[name="full_content"]');
+            
+            if (!title || !title.value.trim()) {
+                e.preventDefault();
+                alert('Module title is required');
+                title.focus();
+                return false;
             }
             
-            // Clear previous custom validity messages
-            const inputs = this.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                input.setCustomValidity('');
-            });
-
-            // Validate estimated hours
+            if (!shortDesc || !shortDesc.value.trim()) {
+                e.preventDefault();
+                alert('Short description is required');
+                shortDesc.focus();
+                return false;
+            }
+            
+            if (!fullContent || !fullContent.value.trim()) {
+                e.preventDefault();
+                alert('Full content is required');
+                fullContent.focus();
+                return false;
+            }
+            
             if (estimatedHoursInput) {
                 const hours = parseInt(estimatedHoursInput.value) || 0;
                 if (hours < 1 || hours > 100) {
-                    estimatedHoursInput.setCustomValidity('Estimated hours must be between 1 and 100');
                     e.preventDefault();
-                    estimatedHoursInput.reportValidity();
-                    return;
+                    alert('Estimated hours must be between 1 and 100');
+                    estimatedHoursInput.focus();
+                    return false;
                 }
             }
-
-            // Confirm before submitting
+            
+            // Short description length check
+            if (shortDesc.value.length > 500) {
+                e.preventDefault();
+                alert('Short description must be 500 characters or less');
+                shortDesc.focus();
+                return false;
+            }
+            
+            // Optional: confirmation dialog
             if (!confirm('Are you sure you want to create this module?')) {
                 e.preventDefault();
-                return;
+                return false;
             }
+            
+            console.log('Form validation passed, submitting...');
+            return true;
         });
     }
-
-    
 
     console.log('Module creation form initialized');
 });
