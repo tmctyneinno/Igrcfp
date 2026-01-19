@@ -61,16 +61,8 @@
                                 @enderror
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Course Code <span class="text-danger">*</span></label>
-                                <input type="text" name="code" class="form-control rich-editor @error('code') is-invalid @enderror" 
-                                       placeholder="e.g., CGFCS" value="{{ old('code') }}" required>
-                                @error('code')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="form-label">Short Title <span class="text-danger">*</span></label>
                                 <input type="text" name="short_title" class="form-control @error('short_title') is-invalid @enderror" 
                                        placeholder="e.g., Certified GRC & Financial Crime Specialist" value="{{ old('short_title') }}" required>
