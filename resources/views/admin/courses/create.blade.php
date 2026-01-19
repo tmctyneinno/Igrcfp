@@ -764,22 +764,56 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
     
-    // Initialize CKEditor for all textareas with rich-editor class
-    document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
-        // Check if textarea exists and hasn't been initialized already
-        if (textarea && !textarea.classList.contains('ck-initialized')) {
+    // Only initialize CKEditor for specific textareas that need it
+    const richEditorTextareas = document.querySelectorAll('textarea.rich-editor');
+    
+    console.log('Found rich-editor textareas:', richEditorTextareas.length);
+    
+    // Initialize CKEditor with proper configuration
+    if (typeof ClassicEditor !== 'undefined' && richEditorTextareas.length > 0) {
+        richEditorTextareas.forEach((textarea, index) => {
+            // Skip if already initialized
+            if (textarea.hasAttribute('data-ckeditor-initialized')) {
+                return;
+            }
+            
+            console.log(`Initializing CKEditor for ${textarea.name || textarea.id}`);
+            
+            // Basic CKEditor configuration
             ClassicEditor
-                .create(textarea)
+                .create(textarea, {
+                    // Minimal configuration
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                            'outdent', 'indent', '|',
+                            'undo', 'redo'
+                        ]
+                    },
+                    // Disable any features that might cause issues
+                    removePlugins: ['MediaEmbed', 'Table', 'ImageUpload'],
+                    // Ensure it doesn't interfere with form submission
+                    shouldNotGroupWhenFull: true
+                })
                 .then(editor => {
-                    console.log(`CKEditor initialized for ${textarea.name || textarea.id}`);
-                    textarea.classList.add('ck-initialized');
+                    console.log(`CKEditor ${index + 1} initialized successfully`);
+                    textarea.setAttribute('data-ckeditor-initialized', 'true');
+                    
+                    // Ensure form data includes CKEditor content
+                    editor.model.document.on('change:data', () => {
+                        textarea.value = editor.getData();
+                    });
                 })
                 .catch(error => {
-                    console.error(`Error initializing CKEditor:`, error);
-                    // Don't block form submission if CKEditor fails
+                    console.error(`Failed to initialize CKEditor ${index + 1}:`, error);
+                    // Don't block form if CKEditor fails
+                    textarea.classList.remove('rich-editor'); // Remove class to prevent re-try
                 });
-        }
-    });
+        });
+    } else {
+        console.warn('CKEditor not loaded or no textareas found');
+    }
    
     
     // Image preview functionality
