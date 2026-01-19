@@ -658,7 +658,6 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     $safeFilename = Str::slug($filename);
     // Create unique filename
     $newFilename = $safeFilename . '_' . time() . '_' . Str::random(5) . '.' . $extension;
-     dd('materiL22');
     
     // Determine storage path
     $year = date('Y');
@@ -671,6 +670,7 @@ private function processMaterialUpload($file, $course, $request, $index = 0)
     // Get additional file info
     $fileType = $file->getClientMimeType();
     $fileSize = $file->getSize();
+     dd('materiL22');
     
     // Generate thumbnail for images
     $thumbnailPath = null;
