@@ -764,22 +764,22 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
     
-    // Initialize CKEditor for all textareas with rich-editor class
-    document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
-        // Check if textarea exists and hasn't been initialized already
-        if (textarea && !textarea.classList.contains('ck-initialized')) {
-            ClassicEditor
-                .create(textarea)
-                .then(editor => {
-                    console.log(`CKEditor initialized for ${textarea.name || textarea.id}`);
-                    textarea.classList.add('ck-initialized');
-                })
-                .catch(error => {
-                    console.error(`Error initializing CKEditor:`, error);
-                    // Don't block form submission if CKEditor fails
-                });
-        }
-    });
+    // // Initialize CKEditor for all textareas with rich-editor class
+    // document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
+    //     // Check if textarea exists and hasn't been initialized already
+    //     if (textarea && !textarea.classList.contains('ck-initialized')) {
+    //         ClassicEditor
+    //             .create(textarea)
+    //             .then(editor => {
+    //                 console.log(`CKEditor initialized for ${textarea.name || textarea.id}`);
+    //                 textarea.classList.add('ck-initialized');
+    //             })
+    //             .catch(error => {
+    //                 console.error(`Error initializing CKEditor:`, error);
+    //                 // Don't block form submission if CKEditor fails
+    //             });
+    //     }
+    // });
    
     
     // Image preview functionality
