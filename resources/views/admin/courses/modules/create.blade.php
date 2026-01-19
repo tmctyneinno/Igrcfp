@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.store', $course->slug) }}" method="POST" id="moduleForm">
+    <form action="{{ route('admin.courses.modules.store', $course->slug) }}" method="POST" id="moduleForm" novalidate>
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
@@ -382,36 +382,57 @@
 @endpush
 
 @push('scripts')
+<!-- Load CKEditor from CDN - MUST BE FIRST -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-     // Initialize CKEditor 5
-    ClassicEditor
-    .create(document.querySelector('#editor1'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor2'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor3'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor4'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor5'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor6'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor7'))
-    .catch(error => { console.error(error); });
-    ClassicEditor
-    .create(document.querySelector('#editor8'))
-    .catch(error => { console.error(error); });
+    console.log('Module form loaded - initializing');
+    
+    // Use the SAME CKEditor initialization as your course form
+    // Initialize CKEditor with delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCKEditors();
+    }, 100);
+    
+    function initializeCKEditors() {
+        const editors = document.querySelectorAll('textarea[id^="editor"]:not([data-ck-initialized])');
+        
+        if (editors.length === 0) return;
+        
+        // Load CKEditor dynamically if not loaded
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        editors.forEach(textarea => {
+            try {
+                ClassicEditor
+                    .create(textarea)
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        
+                        // Update form on submit - SAME AS COURSE FORM
+                        const form = textarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                textarea.value = editor.getData();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('CKEditor error:', error);
+                        // Don't break the form
+                        textarea.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('CKEditor initialization error:', error);
+            }
+        });
+    }
    
-
-    // Character count functionality
+    // Character count functionality - SAME AS COURSE FORM
     function setupCharacterCount(textareaSelector, counterSelector) {
         const textarea = document.querySelector(textareaSelector);
         const counter = document.querySelector(counterSelector);
@@ -443,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update preview in real-time
     const moduleNumberInput = document.querySelector('input[name="module_number"]');
     const estimatedHoursInput = document.querySelector('input[name="estimated_hours"]');
-    const moduleTitleInput = document.querySelector('input[name="title"]');
     const previewModuleNumber = document.getElementById('previewModuleNumber');
     const previewEstimatedHours = document.getElementById('previewEstimatedHours');
 
@@ -463,17 +483,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (estimatedHoursInput) estimatedHoursInput.addEventListener('input', updatePreview);
     updatePreview(); // Initial update
 
-    // Form validation
+    // Form validation - USE THE SAME PATTERN AS COURSE FORM
     const moduleForm = document.getElementById('moduleForm');
     if (moduleForm) {
         moduleForm.addEventListener('submit', function(e) {
-            // Sync all CKEditor instances before submission
-            for (let i = 1; i <= 8; i++) {
-                const editorId = 'editor' + i;
-                if (ClassicEditor && ClassicEditor.instances[editorId]) {
-                    ClassicEditor.instances[editorId].updateSourceElement();
-                }
-            }
+            console.log('Form submitted');
             
             // Clear previous custom validity messages
             const inputs = this.querySelectorAll('input, select, textarea');
@@ -481,26 +495,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 input.setCustomValidity('');
             });
 
-            // Validate estimated hours
+            // Validate estimated hours - SIMPLER VERSION
             if (estimatedHoursInput) {
                 const hours = parseInt(estimatedHoursInput.value) || 0;
                 if (hours < 1 || hours > 100) {
-                    estimatedHoursInput.setCustomValidity('Estimated hours must be between 1 and 100');
                     e.preventDefault();
-                    estimatedHoursInput.reportValidity();
+                    alert('Estimated hours must be between 1 and 100');
+                    estimatedHoursInput.focus();
                     return;
                 }
             }
+            
+            // Validate required fields - SIMPLE CHECK LIKE COURSE FORM
+            const title = this.querySelector('input[name="title"]');
+            const shortDesc = this.querySelector('textarea[name="short_description"]');
+            const fullContent = this.querySelector('textarea[name="full_content"]');
+            
+            if (!title || !title.value.trim()) {
+                e.preventDefault();
+                alert('Module title is required');
+                title.focus();
+                return;
+            }
+            
+            if (!shortDesc || !shortDesc.value.trim()) {
+                e.preventDefault();
+                alert('Short description is required');
+                shortDesc.focus();
+                return;
+            }
+            
+            if (!fullContent || !fullContent.value.trim()) {
+                e.preventDefault();
+                alert('Full content is required');
+                fullContent.focus();
+                return;
+            }
 
-            // Confirm before submitting
+            // Confirm before submitting - SAME AS COURSE FORM
             if (!confirm('Are you sure you want to create this module?')) {
                 e.preventDefault();
                 return;
             }
+            
+            console.log('Form validation passed');
         });
     }
-
-    
 
     console.log('Module creation form initialized');
 });
