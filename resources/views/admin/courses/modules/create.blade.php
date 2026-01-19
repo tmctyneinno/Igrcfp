@@ -439,10 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     // Remove problematic plugins
                     removePlugins: ['MediaEmbed', 'Table', 'ImageUpload', 'Image', 'ImageToolbar', 'ImageCaption'],
-                    // Simple upload if needed
-                    simpleUpload: {
-                        uploadUrl: '{{ route("admin.upload") }}'
-                    }
+                   
                 })
                 .then(editor => {
                     console.log(`CKEditor ${editorId} initialized successfully`);
