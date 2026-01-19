@@ -586,7 +586,7 @@ class CourseController extends Controller
         $course = Course::where('id', $courseIdentifier)
             ->orWhere('slug', $courseIdentifier)
             ->firstOrFail();
-        
+ 
         // Validate
         $request->validate([
             'materials.*' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,mp4,avi,mov,wmv,mp3,wav,jpg,jpeg,png,gif,bmp,svg|max:20480', // 20MB
@@ -595,7 +595,7 @@ class CourseController extends Controller
             'is_downloadable' => 'boolean',
             'description' => 'nullable|string|max:500'
         ]);
-        
+               dd('materiL');
         // Handle uploads
         $results = [
             'success' => [],
