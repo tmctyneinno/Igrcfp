@@ -760,11 +760,12 @@
 @endpush
 
 @push('scripts')
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Your other code first...
+    console.log('Document loaded - initializing course form');
     
-    // Initialize CKEditor with delay to ensure DOM is ready
+  // Initialize CKEditor with delay to ensure DOM is ready
     setTimeout(() => {
         initializeCKEditors();
     }, 100);
@@ -805,13 +806,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Document loaded - initializing course form');
-    
-  
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
