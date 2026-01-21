@@ -2,21 +2,32 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 
-export default function Certification({ courses = [] }) {
+export default function Certification({ courses }) { // Remove default value from parameter
+
+    // Safe courses initialization
+    const coursesData = Array.isArray(courses) ? courses : [];
 
     // Format price safely
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
         const numPrice = parseFloat(price);
         return isNaN(numPrice) ? null : `$${numPrice.toFixed(2)}`;
-    };
+    }; 
 
     // Check if course has discount
     const hasDiscount = (course) => {
-        if (!course.discount_price || !course.price) return false;
+        if (!course?.discount_price || !course?.price) return false;
         const price = parseFloat(course.price);
         const discountPrice = parseFloat(course.discount_price);
         return !isNaN(price) && !isNaN(discountPrice) && discountPrice < price;
+    };
+    
+    const getCleanDescription = (course) => {
+        const text = course?.short_description || course?.description;
+        if (!text) return 'No description available';
+        
+        const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+        return cleanText.length > 100 ? cleanText.substring(0, 100) + '...' : cleanText;
     };
 
     return (
@@ -56,10 +67,10 @@ export default function Certification({ courses = [] }) {
 
             {/* COURSES */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {courses.length > 0 ? (
-                    courses.map((course, index) => {
-                        const price = parseFloat(course.price);
-                        const discountPrice = parseFloat(course.discount_price);
+                {coursesData.length > 0 ? (
+                    coursesData.map((course, index) => {
+                        const price = parseFloat(course?.price || 0);
+                        const discountPrice = parseFloat(course?.discount_price || 0);
                         const hasDisc = hasDiscount(course);
                         const discountPercentage = hasDisc && price > 0 
                             ? Math.round(((price - discountPrice) / price) * 100) 
@@ -67,7 +78,7 @@ export default function Certification({ courses = [] }) {
 
                         return (
                             <div
-                                key={course.id}
+                                key={course?.id || index}
                                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
                                 data-aos="fade-up"
                                 data-aos-delay={index * 150}
@@ -75,8 +86,8 @@ export default function Certification({ courses = [] }) {
                                 {/* IMAGE */}
                                 <div className="h-48 overflow-hidden">
                                     <img
-                                        src={course.image_url || '/images/fallback-course.jpg'}
-                                        alt={course.title}
+                                        src={course?.image_url || '/images/fallback-course.jpg'}
+                                        alt={course?.title || 'Course image'}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
                                             e.target.src = '/images/fallback-course.jpg';
@@ -85,33 +96,30 @@ export default function Certification({ courses = [] }) {
                                 </div>
 
                                 {/* CONTENT */}
-                                <div className="p-6">
-                                    <Link href={`/courses/${course.slug}`}>
+                                <div className="p-4">
+                                    <Link href={`/courses/${course?.slug || '#'}`}>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
-                                            {course.title}
+                                            {course?.title || 'Untitled Course'}
                                         </h3>
                                     </Link>
                                     
                                     <p className="text-gray-600 text-sm mb-4">
-                                        {course.short_description || 
-                                         (course.description && course.description.length > 100 
-                                            ? `${course.description.substring(0, 100)}...` 
-                                            : course.description || 'No description available')}
+                                        {getCleanDescription(course)}
                                     </p>
 
                                     {/* COURSE METADATA */}
                                     <div className="flex items-center justify-between mb-4">
                                         <span className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                                            {course.level || 'All Levels'}
+                                            {course?.level || 'All Levels'}
                                         </span>
                                         
                                         <div className="flex items-center space-x-3">
-                                            {course.duration && (
+                                            {course?.duration && (
                                                 <span className="text-sm text-gray-500">
                                                     ⏱️ {course.duration}
                                                 </span>
                                             )}
-                                            {course.modules_count > 0 && (
+                                            {course?.modules_count > 0 && (
                                                 <span className="text-sm text-gray-500">
                                                     📚 {course.modules_count} modules
                                                 </span>
@@ -122,7 +130,7 @@ export default function Certification({ courses = [] }) {
                                     {/* PRICE SECTION */}
                                     <div className="flex items-center justify-between pt-4 border-t">
                                         <Link
-                                            href={`/courses/${course.slug}`}
+                                            href={`/courses/${course?.slug || '#'}`}
                                             className="text-blue-950 font-bold hover:underline transition duration-200"
                                         >
                                             Learn More →
@@ -157,17 +165,17 @@ export default function Certification({ courses = [] }) {
 
                                     {/* BADGES */}
                                     <div className="mt-3 flex flex-wrap gap-2">
-                                        {course.is_featured && (
+                                        {course?.is_featured && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
                                                 ⭐ Featured
                                             </span>
                                         )}
-                                        {course.is_popular && (
+                                        {course?.is_popular && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-green-100 text-green-800 rounded">
                                                 🔥 Popular
                                             </span>
                                         )}
-                                        {course.format && (
+                                        {course?.format && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
                                                 {course.format}
                                             </span>
@@ -192,9 +200,8 @@ export default function Certification({ courses = [] }) {
                 )}
             </div>
 
-
             {/* VIEW ALL BUTTON */}
-            {courses.length > 0 && (
+            {coursesData.length > 0 && (
                 <div className="text-center mt-12">
                     <Link
                         href="/courses"
