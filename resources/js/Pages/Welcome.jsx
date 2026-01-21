@@ -44,7 +44,7 @@ export default function Welcome({ auth, courses }) {
 
             <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <BecomeMember />
-            </section>
+            </section> 
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <MembershipOptions />
