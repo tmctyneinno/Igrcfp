@@ -44,13 +44,13 @@
                         <div class="d-flex gap-2">
                            @foreach($course->modules as $module)
                                 <div>
-                                    <!-- Module content here -->
                                     <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" class="btn btn-sm btn-outline-primary">
                                         Edit Module
                                     </a>
                                 </div>
                             @endforeach
-                            <form action="{{ route('admin.courses.destroy', $course->slug) }}" method="POST" 
+                             @foreach($course->modules as $module)
+                            <form action="{{ route('admin.courses.destroy', [$course->slug, $module->id] ) }}" method="POST" 
                                   onsubmit="return confirm('Are you sure you want to delete this course?')">
                                 @csrf
                                 @method('DELETE')
