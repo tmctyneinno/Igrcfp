@@ -42,14 +42,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">Course Overview</h6>
                         <div class="d-flex gap-2">
-                           @foreach($course->modules as $module)
-                                <div>
-                                    <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" class="btn btn-sm btn-outline-primary">
-                                        Edit Module
-                                    </a>
-                                </div>
-                            @endforeach
-                            <form action="{{ route('admin.courses.destroy', [$course->slug, $module->id] ) }}" method="POST" 
+                            <a href="{{ route('admin.courses.edit', $course->slug) }}" class="btn btn-sm btn-outline-primary">
+                                Edit
+                            </a>
+                            <form action="{{ route('admin.courses.destroy', $course->slug) }}" method="POST" 
                                   onsubmit="return confirm('Are you sure you want to delete this course?')">
                                 @csrf
                                 @method('DELETE')
