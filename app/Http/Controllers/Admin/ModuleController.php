@@ -21,9 +21,6 @@ class ModuleController extends Controller
         return view('admin.courses.modules.create', compact('course', 'nextModuleNumber'));
     } 
 
-    /**
-     * Store a newly created module in storage.
-     */
     public function store(Request $request, Course $course)
     {
        

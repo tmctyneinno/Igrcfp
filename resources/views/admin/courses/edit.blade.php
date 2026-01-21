@@ -455,7 +455,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                                             <div>
                                                 <span class="badge bg-primary me-2">Module {{ $module->module_number }}</span>
                                                 <strong>{{ $module->title }}</strong>
-                                            </div>
+                                            </div> 
                                             <div class="d-flex gap-1">
                                                 <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->slug]) }}" 
                                                    class="btn btn-sm btn-outline-primary">
