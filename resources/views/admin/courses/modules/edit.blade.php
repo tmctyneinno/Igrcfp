@@ -85,7 +85,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea id="short_description" name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the module (max 500 characters)" 
                                           required maxlength="500">{{ old('short_description', $module->short_description) }}</textarea>
                                 <div class="d-flex justify-content-between mt-1">
@@ -416,6 +416,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   
+  ClassicEditor
+        .create(document.querySelector('#short_description'))
+        .catch(error => console.error(error));
+   ClassicEditor
+        .create(document.querySelector('#full_content'))
+        .catch(error => console.error(error));
     ClassicEditor
         .create(document.querySelector('#learning_objectives'))
         .catch(error => console.error(error));
