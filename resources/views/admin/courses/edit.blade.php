@@ -457,11 +457,11 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                                                 <strong>{{ $module->title }}</strong>
                                             </div> 
                                             <div class="d-flex gap-1">
-                                                <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->slug]) }}" 
+                                                <a href="{{ route('admin.courses.modules.edit', ['course' => $course->slug, 'module' => $module->id]) }}" 
                                                    class="btn btn-sm btn-outline-primary">
                                                     <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                 </a>
-                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->slug]) }}" 
+                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->id]) }}" 
                                                       method="POST" class="d-inline"
                                                       onsubmit="return confirm('Delete this module?')">
                                                     @csrf
