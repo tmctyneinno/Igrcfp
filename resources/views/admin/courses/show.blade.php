@@ -847,7 +847,7 @@
 
 <!-- Upload Material Modal -->
 <div class="modal fade" id="uploadMaterialModal" tabindex="-1" aria-labelledby="uploadMaterialModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog"> 
         <div class="modal-content">
             <form action="{{ route('admin.courses.materials.upload', $course->slug) }}" method="POST" enctype="multipart/form-data">
                 @csrf
