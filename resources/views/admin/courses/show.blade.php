@@ -49,8 +49,7 @@
                                     </a>
                                 </div>
                             @endforeach
-                             @foreach($course->modules as $module)
-                            <form action="{{ route('admin.courses.destroy', [$course->slug, $module->id] ) }}" method="POST" 
+                            <form action="{{ route('admin.courses.destroy', $course->slug ) }}" method="POST" 
                                   onsubmit="return confirm('Are you sure you want to delete this course?')">
                                 @csrf
                                 @method('DELETE')
