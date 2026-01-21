@@ -25,9 +25,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     // Edit Course
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
         ->name('courses.edit'); 
-   Route::get('/courses/{course}/modules/{module?}/edit', [ModuleController::class, 'edit'])
-    ->name('admin.courses.modules.edit')
-    ->defaults('module', null);
+//    Route::get('/courses/{course}/modules/{module?}/edit', [ModuleController::class, 'edit'])
+//     ->name('admin.courses.modules.edit')
+//     ->defaults('module', null);
     
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     
