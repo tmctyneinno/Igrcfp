@@ -226,6 +226,7 @@
                                            title="View" data-bs-toggle="tooltip">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
+                                        @foreach($course->modules as $module)
                                         <a href="{{ route('admin.courses.edit', $course->slug) }}" 
                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="Edit" data-bs-toggle="tooltip">
