@@ -169,7 +169,7 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        $course->load(['modules', 'materials']);
+        $course->load([ 'materials']);
         return view('admin.courses.edit', compact('course'));
     }
 
