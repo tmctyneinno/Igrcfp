@@ -101,7 +101,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
                                             {course?.title || 'Untitled Course'}
                                         </h3>
-                                    </Link>
+                                    </Link> 
                                     
                                     <p className="text-gray-600 text-sm mb-4">
                                         {getCleanDescription(course)}
@@ -109,7 +109,7 @@ export default function Certification({ courses }) { // Remove default value fro
 
                                     {/* COURSE METADATA */}
                                     <div className="flex items-center justify-between mb-4">
-                                        <span className="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                        <span className="text-xs font-semibold px-3 capitalise py-1 bg-blue-100 text-blue-800 rounded-full">
                                             {course?.level || 'All Levels'}
                                         </span>
                                         
