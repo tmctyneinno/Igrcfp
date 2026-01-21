@@ -23,8 +23,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::post('/courses/bulk-action', [CourseController::class, 'bulkAction'])->name('courses.bulk-action');
     
     // Edit Course
-    // Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
-    //     ->name('courses.edit'); 
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
+        ->name('courses.edit'); 
    Route::get('/courses/{course}/modules/{module?}/edit', [ModuleController::class, 'edit'])
     ->name('admin.courses.modules.edit')
     ->defaults('module', null);
