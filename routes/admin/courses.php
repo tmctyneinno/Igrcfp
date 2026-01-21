@@ -24,7 +24,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     
     // Edit Course
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
-        ->name('courses.edit');
+        ->name('courses.edit'); 
     
     Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
     
