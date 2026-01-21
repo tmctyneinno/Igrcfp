@@ -139,7 +139,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex flex-column">
+                                    <div class="d-flex flex-column"> 
                                         <span class="text-md fw-medium text-secondary-light mb-1">{{ Str::limit($course->title, 40) }}</span>
                                         <small class="text-muted">{!! Str::limit($course->short_description, 60) !!}</small>
                                         <div class="mt-1">
