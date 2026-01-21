@@ -193,7 +193,7 @@
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
                                                         <strong>Description:</strong>
-                                                        <p class="mb-2">{{ $module->short_description }}</p>
+                                                        <p class="mb-2">{!! $module->short_description !!}</p>
                                                     </div>
                                                     
                                                     @if($module->learning_objectives)
