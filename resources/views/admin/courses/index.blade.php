@@ -227,11 +227,12 @@
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
                                         @foreach($course->modules as $module)
-                                        <a href="{{ route('admin.courses.edit', $course->slug) }}" 
+                                        <a href="{{ route('admin.courses.modules.edit',[$course->slug, $module->id]) }}" 
                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
                                            title="Edit" data-bs-toggle="tooltip">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                         </a>
+                                        @endforeach
                                         
                                         <!-- Delete Form -->
                                         <form action="{{ route('admin.courses.destroy', $course->slug) }}" method="POST" class="d-inline">
