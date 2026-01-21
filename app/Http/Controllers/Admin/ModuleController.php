@@ -69,7 +69,7 @@ class ModuleController extends Controller
         // Ensure the module belongs to the course
         if ($module->course_id !== $course->id) {
             abort(404);
-        }
+        } 
 
         return view('admin.courses.modules.edit', compact('course', 'module'));
     }
