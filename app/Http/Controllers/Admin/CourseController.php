@@ -176,13 +176,15 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     { 
+        \Log::info('Update method called for course: ' . $slug);
+        \Log::info('Request data:', $request->all());
         // dd('update_Course');
-        if (is_numeric($id)) {
-        $course = Course::findOrFail($id);
+        if (is_numeric($slug)) {
+        $course = Course::findOrFail($slug);
         } else {
-            $course = Course::where('slug', $id)->firstOrFail();
+            $course = Course::where('slug', $slug)->firstOrFail();
         }
        
         // dd($id);

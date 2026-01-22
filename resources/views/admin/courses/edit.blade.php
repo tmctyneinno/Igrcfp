@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.update', $course->slug) }}" method="POST" enctype="multipart/form-data" id="courseForm">
+    <form action="{{ route('admin.courses.update', $course->slug) }}" method="POST" enctype="multipart/form-data" id="courseForm" onsubmit="console.log('Form submitting...')">
         @csrf
         @method('PUT') 
         <div class="row gy-4">
@@ -1082,21 +1082,46 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing edit form');
+    setTimeout(() => {
+        initializeCKEditors();
+    }, 100);
 
-    // Initialize CKEditor for all textareas with rich-editor class
-    document.querySelectorAll('textarea.rich-editor').forEach(textarea => {
-        ClassicEditor
-            .create(textarea)
-            .catch(error => {
-                console.error(`Error initializing CKEditor for ${textarea.id}:`, error);
-            });
-    });
-
-    // Initialize CKEditor 5 if needed
-    if (typeof ClassicEditor !== 'undefined') {
-        // You can initialize CKEditor here if needed
-        // ClassicEditor.create(document.querySelector('#editor1')).catch(error => { console.error(error); });
-    } 
+    function initializeCKEditors() {
+        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        
+        if (editors.length === 0) return;
+        
+        // Load CKEditor dynamically if not loaded
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        editors.forEach(textarea => {
+            try {
+                ClassicEditor
+                    .create(textarea)
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        
+                        // Update form on submit
+                        const form = textarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                textarea.value = editor.getData();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('CKEditor error:', error);
+                        // Don't break the form
+                        textarea.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('CKEditor initialization error:', error);
+            }
+        });
+    }
 
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
