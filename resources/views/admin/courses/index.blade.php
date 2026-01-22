@@ -14,7 +14,7 @@
             <li>-</li>
             <li class="fw-medium">Courses</li>
         </ul>
-    </div>
+    </div> 
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

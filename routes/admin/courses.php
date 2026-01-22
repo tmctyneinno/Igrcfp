@@ -6,78 +6,101 @@ use Illuminate\Support\Facades\Route;
 
 // Course Management Routes (Protected - admin & super_admin)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:admin,super_admin'])->group(function () {
-    // Courses Index
-    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     
-    // Create Course
-    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+    // ==================== COURSE ROUTES ====================
     
-    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    // -------- Non-parameter routes (come FIRST) --------
+    Route::prefix('courses')->name('courses.')->group(function () {
+        // Index (list all courses)
+        Route::get('/', [CourseController::class, 'index'])->name('index');
+        
+        // Create form
+        Route::get('/create', [CourseController::class, 'create'])->name('create');
+        
+        // Store new course
+        Route::post('/', [CourseController::class, 'store'])->name('store');
+        
+        // Bulk actions
+        Route::post('/bulk-action', [CourseController::class, 'bulkAction'])->name('bulk-action');
+        
+        // Status management
+        Route::get('/status', [CourseController::class, 'showStatus'])->name('status');
+        
+        // Toggle features (use PATCH for updates)
+        Route::patch('/toggle-featured', [CourseController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::patch('/toggle-popular', [CourseController::class, 'togglePopular'])->name('toggle-popular');
+    });
     
-    // Show Course
-    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
-    Route::get('/courses/status', [CourseController::class, 'showStatus'])->name('courses.status');
-    Route::get('/courses/toggle-featured', [CourseController::class, 'toggleFeatured'])->name('courses.toggle-featured');
-    Route::get('/courses/toggle-popular', [CourseController::class, 'togglePopular'])->name('courses.toggle-popular');
-    Route::post('/courses/{course}/materials/upload/', [CourseController::class, 'materialsUpload'])->name('courses.materials.upload');
-    Route::post('/courses/bulk-action', [CourseController::class, 'bulkAction'])->name('courses.bulk-action');
+    // -------- Course parameter routes (come AFTER) --------
+    Route::prefix('courses/{course}')->name('courses.')->whereNumber('course')->group(function () {
+        // Show single course
+        Route::get('/', [CourseController::class, 'show'])->name('show');
+        
+        // Edit form
+        Route::get('/edit', [CourseController::class, 'edit'])->name('edit');
+        
+        // Update course
+        Route::put('/', [CourseController::class, 'update'])->name('update');
+        
+        // Delete course
+        Route::delete('/', [CourseController::class, 'destroy'])->name('destroy');
+        
+        // Course-specific actions
+        Route::post('/materials/upload', [CourseController::class, 'materialsUpload'])->name('materials.upload');
+        Route::patch('/publish', [CourseController::class, 'publish'])->name('publish');
+        
+        // Course relationships
+        Route::get('/enrollments', [CourseController::class, 'enrollments'])->name('enrollments');
+        Route::get('/reviews', [CourseController::class, 'reviews'])->name('reviews');
+        Route::get('/analytics', [CourseController::class, 'analytics'])->name('analytics');
+        
+        // ==================== MODULE ROUTES ====================
+        Route::prefix('modules')->name('modules.')->group(function () {
+            // Module index (list modules for a course)
+            Route::get('/', [ModuleController::class, 'index'])->name('index');
+            
+            // Create module form
+            Route::get('/create', [ModuleController::class, 'create'])->name('create');
+            
+            // Store new module
+            Route::post('/', [ModuleController::class, 'store'])->name('store');
+            
+            // Module reordering
+            Route::patch('/reorder', [ModuleController::class, 'reorder'])->name('reorder');
+            
+            // Module parameter routes
+            Route::prefix('{module}')->whereNumber('module')->group(function () {
+                // Edit module form
+                Route::get('/edit', [ModuleController::class, 'edit'])->name('edit');
+                
+                // Update module
+                Route::put('/', [ModuleController::class, 'update'])->name('update');
+                
+                // Delete module
+                Route::delete('/', [ModuleController::class, 'destroy'])->name('destroy');
+                
+                // Module-specific actions
+                Route::patch('/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
+                Route::post('/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
+            });
+        });
+    });
     
-    // Edit Course
-    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
-        ->name('courses.edit'); 
-//    Route::get('/courses/{course}/modules/{module?}/edit', [ModuleController::class, 'edit'])
-//     ->name('admin.courses.modules.edit')
-//     ->defaults('module', null);
-    
-    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
-    
-    // Delete Course
-    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
-        ->name('courses.destroy');
-    
-    // Course Categories
-    Route::get('/course-categories', [CourseController::class, 'categories'])
-        ->name('courses.categories.index');
-    
-    Route::post('/course-categories', [CourseController::class, 'storeCategory'])
-        ->name('courses.categories.store');
-    
-    Route::put('/course-categories/{category}', [CourseController::class, 'updateCategory'])
-        ->name('courses.categories.update');
-    
-    Route::delete('/course-categories/{category}', [CourseController::class, 'destroyCategory'])
-        ->name('courses.categories.destroy');
-    
-    // Course Enrollments
-    Route::get('/courses/{course}/enrollments', [CourseController::class, 'enrollments'])
-        ->name('courses.enrollments')
-        ->whereNumber('course');
-    
-    // Course Reviews/Feedback
-    Route::get('/courses/{course}/reviews', [CourseController::class, 'reviews'])
-        ->name('courses.reviews')
-        ->whereNumber('course');
-    
-    // Course Analytics
-    Route::get('/courses/{course}/analytics', [CourseController::class, 'analytics'])
-        ->name('courses.analytics')
-        ->whereNumber('course');
-    
-    // Course Publish/Unpublish
-    Route::put('/courses/{course}/publish', [CourseController::class, 'publish'])
-        ->name('courses.publish')
-        ->whereNumber('course');
+    // ==================== COURSE CATEGORY ROUTES ====================
+    Route::prefix('course-categories')->name('course-categories.')->group(function () {
+        // Category index
+        Route::get('/', [CourseController::class, 'categories'])->name('index');
+        
+        // Store new category
+        Route::post('/', [CourseController::class, 'storeCategory'])->name('store');
+        
+        // Category parameter routes
+        Route::prefix('{category}')->whereNumber('category')->group(function () {
+            // Update category
+            Route::put('/', [CourseController::class, 'updateCategory'])->name('update');
+            
+            // Delete category
+            Route::delete('/', [CourseController::class, 'destroyCategory'])->name('destroy');
+        });
+    });
 });
-
-// Module Management Routes
-Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')->group(function () {
-    Route::get('create', [ModuleController::class, 'create'])->name('create');
-    Route::post('/', [ModuleController::class, 'store'])->name('store');
-    Route::get('{module}/edit', [ModuleController::class, 'edit'])->name('edit');
-    Route::put('{module}', [ModuleController::class, 'update'])->name('update');
-    Route::delete('{module}', [ModuleController::class, 'destroy'])->name('destroy');
-    Route::post('{module}/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
-    Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
-    Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
-});
-   
