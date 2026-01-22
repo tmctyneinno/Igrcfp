@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:admin,super_admin'])->group(function () {
     
     // ==================== COURSE ROUTES ====================
-    
+      
     // -------- Non-parameter routes (come FIRST) --------
     Route::prefix('courses')->name('courses.')->group(function () {
         // Index (list all courses)
