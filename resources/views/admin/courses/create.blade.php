@@ -125,7 +125,7 @@
                 </div>
 
                 <!-- Video Upload Section -->
-                <div class="card mt-24">
+                <!-- <div class="card mt-24">
                     <div class="card-header">
                         <h6 class="card-title mb-0">Course Video</h6>
                     </div>
@@ -154,7 +154,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Upload Video Field -->
                             <div class="col-12 video-upload-field" style="display: {{ old('video_type') == 'upload' ? 'block' : 'none' }};">
                                 <label class="form-label">Upload Video File</label>
                                 <input class="form-control @error('video') is-invalid @enderror" 
@@ -167,7 +166,6 @@
                                 @enderror
                             </div>
 
-                            <!-- YouTube/Vimeo URL Field -->
                             <div class="col-12 video-url-field" style="display: {{ in_array(old('video_type'), ['youtube', 'vimeo']) ? 'block' : 'none' }};">
                                 <label class="form-label">Video URL</label>
                                 <input type="url" name="video_url" id="videoUrlInput" class="form-control @error('video_url') is-invalid @enderror" 
@@ -180,7 +178,6 @@
                                 @enderror
                             </div>
 
-                            <!-- Video Preview -->
                             <div class="col-12">
                                 <div id="videoPreview" class="mt-3" style="display: none;">
                                     <div class="video-preview-container">
@@ -190,7 +187,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Course Details -->
                 <div class="card mt-24">
@@ -417,27 +414,18 @@
                             @enderror
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">Or Upload Document</label>
+                        <!-- <div class="mb-3"> 
+                             <label class="form-label">Or Upload Document</label>
                             <input type="file" name="document" class="form-control" accept=".txt,.doc,.docx,.pdf">
                             <small class="text-muted">Supported formats: TXT, DOC, DOCX, PDF (Max: 10MB)</small>
-                        </div>
+                        </div> -->
                         
-                        <div class="form-text">
-                            <strong>Quick Format Tips:</strong>
-                            <div class="d-flex flex-wrap gap-2 mt-2">
-                                <span class="badge bg-light text-dark">Module X: Title</span>
-                                <span class="badge bg-light text-dark">Objectives:</span>
-                                <span class="badge bg-light text-dark">Topics:</span>
-                                <span class="badge bg-light text-dark">Case Study:</span>
-                                <span class="badge bg-light text-dark">Exercise:</span>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
 
                 <!-- Course Materials Upload -->
-                <div class="card mt-24">
+                <!-- <div class="card mt-24">
                     <div class="card-header">
                         <h6 class="card-title mb-0">Course Materials</h6>
                     </div>
@@ -471,7 +459,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- SEO Settings -->
                 <div class="card mt-24">
