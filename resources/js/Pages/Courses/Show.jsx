@@ -80,9 +80,9 @@ export default function CourseShow({ course }) {
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>{course.title} - Professional Certification</title>
-      </Head>
+      </Head> */}
 
       {/* Hero Banner */}
       <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
