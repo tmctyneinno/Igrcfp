@@ -60,5 +60,5 @@ class CourseController extends Controller
         $course = Course::with([ 'modules'])->where('slug', $slug)->firstOrFail();
 
         return Inertia::render('Courses/Show');
-    } - 
+    } 
 }
