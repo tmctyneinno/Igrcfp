@@ -190,7 +190,6 @@ class CourseController extends Controller
         // dd($id);
       
         $validated = $this->validateRequest($request, $course);
-        // ⚠️ CRITICAL: Remove deleted_at from validated data
         unset($validated['deleted_at']);
 
 
