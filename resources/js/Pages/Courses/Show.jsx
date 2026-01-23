@@ -61,7 +61,11 @@ export default function CourseShow({ auth, course }) {
     ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
 
-
+  // Parse HTML content safely
+  const createMarkup = (html) => {
+    if (!html) return { __html: '' };
+    return { __html: html };
+  };
 
   // Check if arrays exist
   const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
@@ -220,7 +224,9 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="prose max-w-none">
                     {course.programme_overview ? (
-                        <div dangerouslySetInnerHTML={createMarkup(course.full_description)} />
+                        <div 
+                          className="prose max-w-none" 
+                        dangerouslySetInnerHTML={createMarkup(course.full_description)} />
                     ) : (
                         <div className="text-gray-600">
                         <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
