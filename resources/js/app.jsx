@@ -7,6 +7,9 @@ import { createRoot } from 'react-dom/client';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+// Import the EnrollmentProvider
+import { EnrollmentProvider } from './Contexts/EnrollmentContext';
+
 // Initialize AOS 
 AOS.init({
     duration: 1000,
@@ -26,7 +29,11 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        root.render(
+            <EnrollmentProvider user={props.auth?.user}>
+                <App {...props} />
+            </EnrollmentProvider>
+        );
     },
     progress: {
         color: '#4B5563',
