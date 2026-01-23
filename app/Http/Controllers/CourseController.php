@@ -123,10 +123,14 @@ class CourseController extends Controller
             'created_at' => $course->created_at->format('M d, Y'),
             'updated_at' => $course->updated_at->format('M d, Y'),
         ];
+        $isEnrolled = auth()->check() 
+        ? auth()->user()->courses()->where('course_id', $course->id)->exists()
+        : false;
 
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
             'auth' => Auth::guard('web')->user(),
+            'isEnrolled' => $isEnrolled,
         ]);
     }
 
