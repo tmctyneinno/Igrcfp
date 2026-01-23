@@ -218,6 +218,17 @@ export default function CourseShow({ auth, course }) {
             </nav>
             </div>
 
+
+        <div className="bg-yellow-50 p-4 mb-8 rounded-lg border border-yellow-200">
+          <p className="font-bold text-yellow-800 mb-2">Debug - Raw content from course.full_description:</p>
+          <pre className="text-xs whitespace-pre-wrap text-yellow-900">
+            {JSON.stringify(course.full_description?.substring(0, 500) + (course.full_description?.length > 500 ? '...' : ''), null, 2)}
+          </pre>
+          <p className="text-xs text-yellow-700 mt-2">
+            Content length: {course.full_description?.length || 0} characters
+          </p>
+        </div>
+
             {/* Tab Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content Area */}
