@@ -57,7 +57,7 @@ class CourseController extends Controller
      */
     public function show($slug)
     {
-        $course = Course::with(['instructor', 'modules', 'lessons'])->where('slug', $slug)->firstOrFail();
+        $course = Course::with([ 'modules'])->where('slug', $slug)->firstOrFail();
 
         return Inertia::render('Courses/Show', [
             'course' => [
