@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Rules\Password; 
 use Inertia\Inertia;
+use App\Models\User;
 use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
