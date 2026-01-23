@@ -19,7 +19,6 @@ export default function Welcome({ auth, courses }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
   
-     
 
     return (
         <GuestLayout auth={auth}>
