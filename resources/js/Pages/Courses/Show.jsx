@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
 import DOMPurify from 'dompurify';
+import { useEnrollment } from '@/Contexts/EnrollmentContext';
 import { 
   CheckCircleIcon, 
   ClockIcon, 
@@ -21,8 +22,8 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function CourseShow({ auth, course, isEnrolled }) {
-  const [activeTab, setActiveTab] = useState('overview');
-//   const { startEnrollment, user } = useEnrollment();
+    const [activeTab, setActiveTab] = useState('overview');
+    const { startEnrollment, user } = useEnrollment();
 
   if (!course) {
     return (
