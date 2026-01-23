@@ -22,7 +22,7 @@ import {
 
 export default function CourseShow({ auth, course, isEnrolled }) {
   const [activeTab, setActiveTab] = useState('overview');
-  const { startEnrollment, user } = useEnrollment();
+//   const { startEnrollment, user } = useEnrollment();
 
   if (!course) {
     return (
@@ -284,7 +284,14 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                         <div className="p-6 border-b border-gray-200">
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
                             <p className="text-gray-600">Unlock full access to all modules and materials after enrollment</p>
-                        </div>
+
+                            <p className="text-gray-600">
+                                {isEnrolled 
+                                ? 'Access all modules and learning materials' 
+                                : 'Unlock full access after enrollment'
+                                }
+                            
+                                </div>
                     
                     <div className="divide-y divide-gray-200">
                         {modules.length > 0 ? (
