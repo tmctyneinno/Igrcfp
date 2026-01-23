@@ -291,10 +291,10 @@ export default function CourseShow({ auth, course }) {
                     transition={{ duration: 0.3 }}
                 >
                     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
-                        <p className="text-gray-600">Unlock full access to all modules and materials after enrollment</p>
-                    </div>
+                        <div className="p-6 border-b border-gray-200">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
+                            <p className="text-gray-600">Unlock full access to all modules and materials after enrollment</p>
+                        </div>
                     
                     <div className="divide-y divide-gray-200">
                         {modules.length > 0 ? (
