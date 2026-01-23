@@ -498,33 +498,33 @@ export default function CourseShow({ auth, course }) {
                 {/* Course Details Card */}
                 {/* Course Details Card */}
 <div className="bg-white rounded-xl border border-gray-200 p-6">
-  <h3 className="text-lg font-bold text-gray-900 mb-4">Course Detailsdd</h3>
-  <div className="space-y-4">
-    <div>
-      <label className="text-sm text-gray-500">Skill Level</label>
-      <p className="font-medium">{course.level || 'All Levels'}</p>
+    <h3 className="text-lg font-bold text-gray-900 mb-4">Course Details</h3>
+    <div className="space-y-4">
+        <div>
+            <label className="text-sm text-gray-500">Skill Level</label>
+            <p className="font-medium">{course.level || 'All Levels'}</p>
+        </div>
+        <div>
+            <label className="text-sm text-gray-500">Format</label>
+            <p className="font-medium">{course.format || 'Self-Paced Online'}</p>
+        </div>
+        <div>
+            <label className="text-sm text-gray-500">Duration</label>
+            <p className="font-medium">{course.duration || 'Flexible Schedule'}</p>
+        </div>
+        <div>
+            <label className="text-sm text-gray-500">Modules</label>
+            <p className="font-medium">{course.total_modules || modules.length || 0}</p>
+        </div>
+        <div>
+            <label className="text-sm text-gray-500">Total Hours</label>
+            <p className="font-medium">{course.total_hours || 'Varies by pace'}</p>
+        </div>
+        <div>
+            <label className="text-sm text-gray-500">Access Period</label>
+            <p className="font-medium text-green-600">Lifetime Access</p>
+        </div>
     </div>
-    <div>
-      <label className="text-sm text-gray-500">Format</label>
-      <p className="font-medium">{course.format || 'Self-Paced Online'}</p>
-    </div>
-    <div>
-      <label className="text-sm text-gray-500">Duration</label>
-      <p className="font-medium">{course.duration || 'Flexible Schedule'}</p>
-    </div>
-    <div>
-      <label className="text-sm text-gray-500">Modules</label>
-      <p className="font-medium">{course.total_modules || modules.length || 0}</p>
-    </div>
-    <div>
-      <label className="text-sm text-gray-500">Total Hours</label>
-      <p className="font-medium">{course.total_hours || 'Varies by pace'}</p>
-    </div>
-    <div>
-      <label className="text-sm text-gray-500">Access Period</label>
-      <p className="font-medium text-green-600">Lifetime Access</p>
-    </div>
-  </div>
 </div>
 
                 {/* Need Help Card */}
