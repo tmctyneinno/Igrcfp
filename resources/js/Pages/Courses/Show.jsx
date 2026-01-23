@@ -82,8 +82,8 @@ export default function CourseShow({ auth, course }) {
   ];
 
     const getCleanDescription = (course) => {
-        const text = course?.short_description || course?.description;
-        if (!text) return 'No description available';
+        const text = course?.short_description;
+        if (!text) return course.short_description;
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
         return cleanText.length > 100 ? cleanText.substring(0, 100) + '...' : cleanText;
@@ -115,7 +115,7 @@ export default function CourseShow({ auth, course }) {
                 </div>
                 
                 <h1 className="text-4xl lg:text-5xl font-bold mb-4">{course.title}</h1>
-                <p className="text-xl text-gray-200 mb-8 max-w-3xl">{course.short_description}</p>
+                <p className="text-xl text-gray-200 mb-8 max-w-3xl">{getCleanDescription(course.short_description) }</p>
                 
                 <div className="flex flex-wrap gap-6 mb-8">
                     <div className="flex items-center">
