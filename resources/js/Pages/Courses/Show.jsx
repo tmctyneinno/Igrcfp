@@ -509,7 +509,7 @@ export default function CourseShow({ auth, course }) {
                         </div>
                         <div className="flex justify-between items-center">
                             <label className="text-sm text-gray-500">Duration</label>
-                            <p className="font-medium">{course.duration || 'Flexible Schedule'}</p>
+                            <p className="font-medium">{course.duration || 'Flexible Schedule'} hours</p>
                         </div>
                         <div className="flex justify-between items-center">
                             <label className="text-sm text-gray-500">Modules</label>
@@ -517,7 +517,7 @@ export default function CourseShow({ auth, course }) {
                         </div>
                         <div className="flex justify-between items-center">
                             <label className="text-sm text-gray-500">Total Hours</label>
-                            <p className="font-medium">{course.total_hours || 'Varies by pace'}</p>
+                            <p className="font-medium">{course.total_hours || 'Varies by pace'} hours</p>
                         </div>
                         <div className="flex justify-between items-center">
                             <label className="text-sm text-gray-500">Access Period</label>
