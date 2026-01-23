@@ -43,7 +43,7 @@ export default function Welcome({ auth, courses }) {
             </section>
  
             <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <BecomeMember />
+                <BecomeMember /> 
             </section> 
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
