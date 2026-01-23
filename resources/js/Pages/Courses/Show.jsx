@@ -94,7 +94,7 @@ export default function CourseShow({ auth, course }) {
         // Split by double newlines (paragraphs)
         const paragraphs = text.split('\n\n');
         return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
-        };
+    };
 
   return (
     <>
