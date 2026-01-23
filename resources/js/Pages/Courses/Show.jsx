@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { useEnrollment } from '@/Components/Courses/EnrollmentContext';
+import { useEnrollment } from '@/Contexts/EnrollmentContext';
 import { 
   CheckCircleIcon, 
   ClockIcon, 
