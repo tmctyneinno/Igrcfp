@@ -493,6 +493,7 @@ export default function CourseShow({ course }) {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
