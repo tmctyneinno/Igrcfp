@@ -15,7 +15,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AuthController extends Controller
+class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
