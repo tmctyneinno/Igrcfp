@@ -57,8 +57,76 @@ class CourseController extends Controller
      */
     public function show($slug)
     {
-        $course = Course::with([ 'modules'])->where('slug', $slug)->firstOrFail();
+        $course = Course::with(['modules' => function($query) {
+            $query->orderBy('module_number');
+        }, 'materials' => function($query) {
+            $query->orderBy('sort_order');
+        }])->where('slug', $slug)->firstOrFail();
 
-        return Inertia::render('Courses/Show');
-    } 
+        // Format course data for Inertia
+        $formattedCourse = [
+            'id' => $course->id,
+            'title' => $course->title,
+            'slug' => $course->slug,
+            'short_title' => $course->short_title,
+            'short_description' => $course->short_description,
+            'full_description' => $course->full_description,
+            'image_url' => $course->image_url,
+            'banner_image_url' => $course->banner_image_url,
+            'video_type' => $course->video_type,
+            'video_url' => $course->video_url,
+            'video_embed_url' => $course->video_embed_url,
+            'level' => $course->level,
+            'format' => $course->format,
+            'duration' => $course->duration,
+            'total_modules' => $course->total_modules,
+            'total_hours' => $course->total_hours,
+            'certification_name' => $course->certification_name,
+            'certifying_body' => $course->certifying_body,
+            'price' => $course->price,
+            'discount_price' => $course->discount_price,
+            'discount_percentage' => $course->discount_percentage,
+            'target_audience' => $course->target_audience,
+            'learning_outcomes' => $course->learning_outcomes ? explode("\n", $course->learning_outcomes) : [],
+            'prerequisites' => $course->prerequisites,
+            'career_pathways' => $course->career_pathways,
+            'assessment_structure' => $course->assessment_structure,
+            'code_of_conduct' => $course->code_of_conduct,
+            'programme_overview' => $course->programme_overview,
+            'programme_architecture' => $course->programme_architecture,
+            'meta_description' => $course->meta_description,
+            'meta_keywords' => $course->meta_keywords,
+            'status' => $course->status,
+            'is_featured' => $course->is_featured,
+            'is_popular' => $course->is_popular,
+            'modules' => $course->modules->map(function($module) {
+                return [
+                    'id' => $module->id,
+                    'title' => $module->title,
+                    'description' => $module->description,
+                    'module_number' => $module->module_number,
+                    'duration' => $module->duration,
+                    'sort_order' => $module->sort_order,
+                ];
+            }),
+            'materials' => $course->materials->map(function($material) {
+                return [
+                    'id' => $material->id,
+                    'title' => $material->title,
+                    'description' => $material->description,
+                    'file_url' => $material->file_url,
+                    'file_type' => $material->file_type,
+                    'sort_order' => $material->sort_order,
+                ];
+            }),
+            'created_at' => $course->created_at->format('M d, Y'),
+            'updated_at' => $course->updated_at->format('M d, Y'),
+        ];
+
+        return Inertia::render('Courses/Show', [
+            'course' => $formattedCourse,
+        ]);
+    }
+
+    
 }
