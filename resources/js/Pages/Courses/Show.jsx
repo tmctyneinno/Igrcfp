@@ -11,8 +11,7 @@ import {
   PlayIcon,
   StarIcon,
   DocumentTextIcon,
-  DownloadIcon,
-  ArrowDownTrayIcon
+  ArrowDownTrayIcon // Correct import for download icon
 } from '@heroicons/react/24/outline';
 
 export default function CourseShow({ course }) {
@@ -48,6 +47,9 @@ export default function CourseShow({ course }) {
     return { __html: html };
   };
 
+  // Check if course has video
+  const hasVideo = course.video_type && course.video_url;
+
   return (
     <>
       <Head>
@@ -68,9 +70,12 @@ export default function CourseShow({ course }) {
                   alt={course.title}
                   className="w-full h-64 lg:h-80 object-cover"
                 />
-                {course.hasVideo() && (
+                {hasVideo && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="bg-white/90 hover:bg-white p-4 rounded-full transition transform hover:scale-110">
+                    <button 
+                      onClick={() => window.open(course.video_embed_url || course.video_url, '_blank')}
+                      className="bg-white/90 hover:bg-white p-4 rounded-full transition transform hover:scale-110"
+                    >
                       <PlayIcon className="h-12 w-12 text-blue-600" />
                     </button>
                   </div>
@@ -316,7 +321,7 @@ export default function CourseShow({ course }) {
                           <p className="text-sm text-gray-500">{material.file_type}</p>
                         </div>
                       </div>
-                      <DownloadIcon className="h-5 w-5 text-blue-600" />
+                      <ArrowDownTrayIcon className="h-5 w-5 text-blue-600" />
                     </a>
                   ))}
                 </div>
