@@ -61,12 +61,6 @@ export default function CourseShow({ auth, course, isEnrolled }) {
     ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
 
-  // Parse HTML content safely
-  const createMarkup = (html) => {
-    if (!html) return { __html: '' };
-    return { __html: html };
-  };
-
   // Check if arrays exist
   const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
   const modules = Array.isArray(course.modules) ? course.modules : [];
@@ -89,12 +83,23 @@ export default function CourseShow({ auth, course, isEnrolled }) {
         return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
     };
 
-    const formatTextWithParagraphs = (text) => {
-        if (!text) return '';
-        // Split by double newlines (paragraphs)
-        const paragraphs = text.split('\n\n');
-        return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
-    };
+    // In useEnrollment() context:
+const startEnrollment = (course) => {
+    setSelectedCourse(course);
+    
+    if (!user) {
+        // Redirect to login with return URL
+        router.visit('/login', {
+            data: { 
+                redirect: `/courses/${course.slug}/enroll` // Goes to enrollment page after login
+            }
+        });
+        return;
+    }
+    
+    // User is logged in, go directly to payment
+    router.visit(`/courses/${course.slug}/enroll`);
+};
 
   return (
     <>
