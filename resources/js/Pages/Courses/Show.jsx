@@ -192,36 +192,25 @@ export default function CourseShow({ auth, course }) {
             </div>
         </div>
 
-        {/* Debug - Show what browser actually sees */}
-<div className="bg-red-50 p-4 mb-4 border border-red-200 rounded">
-  <p className="font-bold text-red-800 mb-2">HTML Debug (View Page Source):</p>
-  <div className="bg-white p-3 rounded border overflow-auto max-h-60">
-    <pre className="text-xs">
-      {course.full_description}
-    </pre>
-  </div>
-  <button 
-    onClick={() => {
-      const newWindow = window.open();
-      newWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-          <script src="https://cdn.tailwindcss.com"></script>
-        </head>
-        <body class="p-8">
-          <div class="prose prose-lg max-w-none">
-            ${course.full_description}
-          </div>
-        </body>
-        </html>
-      `);
-    }}
-    className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-  >
-    Open HTML in new window to debug
-  </button>
+        <div 
+  className="
+    prose prose-lg max-w-none
+    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+    [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
+    [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
+    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
+    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
+    [&_li]:mb-1
+    [&_strong]:font-bold [&_strong]:text-gray-900
+    [&_b]:font-bold [&_b]:text-gray-900
+    [&_em]:italic
+    [&_i]:italic
+    [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
+    [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
+  "
+>
+  <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
 </div>
 
         {/* Main Content with Tabs */}
