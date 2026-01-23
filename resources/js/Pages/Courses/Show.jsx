@@ -90,11 +90,11 @@ export default function CourseShow({ auth, course }) {
     };
 
     const formatTextWithParagraphs = (text) => {
-    if (!text) return '';
-    // Split by double newlines (paragraphs)
-    const paragraphs = text.split('\n\n');
-    return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
-    };
+        if (!text) return '';
+        // Split by double newlines (paragraphs)
+        const paragraphs = text.split('\n\n');
+        return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
+        };
 
   return (
     <>
@@ -230,7 +230,7 @@ export default function CourseShow({ auth, course }) {
                     transition={{ duration: 0.3 }}
                 >
                     <div className="prose prose-lg max-w-none">
-                    {course.course.full_description ? (
+                    {course.full_description ? (
                         <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
                     ) : (
                         <div className="text-gray-600">
