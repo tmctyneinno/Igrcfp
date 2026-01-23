@@ -195,26 +195,7 @@ export default function CourseShow({ auth, course }) {
             </div>
         </div>
 
-        <div 
-  className="
-    prose prose-lg max-w-none
-    [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-    [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-    [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-    [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
-    [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
-    [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
-    [&_li]:mb-1
-    [&_strong]:font-bold [&_strong]:text-gray-900
-    [&_b]:font-bold [&_b]:text-gray-900
-    [&_em]:italic
-    [&_i]:italic
-    [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
-    [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
-  "
->
-  <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
-</div>
+        
 
         {/* Main Content with Tabs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -256,12 +237,11 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
-                        <div dangerouslySetInnerHTML={{ 
-                            __html: DOMPurify.sanitize(course.full_description, {
-                            ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
-                            ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style']
-                            }) 
-                        }} />
+                        <FormattedContent
+                            content={course.target_audience}
+                            title="Target Audience"
+                            className="bg-white rounded-xl border border-gray-200 p-6"
+                        />
                         //  <div dangerouslySetInnerHTML={{ __html: formatTextWithParagraphs(course.full_description) }} />
                     ) : (
                         <div className="text-gray-600">
