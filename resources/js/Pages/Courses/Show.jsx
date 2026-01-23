@@ -82,11 +82,11 @@ export default function CourseShow({ auth, course }) {
   ];
 
     const getCleanDescription = (course) => {
-        const text = course?.short_description;
-        if (!text) return course.short_description;
+        const text = course ;
+        if (!text) return 'No description available';
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
-        return cleanText.length > 100 ? cleanText.substring(0, 100) + '...' : cleanText;
+        return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
     };
 
   return (
