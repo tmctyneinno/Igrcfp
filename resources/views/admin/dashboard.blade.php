@@ -65,7 +65,7 @@
         </div>
         </div><!-- card end -->
     </div>
-    <div class="col">
+    {{-- <div class="col">
         <div class="card shadow-none border bg-gradient-start-4 h-100">
         <div class="card-body p-20">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -79,8 +79,8 @@
             </div>
         </div>
         </div><!-- card end -->
-    </div>
-    <div class="col">
+    </div> --}}
+    {{-- <div class="col">
         <div class="card shadow-none border bg-gradient-start-5 h-100">
         <div class="card-body p-20">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -93,8 +93,8 @@
             </div>
             </div>
         </div>
-        </div><!-- card end -->
-    </div>
+        </div>
+    </div> --}}
     </div>
 
     <div class="row gy-4 mt-1">
