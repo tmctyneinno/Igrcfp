@@ -231,7 +231,7 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
-                        <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
+                        <div dangerouslySetInnerHTML={{ __html: formatTextWithParagraphs(course.full_description) }} />
                     ) : (
                         <div className="text-gray-600">
                         <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
