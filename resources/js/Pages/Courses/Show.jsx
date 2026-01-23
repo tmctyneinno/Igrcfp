@@ -61,11 +61,7 @@ export default function CourseShow({ auth, course }) {
     ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
 
-  // Parse HTML content safely
-  const createMarkup = (html) => {
-    if (!html) return { __html: '' };
-    return { __html: html };
-  };
+
 
   // Check if arrays exist
   const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
