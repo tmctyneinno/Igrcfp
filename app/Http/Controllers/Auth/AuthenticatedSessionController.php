@@ -4,21 +4,23 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use App\Rules\Password; 
+use Illuminate\Validation\Rules;
 use Inertia\Inertia;
-use App\Models\User;
 use Inertia\Response;
 
-class AuthenticatedSessionController extends Controller
+class AuthController extends Controller
 {
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function showLogin(): Response
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
@@ -26,12 +28,35 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function login(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard', absolute: false));
+    }
+
+    /**
+     * Display the registration view.
+     */
+    public function showRegister(): Response
+    {
+        return Inertia::render('Auth/Register');
+    }
+
+    /**
+     * Handle an incoming registration request.
+     */
+    public function register(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
@@ -42,16 +67,15 @@ class AuthenticatedSessionController extends Controller
 
         event(new Registered($user));
 
-        // Instead of logging in and redirecting to dashboard,
-        // redirect to login page with success message
-        return redirect()->route('login')
-            ->with('status', 'Registration successful! Please login.');
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
