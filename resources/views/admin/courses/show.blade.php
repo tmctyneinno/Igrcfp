@@ -535,7 +535,7 @@
                             <div class="col-12">
                                 <h6 class="mb-2">Target Audience</h6>
                                 <div class="bg-light p-3 rounded-8">
-                                      {!! (implode("\n", $course->target_audience)) !!}
+                                      {!! $course->target_audience !!}
                                 </div>
                             </div>
                         @endif
