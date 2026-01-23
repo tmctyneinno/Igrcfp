@@ -83,23 +83,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
         return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
     };
 
-    // In useEnrollment() context:
-const startEnrollment = (course) => {
-    setSelectedCourse(course);
     
-    if (!user) {
-        // Redirect to login with return URL
-        router.visit('/login', {
-            data: { 
-                redirect: `/courses/${course.slug}/enroll` // Goes to enrollment page after login
-            }
-        });
-        return;
-    }
-    
-    // User is logged in, go directly to payment
-    router.visit(`/courses/${course.slug}/enroll`);
-};
 
   return (
     <>
