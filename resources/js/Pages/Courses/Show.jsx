@@ -89,6 +89,13 @@ export default function CourseShow({ auth, course }) {
         return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
     };
 
+    const formatTextWithParagraphs = (text) => {
+    if (!text) return '';
+    // Split by double newlines (paragraphs)
+    const paragraphs = text.split('\n\n');
+    return paragraphs.map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
+    };
+
   return (
     <>
       <GuestLayout auth={auth}>
@@ -224,7 +231,7 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="prose prose-lg max-w-none">
                     {course.programme_overview ? (
-                        <div dangerouslySetInnerHTML={createMarkup(course.full_description)} />
+                        <div dangerouslySetInnerHTML={{ __html: formatTextWithParagraphs(course.full_description)}} />
                     ) : (
                         <div className="text-gray-600">
                         <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
