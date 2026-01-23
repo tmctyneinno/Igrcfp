@@ -192,6 +192,38 @@ export default function CourseShow({ auth, course }) {
             </div>
         </div>
 
+        {/* Debug - Show what browser actually sees */}
+<div className="bg-red-50 p-4 mb-4 border border-red-200 rounded">
+  <p className="font-bold text-red-800 mb-2">HTML Debug (View Page Source):</p>
+  <div className="bg-white p-3 rounded border overflow-auto max-h-60">
+    <pre className="text-xs">
+      {course.full_description}
+    </pre>
+  </div>
+  <button 
+    onClick={() => {
+      const newWindow = window.open();
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+          <script src="https://cdn.tailwindcss.com"></script>
+        </head>
+        <body class="p-8">
+          <div class="prose prose-lg max-w-none">
+            ${course.full_description}
+          </div>
+        </body>
+        </html>
+      `);
+    }}
+    className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+  >
+    Open HTML in new window to debug
+  </button>
+</div>
+
         {/* Main Content with Tabs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             {/* Tabs Navigation */}
