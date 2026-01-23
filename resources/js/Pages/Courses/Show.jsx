@@ -11,7 +11,7 @@ import {
   PlayIcon,
   StarIcon,
   DocumentTextIcon,
-  ArrowDownTrayIcon // Correct import for download icon
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 
 export default function CourseShow({ course }) {
@@ -30,15 +30,26 @@ export default function CourseShow({ course }) {
     );
   }
 
-  const formatPrice = (price) => {
-    if (!price && price !== 0) return 'Free';
-    const numPrice = parseFloat(price);
-    return isNaN(numPrice) ? 'Free' : `$${numPrice.toFixed(2)}`;
+  // Safe parsing functions
+  const parseFloatSafe = (value) => {
+    if (value === null || value === undefined || value === '') return 0;
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
   };
 
-  const hasDiscount = course.discount_price > 0 && course.discount_price < course.price;
-  const discountPercentage = hasDiscount 
-    ? Math.round(((course.price - course.discount_price) / course.price) * 100) 
+  const formatPrice = (price) => {
+    const numPrice = parseFloatSafe(price);
+    return numPrice === 0 ? 'Free' : `$${numPrice.toFixed(2)}`;
+  };
+
+  // Parse prices safely
+  const price = parseFloatSafe(course.price);
+  const discountPrice = parseFloatSafe(course.discount_price);
+  
+  // Check for discount
+  const hasDiscount = discountPrice > 0 && discountPrice < price;
+  const discountPercentage = hasDiscount && price > 0 
+    ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
 
   // Parse HTML content safely
@@ -49,6 +60,11 @@ export default function CourseShow({ course }) {
 
   // Check if course has video
   const hasVideo = course.video_type && course.video_url;
+
+  // Check if arrays exist
+  const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
+  const modules = Array.isArray(course.modules) ? course.modules : [];
+  const materials = Array.isArray(course.materials) ? course.materials : [];
 
   return (
     <>
@@ -114,7 +130,7 @@ export default function CourseShow({ course }) {
                 </div>
                 <div className="flex items-center">
                   <BookOpenIcon className="h-5 w-5 mr-2" />
-                  <span>{course.total_modules || course.modules?.length || 0} Modules</span>
+                  <span>{(course.total_modules || modules.length || 0)} Modules</span>
                 </div>
                 <div className="flex items-center">
                   <AcademicCapIcon className="h-5 w-5 mr-2" />
@@ -129,14 +145,14 @@ export default function CourseShow({ course }) {
                     <div className="flex items-center">
                       {hasDiscount ? (
                         <>
-                          <span className="text-3xl font-bold">${course.discount_price.toFixed(2)}</span>
-                          <span className="text-lg line-through text-gray-300 ml-2">${course.price.toFixed(2)}</span>
+                          <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
+                          <span className="text-lg line-through text-gray-300 ml-2">${price.toFixed(2)}</span>
                           <span className="ml-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                             Save {discountPercentage}%
                           </span>
                         </>
                       ) : (
-                        <span className="text-3xl font-bold">{formatPrice(course.price)}</span>
+                        <span className="text-3xl font-bold">{formatPrice(price)}</span>
                       )}
                     </div>
                     <p className="text-blue-100 text-sm mt-1">One-time payment • Lifetime access</p>
@@ -177,14 +193,14 @@ export default function CourseShow({ course }) {
             )}
 
             {/* Learning Outcomes */}
-            {course.learning_outcomes && course.learning_outcomes.length > 0 && (
+            {learningOutcomes.length > 0 && (
               <section className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <CheckCircleIcon className="h-6 w-6 mr-2 text-green-600" />
                   What You'll Learn
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {course.learning_outcomes.map((outcome, index) => (
+                  {learningOutcomes.map((outcome, index) => (
                     <div key={index} className="flex items-start p-4 bg-gray-50 rounded-lg">
                       <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
                       <span className="text-gray-700">{outcome}</span>
@@ -195,16 +211,16 @@ export default function CourseShow({ course }) {
             )}
 
             {/* Course Modules */}
-            {course.modules && course.modules.length > 0 && (
+            {modules.length > 0 && (
               <section className="mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <DocumentTextIcon className="h-6 w-6 mr-2 text-purple-600" />
                   Course Curriculum
                 </h2>
                 <div className="space-y-4">
-                  {course.modules.map((module, index) => (
+                  {modules.map((module, index) => (
                     <motion.div
-                      key={module.id}
+                      key={module.id || index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -216,7 +232,7 @@ export default function CourseShow({ course }) {
                             <div className="bg-blue-100 text-blue-800 font-bold rounded-full h-10 w-10 flex items-center justify-center mr-4">
                               {module.module_number || index + 1}
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900">{module.title}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">{module.title || `Module ${index + 1}`}</h3>
                           </div>
                           {module.duration && (
                             <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
@@ -224,7 +240,7 @@ export default function CourseShow({ course }) {
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-600">{module.description}</p>
+                        <p className="text-gray-600">{module.description || 'No description available'}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -289,7 +305,7 @@ export default function CourseShow({ course }) {
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-gray-100">
                   <span className="text-gray-600">Modules</span>
-                  <span className="font-semibold text-gray-900">{course.total_modules || course.modules?.length || 'N/A'}</span>
+                  <span className="font-semibold text-gray-900">{course.total_modules || modules.length || 'N/A'}</span>
                 </div>
                 <div className="flex justify-between items-center pb-3 border-b border-gray-100">
                   <span className="text-gray-600">Total Hours</span>
@@ -303,22 +319,22 @@ export default function CourseShow({ course }) {
             </div>
 
             {/* Download Materials */}
-            {course.materials && course.materials.length > 0 && (
+            {materials.length > 0 && (
               <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Course Materials</h3>
                 <div className="space-y-3">
-                  {course.materials.map((material) => (
+                  {materials.map((material, index) => (
                     <a
-                      key={material.id}
-                      href={material.file_url}
+                      key={material.id || index}
+                      href={material.file_url || '#'}
                       download
                       className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition"
                     >
                       <div className="flex items-center">
                         <DocumentTextIcon className="h-5 w-5 text-gray-500 mr-3" />
                         <div>
-                          <p className="font-medium text-gray-900">{material.title}</p>
-                          <p className="text-sm text-gray-500">{material.file_type}</p>
+                          <p className="font-medium text-gray-900">{material.title || `Material ${index + 1}`}</p>
+                          <p className="text-sm text-gray-500">{material.file_type || 'File'}</p>
                         </div>
                       </div>
                       <ArrowDownTrayIcon className="h-5 w-5 text-blue-600" />
@@ -352,13 +368,13 @@ export default function CourseShow({ course }) {
                 {hasDiscount ? (
                   <div>
                     <div className="flex items-center justify-center mb-2">
-                      <span className="text-3xl font-bold">${course.discount_price.toFixed(2)}</span>
-                      <span className="text-lg line-through text-gray-300 ml-2">${course.price.toFixed(2)}</span>
+                      <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
+                      <span className="text-lg line-through text-gray-300 ml-2">${price.toFixed(2)}</span>
                     </div>
                     <p className="text-sm text-blue-200">Save {discountPercentage}% • Limited time offer</p>
                   </div>
                 ) : (
-                  <div className="text-3xl font-bold">{formatPrice(course.price)}</div>
+                  <div className="text-3xl font-bold">{formatPrice(price)}</div>
                 )}
               </div>
 
