@@ -120,7 +120,7 @@ export default function CourseShow({ auth, course }) {
                 <div className="flex flex-wrap gap-6 mb-8">
                     <div className="flex items-center">
                     <ClockIcon className="h-5 w-5 mr-2" />
-                    <span>{course.duration || 'Flexible Schedule'}</span>
+                    <span>{course.duration || 'Flexible Schedule'} hours</span>
                     </div>
                     <div className="flex items-center">
                     <BookOpenIcon className="h-5 w-5 mr-2" />
@@ -160,7 +160,7 @@ export default function CourseShow({ auth, course }) {
                     <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
                     </div>
 
-                    <button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4">
+                    <button className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4">
                     Enroll Now
                     </button>
                     
