@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
+import DOMPurify from 'dompurify';
 import { 
   CheckCircleIcon, 
   ClockIcon, 
@@ -231,9 +232,12 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
-                        <div className="prose prose-lg prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-li:text-gray-700 max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
-                        </div>
+                        <div dangerouslySetInnerHTML={{ 
+                            __html: DOMPurify.sanitize(course.full_description, {
+                            ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+                            ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style']
+                            }) 
+                        }} />
                         //  <div dangerouslySetInnerHTML={{ __html: formatTextWithParagraphs(course.full_description) }} />
                     ) : (
                         <div className="text-gray-600">
