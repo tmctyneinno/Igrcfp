@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
@@ -125,7 +126,7 @@ class CourseController extends Controller
 
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
-            'auth' => Auth(),
+            'auth' => Auth::guard('web')->user(),
         ]);
     }
 
