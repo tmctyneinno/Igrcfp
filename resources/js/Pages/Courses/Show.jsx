@@ -20,8 +20,9 @@ import {
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 
-export default function CourseShow({ auth, course }) {
+export default function CourseShow({ auth, course, isEnrolled }) {
   const [activeTab, setActiveTab] = useState('overview');
+  const { startEnrollment, user } = useEnrollment();
 
   if (!course) {
     return (
