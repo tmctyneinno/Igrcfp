@@ -82,419 +82,419 @@ export default function CourseShow({ course }) {
 
   return (
     <>
-      <NavBar/>
+      <GuestLayout auth={auth}>
 
-      {/* Hero Banner */}
-      <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex flex-col lg:flex-row items-start gap-8">
-            {/* Course Title & Basic Info */}
-            <div className="lg:w-2/3">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
-                  {course.level || 'All Levels'}
-                </span>
-                <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
-                  {course.format || 'Self-Paced'}
-                </span>
-                {course.is_featured && (
-                  <span className="px-3 py-1 bg-yellow-500/20 rounded-full text-sm font-medium flex items-center">
-                    <StarIcon className="h-3 w-3 mr-1" /> Featured
-                  </span>
-                )}
-              </div>
-              
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4">{course.title}</h1>
-              <p className="text-xl text-gray-200 mb-8 max-w-3xl">{course.short_description}</p>
-              
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center">
-                  <ClockIcon className="h-5 w-5 mr-2" />
-                  <span>{course.duration || 'Flexible Schedule'}</span>
-                </div>
-                <div className="flex items-center">
-                  <BookOpenIcon className="h-5 w-5 mr-2" />
-                  <span>{course.total_modules || modules.length || 0} Modules</span>
-                </div>
-                <div className="flex items-center">
-                  <CalendarIcon className="h-5 w-5 mr-2" />
-                  <span>{course.total_hours || 'Flexible'} Hours Total</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing Card */}
-            <div className="lg:w-1/3 w-full">
-              <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold">Enroll Now</h3>
-                  {hasDiscount && (
-                    <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
-                      {discountPercentage}% OFF
+        {/* Hero Banner */}
+        <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
+            <div className="absolute inset-0 bg-black/50"></div>
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="flex flex-col lg:flex-row items-start gap-8">
+                {/* Course Title & Basic Info */}
+                <div className="lg:w-2/3">
+                <div className="flex items-center gap-2 mb-4">
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                    {course.level || 'All Levels'}
                     </span>
-                  )}
-                </div>
-                
-                <div className="mb-6">
-                  {hasDiscount ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
-                        <span className="text-lg line-through text-gray-500 ml-2">${price.toFixed(2)}</span>
-                      </div>
-                      <p className="text-sm text-green-600 font-medium">Limited time offer</p>
-                    </div>
-                  ) : (
-                    <div className="text-3xl font-bold">{formatPrice(price)}</div>
-                  )}
-                  <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
-                </div>
-
-                <button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4">
-                  Enroll Now
-                </button>
-                
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center">
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                    <span>30-day money-back guarantee</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                    <span>Certificate of completion</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                    <span>24/7 support access</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content with Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Tabs Navigation */}
-        <div className="border-b border-gray-200 mb-8">
-          <nav className="-mb-px flex space-x-8 overflow-x-auto">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`
-                    py-4 px-1 border-b-2 font-medium text-sm flex items-center whitespace-nowrap
-                    ${activeTab === tab.id
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }
-                  `}
-                >
-                  <Icon className={`h-5 w-5 mr-2 ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'}`} />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Tab Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content Area */}
-          <div className="lg:col-span-2">
-            {/* Overview Tab */}
-            {activeTab === 'overview' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="prose max-w-none">
-                  {course.programme_overview ? (
-                    <div dangerouslySetInnerHTML={createMarkup(course.programme_overview)} />
-                  ) : (
-                    <div className="text-gray-600">
-                      <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
-                      
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">Programme Highlights</h3>
-                      <ul className="space-y-3">
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                          <span>Comprehensive curriculum developed by industry experts</span>
-                        </li>
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                          <span>Practical, real-world case studies and applications</span>
-                        </li>
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                          <span>Interactive learning with hands-on exercises</span>
-                        </li>
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                          <span>Expert-led sessions and mentorship opportunities</span>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Curriculum Tab */}
-            {activeTab === 'curriculum' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
-                    <p className="text-gray-600">Unlock full access to all modules and materials after enrollment</p>
-                  </div>
-                  
-                  <div className="divide-y divide-gray-200">
-                    {modules.length > 0 ? (
-                      modules.map((module, index) => (
-                        <div key={module.id || index} className="p-6 hover:bg-gray-50 transition">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold mr-4">
-                                {module.module_number || index + 1}
-                              </div>
-                              <div>
-                                <h4 className="font-semibold text-gray-900">{module.title || `Module ${index + 1}`}</h4>
-                                {module.duration && (
-                                  <p className="text-sm text-gray-500 mt-1">{module.duration}</p>
-                                )}
-                              </div>
-                            </div>
-                            <LockClosedIcon className="h-5 w-5 text-gray-400" />
-                          </div>
-                          {module.description && (
-                            <div className="mt-4 pl-14">
-                              <div className="text-gray-600 bg-gray-50 p-4 rounded-lg">
-                                {module.description}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-6 text-center text-gray-500">
-                        <p>Curriculum details will be available after enrollment</p>
-                      </div>
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                    {course.format || 'Self-Paced'}
+                    </span>
+                    {course.is_featured && (
+                    <span className="px-3 py-1 bg-yellow-500/20 rounded-full text-sm font-medium flex items-center">
+                        <StarIcon className="h-3 w-3 mr-1" /> Featured
+                    </span>
                     )}
-                  </div>
                 </div>
-              </motion.div>
-            )}
-
-            {/* Outcomes Tab */}
-            {activeTab === 'outcomes' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">Learning Outcomes</h3>
-                  
-                  {learningOutcomes.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {learningOutcomes.map((outcome, index) => (
-                        <div key={index} className="flex items-start p-4 bg-blue-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">{outcome}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                        <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">Master essential skills and techniques required for professional certification</span>
-                      </div>
-                      <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                        <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">Apply theoretical knowledge to practical, real-world scenarios</span>
-                      </div>
-                      <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                        <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">Develop critical thinking and problem-solving abilities</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Audience Tab */}
-            {activeTab === 'audience' && course.target_audience && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-6">Who Should Enroll</h3>
-                  <div 
-                    className="prose max-w-none text-gray-700"
-                    dangerouslySetInnerHTML={createMarkup(course.target_audience)}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Certification Tab */}
-            {activeTab === 'certification' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="p-6 bg-blue-50 border-b border-blue-100">
+                
+                <h1 className="text-4xl lg:text-5xl font-bold mb-4">{course.title}</h1>
+                <p className="text-xl text-gray-200 mb-8 max-w-3xl">{course.short_description}</p>
+                
+                <div className="flex flex-wrap gap-6 mb-8">
                     <div className="flex items-center">
-                      <AcademicCapIcon className="h-8 w-8 text-blue-600 mr-3" />
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900">Certification</h3>
-                        <p className="text-gray-600">Official recognition of your achievement</p>
-                      </div>
+                    <ClockIcon className="h-5 w-5 mr-2" />
+                    <span>{course.duration || 'Flexible Schedule'}</span>
                     </div>
-                  </div>
-                  
-                  <div className="p-6">
-                    <div className="mb-6">
-                      <h4 className="font-bold text-gray-900 mb-2">Certificate Details</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="text-gray-600">Certificate Name</span>
-                          <span className="font-semibold">{course.certification_name || 'Professional Certification'}</span>
-                        </div>
-                        {course.certifying_body && (
-                          <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="text-gray-600">Issuing Body</span>
-                            <span className="font-semibold">{course.certifying_body}</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="text-gray-600">Delivery</span>
-                          <span className="font-semibold">Digital & Printable</span>
-                        </div>
-                        <div className="flex justify-between py-2">
-                          <span className="text-gray-600">Verification</span>
-                          <span className="font-semibold">Online Verification Available</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center">
+                    <BookOpenIcon className="h-5 w-5 mr-2" />
+                    <span>{course.total_modules || modules.length || 0} Modules</span>
+                    </div>
+                    <div className="flex items-center">
+                    <CalendarIcon className="h-5 w-5 mr-2" />
+                    <span>{course.total_hours || 'Flexible'} Hours Total</span>
+                    </div>
+                </div>
+                </div>
+
+                {/* Pricing Card */}
+                <div className="lg:w-1/3 w-full">
+                <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
+                    <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold">Enroll Now</h3>
+                    {hasDiscount && (
+                        <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
+                        {discountPercentage}% OFF
+                        </span>
+                    )}
                     </div>
                     
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h5 className="font-bold text-gray-900 mb-2">Certificate Benefits</h5>
-                      <ul className="space-y-2">
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                          <span>Enhance your professional credibility</span>
-                        </li>
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                          <span>Share on LinkedIn and professional networks</span>
-                        </li>
-                        <li className="flex items-start">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                          <span>Add to your resume and portfolio</span>
-                        </li>
-                      </ul>
+                    <div className="mb-6">
+                    {hasDiscount ? (
+                        <div className="space-y-2">
+                        <div className="flex items-center">
+                            <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
+                            <span className="text-lg line-through text-gray-500 ml-2">${price.toFixed(2)}</span>
+                        </div>
+                        <p className="text-sm text-green-600 font-medium">Limited time offer</p>
+                        </div>
+                    ) : (
+                        <div className="text-3xl font-bold">{formatPrice(price)}</div>
+                    )}
+                    <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Course Details Card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Course Details</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm text-gray-500">Skill Level</label>
-                  <p className="font-medium">{course.level || 'All Levels'}</p>
+                    <button className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4">
+                    Enroll Now
+                    </button>
+                    
+                    <div className="space-y-3 text-sm">
+                    <div className="flex items-center">
+                        <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                        <span>30-day money-back guarantee</span>
+                    </div>
+                    <div className="flex items-center">
+                        <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                        <span>Certificate of completion</span>
+                    </div>
+                    <div className="flex items-center">
+                        <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                        <span>24/7 support access</span>
+                    </div>
+                    </div>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-500">Format</label>
-                  <p className="font-medium">{course.format || 'Self-Paced Online'}</p>
                 </div>
-                <div>
-                  <label className="text-sm text-gray-500">Duration</label>
-                  <p className="font-medium">{course.duration || 'Flexible Schedule'}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Modules</label>
-                  <p className="font-medium">{course.total_modules || modules.length || 0}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Total Hours</label>
-                  <p className="font-medium">{course.total_hours || 'Varies by pace'}</p>
-                </div>
-                <div>
-                  <label className="text-sm text-gray-500">Access Period</label>
-                  <p className="font-medium text-green-600">Lifetime Access</p>
-                </div>
-              </div>
             </div>
-
-            {/* Need Help Card */}
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Need Assistance?</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Our admissions team is here to help you with any questions about this programme.
-              </p>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                Contact Admissions
-              </button>
             </div>
-
-            {/* Share Card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Share this Course</h3>
-              <div className="flex space-x-3">
-                <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
-                  LinkedIn
-                </button>
-                <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
-                  Twitter
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-12 bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl p-8 text-white">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to Advance Your Career?</h2>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Join thousands of professionals who have transformed their careers with our certification programmes.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200">
-                Enroll Now - ${hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
-              </button>
-              <button className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/10 transition duration-200">
-                Download Syllabus
-              </button>
+        {/* Main Content with Tabs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            {/* Tabs Navigation */}
+            <div className="border-b border-gray-200 mb-8">
+            <nav className="-mb-px flex space-x-8 overflow-x-auto">
+                {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                    <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                        py-4 px-1 border-b-2 font-medium text-sm flex items-center whitespace-nowrap
+                        ${activeTab === tab.id
+                        ? 'border-blue-600 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }
+                    `}
+                    >
+                    <Icon className={`h-5 w-5 mr-2 ${activeTab === tab.id ? 'text-blue-600' : 'text-gray-400'}`} />
+                    {tab.label}
+                    </button>
+                );
+                })}
+            </nav>
             </div>
-          </div>
+
+            {/* Tab Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content Area */}
+            <div className="lg:col-span-2">
+                {/* Overview Tab */}
+                {activeTab === 'overview' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="prose max-w-none">
+                    {course.programme_overview ? (
+                        <div dangerouslySetInnerHTML={createMarkup(course.programme_overview)} />
+                    ) : (
+                        <div className="text-gray-600">
+                        <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
+                        
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">Programme Highlights</h3>
+                        <ul className="space-y-3">
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                            <span>Comprehensive curriculum developed by industry experts</span>
+                            </li>
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                            <span>Practical, real-world case studies and applications</span>
+                            </li>
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                            <span>Interactive learning with hands-on exercises</span>
+                            </li>
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                            <span>Expert-led sessions and mentorship opportunities</span>
+                            </li>
+                        </ul>
+                        </div>
+                    )}
+                    </div>
+                </motion.div>
+                )}
+
+                {/* Curriculum Tab */}
+                {activeTab === 'curriculum' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="p-6 border-b border-gray-200">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
+                        <p className="text-gray-600">Unlock full access to all modules and materials after enrollment</p>
+                    </div>
+                    
+                    <div className="divide-y divide-gray-200">
+                        {modules.length > 0 ? (
+                        modules.map((module, index) => (
+                            <div key={module.id || index} className="p-6 hover:bg-gray-50 transition">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold mr-4">
+                                    {module.module_number || index + 1}
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-gray-900">{module.title || `Module ${index + 1}`}</h4>
+                                    {module.duration && (
+                                    <p className="text-sm text-gray-500 mt-1">{module.duration}</p>
+                                    )}
+                                </div>
+                                </div>
+                                <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                            </div>
+                            {module.description && (
+                                <div className="mt-4 pl-14">
+                                <div className="text-gray-600 bg-gray-50 p-4 rounded-lg">
+                                    {module.description}
+                                </div>
+                                </div>
+                            )}
+                            </div>
+                        ))
+                        ) : (
+                        <div className="p-6 text-center text-gray-500">
+                            <p>Curriculum details will be available after enrollment</p>
+                        </div>
+                        )}
+                    </div>
+                    </div>
+                </motion.div>
+                )}
+
+                {/* Outcomes Tab */}
+                {activeTab === 'outcomes' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">Learning Outcomes</h3>
+                    
+                    {learningOutcomes.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {learningOutcomes.map((outcome, index) => (
+                            <div key={index} className="flex items-start p-4 bg-blue-50 rounded-lg">
+                            <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                            <span className="text-gray-700">{outcome}</span>
+                            </div>
+                        ))}
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
+                            <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                            <span className="text-gray-700">Master essential skills and techniques required for professional certification</span>
+                        </div>
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
+                            <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                            <span className="text-gray-700">Apply theoretical knowledge to practical, real-world scenarios</span>
+                        </div>
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
+                            <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                            <span className="text-gray-700">Develop critical thinking and problem-solving abilities</span>
+                        </div>
+                        </div>
+                    )}
+                    </div>
+                </motion.div>
+                )}
+
+                {/* Audience Tab */}
+                {activeTab === 'audience' && course.target_audience && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">Who Should Enroll</h3>
+                    <div 
+                        className="prose max-w-none text-gray-700"
+                        dangerouslySetInnerHTML={createMarkup(course.target_audience)}
+                    />
+                    </div>
+                </motion.div>
+                )}
+
+                {/* Certification Tab */}
+                {activeTab === 'certification' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="p-6 bg-blue-50 border-b border-blue-100">
+                        <div className="flex items-center">
+                        <AcademicCapIcon className="h-8 w-8 text-blue-600 mr-3" />
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-900">Certification</h3>
+                            <p className="text-gray-600">Official recognition of your achievement</p>
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div className="p-6">
+                        <div className="mb-6">
+                        <h4 className="font-bold text-gray-900 mb-2">Certificate Details</h4>
+                        <div className="space-y-3">
+                            <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-gray-600">Certificate Name</span>
+                            <span className="font-semibold">{course.certification_name || 'Professional Certification'}</span>
+                            </div>
+                            {course.certifying_body && (
+                            <div className="flex justify-between py-2 border-b border-gray-100">
+                                <span className="text-gray-600">Issuing Body</span>
+                                <span className="font-semibold">{course.certifying_body}</span>
+                            </div>
+                            )}
+                            <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-gray-600">Delivery</span>
+                            <span className="font-semibold">Digital & Printable</span>
+                            </div>
+                            <div className="flex justify-between py-2">
+                            <span className="text-gray-600">Verification</span>
+                            <span className="font-semibold">Online Verification Available</span>
+                            </div>
+                        </div>
+                        </div>
+                        
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                        <h5 className="font-bold text-gray-900 mb-2">Certificate Benefits</h5>
+                        <ul className="space-y-2">
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                            <span>Enhance your professional credibility</span>
+                            </li>
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                            <span>Share on LinkedIn and professional networks</span>
+                            </li>
+                            <li className="flex items-start">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+                            <span>Add to your resume and portfolio</span>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                    </div>
+                </motion.div>
+                )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+                {/* Course Details Card */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Course Details</h3>
+                <div className="space-y-4">
+                    <div>
+                    <label className="text-sm text-gray-500">Skill Level</label>
+                    <p className="font-medium">{course.level || 'All Levels'}</p>
+                    </div>
+                    <div>
+                    <label className="text-sm text-gray-500">Format</label>
+                    <p className="font-medium">{course.format || 'Self-Paced Online'}</p>
+                    </div>
+                    <div>
+                    <label className="text-sm text-gray-500">Duration</label>
+                    <p className="font-medium">{course.duration || 'Flexible Schedule'}</p>
+                    </div>
+                    <div>
+                    <label className="text-sm text-gray-500">Modules</label>
+                    <p className="font-medium">{course.total_modules || modules.length || 0}</p>
+                    </div>
+                    <div>
+                    <label className="text-sm text-gray-500">Total Hours</label>
+                    <p className="font-medium">{course.total_hours || 'Varies by pace'}</p>
+                    </div>
+                    <div>
+                    <label className="text-sm text-gray-500">Access Period</label>
+                    <p className="font-medium text-green-600">Lifetime Access</p>
+                    </div>
+                </div>
+                </div>
+
+                {/* Need Help Card */}
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Need Assistance?</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                    Our admissions team is here to help you with any questions about this programme.
+                </p>
+                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                    Contact Admissions
+                </button>
+                </div>
+
+                {/* Share Card */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Share this Course</h3>
+                <div className="flex space-x-3">
+                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
+                    LinkedIn
+                    </button>
+                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
+                    Twitter
+                    </button>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="mt-12 bg-gradient-to-r from-blue-900 to-blue-700 rounded-2xl p-8 text-white">
+            <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-2xl font-bold mb-4">Ready to Advance Your Career?</h2>
+                <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+                Join thousands of professionals who have transformed their careers with our certification programmes.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200">
+                    Enroll Now - ${hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
+                </button>
+                <button className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/10 transition duration-200">
+                    Download Syllabus
+                </button>
+                </div>
+            </div>
+            </div>
         </div>
-      </div>
-      <Footer />
+    </GuestLayout>
     </>
   );
 }
