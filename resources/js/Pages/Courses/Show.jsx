@@ -11,7 +11,8 @@ import {
   PlayIcon,
   StarIcon,
   DocumentTextIcon,
-  DownloadIcon
+  DownloadIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 
 export default function CourseShow({ course }) {
