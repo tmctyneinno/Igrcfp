@@ -402,9 +402,7 @@
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
                                 <textarea id="assessment_structure" name="assessment_structure" class="form-control rich-editor @error('assessment_structure') is-invalid @enderror" rows="4" 
-                                          placeholder="Module quizzes
-Practical assignments
-Final examination">{{ old('assessment_structure', $course->assessment_structure) }}</textarea>
+                                          placeholder="">{{ old('assessment_structure', $course->assessment_structure) }}</textarea>
                                 @error('assessment_structure')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -510,7 +508,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                 </div>
 
                 <!-- Course Materials Management -->
-                <div class="card mt-24">
+                <!-- <div class="card mt-24">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="card-title mb-0">Course Materials ({{ $course->materials->count() }})</h6>
@@ -603,7 +601,7 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
                             </div>
                         @endif
                     </div>
-                </div>
+                </div> -->
 
                 <!-- SEO Settings -->
                 <div class="card mt-24">
@@ -1079,46 +1077,46 @@ Final examination">{{ old('assessment_structure', $course->assessment_structure)
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing edit form');
-    setTimeout(() => {
-        initializeCKEditors();
-    }, 100);
+    // setTimeout(() => {
+    //     initializeCKEditors();
+    // }, 100);
 
-    function initializeCKEditors() {
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+    // function initializeCKEditors() {
+    //     const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
         
-        if (editors.length === 0) return;
+    //     if (editors.length === 0) return;
         
-        // Load CKEditor dynamically if not loaded
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded');
-            return;
-        }
+    //     // Load CKEditor dynamically if not loaded
+    //     if (typeof ClassicEditor === 'undefined') {
+    //         console.error('CKEditor not loaded');
+    //         return;
+    //     }
         
-        editors.forEach(textarea => {
-            try {
-                ClassicEditor
-                    .create(textarea)
-                    .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
+    //     editors.forEach(textarea => {
+    //         try {
+    //             ClassicEditor
+    //                 .create(textarea)
+    //                 .then(editor => {
+    //                     textarea.setAttribute('data-ck-initialized', 'true');
                         
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            form.addEventListener('submit', function() {
-                                textarea.value = editor.getData();
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('CKEditor error:', error);
-                        // Don't break the form
-                        textarea.style.display = 'block';
-                    });
-            } catch (error) {
-                console.error('CKEditor initialization error:', error);
-            }
-        });
-    }
+    //                     // Update form on submit
+    //                     const form = textarea.closest('form');
+    //                     if (form) {
+    //                         form.addEventListener('submit', function() {
+    //                             textarea.value = editor.getData();
+    //                         });
+    //                     }
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('CKEditor error:', error);
+    //                     // Don't break the form
+    //                     textarea.style.display = 'block';
+    //                 });
+    //         } catch (error) {
+    //             console.error('CKEditor initialization error:', error);
+    //         }
+    //     });
+    // }
 
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
