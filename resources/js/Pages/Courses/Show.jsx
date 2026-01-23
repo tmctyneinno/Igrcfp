@@ -68,11 +68,11 @@ export default function CourseShow({ course }) {
 
   return (
     <>
-      {/* <Head>
-        <title>{course.title} - Certification Course</title>
-        <meta name="description" content={course.meta_description || course.short_description} />
-        <meta name="keywords" content={course.meta_keywords} />
-      </Head> */}
+      <Head>
+        {/* <title>{course.title} - Certification Course</title> */}
+        {/* <meta name="description" content={course.meta_description || course.short_description} /> */}
+        {/* <meta name="keywords" content={course.meta_keywords} /> */}
+      </Head>
 
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-700 text-white">
