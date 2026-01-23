@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import GuestLayout from '@/Layouts/GuestLayout';
 import { 
   CheckCircleIcon, 
   ClockIcon, 
