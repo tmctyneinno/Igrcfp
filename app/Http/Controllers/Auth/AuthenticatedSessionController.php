@@ -20,13 +20,14 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function showLogin(): Response
+    public function create(): Response
     {
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
     }
+
 
     /**
      * Handle an incoming authentication request.
@@ -51,7 +52,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming registration request.
      */
-    public function register(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
