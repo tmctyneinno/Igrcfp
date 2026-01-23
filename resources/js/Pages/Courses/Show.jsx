@@ -344,7 +344,7 @@ export default function CourseShow({ auth, course }) {
                     <h3 className="text-xl font-bold text-gray-900 mb-6">Learning Outcomes</h3>
                     
                     {learningOutcomes.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols- gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         {learningOutcomes.map((outcome, index) => (
                             <div key={index} className="flex items-start p-4 bg-blue-50 rounded-lg">
                             <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
@@ -401,10 +401,28 @@ export default function CourseShow({ auth, course }) {
                 >
                     <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-6">Who Should Enroll</h3>
-                    <div 
-                        className="prose max-w-none text-gray-700"
-                        dangerouslySetInnerHTML={createMarkup(course.target_audience)}
-                    />
+                    
+                        <div 
+                            className="
+                                prose prose-lg max-w-none
+                                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
+                                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
+                                [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
+                                [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
+                                [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
+                                [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
+                                [&_li]:mb-1
+                                [&_strong]:font-bold [&_strong]:text-gray-900
+                                [&_b]:font-bold [&_b]:text-gray-900
+                                [&_em]:italic
+                                [&_i]:italic
+                                [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
+                                [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
+                            "
+                            >
+                            <div dangerouslySetInnerHTML={{ __html: course.target_audience }} />
+                        </div>
+                        
                     </div>
                 </motion.div>
                 )}
