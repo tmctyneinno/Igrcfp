@@ -8,7 +8,7 @@ export default function Certification({ courses }) { // Remove default value fro
     const coursesData = Array.isArray(courses) ? courses : [];
 
     // Format price safely
-    const formatPrice = (price) => { 
+    const formatPrice = (price) => {
         if (!price && price !== 0) return null;
         const numPrice = parseFloat(price);
         return isNaN(numPrice) ? null : `$${numPrice.toFixed(2)}`;
