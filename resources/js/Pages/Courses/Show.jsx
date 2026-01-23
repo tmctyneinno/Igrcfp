@@ -81,6 +81,14 @@ export default function CourseShow({ auth, course }) {
     { id: 'certification', label: 'Certification', icon: AcademicCapIcon },
   ];
 
+    const getCleanDescription = (course) => {
+        const text = course?.short_description || course?.description;
+        if (!text) return 'No description available';
+        
+        const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+        return cleanText.length > 100 ? cleanText.substring(0, 100) + '...' : cleanText;
+    };
+
   return (
     <>
       <GuestLayout auth={auth}>
