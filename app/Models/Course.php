@@ -51,7 +51,6 @@ class Course extends Model
         'discount_price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_popular' => 'boolean',
-        'target_audience' => 'array',
         'total_modules' => 'integer',
         'total_hours' => 'integer',
     ];

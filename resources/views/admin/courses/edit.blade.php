@@ -384,7 +384,8 @@
                             <div class="col-12">
                                 <label class="form-label">Prerequisites</label>
                                 <textarea id="prerequisites" name="prerequisites" class="form-control rich-editor @error('prerequisites') is-invalid @enderror" 
-                                          rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites', $course->prerequisites) }}</textarea>
+                                          rows="3" placeholder="Requirements before taking this course">
+                                          {{ old('prerequisites', $course->prerequisites) }}</textarea>
                                 @error('prerequisites')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
