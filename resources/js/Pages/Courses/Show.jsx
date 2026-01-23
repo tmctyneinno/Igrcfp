@@ -23,7 +23,7 @@ import NavBar from '@/Layouts/NavBar';
 import Footer from '@/Layouts/Footer';
 // Import the components
 import FormattedContent from '@/Components/FormattedContent';
-import { calculateReadingTime } from '@/Utils/htmlFormatters';
+// import { calculateReadingTime } from '@/Utils/htmlFormatters';
 
 export default function CourseShow({ auth, course }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -238,9 +238,12 @@ export default function CourseShow({ auth, course }) {
                     <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
                         <FormattedContent
-                            content={course.target_audience}
-                            title="Target Audience"
-                            className="bg-white rounded-xl border border-gray-200 p-6"
+                        content={course.full_description || course.programme_overview}
+                        title={course.title}
+                        showBreadcrumb={true}
+                        showReadingTime={true}
+                        showActions={true}
+                        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
                         />
                         //  <div dangerouslySetInnerHTML={{ __html: formatTextWithParagraphs(course.full_description) }} />
                     ) : (
