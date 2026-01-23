@@ -21,7 +21,7 @@ import {
 import NavBar from '@/Layouts/NavBar';
 import Footer from '@/Layouts/Footer';
 
-export default function CourseShow({ course }) {
+export default function CourseShow({ auth, course }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   if (!course) {
