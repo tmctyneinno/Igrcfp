@@ -63,7 +63,7 @@
             </div>
             </div>
         </div>
-        </div><!-- card end -->
+        </div><!-- card end --> 
     </div>
     {{-- <div class="col">
         <div class="card shadow-none border bg-gradient-start-4 h-100">
