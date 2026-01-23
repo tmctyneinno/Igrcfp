@@ -21,6 +21,9 @@ import {
 } from '@heroicons/react/24/outline';
 import NavBar from '@/Layouts/NavBar';
 import Footer from '@/Layouts/Footer';
+// Import the components
+import FormattedContent from '@/Components/FormattedContent';
+import { calculateReadingTime } from '@/Utils/htmlFormatters';
 
 export default function CourseShow({ auth, course }) {
   const [activeTab, setActiveTab] = useState('overview');
