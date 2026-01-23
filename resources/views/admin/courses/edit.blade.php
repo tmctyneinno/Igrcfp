@@ -377,7 +377,7 @@
                                     class="form-control rich-editor @error('target_audience') is-invalid @enderror"
                                     rows="5"
                                     placeholder=""
-                                    required>{{ old('target_audience', is_array($course->target_audience) ? implode("\n", $course->target_audience) : $course->target_audience) }}</textarea>
+                                    required> {{ old('target_audience', $course->target_audience) }}</textarea>
 
                             </div>
                             
