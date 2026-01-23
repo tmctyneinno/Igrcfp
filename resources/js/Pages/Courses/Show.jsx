@@ -290,8 +290,8 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                                 ? 'Access all modules and learning materials' 
                                 : 'Unlock full access after enrollment'
                                 }
-                            
-                                </div>
+                            </p>
+                        </div>
                     
                     <div className="divide-y divide-gray-200">
                         {modules.length > 0 ? (
