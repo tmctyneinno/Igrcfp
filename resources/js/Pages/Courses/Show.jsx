@@ -18,6 +18,7 @@ import {
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 import NavBar from '@/Layouts/NavBar';
+import Footer from '@/Layouts/Footer';
 
 export default function CourseShow({ course }) {
   const [activeTab, setActiveTab] = useState('overview');
