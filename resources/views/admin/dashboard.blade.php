@@ -61,7 +61,7 @@
             <div class="w-50-px h-50-px bg-info rounded-circle d-flex justify-content-center align-items-center">
                 <iconify-icon icon="fluent:people-20-filled" class="text-white text-2xl mb-0"></iconify-icon>
             </div>
-            </div>
+            </div> 
         </div>
         </div><!-- card end --> 
     </div>
