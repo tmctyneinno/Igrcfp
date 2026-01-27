@@ -27,7 +27,19 @@ export default function Register() {
         return () => {
             reset('password', 'password_confirmation');
         };
-    }, [currentStep]); // Added currentStep dependency
+    }, [currentStep]); 
+    
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            console.log('Validation Errors:', errors);
+            
+            // Auto-scroll to first error
+            const firstErrorElement = document.querySelector('[id^="error-"]');
+            if (firstErrorElement) {
+                firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [errors]);
 
     const submit = (e) => {
         e.preventDefault();
