@@ -27,7 +27,7 @@ export default function Certification({ courses }) { // Remove default value fro
         if (!text) return 'No description available';
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
-        return cleanText.length > 100 ? cleanText.substring(0, 100) + '...' : cleanText;
+        return cleanText.length > 100 ? cleanText.substring(0, 0) + '...' : cleanText;
     };
 
     return (
@@ -66,7 +66,7 @@ export default function Certification({ courses }) { // Remove default value fro
             </div>
 
             {/* COURSES */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {coursesData.length > 0 ? (
                     coursesData.map((course, index) => {
                         const price = parseFloat(course?.price || 0);
@@ -88,7 +88,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                     <img
                                         src={course?.image_url || '/images/fallback-course.jpg'}
                                         alt={course?.title || 'Course image'}
-                                       className="w-full h-full object-cont transition-transform duration-300 hover:scale-110 cursor-zoom-in"
+                                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-110 cursor-zoom-in"
                                         onError={(e) => {
                                             e.target.src = '/images/fallback-course.jpg';
                                         }}
