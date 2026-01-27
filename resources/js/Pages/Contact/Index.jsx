@@ -305,7 +305,7 @@ export default function Index({ auth, title }) {
                                         </div>
 
                                         {/* Partnerships */}
-                                        <div className="bg-white rounded-xl border border-gray-200 p-5 hover:border-purple-200 transition-colors duration-200">
+                                        <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2 hover:border-purple-200 transition-colors duration-200">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
                                                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -331,7 +331,7 @@ export default function Index({ auth, title }) {
                                         </div>
 
                                         {/* Media & Publications */}
-                                        <div className="bg-white rounded-xl border border-gray-200 p-5 hover:border-amber-200 transition-colors duration-200">
+                                        <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2hover:border-amber-200 transition-colors duration-200">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
                                                     <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
