@@ -25,11 +25,7 @@ export default function VerifyEmail({ status }) {
 
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="flex justify-center">
-                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <ShieldCheckIcon className="h-10 w-10 text-white" />
-                        </div>
-                    </div>
+                    
                     <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-gray-900">
                         Verify Your Email
                     </h2>
@@ -98,29 +94,8 @@ export default function VerifyEmail({ status }) {
 
                             {/* Didn't Receive Email Section */}
                             <div className="border-t border-gray-200 pt-6">
-                                <h4 className="font-semibold text-gray-900 mb-4">Didn't receive the email?</h4>
                                 
                                 <div className="space-y-4">
-                                    <div className="p-4 bg-gray-50 rounded-lg">
-                                        <p className="text-gray-700 text-sm mb-3">
-                                            If you don't see the verification email, try these steps:
-                                        </p>
-                                        <ul className="text-sm text-gray-600 space-y-2">
-                                            <li className="flex items-start">
-                                                <span className="text-blue-600 mr-2">•</span>
-                                                Check your spam or junk folder
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="text-blue-600 mr-2">•</span>
-                                                Wait 5-10 minutes for delivery
-                                            </li>
-                                            <li className="flex items-start">
-                                                <span className="text-blue-600 mr-2">•</span>
-                                                Ensure you entered the correct email address
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                     {/* Resend Form */}
                                     <form onSubmit={submit} className="space-y-4">
                                         <button
