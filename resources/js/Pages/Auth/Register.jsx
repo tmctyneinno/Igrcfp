@@ -535,26 +535,26 @@ export default function Register() {
                                             </PrimaryButton>
                                         </div>
                                     </div>
-                                    // Add a general error display at the top
-{Object.keys(errors).length > 0 && (
-    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-        <div className="flex items-start">
-            <svg className="h-5 w-5 text-red-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-            <div>
-                <h4 className="text-sm font-medium text-red-800">Please fix the following errors:</h4>
-                <ul className="mt-2 text-sm text-red-700 space-y-1">
-                    {Object.entries(errors).map(([field, messages]) => (
-                        Array.isArray(messages) ? messages.map((message, index) => (
-                            <li key={`${field}-${index}`}>• {message}</li>
-                        )) : <li key={field}>• {messages}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    </div>
-)}
+                                    
+                                    {Object.keys(errors).length > 0 && (
+                                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                            <div className="flex items-start">
+                                                <svg className="h-5 w-5 text-red-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                                </svg>
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-red-800">Please fix the following errors:</h4>
+                                                    <ul className="mt-2 text-sm text-red-700 space-y-1">
+                                                        {Object.entries(errors).map(([field, messages]) => (
+                                                            Array.isArray(messages) ? messages.map((message, index) => (
+                                                                <li key={`${field}-${index}`}>• {message}</li>
+                                                            )) : <li key={field}>• {messages}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </form>
