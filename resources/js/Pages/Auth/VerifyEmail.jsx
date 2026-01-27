@@ -1,51 +1,221 @@
-import React from "react";
-import PrimaryButton from '@/Components/PrimaryButton';
+import React, { useState } from "react";
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { 
+  EnvelopeIcon, 
+  ArrowRightOnRectangleIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  ArrowPathIcon,
+  ShieldCheckIcon
+} from '@heroicons/react/24/outline';
 
 export default function VerifyEmail({ status }) {
     const { post, processing } = useForm({});
+    const [isHovering, setIsHovering] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('verification.send'));
     };
 
-    return ( 
+    return (
         <GuestLayout>
-            <Head title="Email Verification" />
+            <Head title="Email Verification | IGRCFP" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                    <div className="flex justify-center">
+                        <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <ShieldCheckIcon className="h-10 w-10 text-white" />
+                        </div>
+                    </div>
+                    <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-gray-900">
+                        Verify Your Email
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-600">
+                        One final step to access your IGRCFP account
+                    </p>
+                </div>
+
+                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
+                    <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
+                        {/* Status Message */}
+                        {status === 'verification-link-sent' && (
+                            <div className="mb-8 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                                <div className="flex items-start">
+                                    <CheckCircleIcon className="h-6 w-6 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
+                                    <div>
+                                        <h3 className="font-semibold text-green-800">Verification Email Sent!</h3>
+                                        <p className="text-green-700 text-sm mt-1">
+                                            A new verification link has been sent to your email address.
+                                            Please check your inbox (and spam folder).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Main Content */}
+                        <div className="space-y-6">
+                            <div className="text-center">
+                                <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                                    <EnvelopeIcon className="h-8 w-8 text-blue-600" />
+                                </div>
+                                
+                                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                                    Almost There!
+                                </h3>
+                                
+                                <p className="text-gray-700 leading-relaxed">
+                                    Welcome to the Institute of GRC and Financial Crime Prevention! 
+                                    Before you can access all member benefits and professional resources, 
+                                    we need to verify your email address.
+                                </p>
+                            </div>
+
+                            {/* Instructions */}
+                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                                <h4 className="font-semibold text-blue-900 mb-3 flex items-center">
+                                    <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
+                                    What to do next:
+                                </h4>
+                                <ol className="space-y-3 text-sm text-blue-800">
+                                    <li className="flex items-start">
+                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">1</span>
+                                        Check your email inbox for a message from <span className="font-medium">noreply@igrcfp.org</span>
+                                    </li>
+                                    <li className="flex items-start">
+                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">2</span>
+                                        Click the verification link in the email (valid for 24 hours)
+                                    </li>
+                                    <li className="flex items-start">
+                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">3</span>
+                                        You'll be automatically redirected to your dashboard
+                                    </li>
+                                </ol>
+                            </div>
+
+                            {/* Didn't Receive Email Section */}
+                            <div className="border-t border-gray-200 pt-6">
+                                <h4 className="font-semibold text-gray-900 mb-4">Didn't receive the email?</h4>
+                                
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-gray-50 rounded-lg">
+                                        <p className="text-gray-700 text-sm mb-3">
+                                            If you don't see the verification email, try these steps:
+                                        </p>
+                                        <ul className="text-sm text-gray-600 space-y-2">
+                                            <li className="flex items-start">
+                                                <span className="text-blue-600 mr-2">•</span>
+                                                Check your spam or junk folder
+                                            </li>
+                                            <li className="flex items-start">
+                                                <span className="text-blue-600 mr-2">•</span>
+                                                Wait 5-10 minutes for delivery
+                                            </li>
+                                            <li className="flex items-start">
+                                                <span className="text-blue-600 mr-2">•</span>
+                                                Ensure you entered the correct email address
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    {/* Resend Form */}
+                                    <form onSubmit={submit} className="space-y-4">
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            onMouseEnter={() => setIsHovering(true)}
+                                            onMouseLeave={() => setIsHovering(false)}
+                                            className="group w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {processing ? (
+                                                <>
+                                                    <ArrowPathIcon className="animate-spin h-5 w-5 mr-3" />
+                                                    Sending...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <EnvelopeIcon className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
+                                                    Resend Verification Email
+                                                    {isHovering && (
+                                                        <span className="ml-2 text-blue-200 text-xs">
+                                                            (Click to send)
+                                                        </span>
+                                                    )}
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <p className="text-xs text-gray-500 text-center">
+                                            You can request a new verification email every 2 minutes
+                                        </p>
+                                    </form>
+                                </div>
+                            </div>
+
+                            {/* Contact Support */}
+                            <div className="mt-6 pt-6 border-t border-gray-200">
+                                <div className="text-center">
+                                    <p className="text-sm text-gray-600 mb-2">
+                                        Still having trouble? Our support team is here to help.
+                                    </p>
+                                    <a 
+                                        href="mailto:support@igrcfp.org?subject=Email%20Verification%20Help" 
+                                        className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+                                    >
+                                        Contact Support
+                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Logout Option */}
+                        <div className="mt-8 pt-6 border-t border-gray-200">
+                            <div className="flex items-center justify-center">
+                                <span className="text-sm text-gray-600 mr-3">Registered by mistake?</span>
+                                <Link
+                                    href={route('logout')}
+                                    method="post"
+                                    as="button"
+                                    className="inline-flex items-center text-sm text-gray-700 hover:text-gray-900 font-medium px-4 py-2 border border-gray-300 hover:border-gray-400 rounded-lg transition-colors"
+                                >
+                                    <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
+                                    Log Out & Cancel
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Timer & Info */}
+                        <div className="mt-8 text-center">
+                            <div className="inline-flex items-center px-4 py-2 bg-gray-100 rounded-full">
+                                <svg className="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span className="text-sm text-gray-700">
+                                    Verification link expires in <span className="font-semibold">24 hours</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Note */}
+                    <div className="mt-8 text-center">
+                        <p className="text-xs text-gray-500">
+                            Having email delivery issues? Ensure <span className="font-medium">noreply@igrcfp.org</span> is added to your safe sender list.
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                            By verifying your email, you confirm acceptance of our{' '}
+                            <a href="/terms" className="text-blue-600 hover:text-blue-700">Terms of Service</a> and{' '}
+                            <a href="/privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</a>.
+                        </p>
+                    </div>
+                </div>
             </div>
-
-            {status === 'verification-link-sent' && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
-                </div>
-            )}
-
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
-
-                    <Link
-                        href={route('logout')}
-                        method="post"
-                        as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Log Out
-                    </Link>
-                </div>
-            </form>
         </GuestLayout>
     );
 }
