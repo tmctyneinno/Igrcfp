@@ -252,7 +252,7 @@ export default function Index({ auth, title }) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* General Enquiries */}
-                                        <div className="bg-white rounded-xl border border-gray-200 p-2 hover:border-blue-200 transition-colors duration-200">
+                                        <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2 hover:border-blue-200 transition-colors duration-200">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
                                                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -278,7 +278,7 @@ export default function Index({ auth, title }) {
                                         </div>
 
                                         {/* Training & Certification */}
-                                        <div className="bg-white rounded-xl border border-gray-200 p-5 hover:border-green-200 transition-colors duration-200">
+                                        <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2 hover:border-green-200 transition-colors duration-200">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
                                                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
