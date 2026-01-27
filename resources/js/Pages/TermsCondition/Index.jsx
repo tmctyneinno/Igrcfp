@@ -310,14 +310,14 @@ export default function TermsAndConditions({ auth }) {
                     By continuing to use our website, enrolling in programmes, or maintaining membership, 
                     you acknowledge that you have read, understood, and agreed to these Terms & Conditions.
                   </p>
-                  <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                  {/* <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
                     <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                       I Understand & Accept
                     </button>
                     <button className="px-6 py-3 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors">
                       Download PDF Version
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               
