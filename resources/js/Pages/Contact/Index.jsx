@@ -241,12 +241,10 @@ export default function Index({ auth, title }) {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="flex items-center p-4 bg-blue-50 rounded-lg">
-                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <EnvelopeIcon className="h-5 w-5 text-white" />
-                            </div>
+                        <div className="">
+                            
                             <div className="ml-1">
-                                <div className="">
+                                <div className="space-y-6">
     <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
         <p className="text-gray-600 mb-6">Get in touch with the appropriate department for efficient assistance.</p>
