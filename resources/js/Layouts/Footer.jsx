@@ -299,6 +299,12 @@ export default function Footer() {
                         </div>
                     </div>
                 </div>
+                
+            </div>
+            <div className="text-center md:text-left">
+                <p className="text-gray-400">
+                    © {currentYear} The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP).
+                </p>
             </div>
         </footer>
     );
