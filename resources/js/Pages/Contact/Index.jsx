@@ -240,8 +240,8 @@ export default function Index({ auth, title }) {
                         </p>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="">
+                    <div className="space-y-0">
+                        <div className="items-center p-4 bg-blue-50 rounded-lg">
                             
                             <div className="ml-1">
                                 <div className="space-y-6">
