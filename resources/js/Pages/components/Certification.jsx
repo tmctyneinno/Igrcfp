@@ -129,12 +129,6 @@ export default function Certification({ courses }) { // Remove default value fro
 
                                     {/* PRICE SECTION */}
                                     <div className="flex items-center justify-between pt-2 border-t">
-                                        <Link
-                                            href={`/courses/${course?.slug || '#'}`}
-                                            className="text-blue-950 font-bold hover:underline transition duration-200"
-                                        >
-                                            Learn More →
-                                        </Link>
                                         
                                         {price > 0 ? (
                                             <div className="text-right">
