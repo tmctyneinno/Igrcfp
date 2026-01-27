@@ -50,7 +50,7 @@ export default function Register() {
             console.log('Submitting form...'); // Debug
             post(route('register'));
         }
-    };
+    }; 
 
     const nextStep = () => {
         console.log('nextStep called, current step:', currentStep); // Debug
@@ -191,7 +191,7 @@ export default function Register() {
                                                 <h4 className="font-semibold text-lg mb-2">Professional</h4>
                                                 <p className="text-sm text-gray-600">
                                                     Learn new skills, take courses, and track your progress
-                                                </p>
+                                                </p> 
                                             </div>
                                         </div>
 
