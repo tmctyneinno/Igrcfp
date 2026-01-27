@@ -90,7 +90,7 @@ class RegisteredUserController extends Controller
             ]);
             
             return back()->withErrors([
-                'message' => 'Registration failed due to a system error. Please try again.',
+                'message' => $validator->errors()->toArray(),
             ])->withInput();
         }
     }
