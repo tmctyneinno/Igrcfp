@@ -88,7 +88,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                     <img
                                         src={course?.image_url || '/images/fallback-course.jpg'}
                                         alt={course?.title || 'Course image'}
-                                        className="w-full h-full object-cover"
+                                       className="w-full h-full object-cont transition-transform duration-300 hover:scale-110 cursor-zoom-in"
                                         onError={(e) => {
                                             e.target.src = '/images/fallback-course.jpg';
                                         }}
