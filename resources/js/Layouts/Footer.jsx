@@ -268,10 +268,9 @@ export default function Footer() {
                
 
                 {/* Bottom Bar */}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-blue-900/30">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-2 pt-4 border-t border-blue-900/30">
                     
-                    <div className="flex items-center gap-6">
-                        
+                    <div className="flex items-center gap-2">
                         
                         <div className="flex gap-4">
                             <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition">
