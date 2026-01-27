@@ -106,8 +106,8 @@ export default function TermsAndConditions({ auth }) {
       <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-4xl mx-auto">
-                    <div className="inline-flex items-center justify-center p-4 bg-white/10 backdrop-blur-sm rounded-2xl mb-8">
-                    <ScaleIcon className="h-12 w-12 text-white" />
+                    <div className="inline-flex items-center justify-center p-4 bg-blue-100 backdrop-blur-sm rounded-2xl mb-8">
+                        <ScaleIcon className="h-12 w-12 text-blue-600" />
                     </div>
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                         Terms & Conditions
@@ -120,15 +120,15 @@ export default function TermsAndConditions({ auth }) {
                         By accessing the IGRCFP website, enrolling in programmes, or becoming a member, 
                             you agree to the following terms and conditions.
                     </p>
-                        <div className="mt-8 flex flex-wrap justify-center gap-3">
-                            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                            <span className="text-sm font-medium">Members & Students</span>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                            <span className="text-sm font-medium">Website Users</span>
-                            </div>
+                    <div className="mt-8 flex flex-wrap justify-center gap-3">
                         <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <span className="text-sm font-medium">Partners & Affiliates</span>
+                            <span className="text-sm font-medium">Members & Students</span>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                            <span className="text-sm font-medium">Website Users</span>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+                            <span className="text-sm font-medium">Partners & Affiliates</span>
                         </div>
                     </div>
                 </div>
