@@ -40,6 +40,17 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        $credentials = $this->only('email', 'password');
+        
+        // Check if user exists and is verified
+        $user = \App\Models\User::where('email', $this->email)->first();
+        
+
+        if ($user && !$user->hasVerifiedEmail()) {
+            throw ValidationException::withMessages([
+                'email' => __('Please verify your email address before logging in.'),
+            ]);
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
