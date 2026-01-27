@@ -42,7 +42,10 @@ class RegisteredUserController extends Controller
             //     'regex:/^https?:\/\/(www\.)?linkedin\.com\/.+/i'
             // ], 
         ]);
-
+        \Log::error('Failed to Register', [
+            'user_id' => $user->id,
+            'error' => $e->getMessage()
+        ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -58,9 +61,10 @@ class RegisteredUserController extends Controller
         $this->sendVerificationEmail($user);
         Auth::login($user);
         return redirect()->route('verification.notice');
-     }
+    }
 
-    protected function sendVerificationEmail(User $user): void
+    
+     protected function sendVerificationEmail(User $user): void
     { 
         try {
             Mail::to($user->email)->send(new VerificationEmail($user));
