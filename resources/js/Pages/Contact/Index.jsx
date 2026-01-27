@@ -233,8 +233,10 @@ export default function Index({ auth, title }) {
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
                             Get in Touch
                         </h2>
+                        <h4> Institute of GRC and Financial Crime Prevention (IGRCFP)</h4>
                         <p className="text-gray-600 text-sm">
-                            Multiple ways to connect with our team
+                            We'd love to hear from you.
+                            Whether you're exploring membership, training, partnerships, accreditation, or just want to understand what we do a little better.
                         </p>
                     </div>
 
