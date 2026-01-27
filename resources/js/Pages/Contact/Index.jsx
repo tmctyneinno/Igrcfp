@@ -243,7 +243,7 @@ export default function Index({ auth, title }) {
                     <div className="space-y-4">
                         <div className=" items-center p-1 bg-blue-50 rounded-lg">
                             
-                            <div className="">
+                            <div className="p-2">
                                 <div className="space-y-6">
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
