@@ -27,7 +27,7 @@ export default function Certification({ courses }) { // Remove default value fro
         if (!text) return 'No description available';
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
-        return cleanText.length > 100 ? cleanText.substring(0, 0) + '...' : cleanText;
+        return cleanText.length > 100 ? cleanText.substring(0, 80) + '...' : cleanText;
     };
 
     return (
@@ -96,7 +96,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                 </div>
 
                                 {/* CONTENT */}
-                                <div className="p-4">
+                                <div className="p-2">
                                     <Link href={`/courses/${course?.slug || '#'}`}>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
                                             {course?.title || 'Untitled Course'}
