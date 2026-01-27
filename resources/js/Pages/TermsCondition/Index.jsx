@@ -301,48 +301,7 @@ export default function TermsAndConditions({ auth }) {
                 })}
               </div>
               
-              {/* Acceptance Section */}
-              <div className="mt-16 p-8 bg-gradient-to-r from-blue-50 to-gray-50 rounded-2xl border border-blue-200">
-                <div className="text-center">
-                  <ShieldCheckIcon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">Acceptance of Terms</h4>
-                  <p className="text-gray-700 max-w-2xl mx-auto">
-                    By continuing to use our website, enrolling in programmes, or maintaining membership, 
-                    you acknowledge that you have read, understood, and agreed to these Terms & Conditions.
-                  </p>
-                  {/* <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-                    <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                      I Understand & Accept
-                    </button>
-                    <button className="px-6 py-3 border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-lg transition-colors">
-                      Download PDF Version
-                    </button>
-                  </div> */}
-                </div>
-              </div>
               
-              {/* Contact for Clarification */}
-              <div className="mt-12 p-6 bg-white border border-gray-200 rounded-xl">
-                <h4 className="font-semibold text-gray-900 mb-3">Need Clarification?</h4>
-                <p className="text-gray-700 mb-4">
-                  If you have questions about these terms, please contact our legal team before proceeding.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a 
-                    href="mailto:legal@igrcfp.org" 
-                    className="text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    legal@igrcfp.org
-                  </a>
-                  <span className="text-gray-400 hidden sm:block">•</span>
-                  <a 
-                    href="tel:+442012345678" 
-                    className="text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    +44 (0)20 1234 5678
-                  </a>
-                </div>
-              </div>
               
               {/* Last Updated */}
               <div className="mt-12 pt-8 border-t border-gray-200">
