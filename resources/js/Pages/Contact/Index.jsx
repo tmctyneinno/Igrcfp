@@ -269,9 +269,8 @@ export default function Index({ auth, title }) {
                                 <address className="text-sm text-gray-800 not-italic">
                                     <span><b>United Kingdom</b></span><br/>
                                     85 Great Portland Street London W1W 7LT<br/>
-                                    We aim to respond within 2–3 working days.
+                                    We aim to respond within <b>2–3 working days.</b>
                                     If your enquiry is urgent, please note this clearly in the subject line.
-                                    
                                 </address>
                                 <a 
                                     href="https://maps.google.com/?q=85+Great+Portland+Street+London"
