@@ -134,39 +134,20 @@ export default function PrivacyPolicy({ auth }) {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Privacy Policy
             </h1>
-            
+            <div className="inline-flex items-center bg-white px-4 py-2 rounded-full shadow-sm mb-6">
+              <ClockIcon className="h-4 w-4 text-gray-500 mr-2" />
+              <span className="text-sm font-medium text-gray-700">Effective Date: 26/01/2026</span>
+            </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
                 At IGRCFP, your privacy matters. We collect information because it helps us deliver education, 
               professional recognition, and a credible global GRC ecosystem. Not because we're interested in your personal life.
             
             </p>
-            
-            
           </div>
         </div>
       </section>
       
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 py-16">
-        <div className="absolute inset-0 bg-[url('/images/pattern-grid.svg')] opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center p-3 bg-blue-100 rounded-xl mb-6">
-              <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-            <div className="inline-flex items-center bg-white px-4 py-2 rounded-full shadow-sm mb-6">
-              <ClockIcon className="h-4 w-4 text-gray-500 mr-2" />
-              <span className="text-sm font-medium text-gray-700">Effective Date: 26/01/2026</span>
-            </div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              At IGRCFP, your privacy matters. We collect information because it helps us deliver education, 
-              professional recognition, and a credible global GRC ecosystem. Not because we're interested in your personal life.
-            </p>
-          </div>
-        </div>
-      </div>
-
+      
       {/* Main Content */}
       <div className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,7 +172,7 @@ export default function PrivacyPolicy({ auth }) {
             </div>
 
             {/* Policy Sections */}
-            <div className="p-8 md:p-12">
+            <div className="p-6 md:p-12">
               <div className="space-y-12">
                 {sections.map((section, index) => {
                   const Icon = section.icon;
