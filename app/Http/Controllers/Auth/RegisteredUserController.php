@@ -56,9 +56,10 @@ class RegisteredUserController extends Controller
             ]);
             
             // Return errors to frontend
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return Inertia::render('Auth/Register', [
+                'errors' => $validator->errors()->toArray(),
+                'old' => $request->all(),
+            ])->with('status', 'validation-failed');
         }
 
         try {
