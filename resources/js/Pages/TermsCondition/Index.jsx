@@ -110,16 +110,15 @@ export default function TermsAndConditions({ auth }) {
                     <ShieldCheckIcon className="h-8 w-8 text-blue-600" />
                   </div>
                   <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                    Privacy Policy
+                    Terms & Conditions
                   </h1>
                   <div className="inline-flex items-center bg-white px-4 py-2 rounded-full shadow-sm mb-6">
                     <ClockIcon className="h-4 w-4 text-gray-500 mr-2" />
                     <span className="text-sm font-medium text-gray-700">Effective Date: 26/01/2026</span>
                   </div>
                   <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-                      At IGRCFP, your privacy matters. We collect information because it helps us deliver education, 
-                    professional recognition, and a credible global GRC ecosystem. Not because we're interested in your personal life.
-                  
+                      By accessing the IGRCFP website, enrolling in programmes, or becoming a member, 
+                        you agree to the following terms and conditions.
                   </p>
                 </div>
               </div>
