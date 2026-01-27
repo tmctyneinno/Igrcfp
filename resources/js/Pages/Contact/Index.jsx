@@ -374,14 +374,14 @@ export default function Index({ auth, title }) {
                                     </div>
 
                                     {/* Alternative Contact */}
-                                    <div className="mt-6 text-center">
+                                    {/* <div className="mt-6 text-center">
                                         <p className="text-gray-600 text-sm">
                                             Prefer other contact methods? 
                                             <a href="/contact" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
                                                 Visit our full contact page →
                                             </a>
                                         </p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -411,6 +411,7 @@ export default function Index({ auth, title }) {
                                 </a>
                             </div>
                         </div>
+                        
                     </div>
 
                     <div className="mt-6 pt-6 border-t border-gray-200">
