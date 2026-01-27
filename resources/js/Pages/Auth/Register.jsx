@@ -188,7 +188,7 @@ export default function Register() {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                                                     </svg>
                                                 </div>
-                                                <h4 className="font-semibold text-lg mb-2">Learner</h4>
+                                                <h4 className="font-semibold text-lg mb-2">Professional</h4>
                                                 <p className="text-sm text-gray-600">
                                                     Learn new skills, take courses, and track your progress
                                                 </p>
