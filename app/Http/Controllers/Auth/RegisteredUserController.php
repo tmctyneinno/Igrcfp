@@ -47,11 +47,12 @@ class RegisteredUserController extends Controller
             'linkedin_url' =>  $request->linkedin_url,
             'password' => Hash::make($request->password),
             'email_verification_token' => Str::random(60),
+            'email_verified_at' => null,
         ]);
 
         event(new Registered($user));
         $this->sendVerificationEmail($user);
-
+return redirect()->route('verification.notice');
         return redirect()->route('login')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 
