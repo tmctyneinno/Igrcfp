@@ -128,7 +128,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                     </div>
 
                                     {/* PRICE SECTION */}
-                                    <div className="flex items-center justify-between pt-2 border-t">
+                                    <div className="flex items-center justify-between pt-1 border-t">
                                         
                                         {price > 0 ? (
                                             <div className="text-right">
@@ -158,7 +158,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                     </div>
 
                                     {/* BADGES */}
-                                    <div className="mt-3 flex flex-wrap gap-2">
+                                    <div className="mt-1 flex flex-wrap gap-2">
                                         {course?.is_featured && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
                                                 ⭐ Featured
