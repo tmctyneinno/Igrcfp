@@ -98,9 +98,9 @@ export default function Certification({ courses }) { // Remove default value fro
                                 {/* CONTENT */}
                                 <div className="p-2">
                                     <Link href={`/courses/${course?.slug || '#'}`}>
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
+                                        <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition">
                                             {course?.title || 'Untitled Course'}
-                                        </h3>
+                                        </h4>
                                     </Link> 
                                     
                                     <p className="text-gray-600 text-sm mb-4">
