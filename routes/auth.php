@@ -35,9 +35,10 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::post('logout', [AuthenticatedSessionController::class, 'logout'])
+Route::post('logout', [AuthenticatedSessionController::class, 'logout'])
         ->name('logout');
+Route::middleware(['auth', 'verified'])->group(function () {
+    
     
     // Your protected routes
     Route::get('/dashboard', function () {
