@@ -80,7 +80,7 @@ createInertiaApp({
                 <App {...props} />
             </EnrollmentProvider>
         );
-    },
+    },  
     progress: {
         color: '#4B5563',
     },
