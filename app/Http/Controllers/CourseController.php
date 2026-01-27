@@ -131,7 +131,7 @@ class CourseController extends Controller
             'slug' => $slug,
             'controller' => __METHOD__,
         ]);
-        return Inertia::render('Courses/show', [
+        return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
             'auth' => Auth::guard('web')->user(),
             'isEnrolled' => $isEnrolled,
