@@ -52,8 +52,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
         $this->sendVerificationEmail($user);
-return redirect()->route('verification.notice');
-        return redirect()->route('login')->with('success', 'Registration successful! Please check your email to verify your account.');
+        return redirect()->route('verification.notice');
+        // return redirect()->route('login')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 
     protected function sendVerificationEmail(User $user): void
