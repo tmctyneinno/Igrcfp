@@ -10,21 +10,41 @@ import { EnrollmentProvider } from './Contexts/EnrollmentContext';
 
 AOS.init({
     duration: 1000,
-    once: true, 
+    once: true,
     offset: 100,
 });
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-   
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
+    resolve: (name) => {
+        console.log('🔄 Inertia is trying to resolve component:', name);
+        console.log('📁 Looking for file:', `./Pages/${name}.jsx`);
         
-        resolvePageComponent(
+        const pages = import.meta.glob('./Pages/**/*.jsx');
+        console.log('📄 Available pages:', Object.keys(pages));
+        
+        // Check if our specific file exists
+        const targetPath = `./Pages/${name}.jsx`;
+        if (pages[targetPath]) {
+            console.log('✅ Found component at:', targetPath);
+        } else {
+            console.log('❌ Component NOT found at:', targetPath);
+            console.log('🔍 Similar files:', 
+                Object.keys(pages).filter(p => p.includes(name.toLowerCase()) || 
+                                               p.includes('show') || 
+                                               p.includes('course'))
+            );
+        }
+        
+        return resolvePageComponent(
             `./Pages/${name}.jsx`,
-            import.meta.glob('./Pages/**/*.jsx'),
-        ),
+            pages
+        );
+    },
     setup({ el, App, props }) {
+        console.log('🚀 Setting up Inertia app with props:', props);
         const root = createRoot(el);
 
         root.render(
