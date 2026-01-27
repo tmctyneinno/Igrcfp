@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.role' => App\Http\Middleware\CheckAdminRole::class,
             'auth.admin' => App\Http\Middleware\AuthenticateAdmin::class,
             'guest:admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         ]);
         
         // Admin middleware group (more streamlined)
