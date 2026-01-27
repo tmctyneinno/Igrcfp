@@ -233,7 +233,7 @@ export default function Index({ auth, title }) {
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
                             Get in Touch
                         </h2>
-                        <h4> Institute of GRC and Financial Crime Prevention (IGRCFP)</h4>
+                        <h3> Institute of GRC and Financial Crime Prevention (IGRCFP)</h3>
                         <p className="text-gray-600 text-sm">
                             We'd love to hear from you.
                             Whether you're exploring membership, training, partnerships, accreditation, or just want to understand what we do a little better.
@@ -251,7 +251,8 @@ export default function Index({ auth, title }) {
                                     href="mailto:enquiries@igrfcp.org" 
                                     className="text-blue-600 hover:text-blue-700 font-medium block"
                                 >
-                                   enquiries@igrfcp.org
+                                   enquiries@igrcfp.org <br/>
+                                    (General enquiries, membership, programmes)
                                 </a>
                                 <p className="text-xs text-gray-600 mt-1">
                                     Response within 24 hours
