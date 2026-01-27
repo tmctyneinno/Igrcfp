@@ -39,6 +39,24 @@ class RegisteredUserController extends Controller
                 'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
+            if ($validator->fails()) {
+                // Log validation errors
+                \Log::warning('Registration Attempt Failed - Validation Errors', [
+                    'errors' => $validator->errors()->all(),
+                    'failed_fields' => $validator->failed(),
+                    'input' => $request->except('password', 'password_confirmation'),
+                    'ip' => $request->ip(),
+                    'timestamp' => now()->toDateTimeString(),
+                ]);
+                return back()->withErrors([
+                    'message' => $validator->errors()->toArray(),
+                ])->withInput();
+                
+                // return Inertia::render('Auth/Register', [
+                //     'errors' => $validator->errors()->toArray(),
+                //     'old' => $request->all(),
+                // ])->with('status', 'validation-failed');
+            }
 
             $user = User::create([
                 'name' => $request->name,
