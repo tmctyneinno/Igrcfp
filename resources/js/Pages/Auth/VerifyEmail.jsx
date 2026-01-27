@@ -70,27 +70,6 @@ export default function VerifyEmail({ status }) {
                                 </p>
                             </div>
 
-                            {/* Instructions */}
-                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5">
-                                <h4 className="font-semibold text-blue-900 mb-3 flex items-center">
-                                    <ExclamationTriangleIcon className="h-5 w-5 mr-2" />
-                                    What to do next:
-                                </h4>
-                                <ol className="space-y-3 text-sm text-blue-800">
-                                    <li className="flex items-start">
-                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">1</span>
-                                        Check your email inbox for a message from <span className="font-medium">noreply@igrcfp.org</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">2</span>
-                                        Click the verification link in the email (valid for 24 hours)
-                                    </li>
-                                    <li className="flex items-start">
-                                        <span className="flex-shrink-0 w-6 h-6 bg-white border border-blue-300 rounded-full flex items-center justify-center mr-3 text-blue-700 font-bold">3</span>
-                                        You'll be automatically redirected to your dashboard
-                                    </li>
-                                </ol>
-                            </div>
 
                             {/* Didn't Receive Email Section */}
                             <div className="border-t border-gray-200 pt-6">
@@ -103,7 +82,7 @@ export default function VerifyEmail({ status }) {
                                             disabled={processing}
                                             onMouseEnter={() => setIsHovering(true)}
                                             onMouseLeave={() => setIsHovering(false)}
-                                            className="group w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="group w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-900 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {processing ? (
                                                 <>
