@@ -284,7 +284,7 @@ export default function Footer() {
                             </Link>
                             <span className="text-gray-600">•</span>
                             <Link href="/accessibility" className="text-sm text-gray-400 hover:text-white transition">
-                                Terms o
+                                Terms and Conditions
                             </Link>
                             <span className="text-gray-600">•</span>
                             {/* <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
