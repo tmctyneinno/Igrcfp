@@ -262,7 +262,7 @@ export default function Register() {
                                                     id="name"
                                                     name="name"
                                                     value={data.name}
-                                                    className="pl-10 w-full"
+                                                    className={`pl-10 w-full ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
                                                     placeholder="John Doe"
                                                     autoComplete="name"
                                                     isFocused={true}
