@@ -26,7 +26,7 @@ Route::post('/events/{slug}/register', [EventController::class, 'storeEventRegis
 Route::get('/blog', [HomeController::class, 'blog'])->name('blog');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
-Route::get('/terms-condition', [HomeController::class, 'termsCondition'])->name('terms.condition');
+Route::get('/terms-conditions', [HomeController::class, 'termsCondition'])->name('terms.condition');
 Route::get('/training-calendar', [HomeController::class, 'trainingCalendar'])->name('training.calendar');
 
 Route::prefix('news')->name('news.')->group(function () {

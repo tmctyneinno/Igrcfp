@@ -283,7 +283,7 @@ export default function Footer() {
                                 Privacy Policy
                             </Link>
                             <span className="text-gray-600">•</span>
-                            <Link href="/accessibility" className="text-sm text-gray-400 hover:text-white transition">
+                            <Link href="/terms-conditions" className="text-sm text-gray-400 hover:text-white transition">
                                 Terms and Conditions
                             </Link>
                             <span className="text-gray-600">•</span>
