@@ -133,7 +133,7 @@ export default function TermsAndConditions({ auth }) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             {/* Quick Summary */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
+            <div className="bg-gradient-to-r from-blue-200 via-white to-blue-200 px-8 py-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-white text-xl font-bold mb-2">Summary of Key Terms</h2>
