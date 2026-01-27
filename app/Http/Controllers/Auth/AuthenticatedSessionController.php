@@ -28,6 +28,13 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
+    /**
+     * Display the registration view.
+     */
+    public function showRegister(): Response
+    {
+        return Inertia::render('Auth/Register');
+    }
 
     /**
      * Handle an incoming authentication request.
@@ -42,31 +49,23 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Display the registration view.
-     */
-    public function showRegister(): Response
-    {
-        return Inertia::render('Auth/Register');
-    }
-
-    /**
      * Handle an incoming registration request.
      */
-    public function store(Request $request): RedirectResponse
+    public function register(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'p'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
- 
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        // ]);
 
-        // event(new Registered($user));
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        event(new Registered($user));
 
         Auth::login($user);
 
