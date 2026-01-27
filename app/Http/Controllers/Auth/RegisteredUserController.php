@@ -29,40 +29,17 @@ class RegisteredUserController extends Controller
 
    
 
-    public function store(Request $request): RedirectResponse{
-        // Manually validate to get more control
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'role' => 'required|string|max:255',
-            'phone' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            // 'linkedin_url' => [
-            //     'required', 
-            //     'url', 
-            //     'max:500',
-            //     'regex:/^https?:\/\/(www\.)?linkedin\.com\/.+/i'
-            // ],
-        ]);
-
-        if ($validator->fails()) {
-            // Log validation errors
-            \Log::warning('Registration Attempt Failed - Validation Errors', [
-                'errors' => $validator->errors()->all(),
-                'failed_fields' => $validator->failed(),
-                'input' => $request->except('password', 'password_confirmation'),
-                'ip' => $request->ip(),
-                'timestamp' => now()->toDateTimeString(),
-            ]);
-            
-            // Return errors to frontend
-            return Inertia::render('Auth/Register', [
-                'errors' => $validator->errors()->toArray(),
-                'old' => $request->all(),
-            ])->with('status', 'validation-failed');
-        }
-
+    public function store(Request $request): RedirectResponse
+    {
         try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'role' => 'required|string|max:255',
+                'phone' => 'required|string|max:255',
+                'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -89,6 +66,19 @@ class RegisteredUserController extends Controller
             
             return redirect()->route('verification.notice');
 
+        } catch (ValidationException $e) {
+            // Log validation errors
+            \Log::warning('Registration Attempt Failed - Validation Errors', [
+                'errors' => $e->errors(),
+                'failed_fields' => $e->validator->failed(),
+                'input' => $request->except('password', 'password_confirmation'),
+                'ip' => $request->ip(),
+                'timestamp' => now()->toDateTimeString(),
+            ]);
+            
+            // Let Inertia handle the error response
+            throw $e;
+            
         } catch (\Exception $e) {
             // Log registration failure
             \Log::error('Registration Failed - Database Error', [
@@ -98,13 +88,15 @@ class RegisteredUserController extends Controller
                 'ip' => $request->ip(),
                 'timestamp' => now()->toDateTimeString(),
             ]);
-            
-            return back()->withErrors([
-                'message' => 'Registration failed due to a system error. Please try again.',
-            ])->withInput();
+            // Return validation errors that Inertia can display properly
+            $validator = Validator::make([], []);
+            $validator->errors()->add('general', 'Registration failed due to a system error. Please try again.');
+                    
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
-    } 
-
+    }
     
      protected function sendVerificationEmail(User $user): void
     { 
