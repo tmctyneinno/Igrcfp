@@ -88,10 +88,13 @@ class RegisteredUserController extends Controller
                 'ip' => $request->ip(),
                 'timestamp' => now()->toDateTimeString(),
             ]);
-            // Return validation errors that Inertia can display properly
+            // Create proper validation errors
             $validator = Validator::make([], []);
-            $validator->errors()->add('general', 'Registration failed due to a system error. Please try again.');
-                    
+            $validator->errors()->add('email', 'Registration failed. Please try again.');
+            
+            if (str_contains($e->getMessage(), 'Duplicate entry')) {
+                $validator->errors()->add('email', 'This email is already registered.');
+            }
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
