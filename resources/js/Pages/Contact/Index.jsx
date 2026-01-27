@@ -267,9 +267,13 @@ export default function Index({ auth, title }) {
                             <div className="ml-4">
                                 <h3 className="font-medium text-gray-900">Our Office</h3>
                                 <address className="text-sm text-gray-800 not-italic">
-                                    85 Great Portland Street<br />
+                                    United Kingdom
+                                    85 Great Portland Street London W1W 7LT
+                                    We aim to respond within 2–3 working days.
+                                    If your enquiry is urgent, please note this clearly in the subject line.
+                                    {/* 85 Great Portland Street<br />
                                     First Floor, W1W 7LT<br />
-                                    London, UK
+                                    London, UK */}
                                 </address>
                                 <a 
                                     href="https://maps.google.com/?q=85+Great+Portland+Street+London"
