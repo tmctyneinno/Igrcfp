@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            // 'linkedin_url' =>  $request->linkedin_url,
+            'linkedin_url' =>  $request->linkedin_url,
             'password' => Hash::make($request->password),
             'email_verification_token' => Str::random(60),
         ]);
