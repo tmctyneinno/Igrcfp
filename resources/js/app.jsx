@@ -19,34 +19,62 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
-        console.log('🔄 Inertia is trying to resolve component:', name);
-        console.log('📁 Looking for file:', `./Pages/${name}.jsx`);
+        console.log('=== INERTIA DEBUG ===');
+        console.log('📦 Component name requested:', name);
+        console.log('🔍 Looking for file:', `./Pages/${name}.jsx`);
         
-        const pages = import.meta.glob('./Pages/**/*.jsx');
-        console.log('📄 Available pages:', Object.keys(pages));
+        // Get ALL .jsx and .js files
+        const jsxPages = import.meta.glob('./Pages/**/*.jsx', { eager: false });
+        const jsPages = import.meta.glob('./Pages/**/*.js', { eager: false });
+        const allPages = { ...jsxPages, ...jsPages };
         
-        // Check if our specific file exists
-        const targetPath = `./Pages/${name}.jsx`;
-        if (pages[targetPath]) {
-            console.log('✅ Found component at:', targetPath);
+        console.log('📄 Total pages found:', Object.keys(allPages).length);
+        
+        // Check for exact match
+        const exactPath = `./Pages/${name}.jsx`;
+        if (allPages[exactPath]) {
+            console.log('✅ Exact match found:', exactPath);
         } else {
-            console.log('❌ Component NOT found at:', targetPath);
-            console.log('🔍 Similar files:', 
-                Object.keys(pages).filter(p => p.includes(name.toLowerCase()) || 
-                                               p.includes('show') || 
-                                               p.includes('course'))
+            console.log('❌ Exact match NOT found:', exactPath);
+            
+            // Look for similar files
+            const similarFiles = Object.keys(allPages).filter(path => 
+                path.toLowerCase().includes(name.toLowerCase()) ||
+                path.includes('show') || 
+                path.includes('course')
             );
+            
+            if (similarFiles.length > 0) {
+                console.log('🔍 Similar files found:');
+                similarFiles.forEach(file => console.log('   -', file));
+            } else {
+                console.log('🔍 No similar files found');
+            }
+            
+            // List all files for debugging
+            console.log('📁 All available pages:');
+            Object.keys(allPages).sort().forEach(file => {
+                console.log('   -', file);
+            });
         }
         
-        return resolvePageComponent(
-            `./Pages/${name}.jsx`,
-            pages
-        );
+        console.log('=== END DEBUG ===');
+        
+        try {
+            return resolvePageComponent(
+                `./Pages/${name}.jsx`,
+                allPages
+            );
+        } catch (error) {
+            console.error('❌ Error resolving component:', error);
+            throw error;
+        }
     },
     setup({ el, App, props }) {
-        console.log('🚀 Setting up Inertia app with props:', props);
+        console.log('🚀 Inertia setup complete');
+        console.log('📦 Props received:', Object.keys(props));
+        
         const root = createRoot(el);
-
         root.render(
             <EnrollmentProvider user={props.auth?.user}>
                 <App {...props} />
