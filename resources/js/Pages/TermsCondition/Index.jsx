@@ -103,12 +103,10 @@ export default function TermsAndConditions({ auth }) {
     <GuestLayout auth={auth}>
       <Head title="Terms & Conditions | IGRCFP" />
 
-        <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
+        <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 via-white to-blue-50 py-5 md:py-20 border-b">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-                <div className="inline-flex items-center justify-center p-4 bg-blue-100 backdrop-blur-sm rounded-2xl mb-8">
-                    <ScaleIcon className="h-12 w-12 text-blue-600" />
-                </div>
+              
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                     Terms & Conditions
                 </h1>
@@ -125,41 +123,10 @@ export default function TermsAndConditions({ auth }) {
         </section>
       
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-gray-900 to-blue-900 text-white py-20">
+      {/* <div className="relative bg-gradient-to-br from-gray-900 to-blue-900 text-white py-20">
         <div className="absolute inset-0 bg-[url('/images/pattern-grid.svg')] opacity-10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center p-4 bg-white/10 backdrop-blur-sm rounded-2xl mb-8">
-              <ScaleIcon className="h-12 w-12 text-white" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms & Conditions</h1>
-            
-            <div className="max-w-3xl mx-auto mb-10">
-              <div className="inline-flex items-center bg-white/10 px-5 py-3 rounded-full backdrop-blur-sm mb-6">
-                <ClockIcon className="h-5 w-5 mr-3" />
-                <span className="font-medium">Effective Date: 26/01/2026</span>
-              </div>
-              
-              <p className="text-xl text-gray-200 leading-relaxed">
-                By accessing the IGRCFP website, enrolling in programmes, or becoming a member, 
-                you agree to the following terms and conditions.
-              </p>
-              
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <span className="text-sm font-medium">Members & Students</span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <span className="text-sm font-medium">Website Users</span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <span className="text-sm font-medium">Partners & Affiliates</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+       
+      </div> */}
 
       {/* Main Content */}
       <div className="py-16 bg-gray-50">
