@@ -27,7 +27,7 @@ export default function Certification({ courses }) { // Remove default value fro
         if (!text) return 'No description available';
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
-        return cleanText.length > 100 ? cleanText.substring(0, 80) + '...' : cleanText;
+        return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
 
     return (
@@ -103,12 +103,12 @@ export default function Certification({ courses }) { // Remove default value fro
                                         </h4>
                                     </Link> 
                                     
-                                    <p className="text-gray-600 text-sm mb-4">
+                                    <p className="text-gray-600 text-sm mb-1">
                                         {getCleanDescription(course)}
                                     </p>
 
                                     {/* COURSE METADATA */}
-                                    <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center justify-between mb-2">
                                         <span className="text-xs font-semibold px-3 capitalize py-1 bg-blue-100 text-blue-800 rounded-full">
                                             {course?.level || 'All Levels'}
                                         </span>
