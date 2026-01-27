@@ -151,7 +151,7 @@ export default function PrivacyPolicy({ auth }) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             {/* Table of Contents */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-6">
+            <div className="bg-gradient-to-br from-gray-800 to-blue-900 px-8 py-6">
               <h2 className="text-white text-xl font-bold mb-4">Table of Contents</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {sections.map((section, index) => (
