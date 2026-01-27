@@ -29,8 +29,7 @@ class RegisteredUserController extends Controller
 
    
 
-    public function store(Request $request): RedirectResponse
-    {
+    public function store(Request $request): RedirectResponse{
         // Manually validate to get more control
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -103,7 +102,7 @@ class RegisteredUserController extends Controller
                 'message' => 'Registration failed due to a system error. Please try again.',
             ])->withInput();
         }
-    }
+    } 
 
     
      protected function sendVerificationEmail(User $user): void
