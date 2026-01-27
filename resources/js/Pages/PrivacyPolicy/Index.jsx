@@ -123,6 +123,28 @@ export default function PrivacyPolicy({ auth }) {
   return (
     <GuestLayout auth={auth}>
       <Head title="Privacy Policy | IGRCFP" />
+
+      {/* Hero Section */}
+      <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+              <TagIcon className="w-4 h-4 mr-2" />
+              Industry Insights & Updates
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              {title}
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+              {description}
+            </p>
+            
+            
+          </div>
+        </div>
+      </section>
       
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 py-16">
