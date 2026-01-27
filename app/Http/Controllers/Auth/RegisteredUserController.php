@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         try {
-            $validated = $request->validate([
+            $validator  = $request->validate([
                 'name' => 'required|string|max:255',
                 'role' => 'required|string|max:255',
                 'phone' => 'required|string|max:255',
@@ -90,7 +90,7 @@ class RegisteredUserController extends Controller
             ]);
             
             return back()->withErrors([
-                'message' => $validator->errors()->toArray(),
+                'message' => 'Registration failed due to a system error. Please try again.',
             ])->withInput();
         }
     }
