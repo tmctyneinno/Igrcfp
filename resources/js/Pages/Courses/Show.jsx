@@ -6,7 +6,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { useEnrollment } from '@/Contexts/EnrollmentContext';
 import { 
   CheckCircleIcon, 
-  ClockIcon, 
+  ClockIcon,  
   BookOpenIcon, 
   AcademicCapIcon, 
   UsersIcon,
