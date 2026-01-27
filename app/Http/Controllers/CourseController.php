@@ -126,11 +126,7 @@ class CourseController extends Controller
         $isEnrolled = auth()->check() 
         ? auth()->user()->courses()->where('course_id', $course->id)->exists()
         : false;
-        \Log::info('Rendering course page', [
-            'component_name' => 'Courses/Show', // Make sure this is exact
-            'slug' => $slug,
-            'controller' => __METHOD__,
-        ]);
+        
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
             'auth' => Auth::guard('web')->user(),
