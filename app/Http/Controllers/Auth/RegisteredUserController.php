@@ -49,13 +49,13 @@ class RegisteredUserController extends Controller
                     'timestamp' => now()->toDateTimeString(),
                 ]);
                 return back()->withErrors([
-                    'message' => $validator->errors()->toArray(),
-                ])->withInput();
-                
-                // return Inertia::render('Auth/Register', [
-                //     'errors' => $validator->errors()->toArray(),
-                //     'old' => $request->all(),
-                // ])->with('status', 'validation-failed');
+                'message' => 'Registration failed due to a system error. Please try again.',
+            ])->withInput();
+                // Instead of redirect()->back(), use Inertia to preserve errors
+                return Inertia::render('Auth/Register', [
+                    'errors' => $validator->errors()->toArray(),
+                    'old' => $request->all(),
+                ])->with('status', 'validation-failed');
             }
 
             $user = User::create([
