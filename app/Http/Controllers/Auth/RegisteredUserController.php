@@ -90,9 +90,9 @@ class RegisteredUserController extends Controller
             ]);
             // Create proper validation errors
             $validator = Validator::make([], []);
-            $validator->errors()->add('email', 'Registration failed. Please try again.');
+            // $validator->errors()->add('email', 'Registration failed. Please try again.');
             
-            if (str_contains($e->getMessage(), 'Duplicate entry')) {
+            if (str_contains($e->getMessage(), 'The email has already been taken.')) {
                 $validator->errors()->add('email', 'This email is already registered.');
             }
             return redirect()->back()
