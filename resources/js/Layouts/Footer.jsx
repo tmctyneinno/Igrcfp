@@ -270,7 +270,6 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-blue-900/30">
                     
-                    
                     <div className="flex items-center gap-6">
                         
                         
@@ -283,9 +282,9 @@ export default function Footer() {
                                 Terms and Conditions
                             </Link>
                             <span className="text-gray-600">•</span>
-                            {/* <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
-                                Disclaimer
-                            </Link> */}
+                            <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
+                                Privacy Preference Center
+                            </Link>
                         </div>
                     </div>
                 </div>
