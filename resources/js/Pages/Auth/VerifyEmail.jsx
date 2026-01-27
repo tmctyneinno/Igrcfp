@@ -203,17 +203,6 @@ export default function VerifyEmail({ status }) {
                         </div>
                     </div>
 
-                    {/* Footer Note */}
-                    <div className="mt-8 text-center">
-                        <p className="text-xs text-gray-500">
-                            Having email delivery issues? Ensure <span className="font-medium">noreply@igrcfp.org</span> is added to your safe sender list.
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                            By verifying your email, you confirm acceptance of our{' '}
-                            <a href="/terms" className="text-blue-600 hover:text-blue-700">Terms of Service</a> and{' '}
-                            <a href="/privacy" className="text-blue-600 hover:text-blue-700">Privacy Policy</a>.
-                        </p>
-                    </div>
                 </div>
             </div>
         </GuestLayout>
