@@ -282,7 +282,7 @@ export default function Footer() {
                                 Terms and Conditions
                             </Link>
                             <span className="text-gray-600">•</span>
-                            <Link href="/disclaimer" className="text-sm text-gray-400 hover:text-white transition">
+                            <Link href="/privacy-preference-center" className="text-sm text-gray-400 hover:text-white transition">
                                 Privacy Preference Center
                             </Link>
                         </div>
