@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
             //     'url', 
             //     'max:500',
             //     'regex:/^https?:\/\/(www\.)?linkedin\.com\/.+/i'
-            // ],
+            // ], 
         ]);
 
         $user = User::create([
