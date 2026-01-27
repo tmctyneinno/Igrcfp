@@ -286,7 +286,7 @@ export default function TermsAndConditions({ auth }) {
                       
                       {/* Separator */}
                       {index < sections.length - 1 && (
-                        <div className="mt-16 pt-16 border-t border-gray-100">
+                        <div className="mt-16 pt-10 border-t border-gray-100">
                           <div className="flex items-center justify-center">
                             <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></div>
                             <div className="px-4">
