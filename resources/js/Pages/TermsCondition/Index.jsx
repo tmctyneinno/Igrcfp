@@ -120,17 +120,6 @@ export default function TermsAndConditions({ auth }) {
                     By accessing the IGRCFP website, enrolling in programmes, or becoming a member, 
                         you agree to the following terms and conditions.
                 </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <div className="bg-blue-100 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <span className="text-sm font-medium">Members & Students</span>
-                    </div>
-                    <div className="bg-blue-100 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <span className="text-sm font-medium">Website Users</span>
-                    </div>
-                    <div className="bg-blue-100 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <span className="text-sm font-medium">Partners & Affiliates</span>
-                    </div>
-                </div>
             </div>
             </div>
         </section>
