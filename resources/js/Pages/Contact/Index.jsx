@@ -241,10 +241,8 @@ export default function Index({ auth, title }) {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="flex items-center p-1 bg-blue-50 rounded-lg">
-                            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <EnvelopeIcon className="h-5 w-5 text-white" />
-                            </div>
+                        <div className=" items-center p-1 bg-blue-50 rounded-lg">
+                            
                             <div className="">
                                 <div className="space-y-6">
                                     <div>
@@ -254,7 +252,7 @@ export default function Index({ auth, title }) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* General Enquiries */}
-                                        <div className="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-200 transition-colors duration-200">
+                                        <div className="bg-white rounded-xl border border-gray-200 p-2 hover:border-blue-200 transition-colors duration-200">
                                             <div className="flex items-start">
                                                 <div className="flex-shrink-0">
                                                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
