@@ -203,6 +203,10 @@ class HomeController extends Controller
     }
 
     public function termsCondition(){
+        return Inertia::render('TermsCondition/Index');
+    }
+
+    public function privacyPreferenceCenter(){
         return Inertia::render('TermsCondition/Index', [
             'title' => 'News',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
