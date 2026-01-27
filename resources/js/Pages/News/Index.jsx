@@ -346,7 +346,7 @@ export default function News({
                               </div>
                             </div>
                             
-                            <Link 
+                            <Link  
                               href={`/news/${article.slug}/show`}
                               className="text-blue-900 text-sm font-medium hover:text-blue-800"
                             >
