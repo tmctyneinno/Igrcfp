@@ -38,6 +38,5 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
-         {{-- @include('layouts.footer') --}}
     </body>
 </html>

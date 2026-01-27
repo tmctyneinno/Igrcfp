@@ -6,12 +6,24 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/sass/app.scss',
                 'resources/js/app.jsx',
+                'resources/sass/app.scss',
             ],
-            refresh: true,
+            refresh: [
+                'resources/views/**',
+                'resources/js/**',
+                'routes/**',
+            ],
         }),
-        react(),
+        react({
+            include: '**/*.jsx',
+        }),
     ],
-});  
-
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        hmr: {
+            host: 'localhost',
+        },
+    },
+});
