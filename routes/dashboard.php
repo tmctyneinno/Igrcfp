@@ -10,7 +10,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('my-courses');
-    Route::get('/notifications/index', [DashboardController::class, 'notifications.index'])->name('notifications.index');
+    Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
+    Route::get('/cart/index', [DashboardController::class, 'notifications'])->name('cart.index');
 
 
 });
