@@ -35,17 +35,19 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
 });
-Route::post('logout', [AuthenticatedSessionController::class, 'logout'])
-        ->name('logout');
-Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::post('logout', [AuthenticatedSessionController::class, 'logout'])
+            ->name('logout');
     
+Route::middleware(['auth', 'verified'])->group(function () {        
     
     // Your protected routes
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('Dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    
 });
 
 Route::middleware('auth')->group(function () {
