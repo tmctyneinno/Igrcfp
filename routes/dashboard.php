@@ -8,8 +8,9 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->group(function () {        
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    Route::get('/my-courses', [DashboardController::class, 'index'])->name('my-courses');
+
+    Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('my-courses');
+    Route::get('/notifications/index', [DashboardController::class, 'notifications.index'])->name('notifications.index');
 
 
 });
