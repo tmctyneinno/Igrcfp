@@ -15,23 +15,16 @@ use Inertia\Inertia;
  
 class DashboardController extends Controller
 {
-    public function index()
-    {
-        
-        return Inertia::render('Welcome', [
-            'canLogin' => \Route::has('login'),
-            'canRegister' => \Route::has('register'),
-            'courses' => $courses,
-        ]);
-    }
-    public function index(Request $request)
-{
-    if ($request->session()->has('enrollment_redirect')) {
-        $redirect = $request->session()->pull('enrollment_redirect');
-        return redirect($redirect);
-    }
+   
     
-    return Inertia::render('dashboard');
-}
+    public function index(Request $request)
+    {
+        if ($request->session()->has('enrollment_redirect')) {
+            $redirect = $request->session()->pull('enrollment_redirect');
+            return redirect($redirect);
+        }
+        
+        return Inertia::render('dashboard.index');
+    }
 
 }
