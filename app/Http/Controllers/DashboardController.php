@@ -19,6 +19,7 @@ class DashboardController extends Controller
     
     public function index(Request $request)
     {
+        \Log::info('Dasboard Redirect:', [ $request->session()->has('enrollment_redirect')]);
         if ($request->session()->has('enrollment_redirect')) {
             $redirect = $request->session()->pull('enrollment_redirect');
             return redirect($redirect);

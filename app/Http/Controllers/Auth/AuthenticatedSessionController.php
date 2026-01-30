@@ -46,6 +46,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Check for redirect parameter
+        \Log::info('Redirect:', [ $request->input('redirect')]);
         $redirect = $request->input('redirect');
         
         if ($redirect) {
