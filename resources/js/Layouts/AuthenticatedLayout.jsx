@@ -212,9 +212,9 @@ export default function AuthenticatedLayout({ header, children }) {
                         <ResponsiveNavLink href={route('courses.index')} active={route().current('courses.index')}>
                             Courses
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('my-courses')} active={route().current('my-courses')}>
+                        {/* <ResponsiveNavLink href={route('my-courses')} active={route().current('my-courses')}>
                             My Learning
-                        </ResponsiveNavLink>
+                        </ResponsiveNavLink> */}
                     </div>
                     
                     {/* Mobile notification and cart */}
