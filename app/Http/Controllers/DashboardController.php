@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
    
     
-   public function index()
+    public function index()
     {
         // Pass enrollment redirect to frontend if it exists
         $enrollmentRedirect = session('enrollment_redirect');
@@ -26,12 +26,12 @@ class DashboardController extends Controller
             // Clear it from session after passing to frontend
             session()->forget('enrollment_redirect');
             
-            return inertia('Dashboard', [
+            return inertia('Dashboard/Index', [
                 'enrollmentRedirect' => $enrollmentRedirect,
             ]);
         }
         
-        return inertia('Dashboard');
+        return inertia('Dashboard/Index');
     }
 
 }
