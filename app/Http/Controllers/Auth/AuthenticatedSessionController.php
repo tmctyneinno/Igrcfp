@@ -44,7 +44,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
  
         $request->session()->regenerate();
-
+        // Log the redirect parameter for debugging
+        \Log::info('Login Redirect Parameter:', [
+            'redirect' => $request->input('redirect'),
+            'all_input' => $request->all(),
+            'query_params' => $request->query()
+        ]);
+        
         // Check for redirect parameter
         \Log::info('Redirect:', [ $request->input('redirect')]);
         $redirect = $request->input('redirect');
