@@ -17,15 +17,21 @@ class DashboardController extends Controller
 {
    
     
-    public function index(Request $request)
+   public function index()
     {
-        \Log::info('Dasboard Redirect:', [ $request->session()->has('enrollment_redirect')]);
-        if ($request->session()->has('enrollment_redirect')) {
-            $redirect = $request->session()->pull('enrollment_redirect');
-            return redirect($redirect);
+        // Pass enrollment redirect to frontend if it exists
+        $enrollmentRedirect = session('enrollment_redirect');
+        
+        if ($enrollmentRedirect) {
+            // Clear it from session after passing to frontend
+            session()->forget('enrollment_redirect');
+            
+            return inertia('Dashboard', [
+                'enrollmentRedirect' => $enrollmentRedirect,
+            ]);
         }
         
-        return Inertia::render('Dashboard/Index');
+        return inertia('Dashboard');
     }
 
 }
