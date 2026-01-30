@@ -41,6 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     
     // Your protected routes
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('Dashboard');
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
