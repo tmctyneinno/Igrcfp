@@ -24,7 +24,7 @@ class DashboardController extends Controller
             return redirect($redirect);
         }
         
-        return Inertia::render('dashboard.index');
+        return Inertia::render('Dashboard/Index');
     }
 
 }
