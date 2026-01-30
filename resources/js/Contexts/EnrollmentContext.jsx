@@ -13,12 +13,9 @@ export const EnrollmentProvider = ({ children, user }) => {
     setSelectedCourse(course);
     
     if (!user) {
-      // Store the intended enrollment URL
-      setRedirectAfterAuth(`/courses/${course.slug}/enroll`);
-      // Redirect to login with return URL
-      router.visit('/login', {
-        data: { redirect: `/courses/${course.slug}/enroll` }
-      });
+      // Pass redirect as query parameter, not in data object
+      const redirectUrl = `/courses/${course.slug}/enroll`;
+      router.visit(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
       return;
     }
     
