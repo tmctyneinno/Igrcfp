@@ -11,7 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('my-courses');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
-    Route::get('/cart/index', [DashboardController::class, 'notifications'])->name('cart.index');
+    Route::get('/cart/index', [DashboardController::class, 'cart'])->name('cart.index');
 
 
 });

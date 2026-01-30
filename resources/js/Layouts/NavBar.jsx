@@ -97,21 +97,7 @@ export default function NavBar({ auth }) {
                         
                         {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            <Link href="/courses/development" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Advanced Diploma in GRC & Financial Crime Prevention
-                            </Link>
-                            <Link href="/courses/design" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Cybersecurity & Data Security for Financial Institutions
-                            </Link>
-                            <Link href="/courses/business" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Monitoring, Reporting & Risk Analytics
-                            </Link>
-                            <Link href="/courses/marketing" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Regulatory Compliance & Supervisory Engagement
-                            </Link>
-                            <Link href="/courses/data-science" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                RegTech, SupTech & Innovation in Compliance
-                            </Link>
+                            
                         </div>
                     </div>
                     
