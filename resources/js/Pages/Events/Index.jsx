@@ -89,7 +89,7 @@ export default function Events({ auth, title, description, events }) {
     };
 
     return (
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth}> 
             <Head title={title} />
             
             {/* Hero Section - Slimmer */}
