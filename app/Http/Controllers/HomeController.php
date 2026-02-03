@@ -63,7 +63,7 @@ class HomeController extends Controller
     }
 
     public function whyIgrcfp(){
-        return Inertia::render('About/OurStructure/Index');
+        return Inertia::render('About/WhyIgrcfp/Index');
     }
 
     public function membership(){
