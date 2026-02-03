@@ -95,11 +95,7 @@ export default function NavBar({ auth }) {
                         
                         {/* Dropdown Menu - Expanded with programme details */}
                         <div className="absolute left-0 mt-2 w-96 bg-white rounded-lg shadow-xl py-3 border border-gray-100 z-50 hidden group-hover:block">
-                            {/* Header */}
-                            <div className="px-4 py-2 border-b border-gray-100">
-                                <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wide">Professional Education for Modern Risk, Regulation & Technology</h3>
-                                <p className="text-xs text-gray-500 mt-1">Advanced programmes at the intersection of regulation, risk, and technology</p>
-                            </div>
+                            
                             
                             {/* Programme List */}
                             <div className="max-h-[480px] overflow-y-auto">
