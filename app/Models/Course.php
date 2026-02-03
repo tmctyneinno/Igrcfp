@@ -92,11 +92,7 @@ class Course extends Model
         return $query->where('is_featured', true);
     }
 
-    public function scopePopular($query)
-    {
-        return $query->where('is_popular', true);
-    }
-
+    
     public function scopeWithCode($query, $code)
     {
         return $query->where('code', $code);
@@ -189,5 +185,61 @@ class Course extends Model
         return 'slug';
     }
 
+    public function calculatePopularityScore()
+    {
+        $enrollmentWeight = 2;
+        $ratingWeight = 3;
+        $recentEnrollmentWeight = 1.5;
+        
+        // Get enrollments from last 30 days
+        $recentEnrollments = $this->enrollments()
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+        
+        return ($this->enrollments_count * $enrollmentWeight) 
+            + (($this->rating ?: 0) * $ratingWeight)
+            + ($recentEnrollments * $recentEnrollmentWeight);
+    }
+
+    // Scope for popular courses
+    public function scopePopular($query)
+    {
+        return $query->published()
+            ->withCount(['enrollments', 'reviews'])
+            ->orderByRaw('(
+                (enrollments_count * 2) + 
+                (COALESCE(rating, 0) * 3) + 
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = courses.id AND created_at >= ?) * 1.5
+            ) DESC', [now()->subDays(30)]);
+    }
+    // public function scopePopular($query)
+    // {
+    //     return $query->where('is_popular', true);
+    // }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function enrolledUsers()
+    {
+        return $this->belongsToMany(User::class, 'enrollments')
+            ->withPivot(['progress', 'completed_modules', 'completed_at'])
+            ->withTimestamps();
+    }
+
+    public function enrollmentsCount()
+    {
+        return $this->enrollments()->count();
+    }
+
+    // Add these methods for popular courses calculation
+    public function getEnrollmentsCountAttribute()
+    {
+        return $this->enrollments()->count();
+    }
+
     
+
 }

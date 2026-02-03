@@ -68,7 +68,7 @@ export default function Certification({ courses }) { // Remove default value fro
             {/* COURSES */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {coursesData.length > 0 ? (
-                    coursesData.map((course, index) => {
+                    coursesData.map((course, index) => { 
                         const price = parseFloat(course?.price || 0);
                         const discountPrice = parseFloat(course?.discount_price || 0);
                         const hasDisc = hasDiscount(course);
@@ -82,7 +82,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
                                 data-aos="fade-up"
                                 data-aos-delay={index * 150}
-                            >
+                            > 
                                 {/* IMAGE */}
                                 <div className="h-48 overflow-hidden">
                                     <img
