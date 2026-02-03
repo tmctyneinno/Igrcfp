@@ -4,6 +4,7 @@ import React from 'react';
 export default function ProgrammesIndex() {
     return (
         <>
+        <GuestLayout auth={auth}>
             <Head title="Programmes & Courses | IGRCFP" />
             
             {/* Hero Section */}
@@ -293,6 +294,7 @@ export default function ProgrammesIndex() {
                     </div>
                 </div>
             </div>
+        </GuestLayout>
         </>
     );
 }
