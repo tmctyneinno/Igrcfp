@@ -2,7 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function ProgrammesIndex() {
+export default function ProgrammesIndex({auth}) {
     return (
         <>
         <GuestLayout auth={auth}>
