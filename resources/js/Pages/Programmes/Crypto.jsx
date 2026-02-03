@@ -287,6 +287,7 @@ export default function CryptoPathway() {
                     </div>
                 </div>
             </div>
+        </GuestLayout>
         </>
     );
 }

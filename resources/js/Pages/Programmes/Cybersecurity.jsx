@@ -73,6 +73,7 @@ export default function CybersecurityPathway() {
 
     return (
         <>
+        <GuestLayout auth={auth}>
             <Head title="Cybersecurity & Digital Risk | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -286,6 +287,7 @@ export default function CybersecurityPathway() {
                     </div>
                 </div>
             </div>
+            </GuestLayout>
         </>
     );
 }
