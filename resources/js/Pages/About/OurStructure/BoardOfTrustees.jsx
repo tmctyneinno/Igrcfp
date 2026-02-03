@@ -31,9 +31,9 @@ export default function BoardOfTrustees() {
                     </h1>
 
                     <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
-                        The Board of Trustees serves as the strategic oversight body of IFPN and is
+                        The Board of Trustees serves as the strategic oversight body of IGRCFP and is
                         responsible for guiding the long-term direction of the Institute. The board
-                        ensures that the IFPN remains aligned with its mission and vision while
+                        ensures that the IGRCFP remains aligned with its mission and vision while
                         upholding ethical standards.
                     </p>
 
