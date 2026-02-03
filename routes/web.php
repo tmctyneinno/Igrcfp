@@ -66,3 +66,13 @@ require __DIR__.'/dashboard.php';
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::prefix('programmes')->group(function () {
+    Route::get('/', [ProgrammesController::class, 'index'])->name('programmes');
+    Route::get('/grc', [ProgrammesController::class, 'grc'])->name('programmes.grc');
+    Route::get('/financial-crime', [ProgrammesController::class, 'financialCrime'])->name('programmes.financial-crime');
+    Route::get('/crypto', [ProgrammesController::class, 'crypto'])->name('programmes.crypto');
+    Route::get('/cybersecurity', [ProgrammesController::class, 'cybersecurity'])->name('programmes.cybersecurity');
+    Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
+    Route::get('/all-courses', [ProgrammesController::class, 'allCourses'])->name('programmes.all-courses');
+});
