@@ -164,7 +164,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/cybersecurity">
+                                    <Link href="/programmes/cybersecurity">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
