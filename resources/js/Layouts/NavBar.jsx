@@ -106,13 +106,13 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
                                     </div>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="/programmes/grc/advanced-diploma" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Advanced Diploma in GRC & Financial Crime Prevention
                                         </Link>
-                                        <Link href="/programmes/grc/enterprise-risk" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Enterprise Risk Management
                                         </Link>
-                                        <Link href="/programmes/grc/board-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Board Governance & Ethical Leadership
                                         </Link>
                                     </div>
@@ -125,13 +125,13 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
                                     </div>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="/programmes/financial-crime/aml" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Advanced AML & Financial Intelligence
                                         </Link>
-                                        <Link href="/programmes/financial-crime/fraud" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Fraud & Corruption Systems
                                         </Link>
-                                        <Link href="/programmes/financial-crime/sanctions" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Sanctions Risk & Screening
                                         </Link>
                                     </div>
@@ -144,13 +144,13 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
                                     </div>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="/programmes/crypto/regulation" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Crypto-Asset Regulation & Compliance
                                         </Link>
-                                        <Link href="/programmes/crypto/blockchain-risk" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Blockchain Risk & Governance
                                         </Link>
-                                        <Link href="/programmes/crypto/defi" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             DeFi Risk & Oversight
                                         </Link>
                                     </div>
@@ -163,13 +163,13 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
                                     </div>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="/programmes/cyber/risk-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Cyber Risk Governance
                                         </Link>
-                                        <Link href="/programmes/cyber/data-protection" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Data Protection & Privacy
                                         </Link>
-                                        <Link href="/programmes/cyber/incident-response" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Incident Response & Breach Management
                                         </Link>
                                     </div>
@@ -182,13 +182,13 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
                                     </div>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="/programmes/ai/governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             AI Governance & Ethics
                                         </Link>
-                                        <Link href="/programmes/ai/regtech" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             RegTech & SupTech Applications
                                         </Link>
-                                        <Link href="/programmes/ai/data-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Data Governance & Protection
                                         </Link>
                                     </div>
