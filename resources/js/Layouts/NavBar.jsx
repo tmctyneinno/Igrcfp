@@ -101,11 +101,11 @@ export default function NavBar({ auth }) {
                             <div className="max-h-[480px] overflow-y-auto">
                                 {/* GRC Pathway */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="#">
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
-                                    </div>
+                                    <Link href="programmes/grc">
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
+                                        </div>
                                     </Link>
                                     <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
@@ -122,6 +122,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Financial Crime Prevention */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                     <Link href="programmes/grc"></Link>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
