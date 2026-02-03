@@ -8,7 +8,7 @@ export default function ProgrammesIndex({auth}) {
         <GuestLayout auth={auth}>
             <Head title="Programmes & Courses | IGRCFP" />
             {/* Hero Section - Slimmer */}
-            <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 md:py-20">
+            <section className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200 to-indigo-50 py-12 md:py-20">
                 <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
