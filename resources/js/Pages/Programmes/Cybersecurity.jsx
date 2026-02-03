@@ -123,4 +123,169 @@ export default function CybersecurityPathway() {
                             <div key={index} className="bg-green-50 p-8 rounded-xl border border-green-100 hover:shadow-lg transition-shadow duration-300">
                                 <div className="text-4xl mb-4">{theme.icon}</div>
                                 <h3 className="text-xl font-semibold text-gray-900 mb-3">{theme.title}</h3>
-                                <p className="text-gray-
+                                <p className="text-gray-600">{theme.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Programme Overview */}
+            <div className="py-16 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-6">Programme Overview</h2>
+                            <p className="text-gray-600 text-lg mb-6">
+                                This pathway addresses cybersecurity and digital risk from governance, 
+                                compliance, and business perspectives, rather than purely technical viewpoints.
+                            </p>
+                            <p className="text-gray-600 mb-8">
+                                Designed for professionals who need to understand, manage, and oversee 
+                                cyber risks within their organizations while ensuring regulatory compliance.
+                            </p>
+                            
+                            <div className="bg-green-50 p-6 rounded-xl">
+                                <h3 className="text-xl font-semibold text-green-900 mb-4">Who This Programme Is For</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <ul className="space-y-2">
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>Executives & Board Members</span>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>CISOs & Security Leaders</span>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>Risk & Compliance Teams</span>
+                                        </li>
+                                    </ul>
+                                    <ul className="space-y-2">
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>Digital Transformation Leaders</span>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>Technology Organizations</span>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                                            </svg>
+                                            <span>Financial Institution Leaders</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Programme Focus Areas</h3>
+                                <div className="space-y-4">
+                                    {[
+                                        "Board-level cyber risk governance",
+                                        "Regulatory compliance and reporting",
+                                        "Incident response and crisis management",
+                                        "Third-party and supply chain risk",
+                                        "Data protection and privacy",
+                                        "Operational resilience planning"
+                                    ].map((area, index) => (
+                                        <div key={index} className="flex items-start">
+                                            <svg className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            <span className="text-gray-700">{area}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Courses Grid */}
+            <div className="py-16 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-4">Cybersecurity & Digital Risk Courses</h2>
+                        <p className="text-gray-600 text-lg">Comprehensive courses for organizational cyber risk management</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {courses.map((course, index) => (
+                            <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                                <div className="p-6">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                            course.level === 'Executive' ? 'bg-yellow-100 text-yellow-800' :
+                                            course.level === 'Advanced' ? 'bg-green-100 text-green-800' :
+                                            'bg-blue-100 text-blue-800'
+                                        }`}>
+                                            {course.level}
+                                        </span>
+                                        <span className="text-sm text-gray-500">{course.duration}</span>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-3">{course.title}</h3>
+                                    <p className="text-gray-600 mb-4">{course.description}</p>
+                                    <div className="space-y-2 mb-6">
+                                        <h4 className="font-semibold text-gray-900">Learning Outcomes:</h4>
+                                        <ul className="space-y-1">
+                                            {course.outcomes.map((outcome, idx) => (
+                                                <li key={idx} className="flex items-start text-sm text-gray-600">
+                                                    <svg className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    {outcome}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <button className="w-full bg-green-900 text-white py-3 rounded-lg font-medium hover:bg-green-800 transition duration-300">
+                                        View Course Details
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Certification Section */}
+            <div className="py-16 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="bg-gradient-to-r from-green-900 to-green-800 rounded-2xl p-8 md:p-12">
+                        <div className="text-center">
+                            <h2 className="text-3xl font-bold text-white mb-6">Professional Recognition</h2>
+                            <p className="text-green-100 text-lg mb-8 max-w-3xl mx-auto">
+                                Completion of Cybersecurity & Digital Risk pathway courses may lead to IGRCFP professional certifications and eligibility for the Certified Cyber Risk Leader (CCRL) designation.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <a href="/certifications/cyber" className="bg-white text-green-900 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition duration-300">
+                                    Explore CCRL Certification
+                                </a>
+                                <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-900 transition duration-300">
+                                    Contact Admissions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
