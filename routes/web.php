@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
-// use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\ProgrammesController;
 // use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
