@@ -143,7 +143,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/Crypto">
+                                    <Link href="programmes/crypto">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
@@ -164,18 +164,20 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href="programmes/cybersecurity">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
                                     </div>
+                                    </Link>
                                     <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Cyber Risk Governance
                                         </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Data Protection & Privacy
                                         </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
+                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Incident Response & Breach Management
                                         </Link>
                                     </div>
