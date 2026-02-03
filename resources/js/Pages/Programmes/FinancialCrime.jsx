@@ -1,5 +1,5 @@
- import { Head } from '@inertiajs/react';
- import GuestLayout from '@/Layouts/GuestLayout';
+import { Head } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
 import React from 'react';
 
 export default function FinancialCrimePathway({auth}) {
