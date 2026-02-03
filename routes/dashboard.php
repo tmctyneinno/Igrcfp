@@ -14,6 +14,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/cart/index', [DashboardController::class, 'cart'])->name('cart.index');
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
 
+    Route::get('/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
+    Route::get('/courses/{course:slug}', [DashboardController::class, 'courseSlug'])->name('courses.show');
 
 });
 

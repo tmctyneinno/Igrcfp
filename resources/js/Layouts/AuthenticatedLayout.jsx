@@ -43,11 +43,6 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const fetchCounts = async () => {
         try {
-            // You can fetch these from your backend API
-            // Example:
-            // const response = await axios.get('/api/user/notifications/count');
-            // setNotificationCount(response.data.count);
-            
             // For now, using mock data
             setNotificationCount(3); // Mock notification count
             setCartCount(1); // Mock cart count

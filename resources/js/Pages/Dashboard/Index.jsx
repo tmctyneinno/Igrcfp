@@ -1,26 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import LearningCenter from '@/Pages/Dashboard/Learner/LearningCenter';
+import MyLearning from '@/Pages/Dashboard/Learner/MyLearning';
+import MostPopular from '@/Pages/Dashboard/Learner/MostPopular';
+import { useCart } from '@/contexts/CartContext'; 
 
-export default function Dashboard() {
+export default function Dashboard({ auth, courses, enrolledCourses, popularCourses }) {
+    const { cartCount, cartItems } = useCart();
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    IGRFCP
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="Dashboard" />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            You're logged in!
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <LearningCenter enrolledCourses={enrolledCourses} />
+            <MyLearning enrolledCourses={enrolledCourses} />
+            <MostPopular initialCourses={popularCourses} />
         </AuthenticatedLayout>
     );
 }

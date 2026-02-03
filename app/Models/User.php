@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\CustomResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -101,6 +103,11 @@ class User extends Authenticatable
         return Attribute::make(
             set: fn (?string $value) => $this->normalizeLinkedinUrl($value),
         );
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPasswordNotification($token));
     }
 
     /**
@@ -364,5 +371,10 @@ class User extends Authenticatable
         return $this->enrollments()
             ->where('course_id', $courseId)
             ->first();
+    }
+
+    public function hasEnrolled($courseId)
+    {
+        return $this->enrollments()->where('course_id', $courseId)->exists();
     }
 }
