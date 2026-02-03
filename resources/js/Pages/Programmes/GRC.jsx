@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
+import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function GRCPathway() {
     const courses = [
@@ -73,6 +74,7 @@ export default function GRCPathway() {
 
     return (
         <>
+        <GuestLayout auth={auth}>
             <Head title="GRC Pathway | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -271,6 +273,7 @@ export default function GRCPathway() {
                     </div>
                 </div>
             </div>
+        </GuestLayout>
         </>
     );
 }
