@@ -7,7 +7,23 @@ export default function ProgrammesIndex({auth}) {
         <>
         <GuestLayout auth={auth}>
             <Head title="Programmes & Courses | IGRCFP" />
-            
+            {/* Hero Section - Slimmer */}
+            <section className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 md:py-20">
+                <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                        <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
+                            Professional Education for Modern Risk, Regulation & Technology
+                       </div>
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                            {title}
+                        </h1> 
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                             Advanced programmes designed for today's complex regulatory, digital, and financial crime landscape.
+                       </p>
+                    </div>
+                </div>
+            </section>
             {/* Hero Section */}
             <div className="relative bg-gradient-to-r from-blue-900 to-blue-800 py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,7 +36,7 @@ export default function ProgrammesIndex({auth}) {
                         </p>
                     </div>
                 </div>
-            </div>
+            </div> 
 
             {/* Intersection Section */}
             <div className="bg-gray-50 py-16">
