@@ -74,7 +74,7 @@ export default function AIPathway({ auth}) {
 
     return (
         <>
-        <GuestLayout>
+       <GuestLayout auth={auth}>
             <Head title="AI & Emerging Technology | IGRCFP Programmes" />
             
             {/* Hero Section */}
