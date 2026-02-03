@@ -11,6 +11,7 @@ import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
+import WhatWeOffer from "@/Pages/components/WhatWeOffer";
 
   
  
@@ -34,7 +35,7 @@ export default function Welcome({ auth, courses }) {
             </section>
 
             
-               <WhatWeOffer auth={auth} />
+            <WhatWeOffer auth={auth} />
            
 
             <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
