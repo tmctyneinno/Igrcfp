@@ -13,10 +13,10 @@ export default function ProgrammesIndex({auth}) {
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
-                            Professional Education for Modern Risk, Regulation & Technology
+                            Programmes and Courses
                        </div>
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-                            {title}
+                            Professional Education for Modern Risk, Regulation & Technology
                         </h1> 
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                              Advanced programmes designed for today's complex regulatory, digital, and financial crime landscape.
