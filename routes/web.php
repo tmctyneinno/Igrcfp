@@ -15,6 +15,7 @@ use App\Http\Controllers\HomeController;
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/welcome-to-igrcfp', [HomeController::class, 'welcomeToIGRCFP'])->name('welcome-to-igrcfp');
 Route::get('/our-structure', [HomeController::class, 'OurStructure'])->name('our-structure');
+Route::get('/why-igrcfp', [HomeController::class, 'whyIgrcfp'])->name('why-igrcfp');
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
 
