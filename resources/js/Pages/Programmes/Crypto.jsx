@@ -73,6 +73,7 @@ export default function CryptoPathway() {
 
     return (
         <>
+        <GuestLayout auth={auth}>
             <Head title="Crypto & Digital Assets | IGRCFP Programmes" />
             
             {/* Hero Section */}
