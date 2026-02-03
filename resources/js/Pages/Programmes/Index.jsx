@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
+import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function ProgrammesIndex() {
     return (
