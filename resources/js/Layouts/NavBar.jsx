@@ -1,14 +1,10 @@
-
 import { Link } from "@inertiajs/react";
 import React, { useEffect, useState, useRef } from "react";
 
 export default function NavBar({ auth }) {
-
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-    
-       
     
     // Close mobile menu when clicking outside
     useEffect(() => {
@@ -51,7 +47,8 @@ export default function NavBar({ auth }) {
                     >
                         Home
                     </Link>
-                    {/* About Dropdown - Fixed with hover bridge */}
+                    
+                    {/* About Dropdown */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
                             About Us
@@ -68,39 +65,184 @@ export default function NavBar({ auth }) {
                             <Link href='/welcome-to-igrcfp' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Welcome to IGRCFP
                             </Link>
-                            <Link href='our-structure' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                            <Link href='/our-structure' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Our Structure
+                            </Link>
+                            <Link href='/why-igrcfp' className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                                Why IGRCFP
                             </Link>
                         </div>
                     </div>
 
-                        <Link 
+                    <Link 
                         href="/membership" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         Membership
                     </Link>
 
-                    {/* Courses Dropdown - Fixed with hover bridge */}
+                    {/* Programmes & Courses Dropdown - UPDATED WITH DETAILED CONTENT */}
                     <div className="relative group">
-                        <Link href="/certifications">
-                            <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                                Certifications
-                                <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                        </Link>
+                        <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
+                            Programmes & Courses
+                            <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        
+                        {/* Invisible hover bridge */}
+                        <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
+                        
+                        {/* Dropdown Menu - Expanded with programme details */}
+                        <div className="absolute left-0 mt-2 w-96 bg-white rounded-lg shadow-xl py-3 border border-gray-100 z-50 hidden group-hover:block">
+                            {/* Header */}
+                            <div className="px-4 py-2 border-b border-gray-100">
+                                <h3 className="font-bold text-blue-900 text-sm uppercase tracking-wide">Professional Education for Modern Risk, Regulation & Technology</h3>
+                                <p className="text-xs text-gray-500 mt-1">Advanced programmes at the intersection of regulation, risk, and technology</p>
+                            </div>
+                            
+                            {/* Programme List */}
+                            <div className="max-h-[480px] overflow-y-auto">
+                                {/* GRC Pathway */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
+                                    </div>
+                                    <div className="ml-5 mt-2 space-y-1">
+                                        <Link href="/programmes/grc/advanced-diploma" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Advanced Diploma in GRC & Financial Crime Prevention
+                                        </Link>
+                                        <Link href="/programmes/grc/enterprise-risk" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Enterprise Risk Management
+                                        </Link>
+                                        <Link href="/programmes/grc/board-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Board Governance & Ethical Leadership
+                                        </Link>
+                                    </div>
+                                </div>
+                                
+                                {/* Financial Crime Prevention */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
+                                    </div>
+                                    <div className="ml-5 mt-2 space-y-1">
+                                        <Link href="/programmes/financial-crime/aml" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Advanced AML & Financial Intelligence
+                                        </Link>
+                                        <Link href="/programmes/financial-crime/fraud" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Fraud & Corruption Systems
+                                        </Link>
+                                        <Link href="/programmes/financial-crime/sanctions" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Sanctions Risk & Screening
+                                        </Link>
+                                    </div>
+                                </div>
+                                
+                                {/* Crypto & Digital Assets */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
+                                    </div>
+                                    <div className="ml-5 mt-2 space-y-1">
+                                        <Link href="/programmes/crypto/regulation" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Crypto-Asset Regulation & Compliance
+                                        </Link>
+                                        <Link href="/programmes/crypto/blockchain-risk" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Blockchain Risk & Governance
+                                        </Link>
+                                        <Link href="/programmes/crypto/defi" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            DeFi Risk & Oversight
+                                        </Link>
+                                    </div>
+                                </div>
+                                
+                                {/* Cybersecurity & Digital Risk */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
+                                    </div>
+                                    <div className="ml-5 mt-2 space-y-1">
+                                        <Link href="/programmes/cyber/risk-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Cyber Risk Governance
+                                        </Link>
+                                        <Link href="/programmes/cyber/data-protection" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Data Protection & Privacy
+                                        </Link>
+                                        <Link href="/programmes/cyber/incident-response" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Incident Response & Breach Management
+                                        </Link>
+                                    </div>
+                                </div>
+                                
+                                {/* AI & Emerging Technology */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
+                                    </div>
+                                    <div className="ml-5 mt-2 space-y-1">
+                                        <Link href="/programmes/ai/governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            AI Governance & Ethics
+                                        </Link>
+                                        <Link href="/programmes/ai/regtech" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            RegTech & SupTech Applications
+                                        </Link>
+                                        <Link href="/programmes/ai/data-governance" className="block text-sm text-gray-600 hover:text-blue-900">
+                                            Data Governance & Protection
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Footer */}
+                            <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+                                <Link 
+                                    href="/programmes/all-courses" 
+                                    className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
+                                >
+                                    View All Programmes
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Certifications */}
+                    <div className="relative group">
+                        <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
+                            Certifications
+                            <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
                         
                         {/* Invisible hover bridge */}
                         <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                         
                         {/* Dropdown Menu */}
-                        <div className="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            
+                        <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
+                            <Link href="/certifications/cgrc" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                                Certified GRC Professional (CGRC)
+                            </Link>
+                            <Link href="/certifications/cfc" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                                Certified Financial Crime Specialist (CFCS)
+                            </Link>
+                            <Link href="/certifications/cyber" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
+                                Certified Cyber Risk Leader (CCRL)
+                            </Link>
+                            <div className="border-t border-gray-100 my-2"></div>
+                            <Link href="/certifications/apply" className="block px-4 py-3 text-blue-900 hover:bg-blue-50 font-medium transition duration-200">
+                                Apply for Certification
+                            </Link>
                         </div>
                     </div>
-                    
                     
                     <Link 
                         href="/events" 
@@ -185,7 +327,6 @@ export default function NavBar({ auth }) {
                         </div>
                     ) : (
                         <>
-                            
                             <Link
                                 href='/login'
                                 className="bg-blue-900 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
@@ -213,7 +354,7 @@ export default function NavBar({ auth }) {
                 </div>
             </div>
 
-            {/* Mobile Menu - UPDATED */}
+            {/* Mobile Menu - UPDATED with Programmes Section */}
             {isMobileMenuOpen && (
                 <div 
                     className="md:hidden bg-white py-4 shadow-lg rounded-lg mt-2 mobile-menu-container"
@@ -243,7 +384,7 @@ export default function NavBar({ auth }) {
                             {openDropdown === 'about' && (
                                 <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
                                     <Link 
-                                        href="/about/welcome" 
+                                        href="/welcome-to-igrcfp" 
                                         className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
@@ -253,7 +394,7 @@ export default function NavBar({ auth }) {
                                         Welcome to IGRCFP
                                     </Link>
                                     <Link 
-                                        href="/about/structure" 
+                                        href="/our-structure" 
                                         className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
@@ -261,6 +402,16 @@ export default function NavBar({ auth }) {
                                         }}
                                     >
                                         Our Structure
+                                    </Link>
+                                    <Link 
+                                        href="/why-igrcfp" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        Why IGRCFP
                                     </Link>
                                 </div>
                             )}
@@ -274,68 +425,151 @@ export default function NavBar({ auth }) {
                             Membership
                         </Link>
                         
-                        {/* Courses Dropdown for Mobile */}
+                        {/* Programmes & Courses Dropdown for Mobile */}
                         <div className="py-1 px-4">
                             <button 
                                 className="font-medium text-gray-700 py-2 w-full text-left flex justify-between items-center"
-                                onClick={() => setOpenDropdown(openDropdown === 'courses' ? null : 'courses')}
+                                onClick={() => setOpenDropdown(openDropdown === 'programmes' ? null : 'programmes')}
                             >
-                                Courses
-                                <svg className={`w-4 h-4 transition-transform duration-300 ${openDropdown === 'courses' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                Programmes & Courses
+                                <svg className={`w-4 h-4 transition-transform duration-300 ${openDropdown === 'programmes' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            {openDropdown === 'courses' && (
+                            {openDropdown === 'programmes' && (
+                                <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
+                                    <div className="text-xs uppercase text-blue-900 font-semibold tracking-wide py-2">
+                                        Core Programme Pathways
+                                    </div>
+                                    
+                                    <Link 
+                                        href="/programmes/grc" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                                            GRC & Risk Management
+                                        </div>
+                                    </Link>
+                                    
+                                    <Link 
+                                        href="/programmes/financial-crime" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+                                            Financial Crime Prevention
+                                        </div>
+                                    </Link>
+                                    
+                                    <Link 
+                                        href="/programmes/crypto" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
+                                            Crypto & Digital Assets
+                                        </div>
+                                    </Link>
+                                    
+                                    <Link 
+                                        href="/programmes/cybersecurity" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                                            Cybersecurity & Digital Risk
+                                        </div>
+                                    </Link>
+                                    
+                                    <Link 
+                                        href="/programmes/ai" 
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
+                                            AI & Emerging Technology
+                                        </div>
+                                    </Link>
+                                    
+                                    <div className="border-t border-gray-200 my-2 pt-2">
+                                        <Link 
+                                            href="/programmes/all-courses" 
+                                            className="block text-blue-900 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200"
+                                            onClick={() => {
+                                                setIsMobileMenuOpen(false);
+                                                setOpenDropdown(null);
+                                            }}
+                                        >
+                                            View All Programmes
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* Certifications Dropdown for Mobile */}
+                        <div className="py-1 px-4">
+                            <button 
+                                className="font-medium text-gray-700 py-2 w-full text-left flex justify-between items-center"
+                                onClick={() => setOpenDropdown(openDropdown === 'certifications' ? null : 'certifications')}
+                            >
+                                Certifications
+                                <svg className={`w-4 h-4 transition-transform duration-300 ${openDropdown === 'certifications' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            {openDropdown === 'certifications' && (
                                 <div className="pl-4 space-y-1 border-l-2 border-gray-200 mt-2">
                                     <Link 
-                                        href="/courses/grc" 
+                                        href="/certifications/cgrc" 
                                         className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
                                         }}
                                     >
-                                        Advanced Diploma in GRC & Financial Crime Prevention
+                                        Certified GRC Professional
                                     </Link>
                                     <Link 
-                                        href="/courses/cybersecurity" 
+                                        href="/certifications/cfc" 
                                         className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
                                         }}
                                     >
-                                        Cybersecurity & Data Security for Financial Institutions
+                                        Certified Financial Crime Specialist
                                     </Link>
                                     <Link 
-                                        href="/courses/monitoring" 
+                                        href="/certifications/cyber" 
                                         className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
                                         onClick={() => {
                                             setIsMobileMenuOpen(false);
                                             setOpenDropdown(null);
                                         }}
                                     >
-                                        Monitoring, Reporting & Risk Analytics
-                                    </Link>
-                                    <Link 
-                                        href="/courses/regulatory" 
-                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                        onClick={() => {
-                                            setIsMobileMenuOpen(false);
-                                            setOpenDropdown(null);
-                                        }}
-                                    >
-                                        Regulatory Compliance & Supervisory Engagement
-                                    </Link>
-                                    <Link 
-                                        href="/courses/regtech" 
-                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
-                                        onClick={() => {
-                                            setIsMobileMenuOpen(false);
-                                            setOpenDropdown(null);
-                                        }}
-                                    >
-                                        RegTech, SupTech & Innovation in Compliance
+                                        Certified Cyber Risk Leader
                                     </Link>
                                 </div>
                             )}
@@ -370,7 +604,7 @@ export default function NavBar({ auth }) {
                             Contact
                         </Link>
                         
-                        {!auth.user && (
+                        {!auth?.user && (
                             <div className="pt-4 border-t border-gray-100 mt-2">
                                 <Link
                                     href='/login'
@@ -391,7 +625,6 @@ export default function NavBar({ auth }) {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }
