@@ -33,6 +33,10 @@ export default function Welcome({ auth, courses }) {
                <WhoAreWe auth={auth} />
             </section>
 
+            <section className="bg-white py-24 overflow-hidden">
+               <WhatWeOffer auth={auth} />
+            </section>
+
             <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
                <Certification courses={courses} />
             </section>  
