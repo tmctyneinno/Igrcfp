@@ -1,7 +1,8 @@
  import { Head } from '@inertiajs/react';
+ import GuestLayout from '@/Layouts/GuestLayout';
 import React from 'react';
 
-export default function FinancialCrimePathway() {
+export default function FinancialCrimePathway({auth}) {
     const courses = [
         {
             title: "Advanced AML & Financial Intelligence",
@@ -73,6 +74,7 @@ export default function FinancialCrimePathway() {
 
     return (
         <>
+         <GuestLayout auth={auth}>
             <Head title="Financial Crime Prevention | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -269,6 +271,7 @@ export default function FinancialCrimePathway() {
                     </div>
                 </div>
             </div>
+            </GuestLayout>
         </>
     );
 }
