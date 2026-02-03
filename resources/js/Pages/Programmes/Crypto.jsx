@@ -1,7 +1,8 @@
 import { Head } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
 import React from 'react';
 
-export default function CryptoPathway() {
+export default function CryptoPathway({auth}) {
     const courses = [
         {
             title: "Crypto-Asset Regulation & Compliance",

@@ -1,7 +1,8 @@
 import { Head } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
 import React from 'react';
 
-export default function CybersecurityPathway() {
+export default function CybersecurityPathway({auth}) {
     const courses = [
         {
             title: "Cyber Risk Governance for Boards & Executives",
