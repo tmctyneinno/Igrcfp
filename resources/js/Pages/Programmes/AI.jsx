@@ -1,3 +1,4 @@
+import GuestLayout from '@/Layouts/GuestLayout';
 import { Head } from '@inertiajs/react';
 import React from 'react';
 
@@ -73,7 +74,7 @@ export default function AIPathway({ auth}) {
 
     return (
         <>
-        <G
+        <GuestLayout>
             <Head title="AI & Emerging Technology | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -316,6 +317,7 @@ export default function AIPathway({ auth}) {
                     </div>
                 </div>
             </div>
+            </GuestLayout>
         </>
     );
 }
