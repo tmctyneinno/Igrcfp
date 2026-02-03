@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 
-export default function AIPathway() {
+export default function AIPathway({ auth}) {
     const courses = [
         {
             title: "AI Governance, Ethics & Accountability",
@@ -73,6 +73,7 @@ export default function AIPathway() {
 
     return (
         <>
+        <G
             <Head title="AI & Emerging Technology | IGRCFP Programmes" />
             
             {/* Hero Section */}
