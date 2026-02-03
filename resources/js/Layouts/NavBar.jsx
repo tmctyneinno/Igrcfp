@@ -143,10 +143,12 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href="programmes/Crypto">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
                                     </div>
+                                    </Link>
                                     <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Crypto-Asset Regulation & Compliance
