@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/apexcharts.css')}}">
   <!-- Data Table css -->
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/dataTables.min.css')}}">
-  <!-- Text Editor css -->
+  <!-- Text Editor css --> 
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/editor-katex.min.css')}}">
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/editor.atom-one-dark.min.css')}}">
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/editor.quill.snow.css')}}">

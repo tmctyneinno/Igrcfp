@@ -48,7 +48,7 @@ class CourseController extends Controller
         if ($request->has('level') && $request->level != '') {
             $query->where('level', $request->level);
         }
-        
+         
         // Order by
         $query->latest();
         
@@ -109,7 +109,14 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info('Course Store Request - Full Details:', [
+            'input' => $request->except(['_token', '_method']),
+            
+        ]);
+
         $validated = $this->validateRequest($request);
+        \Log::info('Course validated: ', $validated);
+ 
 
         try {
             // Handle image uploads
@@ -127,11 +134,7 @@ class CourseController extends Controller
                 $validated['video'] = $request->file('video')->store('courses/videos', 'public');
             }
 
-            // Convert target audience from textarea to array
-            if ($request->filled('target_audience')) {
-                $lines = explode("\n", $request->target_audience);
-                $validated['target_audience'] = array_map('trim', array_filter($lines));
-            }
+          
 
             // Create course
             $course = Course::create($validated);
@@ -153,6 +156,54 @@ class CourseController extends Controller
             return back()->withInput()
                 ->with('error', 'Error creating course: ' . $e->getMessage());
         }
+    }
+
+    private function validateRequest(Request $request, ?Course $course = null): array
+    {
+        $rules = [
+            'title' => 'required|string|max:255',
+            'short_title' => 'required|string|max:100',
+            'short_description' => 'required|string',
+            'full_description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
+            'video_type' => 'nullable|in:none,upload,youtube,vimeo',
+            'video' => 'nullable|file|mimes:mp4,mov,avi,wmv,mkv|max:20480',
+            'video_url' => 'nullable|url|max:500',
+            'level' => 'required|in:beginner,intermediate,advanced,expert',
+            'format' => 'required|in:self_paced,instructor_led,hybrid',
+            'duration' => 'required|string|max:100',
+            'total_modules' => 'required|integer|min:1',
+            'total_hours' => 'required|integer|min:1',
+            'certification_name' => 'required|string',
+            'certifying_body' => 'required|string',
+            'price' => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lte:price',
+            'target_audience' => 'nullable|string',
+            'learning_outcomes' => 'nullable|string',
+            'prerequisites' => 'nullable|string',
+            'career_pathways' => 'nullable|string',
+            'assessment_structure' => 'nullable|string',
+            'code_of_conduct' => 'nullable|string',
+            'programme_overview' => 'nullable|string',
+            'programme_architecture' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'status' => 'required|in:draft,published,archived',
+            'is_featured' => 'boolean',
+            'is_popular' => 'boolean',
+            'sort_order' => 'nullable|integer',
+            'bulk_modules' => 'nullable|string',
+        ];
+
+        // Conditional validation for video
+        if ($request->video_type === 'upload') {
+            $rules['video'] = 'required|file|mimes:mp4,mov,avi,wmv,mkv|max:20480';
+        } elseif (in_array($request->video_type, ['youtube', 'vimeo'])) {
+            $rules['video_url'] = 'required|url';
+        }
+
+        return $request->validate($rules);
     }
 
     /**
@@ -388,56 +439,8 @@ class CourseController extends Controller
         return $modules;
     }
 
-    /**
-     * Validate the request data
-     */
-    private function validateRequest(Request $request, ?Course $course = null): array
-    {
-        $rules = [
-            'title' => 'required|string|max:255',
-            'short_title' => 'required|string|max:100',
-            'short_description' => 'required|string|max:500',
-            'full_description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'video_type' => 'nullable|in:none,upload,youtube,vimeo',
-            'video' => 'nullable|file|mimes:mp4,mov,avi,wmv,mkv|max:20480',
-            'video_url' => 'nullable|url|max:500',
-            'level' => 'required|in:beginner,intermediate,advanced,expert',
-            'format' => 'required|in:self_paced,instructor_led,hybrid',
-            'duration' => 'required|string|max:100',
-            'total_modules' => 'required|integer|min:1',
-            'total_hours' => 'required|integer|min:1',
-            'certification_name' => 'required|string|max:255',
-            'certifying_body' => 'required|string|max:255',
-            'price' => 'nullable|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0|lte:price',
-            'target_audience' => 'nullable|string',
-            'learning_outcomes' => 'nullable|string',
-            'prerequisites' => 'nullable|string',
-            'career_pathways' => 'nullable|string',
-            'assessment_structure' => 'nullable|string',
-            'code_of_conduct' => 'nullable|string',
-            'programme_overview' => 'nullable|string',
-            'programme_architecture' => 'nullable|string',
-            'meta_description' => 'nullable|string|max:200',
-            'meta_keywords' => 'nullable|string|max:255',
-            'status' => 'required|in:draft,published,archived',
-            'is_featured' => 'boolean',
-            'is_popular' => 'boolean',
-            'sort_order' => 'nullable|integer',
-            'bulk_modules' => 'nullable|string',
-        ];
-
-        // Conditional validation for video
-        if ($request->video_type === 'upload') {
-            $rules['video'] = 'required|file|mimes:mp4,mov,avi,wmv,mkv|max:20480';
-        } elseif (in_array($request->video_type, ['youtube', 'vimeo'])) {
-            $rules['video_url'] = 'required|url';
-        }
-
-        return $request->validate($rules);
-    }
+    
+   
 
     /**
      * Upload file to storage
