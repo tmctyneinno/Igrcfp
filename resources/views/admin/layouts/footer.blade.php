@@ -10,7 +10,7 @@
 </footer>
 @push('scripts')
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-    <script>
+    <!-- <script>
         ClassicEditor
             .create(document.querySelector('#editor'), {
                 // Optional: Basic toolbar configuration
@@ -36,5 +36,5 @@
             .catch(error => {
                 console.error(error);
             });
-    </script>
+    </script> -->
 @endpush

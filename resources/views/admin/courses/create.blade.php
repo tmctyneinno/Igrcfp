@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize CKEditor with delay to ensure DOM is ready
     setTimeout(() => {
         initializeCKEditors();
-    }, 100);
+    }, 300);
     
     function initializeCKEditors() {
         const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
@@ -769,6 +769,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         editors.forEach(textarea => {
+            // Skip if already initialized
+            if (textarea.hasAttribute('data-ck-initialized')) {
+                return;
+            }
+            
+            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' 
+            // || textarea.name === 'full_description' 
+            // || textarea.name === 'programme_overview'
+            //  || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' 
+            //  || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' 
+            //  || textarea.name === 'meta_keywords' || textarea.name === 'target_audience'
+            ) {
+                console.log('Skipping CKEditor for full_description - using plain textarea');
+                textarea.setAttribute('data-ck-initialized', 'true');
+                return;
+            }
+            
+            // // Ensure textarea has an ID for debugging
+            // if (!textarea.id) {
+            //     textarea.id = `editor-${index}-${Date.now()}`;
+            // }
+            
             try {
                 ClassicEditor
                     .create(textarea)
@@ -790,6 +812,108 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
             } catch (error) {
                 console.error('CKEditor initialization error:', error);
+            }
+        });
+    }
+
+    function initializeCKEditorsdd() {
+        // Check if ClassicEditor is available
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded - retrying in 500ms');
+            setTimeout(initializeCKEditors, 500);
+            return;
+        }
+        
+        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        
+        if (editors.length === 0) {
+            console.log('No editors found to initialize');
+            return;
+        }
+        
+        console.log(`Found ${editors.length} editors to initialize`);
+        
+        editors.forEach((textarea, index) => {
+            // Skip if already initialized
+            if (textarea.hasAttribute('data-ck-initialized')) {
+                return;
+            }
+            
+            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' || textarea.name === 'full_description' || textarea.name === 'programme_overview' || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' || textarea.name === 'meta_keywords' || textarea.name === 'target_audience') {
+                console.log('Skipping CKEditor for full_description - using plain textarea');
+                textarea.setAttribute('data-ck-initialized', 'true');
+                return;
+            }
+            
+            // Ensure textarea has an ID for debugging
+            if (!textarea.id) {
+                textarea.id = `editor-${index}-${Date.now()}`;
+            }
+            
+            try {
+                console.log(`Initializing CKEditor for: ${textarea.id || textarea.name}`);
+               
+                ClassicEditor
+                    .create(textarea, {
+                        toolbar: {
+                            items: [
+                                'heading',
+                                '|',
+                                'bold',
+                                'italic',
+                                'link',
+                                'bulletedList',
+                                'numberedList',
+                                '|',
+                                'outdent',
+                                'indent',
+                                '|',
+                                'blockQuote',
+                                'insertTable',
+                                'undo',
+                                'redo'
+                            ]
+                        },
+                        heading: {
+                            options: [
+                                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                            ]
+                        },
+                        table: {
+                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                        },
+                        removePlugins: ['ImageUpload', 'MediaEmbed']
+                    })
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        console.log(`CKEditor initialized successfully for: ${textarea.id}`);
+                        
+                        // Store editor instance
+                        textarea.ckeditorInstance = editor;
+                        
+                        // Update form on submit
+                        const form = textarea.closest('form');
+                        if (form) {
+                            const submitHandler = function() {
+                                textarea.value = editor.getData();
+                                console.log(`Editor content updated for: ${textarea.id}`);
+                            };
+                            
+                            form.removeEventListener('submit', submitHandler);
+                            form.addEventListener('submit', submitHandler);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`CKEditor error for ${textarea.id}:`, error);
+                        textarea.style.display = 'block';
+                        textarea.classList.add('form-control');
+                    });
+            } catch (error) {
+                console.error(`CKEditor initialization error for ${textarea.id}:`, error);
+                textarea.style.display = 'block';
             }
         });
     }
