@@ -13,5 +13,3 @@ Module 6: Business Impact Analysis and Root Cause Analysis
 Module 7: FMEA, Fault Tree, Event Tree and Bow Tie Analysis
 
 Module 8: Multi-Criteria Decision Analysis (MCDA)
-
-
