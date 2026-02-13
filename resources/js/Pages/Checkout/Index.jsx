@@ -20,7 +20,7 @@ export default function Checkout({ cart, user }) {
     const totalAmount = parseFloat(cart?.total_amount) || 0;
 
     return (
-        <GuestLayout>
+        <AuthenticatedLayout> 
             <Head title="Checkout" />
             
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -93,7 +93,7 @@ export default function Checkout({ cart, user }) {
                                                 />
                                                 Credit / Debit Card
                                             </label>
-                                            <label className="flex items-center">
+                                            {/* <label className="flex items-center">
                                                 <input
                                                     type="radio"
                                                     value="bank"
@@ -102,8 +102,8 @@ export default function Checkout({ cart, user }) {
                                                     className="mr-2"
                                                 />
                                                 Bank Transfer
-                                            </label>
-                                            <label className="flex items-center">
+                                            </label> */}
+                                            {/* <label className="flex items-center">
                                                 <input
                                                     type="radio"
                                                     value="paypal"
@@ -112,7 +112,7 @@ export default function Checkout({ cart, user }) {
                                                     className="mr-2"
                                                 />
                                                 PayPal
-                                            </label>
+                                            </label> */}
                                         </div>
                                     </div>
 
@@ -178,6 +178,6 @@ export default function Checkout({ cart, user }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+         <AuthenticatedLayout> 
     );
 }
