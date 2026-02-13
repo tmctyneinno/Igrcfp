@@ -88,7 +88,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                     <img
                                         src={course?.image_url || '/images/fallback-course.jpg'}
                                         alt={course?.title || 'Course image'}
-                                       className="w-full h-full object-cover transition-transform duration-300 hover:scale-110 cursor-zoom-in"
+                                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-110 cursor-zoom-in"
                                         onError={(e) => {
                                             e.target.src = '/images/fallback-course.jpg';
                                         }}
@@ -155,6 +155,17 @@ export default function Certification({ courses }) { // Remove default value fro
                                                 FREE
                                             </span>
                                         )}
+                                        
+                                        {/* ENROLL BUTTON */}
+                                        <Link
+                                            href={`/courses/${course?.slug || '#'}/enroll`}
+                                            className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+                                        >
+                                            Enroll Now
+                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                            </svg>
+                                        </Link>
                                     </div>
 
                                     {/* BADGES */}
