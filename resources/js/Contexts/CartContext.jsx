@@ -25,8 +25,8 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
         return new Promise((resolve, reject) => {
-            // Make sure the route exists
-            const url = route('cart.add', course.id);
+            // FIXED: Use the correct route name 'dashboard.cart.add' instead of 'cart.add'
+            const url = route('dashboard.cart.add', course.id);
             console.log('Adding to cart:', url); // Debug log
             
             router.post(url, {}, {
