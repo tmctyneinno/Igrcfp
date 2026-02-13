@@ -12,14 +12,15 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/outline';
-import axios from 'axios'; // Make sure to install axios: npm install axios
 
 export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
     const user = props.auth.user; 
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
-    const [cartCount, setCartCount] = useState(0);
+    
+    // Get cart count from shared props (from HandleInertiaRequests middleware)
+    const cartCount = props.cart_count || 0;
 
     // Check for enrollment redirect on dashboard load
     useEffect(() => {
@@ -38,31 +39,9 @@ export default function AuthenticatedLayout({ header, children }) {
             }, 100);
         }
         
-        // Fetch real cart count from database
-        fetchCartCount();
-        
-        // Optional: Set up event listener for cart updates
-        window.addEventListener('cart-updated', fetchCartCount);
-        
-        return () => {
-            window.removeEventListener('cart-updated', fetchCartCount);
-        };
+        // You can still fetch notification count if needed
+        setNotificationCount(3); // Mock notification count
     }, []);
-
-    const fetchCartCount = async () => {
-        try {
-            // Fetch real cart count from your API
-            const response = await axios.get('/api/cart/count');
-            setCartCount(response.data.count);
-            
-            // Also fetch notification count if needed
-            setNotificationCount(3); // You can make this dynamic too
-        } catch (error) {
-            console.error('Error fetching cart count:', error);
-            // Fallback to 0 on error
-            setCartCount(0);
-        }
-    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -120,7 +99,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Link>
                             </div>
 
-                            {/* Cart Icon with Dynamic Count */}
+                            {/* Cart Icon with Dynamic Count from Backend */}
                             <div className="relative">
                                 <Link
                                     href={route('cart.index')}
