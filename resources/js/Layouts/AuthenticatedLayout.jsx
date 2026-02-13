@@ -38,7 +38,7 @@ export default function AuthenticatedLayout({ header, children }) {
         }
         
         // You can still fetch notification count if needed
-        setNotificationCount(0); // Mock notification count
+        setNotificationCount(3); // Mock notification count
     }, []);
 
     return (
@@ -91,7 +91,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <BellIcon className="h-6 w-6" /> 
                                     {notificationCount > 0 && (
                                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                           0 {notificationCount > 9 ? '9+' : notificationCount}
+                                           0
+                                            {/* {notificationCount > 9 ? '9+' : notificationCount} */}
                                         </span>
                                     )}
                                 </Link>
