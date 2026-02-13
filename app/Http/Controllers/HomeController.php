@@ -24,7 +24,7 @@ class HomeController extends Controller
             ->inRandomOrder()
             ->take(8)
             ->get();
-
+ 
         // Get 4 random courses from the remaining
         $randomCourses = Course::published()
             ->withCount('modules')
