@@ -17,7 +17,7 @@ class CartController extends Controller
             ->latest()
             ->first();
 
-        return Inertia::render('Cart/Index', [
+        return Inertia::render('Dashboard/Cart/Index', [
             'cart' => $cart ? [
                 'id' => $cart->id,
                 'item_count' => $cart->item_count,
