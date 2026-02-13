@@ -227,11 +227,12 @@ class HomeController extends Controller
     }
 
 
+  
     public function courses(Request $request)
     {
         $query = Course::published()
             ->withCount('modules')
-            ->with(['category', 'instructor']); // Eager load relationships
+            ->with(['instructor']); // Only load instructor relationship if it exists
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
@@ -247,11 +248,6 @@ class HomeController extends Controller
         // Filter by level
         if ($request->has('level') && !empty($request->level)) {
             $query->where('level', $request->level);
-        }
-
-        // Filter by category
-        if ($request->has('category') && !empty($request->category)) {
-            $query->where('category_id', $request->category);
         }
 
         // Filter by price type
@@ -294,9 +290,9 @@ class HomeController extends Controller
 
         // Get filter options for dropdowns
         $levels = Course::published()->select('level')->distinct()->pluck('level');
-        // $categories = \App\Models\Category::whereHas('courses', function($q) {
-        //     $q->published();
-        // })->get(['id', 'name', 'slug']);
+        
+        // Get unique formats if they exist
+        $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
 
         // Paginate results
         $courses = $query->paginate(12)->withQueryString();
@@ -319,11 +315,7 @@ class HomeController extends Controller
                 'is_featured' => $course->is_featured,
                 'is_popular' => $course->is_popular,
                 'format' => $course->format,
-                'category' => $course->category ? [
-                    'id' => $course->category->id,
-                    'name' => $course->category->name,
-                    'slug' => $course->category->slug
-                ] : null,
+                'tags' => $course->tags,
                 'instructor' => $course->instructor ? [
                     'name' => $course->instructor->name,
                     'avatar' => $course->instructor->avatar
@@ -336,19 +328,19 @@ class HomeController extends Controller
             'filters' => [
                 'search' => $request->search ?? '',
                 'level' => $request->level ?? '',
-                'category' => $request->category ?? '',
                 'price_type' => $request->price_type ?? '',
                 'featured' => $request->featured ?? false,
                 'popular' => $request->popular ?? false,
-                'sort_field' => $request->sort_field ?? 'created_at',
-                'sort_direction' => $request->sort_direction ?? 'desc',
+                'format' => $request->format ?? '',
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
             ],
             'courses' => $courses,
             'filterOptions' => [
                 'levels' => $levels,
-                // 'categories' => $categories,
+                'formats' => $formats,
                 'priceTypes' => [
-                    ['value' => 'all', 'label' => 'All Prices'],
+                    ['value' => '', 'label' => 'All Prices'],
                     ['value' => 'free', 'label' => 'Free'],
                     ['value' => 'paid', 'label' => 'Paid'],
                     ['value' => 'discounted', 'label' => 'Discounted'],
@@ -365,5 +357,6 @@ class HomeController extends Controller
             ]
         ]);
     }
+
    
 }
