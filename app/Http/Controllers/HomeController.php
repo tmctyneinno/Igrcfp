@@ -231,8 +231,8 @@ class HomeController extends Controller
     public function courses(Request $request)
     {
         $query = Course::published()
-            ->withCount('modules')
-            ->with(['instructor']); // Only load instructor relationship if it exists
+            ->withCount('modules');
+            // ->with(['instructor']); // Only load instructor relationship if it exists
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
