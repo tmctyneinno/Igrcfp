@@ -64,6 +64,7 @@ export default function Courses({ courses, filters, filterOptions }) {
     };
 
     return (
+        <GuestLayout auth={auth}>
         <div className="min-h-screen bg-gray-50">
             {/* Header Section */}
             <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
@@ -339,5 +340,6 @@ export default function Courses({ courses, filters, filterOptions }) {
                 </div>
             </section>
         </div>
+        </GuestLayout>
     );
 }
