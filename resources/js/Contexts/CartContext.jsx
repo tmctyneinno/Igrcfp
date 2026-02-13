@@ -20,7 +20,7 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Save cart to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
-    }, [cartItems]);
+    }, [cartItems]); 
 
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {

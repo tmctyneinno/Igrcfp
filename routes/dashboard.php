@@ -21,7 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courses/{course:slug}', [DashboardController::class, 'courseSlug'])->name('courses.show');
     // Cart routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
     Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
