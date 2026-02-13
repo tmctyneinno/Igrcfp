@@ -6,7 +6,7 @@ import MostPopular from '@/Pages/Dashboard/Learner/MostPopular';
 import { useCart } from '@/contexts/CartContext'; 
 
 export default function Dashboard({ auth, courses, enrolledCourses, popularCourses }) {
-    const { cartCount, cartItems } = useCart();
+    const { cartCount, cartItems } = useCart(); 
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
