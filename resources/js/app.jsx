@@ -77,7 +77,7 @@ createInertiaApp({
         const root = createRoot(el);
         root.render(
             <EnrollmentProvider user={props.auth?.user}>
-                 <CartProvider> {/* Add CartProvider here */}
+                 <CartProvider> 
                     <App {...props} />
                 </CartProvider>
             </EnrollmentProvider>
