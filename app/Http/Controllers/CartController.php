@@ -43,12 +43,17 @@ class CartController extends Controller
 
     public function add(Request $request, Course $course)
     {
-         // Add this debug line
-        \Log::info('Cart add method hit', [
-            'user_id' => $request->user()?->id,
-            'course_id' => $course->id,
-            'url' => $request->url()
-        ]);
+        // Debug - check if user is authenticated
+    if (!$request->user()) {
+        \Log::error('Cart add - User not authenticated');
+        return response()->json(['error' => 'Not authenticated'], 401);
+    }
+    
+    \Log::info('Cart add - User authenticated', [
+        'user_id' => $request->user()->id,
+        'course_id' => $course->id,
+        'url' => $request->url()
+    ]);
         
         if (!$course->status) {
             return redirect()->back()->with('error', 'Course not available.');
