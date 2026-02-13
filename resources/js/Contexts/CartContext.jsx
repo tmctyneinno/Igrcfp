@@ -29,9 +29,7 @@ export function CartProvider({ children, initialCount = 0 }) {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
-                    // Check if course was added successfully
                     if (page.props.flash?.success) {
-                        // Add to local state
                         const newCartItems = [...cartItems, { 
                             id: course.id, 
                             title: course.title,
@@ -45,14 +43,12 @@ export function CartProvider({ children, initialCount = 0 }) {
                         setCartItems(newCartItems);
                         setCartCount(newCartItems.length);
                         
-                        // Show success message (optional)
                         if (page.props.flash.success) {
                             alert(page.props.flash.success);
                         }
                         
                         resolve(true);
                     } else {
-                        // Handle case where course might already be in cart
                         if (page.props.flash?.info) {
                             alert(page.props.flash.info);
                         }
@@ -70,17 +66,13 @@ export function CartProvider({ children, initialCount = 0 }) {
 
     // Remove from cart
     const removeFromCart = (courseId) => {
-        // Find the cart item ID from your items
         const item = cartItems.find(item => item.id === courseId);
         if (!item) return;
         
-        // You'll need the cart_item_id - this might need adjustment
-        // based on how your backend identifies cart items
         router.delete(route('cart.remove', courseId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                // Remove from local state
                 const newCartItems = cartItems.filter(item => item.id !== courseId);
                 setCartItems(newCartItems);
                 setCartCount(newCartItems.length);
@@ -131,4 +123,10 @@ export function useCart() {
         throw new Error('useCart must be used within CartProvider');
     }
     return context;
+}
+
+// Add this export if you want a separate hook for just the count
+export function useCartCount() {
+    const { cartCount } = useCart();
+    return cartCount;
 }
