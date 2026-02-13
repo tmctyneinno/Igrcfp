@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { EnrollmentProvider } from './Contexts/EnrollmentContext';
+import { CartProvider } from './Contexts/CartContext';
 
 AOS.init({
     duration: 1000,
