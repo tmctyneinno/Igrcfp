@@ -13,6 +13,7 @@ class Cart extends Model
         'user_id',
         'session_id',
         'status',
+        'course_id',
         'total_amount',
         'item_count'
     ];
