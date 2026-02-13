@@ -67,7 +67,7 @@ class CartController extends Controller
         // Get updated count for response
         $cartCount = $cart->items()->count();
 
-        return redirect()->route('cart.index')->with([
+        return redirect()->route('dashboard.cart.index')->with([
             'success' => 'Course added to cart.',
             'cart_count' => $cartCount
         ]);
