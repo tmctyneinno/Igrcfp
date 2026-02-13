@@ -23,48 +23,19 @@ export function CartProvider({ children, initialCount = 0 }) {
     }, [cartItems]);
 
     // Add to cart - connects to backend CartController
-    const addToCart = (course) => {
+   const addToCart = (course) => {
     return new Promise((resolve, reject) => {
-        const url = route('dashboard.cart.add', course.id);
+        // Use course.slug instead of course.id
+        const url = route('dashboard.cart.add', course.slug);
         console.log('Adding to cart - URL:', url);
-        console.log('Course ID:', course.id);
-        console.log('Route name:', 'dashboard.cart.add');
+        console.log('Route parameter:', course.slug);
         
-        // Try with fetch API instead of router.post to see if it's an Inertia issue
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            console.log('Fetch response status:', response.status);
-            if (response.redirected) {
-                console.log('Redirected to:', response.url);
-                // If redirected, manually go to that page
-                window.location.href = response.url;
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('Fetch response data:', data);
-            resolve(true);
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            reject(error);
-        });
-        
-        // Comment out the router.post for now
-        /*
         router.post(url, {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
                 console.log('Success response:', page);
+                
                 if (page.props.flash?.success) {
                     const existingItem = cartItems.find(item => item.id === course.id);
                     
@@ -96,7 +67,6 @@ export function CartProvider({ children, initialCount = 0 }) {
                 reject(errors);
             }
         });
-        */
     });
 };
 
