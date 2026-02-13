@@ -229,10 +229,8 @@ export default function NavBar({ auth }) {
                             </svg>
                         </button>
                         
-                        {/* Invisible hover bridge */}
-                        <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
+                        {/* <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                         
-                        {/* Dropdown Menu */}
                         <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
                             <Link href="/certifications/cgrc" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
                                 Certified GRC Professional (CGRC)
@@ -247,7 +245,7 @@ export default function NavBar({ auth }) {
                             <Link href="/certifications/apply" className="block px-4 py-3 text-blue-900 hover:bg-blue-50 font-medium transition duration-200">
                                 Apply for Certification
                             </Link>
-                        </div>
+                        </div> */}
                     </div>
                     
                     <Link 
