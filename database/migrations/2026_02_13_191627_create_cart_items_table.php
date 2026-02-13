@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cart_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('cart_id')->constrained()->onDelete('cascade');
-            $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->decimal('price', 10, 2);
-            $table->integer('quantity')->default(1);
-            $table->timestamps();
+        Schema::table('carts', function (Blueprint $table) {
+            if (!Schema::hasColumn('carts', 'total_amount')) {
+                $table->decimal('total_amount', 10, 2)->default(0)->after('status');
+            }
             
-            // Prevent duplicate courses in the same cart
-            $table->unique(['cart_id', 'course_id']);
+            if (!Schema::hasColumn('carts', 'item_count')) {
+                $table->integer('item_count')->default(0)->after('total_amount');
+            }
         });
     }
 
@@ -29,6 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cart_items');
+        Schema::table('carts', function (Blueprint $table) {
+            if (Schema::hasColumn('carts', 'total_amount')) {
+                $table->dropColumn('total_amount');
+            }
+            
+            if (Schema::hasColumn('carts', 'item_count')) {
+                $table->dropColumn('item_count');
+            }
+        });
     }
 };
