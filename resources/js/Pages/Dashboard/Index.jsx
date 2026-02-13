@@ -3,10 +3,10 @@ import { Head } from '@inertiajs/react';
 import LearningCenter from '@/Pages/Dashboard/Learner/LearningCenter';
 import MyLearning from '@/Pages/Dashboard/Learner/MyLearning';
 import MostPopular from '@/Pages/Dashboard/Learner/MostPopular';
-import { useCart } from '@/contexts/CartContext'; 
+import { useCartCount } from '@/contexts/CartContext'; 
 
 export default function Dashboard({ auth, courses, enrolledCourses, popularCourses }) {
-    const { cartCount, cartItems } = useCart(); 
+    const { cartCount, cartItems } = useCartCount(); 
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
