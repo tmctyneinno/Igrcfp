@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { router } from '@inertiajs/react';
 
 const CartContext = createContext();
 
@@ -35,6 +36,13 @@ export function CartProvider({ children, initialCount = 0 }) {
             }];
             setCartItems(newCartItems);
             setCartCount(newCartItems.length);
+            
+            // Optionally sync with backend
+            router.post(route('cart.add', course.id), {}, {
+                preserveState: true,
+                preserveScroll: true,
+            });
+            
             return true;
         }
         return false;
@@ -44,11 +52,23 @@ export function CartProvider({ children, initialCount = 0 }) {
         const newCartItems = cartItems.filter(item => item.id !== courseId);
         setCartItems(newCartItems);
         setCartCount(newCartItems.length);
+        
+        // Optionally sync with backend
+        router.delete(route('cart.remove', courseId), {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const clearCart = () => {
         setCartItems([]);
         setCartCount(0);
+        
+        // Optionally sync with backend
+        router.post(route('cart.clear'), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const value = {
@@ -68,4 +88,9 @@ export function useCart() {
         throw new Error('useCart must be used within CartProvider');
     }
     return context;
+}
+
+export function useCartCount() {
+    const { cartCount } = useCart();
+    return cartCount;
 }
