@@ -141,6 +141,15 @@ class CourseController extends Controller
             return redirect()->route('courses.index')->with('error', 'Course not available.');
         }
 
+        // Check if user is logged in
+        if (!$request->user()) {
+            // Store the intended course in session for redirect after login
+            session(['intended_enrollment' => $course->slug]);
+            
+            // Redirect to login with a message
+            return redirect()->route('login')->with('message', 'Please login to enroll in this course.');
+        }
+
         return Inertia::render('Courses/Enroll', [
             'course' => [
                 'id' => $course->id,
