@@ -107,7 +107,7 @@ export default function NavBar({ auth }) {
                                             <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
                                         </div>
                                     </Link>
-                                    <div className="ml-5 mt-2 space-y-1">
+                                    {/* <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Advanced Diploma in GRC & Financial Crime Prevention
                                         </Link>
@@ -117,7 +117,7 @@ export default function NavBar({ auth }) {
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Board Governance & Ethical Leadership
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 
                                 {/* Financial Crime Prevention */}
@@ -128,7 +128,7 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
                                     </div>
                                     </Link>
-                                    <div className="ml-5 mt-2 space-y-1">
+                                    {/* <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Advanced AML & Financial Intelligence
                                         </Link>
@@ -138,7 +138,7 @@ export default function NavBar({ auth }) {
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Sanctions Risk & Screening
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 
                                 {/* Crypto & Digital Assets */}
@@ -149,7 +149,7 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
                                     </div>
                                     </Link>
-                                    <div className="ml-5 mt-2 space-y-1">
+                                    {/* <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Crypto-Asset Regulation & Compliance
                                         </Link>
@@ -159,7 +159,7 @@ export default function NavBar({ auth }) {
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             DeFi Risk & Oversight
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 
                                 {/* Cybersecurity & Digital Risk */}
@@ -170,7 +170,7 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
                                     </div>
                                     </Link>
-                                    <div className="ml-5 mt-2 space-y-1">
+                                    {/* <div className="ml-5 mt-2 space-y-1">
                                         <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Cyber Risk Governance
                                         </Link>
@@ -180,7 +180,7 @@ export default function NavBar({ auth }) {
                                         <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Incident Response & Breach Management
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 
                                 {/* AI & Emerging Technology */}
@@ -191,7 +191,7 @@ export default function NavBar({ auth }) {
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
                                     </div>
                                     </Link>
-                                    <div className="ml-5 mt-2 space-y-1">
+                                    {/* <div className="ml-5 mt-2 space-y-1">
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             AI Governance & Ethics
                                         </Link>
@@ -201,14 +201,14 @@ export default function NavBar({ auth }) {
                                         <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
                                             Data Governance & Protection
                                         </Link>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             
                             {/* Footer */}
                             <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
                                 <Link 
-                                    href="/programmes/all-courses" 
+                                    href="courses" 
                                     className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
                                 >
                                     View All Programmes
