@@ -21,7 +21,7 @@ class CheckoutController extends Controller
             return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
         }
 
-        return Inertia::render('DashboardCheckout/Index', [
+        return Inertia::render('Dashboard/Checkout/Index', [
             'cart' => [
                 'id' => $cart->id,
                 'item_count' => $cart->item_count,
@@ -88,7 +88,7 @@ class CheckoutController extends Controller
         }
 
         // Redirect to payment processing (implement based on your payment gateway)
-        return redirect()->route('payment.process', [
+        return redirect()->route('dashboard.payment.process', [
             'cart_id' => $cart->id,
             'amount' => $cart->total_amount
         ]);
@@ -96,7 +96,7 @@ class CheckoutController extends Controller
 
     public function success(Request $request)
     {
-        return Inertia::render('dashboard.Checkout/Success', [
+        return Inertia::render('Dashboard/Checkout/Success', [
             'enrollments' => $request->enrollments ?? []
         ]);
     }
