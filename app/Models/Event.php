@@ -13,7 +13,7 @@ class Event extends Model
 
     protected $fillable = [
         'title',
-        'slug',
+        'slug', 
         'description',
         'short_description',
         'image',
