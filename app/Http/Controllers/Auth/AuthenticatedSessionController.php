@@ -59,7 +59,7 @@ class AuthenticatedSessionController extends Controller
             return redirect($redirect);
         }
  
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard.index', absolute: false));
     }
 
     /**
@@ -83,7 +83,7 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard.index', absolute: false));
     }
 
     /**
