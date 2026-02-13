@@ -62,8 +62,8 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
                                 <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    href={route('dashboard.index')}
+                                    active={route().current('dashboard.index')}
                                 >
                                     Dashboard
                                 </NavLink>
@@ -193,7 +193,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* Mobile menu */}
                 <div className={`${showingNavigationDropdown ? 'block' : 'hidden'} sm:hidden`}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('dashboard.index')} active={route().current('dashboard.index')}>
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('courses.index')} active={route().current('courses.index')}>
