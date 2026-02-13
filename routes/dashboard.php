@@ -21,7 +21,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Cart routes
     Route::get('/cart/index', [CartController::class, 'index'])->name('dashboard.cart.index');
     Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
-    // Route::post('/dashboard/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
     Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 

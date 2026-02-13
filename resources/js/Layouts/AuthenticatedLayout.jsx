@@ -101,7 +101,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             {/* Cart Icon with Dynamic Count from Backend */}
                             <div className="relative">
                                 <Link
-                                    href={route('cart.index')}
+                                    href={route('dashboard.cart.index')}
                                     className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition relative"
                                 >
                                     <ShoppingCartIcon className="h-6 w-6" />
@@ -214,7 +214,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </span>
                                 )}
                             </Link>
-                            <Link href={route('cart.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
+                            <Link href={route('dashboard.cart.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
                                 <ShoppingCartIcon className="h-6 w-6" />
                                 {cartCount > 0 && (
                                     <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">
