@@ -101,7 +101,7 @@ export default function Cart({ cart }) {
                                 </Link>
                                 
                                 <Link
-                                    href={route('courses.index')}
+                                    href={route('dashboard.index')}
                                     className="block w-full text-center py-2 px-4 mt-3 text-blue-900 hover:text-blue-700 font-semibold"
                                 >
                                     Explore More Programs
@@ -120,7 +120,7 @@ export default function Cart({ cart }) {
                             href={route('dashboard.index')}
                             className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
                         >
-                            Browse Courses
+                            Explore more program
                         </Link>
                     </div>
                 )} 
