@@ -16,6 +16,9 @@ export default function Checkout({ cart, user }) {
         post(route('checkout.process'));
     };
 
+    // Parse total_amount as a number
+    const totalAmount = parseFloat(cart?.total_amount) || 0;
+
     return (
         <GuestLayout>
             <Head title="Checkout" />
@@ -136,7 +139,7 @@ export default function Checkout({ cart, user }) {
                                         disabled={processing}
                                         className="w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 disabled:opacity-50"
                                     >
-                                        {processing ? 'Processing...' : `Pay $${cart.total_amount.toFixed(2)}`}
+                                        {processing ? 'Processing...' : `Pay $${totalAmount.toFixed(2)}`}
                                     </button>
                                 </div>
                             </form>
@@ -149,16 +152,19 @@ export default function Checkout({ cart, user }) {
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
                             
                             <div className="space-y-3 mb-4">
-                                {cart.items.map((item) => (
-                                    <div key={item.id} className="flex justify-between text-sm">
-                                        <span className="text-gray-600">{item.title}</span>
-                                        <span className="text-gray-900 font-medium">${item.price}</span>
-                                    </div>
-                                ))}
+                                {cart?.items?.map((item) => {
+                                    const itemPrice = parseFloat(item.price) || 0;
+                                    return (
+                                        <div key={item.id} className="flex justify-between text-sm">
+                                            <span className="text-gray-600">{item.title}</span>
+                                            <span className="text-gray-900 font-medium">${itemPrice.toFixed(2)}</span>
+                                        </div>
+                                    );
+                                })}
                                 
                                 <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
                                     <span>Total</span>
-                                    <span>${cart.total_amount.toFixed(2)}</span>
+                                    <span>${totalAmount.toFixed(2)}</span>
                                 </div>
                             </div>
 
