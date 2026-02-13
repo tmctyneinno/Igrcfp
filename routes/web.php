@@ -77,3 +77,4 @@ Route::prefix('programmes')->group(function () {
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
 });
 Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
+ 
