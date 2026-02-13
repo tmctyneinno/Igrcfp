@@ -226,9 +226,6 @@ class HomeController extends Controller
         return Inertia::render('PrivacyPreferenceCenter/Index');
     }
 
-    public function courses(){
-        return Inertia::render('Courses/Index');
-    }
 
     public function courses(Request $request)
     {
