@@ -377,4 +377,16 @@ class User extends Authenticatable
     {
         return $this->enrollments()->where('course_id', $courseId)->exists();
     }
+
+    // Add relationship to carts
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function activeCart()
+    {
+        return $this->hasOne(Cart::class)->where('status', 'active');
+    }
+    
 }
