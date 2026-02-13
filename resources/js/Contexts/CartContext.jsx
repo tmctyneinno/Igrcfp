@@ -25,7 +25,7 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
         return new Promise((resolve, reject) => {
-            router.post(route('cart.add', course.id), {}, {
+            router.post(route('dashboard.cart.add', course.id), {}, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
@@ -69,7 +69,7 @@ export function CartProvider({ children, initialCount = 0 }) {
         const item = cartItems.find(item => item.id === courseId);
         if (!item) return;
         
-        router.delete(route('cart.remove', courseId), {
+        router.delete(route('dashboard.cart.remove', courseId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
@@ -89,7 +89,7 @@ export function CartProvider({ children, initialCount = 0 }) {
 
     // Clear cart
     const clearCart = () => {
-        router.post(route('cart.clear'), {}, {
+        router.post(route('dashboard.cart.clear'), {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
