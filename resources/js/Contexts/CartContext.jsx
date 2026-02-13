@@ -24,49 +24,81 @@ export function CartProvider({ children, initialCount = 0 }) {
 
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
-        return new Promise((resolve, reject) => {
-            const url = route('dashboard.cart.add', course.id);
-            console.log('Adding to cart:', url);
-            
-            router.post(url, {}, {
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess: (page) => {
-                    console.log('Success response:', page);
-                    
-                    if (page.props.flash?.success) {
-                        const existingItem = cartItems.find(item => item.id === course.id);
-                        
-                        if (!existingItem) {
-                            const newCartItems = [...cartItems, { 
-                                id: course.id, 
-                                title: course.title,
-                                price: course.price,
-                                discount_price: course.discount_price,
-                                image_url: course.image_url || course.image,
-                                slug: course.slug,
-                                level: course.level,
-                                duration: course.duration
-                            }];
-                            setCartItems(newCartItems);
-                            setCartCount(newCartItems.length);
-                        }
-                        
-                        alert(page.props.flash.success);
-                        resolve(true);
-                    } else if (page.props.flash?.info) {
-                        alert(page.props.flash.info);
-                        resolve(false);
-                    }
-                },
-                onError: (errors) => {
-                    console.error('Error adding to cart:', errors);
-                    alert('Failed to add course to cart. Please try again.');
-                    reject(errors);
-                }
-            });
+    return new Promise((resolve, reject) => {
+        const url = route('dashboard.cart.add', course.id);
+        console.log('Adding to cart - URL:', url);
+        console.log('Course ID:', course.id);
+        console.log('Route name:', 'dashboard.cart.add');
+        
+        // Try with fetch API instead of router.post to see if it's an Inertia issue
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            console.log('Fetch response status:', response.status);
+            if (response.redirected) {
+                console.log('Redirected to:', response.url);
+                // If redirected, manually go to that page
+                window.location.href = response.url;
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Fetch response data:', data);
+            resolve(true);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            reject(error);
         });
-    };
+        
+        // Comment out the router.post for now
+        /*
+        router.post(url, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (page) => {
+                console.log('Success response:', page);
+                if (page.props.flash?.success) {
+                    const existingItem = cartItems.find(item => item.id === course.id);
+                    
+                    if (!existingItem) {
+                        const newCartItems = [...cartItems, { 
+                            id: course.id, 
+                            title: course.title,
+                            price: course.price,
+                            discount_price: course.discount_price,
+                            image_url: course.image_url || course.image,
+                            slug: course.slug,
+                            level: course.level,
+                            duration: course.duration
+                        }];
+                        setCartItems(newCartItems);
+                        setCartCount(newCartItems.length);
+                    }
+                    
+                    alert(page.props.flash.success);
+                    resolve(true);
+                } else if (page.props.flash?.info) {
+                    alert(page.props.flash.info);
+                    resolve(false);
+                }
+            },
+            onError: (errors) => {
+                console.error('Error adding to cart:', errors);
+                alert('Failed to add course to cart. Please try again.');
+                reject(errors);
+            }
+        });
+        */
+    });
+};
 
     // Remove from cart
     const removeFromCart = (courseId) => {
