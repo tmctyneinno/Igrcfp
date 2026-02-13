@@ -25,6 +25,7 @@ class Event extends Model
         'address',
         'venue',
         'capacity',
+        'meeting_link',
         'available_seats',
         'status',
         'is_featured',
