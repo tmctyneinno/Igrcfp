@@ -66,7 +66,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
 
     return (
         <GuestLayout auth={auth}>
-            <Head title={title} />
+            <Head title='Courses | IGRCFP' />
             <div className="min-h-screen bg-gray-50">
                 {/* Header Section */}
                 <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
