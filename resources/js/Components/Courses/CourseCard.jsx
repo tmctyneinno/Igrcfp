@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import CourseCard from '@/Components/c';
-import SearchBar from '@/Components/SearchBar';
+import CourseCard from '@/Components/Courses/CourseCard';
+import SearchBar from '@/Components/Courses/SearchBar';
 
 export default function Courses({ courses, filters, filterOptions }) {
     const { url } = usePage();
