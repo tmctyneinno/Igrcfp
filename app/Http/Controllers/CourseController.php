@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+
 use Inertia\Inertia;
 use Auth;
 use Illuminate\Support\Facades\Storage;
@@ -134,12 +135,12 @@ class CourseController extends Controller
         ]); 
     }
 
-    public function enroll(Course $course)
+    public function enroll(Request $request, Course $course)
     {
         // Check if course is published
-        // if (!$course->is_published) {
-        //     return redirect()->route('courses.index')->with('error', 'Course not available.');
-        // }
+        if (!$course->is_pstublished) {
+            return redirect()->route('courses.index')->with('error', 'Course not available.');
+        }
 
         // Check if user is logged in
         if (!$request->user()) {
