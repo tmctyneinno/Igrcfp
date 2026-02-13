@@ -8,7 +8,7 @@ import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function Courses({ courses, filters, filterOptions }) {
+export default function Courses({ auth, courses, filters, filterOptions }) {
     const { url } = usePage();
     const [showFilters, setShowFilters] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState(filters);
