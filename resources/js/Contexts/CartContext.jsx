@@ -20,38 +20,44 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Save cart to localStorage when it changes
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
-    }, [cartItems]); 
+    }, [cartItems]);
 
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
         return new Promise((resolve, reject) => {
-            router.post(route('dashboard.cart.add', course.id), {}, {
+            // Make sure the route exists
+            const url = route('cart.add', course.id);
+            console.log('Adding to cart:', url); // Debug log
+            
+            router.post(url, {}, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
+                    console.log('Success response:', page); // Debug log
+                    
                     if (page.props.flash?.success) {
-                        const newCartItems = [...cartItems, { 
-                            id: course.id, 
-                            title: course.title,
-                            price: course.price,
-                            discount_price: course.discount_price,
-                            image_url: course.image_url || course.image,
-                            slug: course.slug,
-                            level: course.level,
-                            duration: course.duration
-                        }];
-                        setCartItems(newCartItems);
-                        setCartCount(newCartItems.length);
+                        // Check if already in cart (backend should prevent duplicates)
+                        const existingItem = cartItems.find(item => item.id === course.id);
                         
-                        if (page.props.flash.success) {
-                            alert(page.props.flash.success);
+                        if (!existingItem) {
+                            const newCartItems = [...cartItems, { 
+                                id: course.id, 
+                                title: course.title,
+                                price: course.price,
+                                discount_price: course.discount_price,
+                                image_url: course.image_url || course.image,
+                                slug: course.slug,
+                                level: course.level,
+                                duration: course.duration
+                            }];
+                            setCartItems(newCartItems);
+                            setCartCount(newCartItems.length);
                         }
                         
+                        alert(page.props.flash.success);
                         resolve(true);
-                    } else {
-                        if (page.props.flash?.info) {
-                            alert(page.props.flash.info);
-                        }
+                    } else if (page.props.flash?.info) {
+                        alert(page.props.flash.info);
                         resolve(false);
                     }
                 },
@@ -69,7 +75,7 @@ export function CartProvider({ children, initialCount = 0 }) {
         const item = cartItems.find(item => item.id === courseId);
         if (!item) return;
         
-        router.delete(route('dashboard.cart.remove', courseId), {
+        router.delete(route('cart.remove', courseId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
@@ -89,7 +95,7 @@ export function CartProvider({ children, initialCount = 0 }) {
 
     // Clear cart
     const clearCart = () => {
-        router.post(route('dashboard.cart.clear'), {}, {
+        router.post(route('cart.clear'), {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
@@ -123,10 +129,4 @@ export function useCart() {
         throw new Error('useCart must be used within CartProvider');
     }
     return context;
-}
-
-// Add this export if you want a separate hook for just the count
-export function useCartCount() {
-    const { cartCount } = useCart();
-    return cartCount;
 }
