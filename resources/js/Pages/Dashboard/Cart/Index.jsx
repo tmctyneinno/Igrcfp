@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Cart({ cart }) {
     const { props } = usePage();
@@ -10,7 +10,7 @@ export default function Cart({ cart }) {
     };
 
     return (
-        <GuestLayout> 
+        <AuthenticatedLayout> 
             <Head title="Shopping Cart" />
             
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -125,6 +125,6 @@ export default function Cart({ cart }) {
                     </div>
                 )} 
             </div>
-        </GuestLayout>
+        </AuthenticatedLayout>
     );
 }
