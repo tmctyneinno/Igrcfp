@@ -32,9 +32,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
     // Stripe payment routes
-Route::post('/payment/stripe/create-intent', [CheckoutController::class, 'createPaymentIntent'])->name('payment.stripe.intent');
-Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('payment.stripe.success');
-Route::get('/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
+    Route::post('/payment/stripe/create-intent', [CheckoutController::class, 'createPaymentIntent'])->name('payment.stripe.intent');
+    Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('payment.stripe.success');
+    Route::get('/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
 });
 
 
