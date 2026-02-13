@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('carts', function (Blueprint $table) {
-            if (Schema::hasColumn('carts', 'user_id')) {
+            // Check if course_id column exists before trying to drop it
+            if (Schema::hasColumn('carts', 'course_id')) {
                 $table->dropColumn('course_id');
             }
         });
@@ -18,7 +19,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('carts', function (Blueprint $table) {
-            $table->foreignId('course_id')->nullable()->constrained();
+            // Only add the column back if it doesn't exist
+            if (!Schema::hasColumn('carts', 'course_id')) {
+                $table->foreignId('course_id')->nullable()->constrained();
+            }
         });
     }
 };
