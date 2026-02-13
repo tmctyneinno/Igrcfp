@@ -13,14 +13,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
-    Route::get('/cart/index', [DashboardController::class, 'cart'])->name('cart.index');
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
 
     Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
     Route::get('/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
     Route::get('/courses/{course:slug}', [DashboardController::class, 'courseSlug'])->name('courses.show');
     // Cart routes
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/cart/index', [CartController::class, 'index'])->name('dashboard.cart.index');
     Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
     // Route::post('/dashboard/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
     Route::delete('/cart/remove/{item}', [CartController::class, 'remove'])->name('cart.remove');
