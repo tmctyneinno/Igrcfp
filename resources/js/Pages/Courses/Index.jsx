@@ -1,7 +1,7 @@
 // resources/js/Pages/Courses/Index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Link, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CourseCard from '@/components/Courses/CourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
