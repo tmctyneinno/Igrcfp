@@ -26,14 +26,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
     // Checkout routes
-    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
-    Route::get('/checkout/success/{enrollment}', [CheckoutController::class, 'success'])->name('checkout.success');
-    Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+    Route::get('dashboard/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('dashboard/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('dashboard/checkout/success/{enrollment}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('dashboard/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
     // Stripe payment routes
     Route::post('/payment/stripe/create-intent', [CheckoutController::class, 'createPaymentIntent'])->name('payment.stripe.intent');
     Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('payment.stripe.success');
+    // Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
     Route::get('/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
 });
 
