@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
+import { useCart } from '@/contexts/CartContext'; // Import your cart context
 
 export default function MostPopular({ initialCourses = [] }) {
+    const { addToCart, cartItems } = useCart(); // Use your existing cart method
     const [addingToCart, setAddingToCart] = useState({});
 
     // Helper function to get level badge color
@@ -32,18 +34,47 @@ export default function MostPopular({ initialCourses = [] }) {
         return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
 
-    // Handle Add to Cart
-    const handleAddToCart = (courseId, e) => {
+    // Check if course is already in cart
+    const isInCart = (courseId) => {
+        return cartItems?.some(item => item.id === courseId);
+    };
+
+    // Handle Add to Cart using your existing cart method
+    const handleAddToCart = async (course, e) => {
         e.preventDefault();
         e.stopPropagation();
         
-        setAddingToCart(prev => ({ ...prev, [courseId]: true }));
+        // Check if already in cart
+        if (isInCart(course.id)) {
+            alert('Course is already in your cart!');
+            return;
+        }
+
+        setAddingToCart(prev => ({ ...prev, [course.id]: true }));
         
-        setTimeout(() => {
-            console.log(`Adding course ${courseId} to cart`);
-            setAddingToCart(prev => ({ ...prev, [courseId]: false }));
-            alert(`Course added to cart successfully!`);
-        }, 1000);
+        try {
+            // Use your existing addToCart method from CartContext
+            const success = await addToCart({
+                id: course.id,
+                title: course.title,
+                slug: course.slug,
+                price: course.price,
+                discount_price: course.discount_price,
+                image_url: course.image || course.image_url,
+                level: course.level,
+                duration: course.duration
+            });
+
+            if (success) {
+                // Show success message (you can replace with toast notification)
+                alert('Course added to cart successfully!');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Failed to add course to cart. Please try again.');
+        } finally {
+            setAddingToCart(prev => ({ ...prev, [course.id]: false }));
+        }
     };
 
     return (
@@ -93,6 +124,7 @@ export default function MostPopular({ initialCourses = [] }) {
                             ? Math.round(((price - discountPrice) / price) * 100) 
                             : 0;
                         const isAdding = addingToCart[course.id] || false;
+                        const inCart = isInCart(course.id);
 
                         return (
                             <div
@@ -185,33 +217,46 @@ export default function MostPopular({ initialCourses = [] }) {
                                             </span>
                                         )}
                                         
-                                        
                                         {/* ADD TO CART BUTTON */}
-                                        <button
-                                            onClick={(e) => handleAddToCart(course.id, e)}
-                                            disabled={isAdding}
-                                            className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {isAdding ? (
-                                                <>
-                                                    <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                    </svg>
-                                                    Adding...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    
-                                                    Add to Cart
-                                                </>
-                                            )}
-                                        </button>
+                                        {inCart ? (
+                                            <Link
+                                                href={route('cart.index')}
+                                                className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                                            >
+                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                View in Cart
+                                            </Link>
+                                        ) : (
+                                            <button
+                                                onClick={(e) => handleAddToCart(course, e)}
+                                                disabled={isAdding}
+                                                className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isAdding ? (
+                                                    <>
+                                                        <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                        Adding...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                        </svg>
+                                                        Add to Cart
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
                                     </div>
 
                                     {/* BADGES */}
                                     <div className="mt-1 flex flex-wrap gap-2">
-                                        {/* {course?.is_featured && (
+                                        {course?.is_featured && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
                                                 ⭐ Featured
                                             </span>
@@ -220,7 +265,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                             <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
                                                 {course.format}
                                             </span>
-                                        )} */}
+                                        )}
                                     </div>
                                 </div>
                             </div>
