@@ -54,7 +54,7 @@ class CartController extends Controller
 
         // Check if already in cart
         if ($cart->items()->where('course_id', $course->id)->exists()) {
-            return redirect()->route('cart.index')->with('info', 'Course already in cart.');
+            return redirect()->route('dashboard.cart.index')->with('info', 'Course already in cart.');
         }
 
         $cart->items()->create([
