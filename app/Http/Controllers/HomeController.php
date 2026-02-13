@@ -294,9 +294,9 @@ class HomeController extends Controller
 
         // Get filter options for dropdowns
         $levels = Course::published()->select('level')->distinct()->pluck('level');
-        $categories = \App\Models\Category::whereHas('courses', function($q) {
-            $q->published();
-        })->get(['id', 'name', 'slug']);
+        // $categories = \App\Models\Category::whereHas('courses', function($q) {
+        //     $q->published();
+        // })->get(['id', 'name', 'slug']);
 
         // Paginate results
         $courses = $query->paginate(12)->withQueryString();
@@ -346,7 +346,7 @@ class HomeController extends Controller
             'courses' => $courses,
             'filterOptions' => [
                 'levels' => $levels,
-                'categories' => $categories,
+                // 'categories' => $categories,
                 'priceTypes' => [
                     ['value' => 'all', 'label' => 'All Prices'],
                     ['value' => 'free', 'label' => 'Free'],
