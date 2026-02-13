@@ -129,8 +129,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <ShoppingCartIcon className="h-6 w-6" />
                                     {cartCount > 0 && (
                                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold shadow-sm">
-                                            {/* {cartCount > 99 ? '99+' : cartCount} */}
-                                            12
+                                            {cartCount > 99 ? '99+' : cartCount}
                                         </span>
                                     )}
                                 </Link>
