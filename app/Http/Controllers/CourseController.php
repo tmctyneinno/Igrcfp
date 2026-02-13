@@ -151,18 +151,44 @@ class CourseController extends Controller
             return redirect()->route('login')->with('success', 'Please login to enroll in this course.');
         }
 
-        return Inertia::render('Courses/Enroll', [
-            'course' => [
-                'id' => $course->id,
-                'title' => $course->title,
-                'slug' => $course->slug,
-                'price' => $course->price,
-                'discount_price' => $course->discount_price,
-                'duration' => $course->duration,
-                'level' => $course->level,
-                'image_url' => $course->image_url,
-            ]
+        // User is logged in - Add to cart
+        $user = $request->user();
+        
+        // Get or create active cart for user
+        $cart = $user->carts()->where('status', 'active')->first();
+        
+        if (!$cart) {
+            $cart = $user->carts()->create([
+                'status' => 'active',
+                'session_id' => session()->getId(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+        
+        // Check if course already in cart
+        $existingItem = $cart->items()->where('course_id', $course->id)->first();
+        
+        if ($existingItem) {
+            return redirect()->route('cart.index')->with('info', 'Course is already in your cart.');
+        }
+        
+        // Add course to cart
+        $cart->items()->create([
+            'course_id' => $course->id,
+            'price' => $course->discount_price ?? $course->price,
+            'quantity' => 1,
         ]);
+        
+        // Update cart totals
+        $cart->update([
+            'total_amount' => $cart->items->sum('price'),
+            'item_count' => $cart->items->count(),
+            'updated_at' => now(),
+        ]);
+
+        // Redirect to cart page with success message
+        return redirect()->route('cart.index')->with('success', 'Course added to cart successfully!');
     }
 
     /**
