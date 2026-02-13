@@ -12,6 +12,7 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronDownIcon
 } from '@heroicons/react/24/outline';
+import axios from 'axios'; // Make sure to install axios: npm install axios
 
 export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
@@ -37,17 +38,29 @@ export default function AuthenticatedLayout({ header, children }) {
             }, 100);
         }
         
-        // Fetch notification and cart counts
-        fetchCounts();
+        // Fetch real cart count from database
+        fetchCartCount();
+        
+        // Optional: Set up event listener for cart updates
+        window.addEventListener('cart-updated', fetchCartCount);
+        
+        return () => {
+            window.removeEventListener('cart-updated', fetchCartCount);
+        };
     }, []);
 
-    const fetchCounts = async () => {
+    const fetchCartCount = async () => {
         try {
-            // For now, using mock data
-            setNotificationCount(3); // Mock notification count
-            setCartCount(1); // Mock cart count
+            // Fetch real cart count from your API
+            const response = await axios.get('/api/cart/count');
+            setCartCount(response.data.count);
+            
+            // Also fetch notification count if needed
+            setNotificationCount(3); // You can make this dynamic too
         } catch (error) {
-            console.error('Error fetching counts:', error);
+            console.error('Error fetching cart count:', error);
+            // Fallback to 0 on error
+            setCartCount(0);
         }
     };
 
@@ -107,16 +120,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Link>
                             </div>
 
-                            {/* Cart Icon */}
+                            {/* Cart Icon with Dynamic Count */}
                             <div className="relative">
                                 <Link
                                     href={route('cart.index')}
-                                    className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition"
+                                    className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition relative"
                                 >
                                     <ShoppingCartIcon className="h-6 w-6" />
                                     {cartCount > 0 && (
-                                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
-                                            {cartCount > 9 ? '9+' : cartCount}
+                                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold shadow-sm">
+                                            {cartCount > 99 ? '99+' : cartCount}
                                         </span>
                                     )}
                                 </Link>
@@ -212,22 +225,22 @@ export default function AuthenticatedLayout({ header, children }) {
                         </ResponsiveNavLink>
                     </div>
                     
-                    {/* Mobile notification and cart */}
+                    {/* Mobile notification and cart with counts */}
                     <div className="pt-4 pb-3 border-t border-gray-200">
                         <div className="flex items-center px-4 space-x-4">
                             <Link href={route('notifications.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
                                 <BellIcon className="h-6 w-6" />
                                 {notificationCount > 0 && (
                                     <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                        {notificationCount}
+                                        {notificationCount > 9 ? '9+' : notificationCount}
                                     </span>
                                 )}
                             </Link>
                             <Link href={route('cart.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
                                 <ShoppingCartIcon className="h-6 w-6" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
-                                        {cartCount}
+                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">
+                                        {cartCount > 99 ? '99+' : cartCount}
                                     </span>
                                 )}
                             </Link>
