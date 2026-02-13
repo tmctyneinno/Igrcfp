@@ -256,7 +256,7 @@ export default function MostPopular({ initialCourses = [] }) {
 
                                     {/* BADGES */}
                                     <div className="mt-1 flex flex-wrap gap-2">
-                                        {course?.is_featured && (
+                                        {/* {course?.is_featured && (
                                             <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
                                                 ⭐ Featured
                                             </span>
@@ -265,7 +265,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                             <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
                                                 {course.format}
                                             </span>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>
