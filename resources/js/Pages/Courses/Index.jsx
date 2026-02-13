@@ -87,24 +87,6 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                     </div>
                 </section>
 
-                {/* Header Section */}
-                <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                                All Courses & Certifications
-                            </h1>
-                            <p className="text-xl text-blue-100 max-w-3xl">
-                                Explore our comprehensive range of professional certifications 
-                                and training programs designed to advance your career.
-                            </p>
-                        </motion.div>
-                    </div>
-                </section>
 
                 {/* Main Content */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
