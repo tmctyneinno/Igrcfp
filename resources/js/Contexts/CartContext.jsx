@@ -25,18 +25,16 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
         return new Promise((resolve, reject) => {
-            // FIXED: Use the correct route name 'dashboard.cart.add' instead of 'cart.add'
             const url = route('dashboard.cart.add', course.id);
-            console.log('Adding to cart:', url); // Debug log
+            console.log('Adding to cart:', url);
             
             router.post(url, {}, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
-                    console.log('Success response:', page); // Debug log
+                    console.log('Success response:', page);
                     
                     if (page.props.flash?.success) {
-                        // Check if already in cart (backend should prevent duplicates)
                         const existingItem = cartItems.find(item => item.id === course.id);
                         
                         if (!existingItem) {
@@ -129,4 +127,10 @@ export function useCart() {
         throw new Error('useCart must be used within CartProvider');
     }
     return context;
+}
+
+// ADD THIS - export useCartCount as well
+export function useCartCount() {
+    const { cartCount } = useCart();
+    return cartCount;
 }
