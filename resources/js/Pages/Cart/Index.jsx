@@ -123,7 +123,7 @@ export default function Cart({ cart }) {
                             Browse Courses
                         </Link>
                     </div>
-                )}
+                )} 
             </div>
         </GuestLayout>
     );
