@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CourseCard from '@/components/Courses/CourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
-
+import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Courses({ courses, filters, filterOptions }) {
     const { url } = usePage();
