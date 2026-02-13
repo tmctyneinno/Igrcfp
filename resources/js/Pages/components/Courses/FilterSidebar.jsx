@@ -81,11 +81,11 @@ export default function FilterSidebar({
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                             <option value="">All Categories</option>
-                            {filterOptions.categories.map((category) => (
+                            {/* {filterOptions.categories.map((category) => (
                                 <option key={category.id} value={category.id}>
                                     {category.name}
                                 </option>
-                            ))}
+                            ))} */}
                         </select>
                     </div>
 
