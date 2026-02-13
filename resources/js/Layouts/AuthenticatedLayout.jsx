@@ -15,7 +15,7 @@ import {
 
 export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
-    const user = props.auth.user;
+    const user = props.auth.user; 
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
     const [cartCount, setCartCount] = useState(0);

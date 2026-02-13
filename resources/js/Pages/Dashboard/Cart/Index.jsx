@@ -97,7 +97,7 @@ export default function Cart({ cart }) {
                                     href={route('checkout.index')}
                                     className="block w-full text-center py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
                                 >
-                                    Proceed to Checkout
+                                    Complete Enrollment
                                 </Link>
                                 
                                 <Link
