@@ -164,10 +164,10 @@ export default function MostPopular({ initialCourses = [] }) {
                                                 {hasDisc ? (
                                                     <>
                                                         <span className="text-lg font-bold text-gray-900">
-                                                            ₦{discountPrice.toLocaleString()}
+                                                            ${discountPrice.toFixed(0)}
                                                         </span>
                                                         <span className="text-sm text-gray-500 line-through ml-2">
-                                                            ₦{price.toLocaleString()}
+                                                            ${price.toFixed(0)}
                                                         </span>
                                                         <span className="text-xs font-semibold text-red-600 ml-2">
                                                             -{discountPercentage}%
@@ -175,7 +175,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                                     </>
                                                 ) : (
                                                     <span className="text-lg font-bold text-gray-900">
-                                                        ₦{price.toLocaleString()}
+                                                        ${price.toFixed(2)}
                                                     </span>
                                                 )}
                                             </div>
@@ -184,6 +184,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                                 FREE
                                             </span>
                                         )}
+                                        
                                         
                                         {/* ADD TO CART BUTTON */}
                                         <button
