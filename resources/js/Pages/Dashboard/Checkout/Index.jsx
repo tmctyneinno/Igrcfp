@@ -178,6 +178,6 @@ export default function Checkout({ cart, user }) {
                     </div>
                 </div>
             </div>
-         <AuthenticatedLayout> 
+        </AuthenticatedLayout> 
     );
 }

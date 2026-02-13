@@ -18,10 +18,10 @@ class CheckoutController extends Controller
             ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
         }
 
-        return Inertia::render('Checkout/Index', [
+        return Inertia::render('DashboardCheckout/Index', [
             'cart' => [
                 'id' => $cart->id,
                 'item_count' => $cart->item_count,
@@ -59,7 +59,7 @@ class CheckoutController extends Controller
             ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+            return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
         }
 
         // Create enrollments for each course in cart
@@ -84,7 +84,7 @@ class CheckoutController extends Controller
 
         // If total is 0 (all free courses), redirect to success
         if ($cart->total_amount == 0) {
-            return redirect()->route('checkout.success', ['enrollments' => $enrollments]);
+            return redirect()->route('dashboard.checkout.success', ['enrollments' => $enrollments]);
         }
 
         // Redirect to payment processing (implement based on your payment gateway)
@@ -96,13 +96,13 @@ class CheckoutController extends Controller
 
     public function success(Request $request)
     {
-        return Inertia::render('Checkout/Success', [
+        return Inertia::render('dashboard.Checkout/Success', [
             'enrollments' => $request->enrollments ?? []
         ]);
     }
 
     public function cancel()
     {
-        return redirect()->route('cart.index')->with('info', 'Checkout cancelled.');
+        return redirect()->route('dashboard.cart.index')->with('info', 'Checkout cancelled.');
     }
 }
