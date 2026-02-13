@@ -19,12 +19,10 @@ export default function AuthenticatedLayout({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
     
-    // Get cart count from shared props (from HandleInertiaRequests middleware)
     const cartCount = props.cart_count || 0;
 
     // Check for enrollment redirect on dashboard load
     useEffect(() => {
-        // Check if we came from enrollment flow
         const enrollmentRedirect = sessionStorage.getItem('enrollment_redirect');
         const intendedUrl = sessionStorage.getItem('intended_url');
         
