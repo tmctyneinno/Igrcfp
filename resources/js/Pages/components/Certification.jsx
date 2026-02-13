@@ -49,7 +49,7 @@ export default function Certification({ courses }) { // Remove default value fro
                     </div>
                     <h2 className="text-3xl font-bold text-gray-900 mt-2">
                         Our Programmes
-                    </h2>
+                    </h2> 
                     <p className="text-gray-600 mt-3 max-w-2xl">
                         Our professional certifications are designed to equip individuals
                         and institutions with globally relevant skills to tackle financial
