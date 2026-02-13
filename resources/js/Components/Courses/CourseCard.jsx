@@ -6,15 +6,49 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CourseCard from '@/Components/Courses/CourseCard';
 import SearchBar from '@/Components/Courses/SearchBar';
 
-export default function Courses({ courses, filters, filterOptions }) {
+export default function Courses({ courses = null, filters = null, filterOptions = null }) {
     const { url } = usePage();
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedFilters, setSelectedFilters] = useState(filters);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+    
+    // Provide default values if props are undefined
+    const safeFilters = filters || {
+        search: '',
+        level: '',
+        price_type: '',
+        featured: false,
+        popular: false,
+        format: '',
+        sort_field: 'created_at',
+        sort_direction: 'desc'
+    };
+    
+    const safeFilterOptions = filterOptions || {
+        levels: [],
+        formats: [],
+        priceTypes: [
+            { value: '', label: 'All Prices' },
+            { value: 'free', label: 'Free' },
+            { value: 'paid', label: 'Paid' },
+            { value: 'discounted', label: 'Discounted' },
+        ],
+        sortOptions: [
+            { value: 'created_at_desc', label: 'Newest First' },
+            { value: 'created_at_asc', label: 'Oldest First' },
+            { value: 'price_asc', label: 'Price: Low to High' },
+            { value: 'price_desc', label: 'Price: High to Low' },
+            { value: 'title_asc', label: 'Title: A to Z' },
+            { value: 'title_desc', label: 'Title: Z to A' },
+        ]
+    };
+
+    const [selectedFilters, setSelectedFilters] = useState(safeFilters);
 
     // Update filters when props change
     useEffect(() => {
-        setSelectedFilters(filters);
+        if (filters) {
+            setSelectedFilters(filters);
+        }
     }, [filters]);
 
     // Handle filter changes
@@ -62,6 +96,15 @@ export default function Courses({ courses, filters, filterOptions }) {
         ).length;
     };
 
+    // Safe courses data
+    const coursesData = courses?.data || [];
+    const pagination = courses || {
+        from: 0,
+        to: 0,
+        total: 0,
+        links: []
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header Section - Matching your certification component style */}
@@ -102,7 +145,7 @@ export default function Courses({ courses, filters, filterOptions }) {
                         {/* Search - Matching your design */}
                         <div className="w-full lg:w-96">
                             <SearchBar
-                                value={selectedFilters.search}
+                                value={selectedFilters?.search || ''}
                                 onChange={(value) => handleFilterChange('search', value)}
                                 placeholder="Search courses by title or description..."
                             />
@@ -112,11 +155,11 @@ export default function Courses({ courses, filters, filterOptions }) {
                         <div className="flex items-center gap-4 w-full lg:w-auto">
                             {/* Sort Dropdown */}
                             <select
-                                value={`${selectedFilters.sort_field}_${selectedFilters.sort_direction}`}
+                                value={`${selectedFilters?.sort_field || 'created_at'}_${selectedFilters?.sort_direction || 'desc'}`}
                                 onChange={handleSortChange}
                                 className="flex-1 lg:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                             >
-                                {filterOptions.sortOptions.map((option) => (
+                                {safeFilterOptions.sortOptions.map((option) => (
                                     <option key={option.value} value={option.value}>
                                         {option.label}
                                     </option>
@@ -170,7 +213,7 @@ export default function Courses({ courses, filters, filterOptions }) {
                             isOpen={mobileFiltersOpen}
                             onClose={() => setMobileFiltersOpen(false)}
                             filters={selectedFilters}
-                            filterOptions={filterOptions}
+                            filterOptions={safeFilterOptions}
                             onFilterChange={handleFilterChange}
                             activeFilterCount={getActiveFilterCount()}
                             onReset={resetFilters}
@@ -197,12 +240,12 @@ export default function Courses({ courses, filters, filterOptions }) {
                                         Level
                                     </label>
                                     <select
-                                        value={selectedFilters.level}
+                                        value={selectedFilters?.level || ''}
                                         onChange={(e) => handleFilterChange('level', e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     >
                                         <option value="">All Levels</option>
-                                        {filterOptions.levels.map((level) => (
+                                        {safeFilterOptions.levels?.map((level) => (
                                             <option key={level} value={level}>
                                                 {level}
                                             </option>
@@ -211,18 +254,18 @@ export default function Courses({ courses, filters, filterOptions }) {
                                 </div>
 
                                 {/* Format Filter */}
-                                {filterOptions.formats && filterOptions.formats.length > 0 && (
+                                {safeFilterOptions.formats && safeFilterOptions.formats.length > 0 && (
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Format
                                         </label>
                                         <select
-                                            value={selectedFilters.format}
+                                            value={selectedFilters?.format || ''}
                                             onChange={(e) => handleFilterChange('format', e.target.value)}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             <option value="">All Formats</option>
-                                            {filterOptions.formats.map((format) => (
+                                            {safeFilterOptions.formats.map((format) => (
                                                 <option key={format} value={format}>
                                                     {format}
                                                 </option>
@@ -236,13 +279,13 @@ export default function Courses({ courses, filters, filterOptions }) {
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Price
                                     </label>
-                                    {filterOptions.priceTypes.map((type) => (
+                                    {safeFilterOptions.priceTypes.map((type) => (
                                         <label key={type.value} className="flex items-center mb-2 cursor-pointer">
                                             <input
                                                 type="radio"
                                                 name="price_type"
                                                 value={type.value}
-                                                checked={selectedFilters.price_type === type.value}
+                                                checked={selectedFilters?.price_type === type.value}
                                                 onChange={(e) => handleFilterChange('price_type', e.target.value)}
                                                 className="mr-2"
                                             />
@@ -259,7 +302,7 @@ export default function Courses({ courses, filters, filterOptions }) {
                                     <label className="flex items-center mb-2 cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            checked={selectedFilters.featured}
+                                            checked={selectedFilters?.featured || false}
                                             onChange={(e) => handleFilterChange('featured', e.target.checked)}
                                             className="mr-2 rounded"
                                         />
@@ -268,7 +311,7 @@ export default function Courses({ courses, filters, filterOptions }) {
                                     <label className="flex items-center cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            checked={selectedFilters.popular}
+                                            checked={selectedFilters?.popular || false}
                                             onChange={(e) => handleFilterChange('popular', e.target.checked)}
                                             className="mr-2 rounded"
                                         />
@@ -291,17 +334,17 @@ export default function Courses({ courses, filters, filterOptions }) {
                     <div className="flex-1">
                         {/* Results Count */}
                         <div className="mb-4 text-sm text-gray-600">
-                            Showing {courses.from || 0} - {courses.to || 0} of {courses.total || 0} courses
+                            Showing {pagination.from || 0} - {pagination.to || 0} of {pagination.total || 0} courses
                         </div>
 
                         {/* Courses */}
-                        {courses.data && courses.data.length > 0 ? (
+                        {coursesData.length > 0 ? (
                             <div className={`grid gap-6 ${
                                 showFilters 
                                     ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
                                     : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                             }`}>
-                                {courses.data.map((course, index) => (
+                                {coursesData.map((course, index) => (
                                     <motion.div
                                         key={course.id}
                                         initial={{ opacity: 0, y: 20 }}
@@ -333,10 +376,10 @@ export default function Courses({ courses, filters, filterOptions }) {
                         )}
 
                         {/* Pagination */}
-                        {courses.links && courses.links.length > 3 && (
+                        {pagination.links && pagination.links.length > 3 && (
                             <div className="mt-12 flex justify-center">
                                 <nav className="flex items-center gap-2">
-                                    {courses.links.map((link, index) => (
+                                    {pagination.links.map((link, index) => (
                                         <Link
                                             key={index}
                                             href={link.url || '#'}
@@ -409,12 +452,12 @@ function FilterSidebarMobile({ isOpen, onClose, filters, filterOptions, onFilter
                             Level
                         </label>
                         <select
-                            value={filters.level}
+                            value={filters?.level || ''}
                             onChange={(e) => onFilterChange('level', e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                         >
                             <option value="">All Levels</option>
-                            {filterOptions.levels.map((level) => (
+                            {filterOptions?.levels?.map((level) => (
                                 <option key={level} value={level}>
                                     {level}
                                 </option>
@@ -423,13 +466,13 @@ function FilterSidebarMobile({ isOpen, onClose, filters, filterOptions, onFilter
                     </div>
 
                     {/* Format Filter */}
-                    {filterOptions.formats && filterOptions.formats.length > 0 && (
+                    {filterOptions?.formats && filterOptions.formats.length > 0 && (
                         <div className="mb-6">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Format
                             </label>
                             <select
-                                value={filters.format}
+                                value={filters?.format || ''}
                                 onChange={(e) => onFilterChange('format', e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                             >
@@ -448,13 +491,13 @@ function FilterSidebarMobile({ isOpen, onClose, filters, filterOptions, onFilter
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Price
                         </label>
-                        {filterOptions.priceTypes.map((type) => (
+                        {filterOptions?.priceTypes?.map((type) => (
                             <label key={type.value} className="flex items-center mb-2 cursor-pointer">
                                 <input
                                     type="radio"
                                     name="price_type_mobile"
                                     value={type.value}
-                                    checked={filters.price_type === type.value}
+                                    checked={filters?.price_type === type.value}
                                     onChange={(e) => onFilterChange('price_type', e.target.value)}
                                     className="mr-2"
                                 />
@@ -471,7 +514,7 @@ function FilterSidebarMobile({ isOpen, onClose, filters, filterOptions, onFilter
                         <label className="flex items-center mb-2 cursor-pointer">
                             <input
                                 type="checkbox"
-                                checked={filters.featured}
+                                checked={filters?.featured || false}
                                 onChange={(e) => onFilterChange('featured', e.target.checked)}
                                 className="mr-2 rounded"
                             />
@@ -480,7 +523,7 @@ function FilterSidebarMobile({ isOpen, onClose, filters, filterOptions, onFilter
                         <label className="flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
-                                checked={filters.popular}
+                                checked={filters?.popular || false}
                                 onChange={(e) => onFilterChange('popular', e.target.checked)}
                                 className="mr-2 rounded"
                             />
