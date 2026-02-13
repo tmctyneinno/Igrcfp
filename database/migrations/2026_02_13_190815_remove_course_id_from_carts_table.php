@@ -9,9 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('carts', function (Blueprint $table) {
-            // Check if course_id column exists before trying to drop it
-            if (Schema::hasColumn('carts', 'course_id')) {
-                $table->dropColumn('course_id');
+            // Comment this out since the column doesn't exist
+            // if (Schema::hasColumn('carts', 'course_id')) {
+            //     $table->dropColumn('course_id');
+            // }
+            
+            // Just add the missing columns
+            if (!Schema::hasColumn('carts', 'session_id')) {
+                $table->string('session_id')->nullable()->after('user_id');
+            }
+            
+            if (!Schema::hasColumn('carts', 'status')) {
+                $table->string('status')->default('active')->after('session_id');
             }
         });
     }
@@ -19,9 +28,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('carts', function (Blueprint $table) {
-            // Only add the column back if it doesn't exist
-            if (!Schema::hasColumn('carts', 'course_id')) {
-                $table->foreignId('course_id')->nullable()->constrained();
+            if (Schema::hasColumn('carts', 'session_id')) {
+                $table->dropColumn('session_id');
+            }
+            if (Schema::hasColumn('carts', 'status')) {
+                $table->dropColumn('status');
             }
         });
     }
