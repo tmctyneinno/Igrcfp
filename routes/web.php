@@ -75,5 +75,5 @@ Route::prefix('programmes')->group(function () {
     Route::get('/crypto', [ProgrammesController::class, 'crypto'])->name('programmes.crypto');
     Route::get('/cybersecurity', [ProgrammesController::class, 'cybersecurity'])->name('programmes.cybersecurity');
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
-    Route::get('/courses', [ProgrammesController::class, 'allCourses'])->name('programmes.all-courses');
 });
+Route::get('/courses', [ProgrammesController::class, 'allCourses'])->name('programmes.all-courses');
