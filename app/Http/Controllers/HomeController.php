@@ -17,14 +17,25 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $courses = Course::published() // Using the published scope from your model
+        $featuredCourses = Course::published()
             ->withCount('modules')
-            ->orderBy('is_featured', 'desc')
-            ->orderBy('is_popular', 'desc')
-            ->orderBy('sort_order', 'asc')
+            ->where('is_featured', true)
+            ->orWhere('is_popular', true)
             ->inRandomOrder()
             ->take(8)
-            ->get()
+            ->get();
+
+        // Get 4 random courses from the remaining
+        $randomCourses = Course::published()
+            ->withCount('modules')
+            ->whereNotIn('id', $featuredCourses->pluck('id'))
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
+
+        // Merge and shuffle the collections
+        $courses = $featuredCourses->merge($randomCourses)
+            ->shuffle()
             ->map(function ($course) {
                 return [
                     'id' => $course->id,
