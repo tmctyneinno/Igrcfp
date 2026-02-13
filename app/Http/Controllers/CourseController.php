@@ -134,5 +134,89 @@ class CourseController extends Controller
         ]); 
     }
 
+    public function enroll(Course $course)
+    {
+        // Check if course is published
+        if (!$course->is_published) {
+            return redirect()->route('courses.index')->with('error', 'Course not available.');
+        }
 
+        return Inertia::render('Courses/Enroll', [
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'price' => $course->price,
+                'discount_price' => $course->discount_price,
+                'duration' => $course->duration,
+                'level' => $course->level,
+                'image_url' => $course->image_url,
+            ]
+        ]);
+    }
+
+    /**
+     * Process the enrollment
+     */
+    public function processEnrollment(Request $request, Course $course)
+    {
+        // Validate request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'payment_method' => 'required|in:card,bank,paypal',
+            'terms_accepted' => 'required|accepted',
+        ]);
+
+        // Check if user is already enrolled
+        if ($request->user()) {
+            $existingEnrollment = $course->enrollments()
+                ->where('user_id', $request->user()->id)
+                ->first();
+                
+            if ($existingEnrollment) {
+                return redirect()->back()->with('error', 'You are already enrolled in this course.');
+            }
+        }
+
+        // Calculate final price
+        $finalPrice = $course->discount_price ?? $course->price;
+
+        // Create enrollment record
+        $enrollment = $course->enrollments()->create([
+            'user_id' => $request->user()?->id,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'payment_method' => $validated['payment_method'],
+            'amount' => $finalPrice,
+            'status' => $finalPrice > 0 ? 'pending_payment' : 'enrolled',
+            'enrollment_date' => now(),
+        ]);
+
+        // If free course, enroll directly
+        if ($finalPrice == 0) {
+            return redirect()->route('courses.show', $course->slug)
+                ->with('success', 'You have successfully enrolled in the course!');
+        }
+
+        // Redirect to payment page for paid courses
+        return redirect()->route('payment.process', [
+            'enrollment' => $enrollment->id,
+            'course' => $course->slug
+        ]);
+    }
+
+    public function enrollmentSuccess(Course $course, Request $request)
+    {
+        $enrollment = $course->enrollments()
+            ->where('id', $request->enrollment)
+            ->firstOrFail();
+
+        return Inertia::render('Courses/EnrollmentSuccess', [
+            'course' => $course,
+            'enrollment' => $enrollment
+        ]);
+    }
 }
