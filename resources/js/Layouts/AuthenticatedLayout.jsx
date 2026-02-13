@@ -72,7 +72,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Courses
                                 </NavLink>
                                 <NavLink
-                                    href={route('my-courses')}
+                                    href={route('dashboard.my-courses')}
                                     active={route().current('dashboard.my-courses')}
                                 >
                                     My Learning
@@ -198,7 +198,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <ResponsiveNavLink href={route('courses.index')} active={route().current('courses.index')}>
                             Courses
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('my-courses')} active={route().current('my-courses')}>
+                        <ResponsiveNavLink href={route('dashboard.my-courses')} active={route().current('dashboard.my-courses')}>
                             My Learning
                         </ResponsiveNavLink>
                     </div>
