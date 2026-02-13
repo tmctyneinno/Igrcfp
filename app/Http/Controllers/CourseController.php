@@ -46,7 +46,7 @@ class CourseController extends Controller
                     'modules_count' => $course->modules_count,
                     'certification' => $course->certification,
                 ];
-            });
+            }); 
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
             'courses' => $courses
@@ -131,7 +131,7 @@ class CourseController extends Controller
             'course' => $formattedCourse,
             'auth' => Auth::guard('web')->user(),
             'isEnrolled' => $isEnrolled,
-        ]);
+        ]); 
     }
 
 
