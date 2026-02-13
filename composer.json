@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
         "spatie/laravel-permission": "^6.24",
+        "stripe/stripe-php": "*",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
