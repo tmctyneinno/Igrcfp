@@ -137,9 +137,9 @@ class CourseController extends Controller
     public function enroll(Course $course)
     {
         // Check if course is published
-        if (!$course->is_published) {
-            return redirect()->route('courses.index')->with('error', 'Course not available.');
-        }
+        // if (!$course->is_published) {
+        //     return redirect()->route('courses.index')->with('error', 'Course not available.');
+        // }
 
         // Check if user is logged in
         if (!$request->user()) {
