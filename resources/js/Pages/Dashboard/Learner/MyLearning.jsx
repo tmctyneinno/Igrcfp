@@ -45,7 +45,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                 </h2>
                 {enrolledCourses.length > 0 && (
                     <Link 
-                        href={route('my-courses')}
+                        href={route('dashboard.my-courses')}
                         className="text-sm font-medium text-blue-600 hover:underline"
                     >
                         View All
