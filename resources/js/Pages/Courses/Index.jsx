@@ -68,6 +68,25 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
         <GuestLayout auth={auth}> 
             <Head title='IGRCFP | Courses' />
             <div className="min-h-screen bg-gray-50">
+                {/* Hero Section - Slimmer */}
+                <section className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200  py-12 md:py-20">
+                    <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+                    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center">
+                            <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
+                                Courses
+                            </div>
+                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                                All Courses & Certifications
+                            </h1> 
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                                Explore our comprehensive range of professional certifications 
+                                and training programs designed to advance your career.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Header Section */}
                 <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
