@@ -22,6 +22,7 @@ class HomeController extends Controller
             ->orderBy('is_featured', 'desc')
             ->orderBy('is_popular', 'desc')
             ->orderBy('sort_order', 'asc')
+            ->inRandomOrder()
             ->take(8)
             ->get()
             ->map(function ($course) {
