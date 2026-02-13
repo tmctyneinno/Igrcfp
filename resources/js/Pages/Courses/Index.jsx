@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import CourseCard from '@/components/CourseCard';
+import CourseCard from '@/Components/Courses/c';
 import FilterSidebar from '@/components/FilterSidebar';
 import SearchBar from '@/components/SearchBar';
 
