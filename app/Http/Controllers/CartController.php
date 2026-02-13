@@ -64,7 +64,13 @@ class CartController extends Controller
 
         $cart->updateTotals();
 
-        return redirect()->route('cart.index')->with('success', 'Course added to cart.');
+        // Get updated count for response
+        $cartCount = $cart->items()->count();
+
+        return redirect()->route('cart.index')->with([
+            'success' => 'Course added to cart.',
+            'cart_count' => $cartCount
+        ]);
     }
 
     public function remove(Request $request, $itemId)
