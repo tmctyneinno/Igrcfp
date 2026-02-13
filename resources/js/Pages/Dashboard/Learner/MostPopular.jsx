@@ -220,7 +220,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                         {/* ADD TO CART BUTTON */}
                                         {inCart ? (
                                             <Link
-                                                href={route('cart.index')}
+                                                href={route('dashboard.cart.index')}
                                                 className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                                             >
                                                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
