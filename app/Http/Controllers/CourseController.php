@@ -148,7 +148,7 @@ class CourseController extends Controller
             session(['intended_enrollment' => $course->slug]);
             
             // Redirect to login with a message
-            return redirect()->route('login')->with('message', 'Please login to enroll in this course.');
+            return redirect()->route('login')->with('success', 'Please login to enroll in this course.');
         }
 
         return Inertia::render('Courses/Enroll', [
