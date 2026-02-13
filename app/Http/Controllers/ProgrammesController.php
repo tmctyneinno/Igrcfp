@@ -31,7 +31,7 @@ class ProgrammesController extends Controller
         return Inertia::render('Programmes/Cybersecurity');
     }
 
-    public function ai()
+    public function ai() 
     {
         return Inertia::render('Programmes/AI');
     }
