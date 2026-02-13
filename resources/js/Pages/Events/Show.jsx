@@ -166,7 +166,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                             {/* Event Description */}
                             {/* <div className="prose prose-lg max-w-none mb-12">
                                 <div dangerouslySetInnerHTML={{ __html: event.description }} />
-                            </div> */}
+                            </div> */} 
                             <div className="prose prose-lg max-w-none mb-12 prose-headings:font-bold prose-strong:font-bold prose-em:italic">
                                 <div dangerouslySetInnerHTML={{ __html: event.description }} />
                             </div>
