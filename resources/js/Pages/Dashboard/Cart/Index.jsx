@@ -104,7 +104,7 @@ export default function Cart({ cart }) {
                                     href={route('courses.index')}
                                     className="block w-full text-center py-2 px-4 mt-3 text-blue-900 hover:text-blue-700 font-semibold"
                                 >
-                                    Continue Shopping
+                                    Explore More Programs
                                 </Link>
                             </div>
                         </div>
