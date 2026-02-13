@@ -108,7 +108,7 @@ export default function Events({ auth, title, description, events }) {
                         </p>
                     </div>
                 </div>
-            </section>
+            </section> 
 
             {/* Events Section - Compact */}
             <section className="py-12 md:py-16 bg-white">
