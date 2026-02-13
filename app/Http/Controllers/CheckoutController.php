@@ -184,7 +184,7 @@ class CheckoutController extends Controller
             // Clear session data
             session()->forget(['pending_enrollments', 'cart_id']);
             
-            return redirect()->route('dashboard.checkout.success')->with('success', 'Payment successful! You are now enrolled.');
+            return redirect()->route('checkout.success')->with('success', 'Payment successful! You are now enrolled.');
             
         } catch (\Exception $e) {
             \Log::error('Stripe success error: ' . $e->getMessage());
