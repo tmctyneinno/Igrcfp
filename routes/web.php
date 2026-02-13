@@ -5,7 +5,6 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgrammesController;
-// use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +43,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show');
-
+ 
 
 
 
@@ -77,4 +76,6 @@ Route::prefix('programmes')->group(function () {
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
 });
 Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
- 
+ // Course enrollment routes
+Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
+Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
