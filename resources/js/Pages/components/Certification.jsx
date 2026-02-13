@@ -6,7 +6,7 @@ export default function Certification({ courses }) { // Remove default value fro
 
     // Safe courses initialization
     const coursesData = Array.isArray(courses) ? courses : [];
-
+ 
     // Format price safely
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
@@ -77,7 +77,7 @@ export default function Certification({ courses }) { // Remove default value fro
                             : 0;
 
                         return (
-                            <div
+                            <div 
                                 key={course?.id || index}
                                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
                                 data-aos="fade-up"

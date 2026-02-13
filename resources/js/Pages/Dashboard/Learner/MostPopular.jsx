@@ -6,7 +6,7 @@ export default function MostPopular({ initialCourses = [] }) {
 
     // Helper function to get level badge color
     const getLevelBadgeColor = (level) => {
-        const levelMap = {
+        const levelMap = { 
             'Beginner': 'bg-blue-100 text-blue-700',
             'Intermediate': 'bg-amber-100 text-amber-700',
             'Advanced': 'bg-emerald-100 text-emerald-700',
@@ -122,7 +122,7 @@ export default function MostPopular({ initialCourses = [] }) {
                     <p className="mt-1 text-sm text-gray-600">
                         Trending courses that other learners are taking
                     </p>
-                </div>
+                </div> 
                 {initialCourses.length > 0 && (
                     <Link 
                         href={route('courses.index', { popular: 1 })}
@@ -269,7 +269,7 @@ export default function MostPopular({ initialCourses = [] }) {
                             </div>
                         );
                     })}
-                </div>
+                </div> 
             ) : (
                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
