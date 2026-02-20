@@ -203,7 +203,7 @@ class CheckoutController extends Controller
             
             $cartId = session('cart_id') ?? $session->metadata->cart_id ?? null;
             
-            // Update enrollments to enrolled status
+            // Update enrollments to enrolled status and create transactions
             if (!empty($enrollmentIds)) {
                 foreach ($enrollmentIds as $enrollmentId) {
                     $enrollment = Enrollment::find($enrollmentId);
@@ -211,9 +211,27 @@ class CheckoutController extends Controller
                         $enrollment->update([
                             'status' => 'enrolled',
                             'payment_method' => 'stripe',
-                            // Ensure name and email are preserved
                             'name' => $enrollment->name ?? $session->customer_details->name ?? null,
                             'email' => $enrollment->email ?? $session->customer_details->email ?? null,
+                        ]);
+                        
+                        // Create transaction record
+                        Transaction::create([
+                            'user_id' => $enrollment->user_id,
+                            'enrollment_id' => $enrollment->id,
+                            'transaction_id' => $session->payment_intent ?? $sessionId,
+                            'payment_method' => 'stripe',
+                            'amount' => $enrollment->amount,
+                            'currency' => 'usd',
+                            'status' => 'completed',
+                            'payment_details' => [
+                                'session_id' => $sessionId,
+                                'payment_intent' => $session->payment_intent,
+                                'customer_email' => $session->customer_details->email ?? $session->customer_email,
+                            ],
+                            'reference' => $sessionId,
+                            'session_id' => $sessionId,
+                            'paid_at' => now(),
                         ]);
                     }
                 }
@@ -223,7 +241,7 @@ class CheckoutController extends Controller
                     $cart = Cart::with('items.course')->find($cartId);
                     if ($cart) {
                         foreach ($cart->items as $item) {
-                            Enrollment::updateOrCreate(
+                            $enrollment = Enrollment::updateOrCreate(
                                 [
                                     'user_id' => $session->metadata->user_id,
                                     'course_id' => $item->course_id,
@@ -237,6 +255,25 @@ class CheckoutController extends Controller
                                     'enrollment_date' => now(),
                                 ]
                             );
+                            
+                            // Create transaction record
+                            Transaction::create([
+                                'user_id' => $enrollment->user_id,
+                                'enrollment_id' => $enrollment->id,
+                                'transaction_id' => $session->payment_intent ?? $sessionId,
+                                'payment_method' => 'stripe',
+                                'amount' => $item->price,
+                                'currency' => 'usd',
+                                'status' => 'completed',
+                                'payment_details' => [
+                                    'session_id' => $sessionId,
+                                    'payment_intent' => $session->payment_intent,
+                                    'customer_email' => $session->customer_details->email ?? $session->customer_email,
+                                ],
+                                'reference' => $sessionId,
+                                'session_id' => $sessionId,
+                                'paid_at' => now(),
+                            ]);
                         }
                     }
                 }
