@@ -70,4 +70,6 @@ class Enrollment extends Model
     {
         return $query->where('status', 'cancelled');
     }
+
+    
 }
