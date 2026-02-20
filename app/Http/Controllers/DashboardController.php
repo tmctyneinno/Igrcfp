@@ -367,7 +367,7 @@ class DashboardController extends Controller
             return $course;
         });
          // dd($popularCourses);
-        return Inertia::render('Dashboard/Index', [
+        return Inertia::render('Dashboard/Learner/LearningCenter', [
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
         ]);
