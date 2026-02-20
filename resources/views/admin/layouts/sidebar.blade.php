@@ -16,7 +16,7 @@
                 <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
                 <span>Dashboard</span>
             </a>
-        </li>
+        </li> 
         <li>
             <a href="{{ route('admin.users.index') }}">
             <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
