@@ -132,7 +132,7 @@ export default function SplitHeroSlider({ auth }) {
                                         </>
                                     ) : (
                                         <Link
-                                            href={route('dashboard')}
+                                            href={route('dashboard.index')}
                                             className="group bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center"
                                         >
                                             Go to Dashboard
