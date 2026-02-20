@@ -15,8 +15,16 @@ class EnrollmentController extends Controller
         $enrollments = Enrollment::with(['user', 'course'])
             ->latest()
             ->paginate(15);
+        // Get summary data for cards
+        $summary = [
+            'total' => Enrollment::count(),
+            'pending' => Enrollment::where('status', 'pending_payment')->count(),
+            'enrolled' => Enrollment::where('status', 'enrolled')->count(),
+            'completed' => Enrollment::where('status', 'completed')->count(),
+            'cancelled' => Enrollment::where('status', 'cancelled')->count(),
+        ];
             
-        return view('admin.enrollments.index', compact('enrollments'));
+        return view('admin.enrollments.index', compact('enrollments','summary'));
     }
 
     public function export(Request $request)
