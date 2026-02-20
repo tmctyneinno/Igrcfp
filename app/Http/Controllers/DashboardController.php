@@ -191,7 +191,7 @@ class DashboardController extends Controller
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'short_description' => $course->short_description,
-                'description' => $course->full_description,
+                'full_description' => $course->full_description,
                 'banner_image' => $course->banner_image,
                 'image_url' => $course->image_url,
                 'level' => $course->level,
