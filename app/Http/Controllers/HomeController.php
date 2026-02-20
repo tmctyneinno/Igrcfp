@@ -85,16 +85,20 @@ class HomeController extends Controller
         ]);
     }
 
-    public function certifications(){
+    public function certifications()
+    {
+        // Get featured/popular courses
         $featuredCourses = Course::published()
             ->withCount('modules')
-            ->where('is_featured', true)
-            ->orWhere('is_popular', true)
+            ->where(function($query) {
+                $query->where('is_featured', true)
+                    ->orWhere('is_popular', true);
+            })
             ->inRandomOrder()
             ->take(8)
             ->get();
- 
-        // Get 4 random courses from the remaining
+    
+        // Get random courses excluding the featured ones
         $randomCourses = Course::published()
             ->withCount('modules')
             ->whereNotIn('id', $featuredCourses->pluck('id'))
@@ -103,7 +107,7 @@ class HomeController extends Controller
             ->get();
 
         // Merge and shuffle the collections
-        $courses = $featuredCourses->merge($randomCourses)
+        $allCourses = $featuredCourses->merge($randomCourses)
             ->shuffle()
             ->map(function ($course) {
                 return [
@@ -121,10 +125,23 @@ class HomeController extends Controller
                 ];
             });
 
+        // Create a paginator instance to maintain the same structure
+        $perPage = 12;
+        $currentPage = request()->input('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+        
+        $courses = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allCourses->slice($offset, $perPage)->values(),
+            $allCourses->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
         return Inertia::render('Certifications/Index', [
             'courses' => $courses,
-            'title' => 'Certifications & Trainings ',
-            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+            'title' => 'Certifications & Trainings',
+            'description' => 'Learn about the Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) Professionals body.',
         ]);
     }
 
