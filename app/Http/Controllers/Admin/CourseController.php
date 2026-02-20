@@ -228,72 +228,101 @@ class CourseController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $slug)
-    { 
+    {
         \Log::info('Update method called for course: ' . $slug);
-        \Log::info('Request data:', $request->all());
-        // dd('update_Course');
-        if (is_numeric($slug)) {
-        $course = Course::findOrFail($slug);
-        } else {
-            $course = Course::where('slug', $slug)->firstOrFail();
-        }
-       
-        // dd($id);
-      
+        \Log::info('Request data:', $request->except(['image', 'banner_image', 'video']));
+
+        // Find course by slug or id
+        $course = is_numeric($slug)
+            ? Course::findOrFail($slug)
+            : Course::where('slug', $slug)->firstOrFail();
+
         $validated = $this->validateRequest($request, $course);
         unset($validated['deleted_at']);
 
-
         try {
-            // Handle image uploads
-           
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMAGE UPLOAD
+            |--------------------------------------------------------------------------
+            */
             if ($request->hasFile('image')) {
-                if ($course->image) {
-                    Storage::delete($course->image);
+                if ($course->image && Storage::disk('public')->exists($course->image)) {
+                    Storage::disk('public')->delete($course->image);
                 }
-                $validated['image'] = $request->file('image')->store('courses/images', 'public');
+
+                $validated['image'] = $request
+                    ->file('image')
+                    ->store('courses/images', 'public');
             }
-            
+
+            /*
+            |--------------------------------------------------------------------------
+            | BANNER IMAGE UPLOAD
+            |--------------------------------------------------------------------------
+            */
             if ($request->hasFile('banner_image')) {
-                if ($course->banner_image) {
-                    Storage::delete($course->banner_image);
+                if ($course->banner_image && Storage::disk('public')->exists($course->banner_image)) {
+                    Storage::disk('public')->delete($course->banner_image);
                 }
-                $validated['banner_image'] = $request->file('banner_image')->store('courses/banner', 'public');
+
+                $validated['banner_image'] = $request
+                    ->file('banner_image')
+                    ->store('courses/banner', 'public');
             }
 
-            // Handle video upload
+            /*
+            |--------------------------------------------------------------------------
+            | VIDEO HANDLING
+            |--------------------------------------------------------------------------
+            */
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
-                if ($course->video) {
-                    Storage::delete($course->video);
+                if ($course->video && Storage::disk('public')->exists($course->video)) {
+                    Storage::disk('public')->delete($course->video);
                 }
-                $validated['video'] = $this->uploadFile($request->file('video'), 'courses/videos');
-            } elseif ($request->video_type !== 'upload') {
-                if ($course->video) {
-                    Storage::delete($course->video);
-                    $validated['video'] = null;
-                }
+
+                $validated['video'] = $request
+                    ->file('video')
+                    ->store('courses/videos', 'public');
             }
 
-            // Convert target audience from textarea to array
+            /*
+            |--------------------------------------------------------------------------
+            | TARGET AUDIENCE (STORE AS HTML STRING)
+            |--------------------------------------------------------------------------
+            */
             if ($request->filled('target_audience')) {
-                $lines = explode("\n", $request->target_audience);
-                $validated['target_audience'] = array_map('trim', array_filter($lines));
+                $validated['target_audience'] = $request->target_audience;
             }
 
-            // Update course
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE COURSE
+            |--------------------------------------------------------------------------
+            */
             $course->update($validated);
 
-            // Handle bulk modules update if provided
+            /*
+            |--------------------------------------------------------------------------
+            | BULK MODULES
+            |--------------------------------------------------------------------------
+            */
             if ($request->filled('bulk_modules')) {
                 $this->processBulkModules($course, $request->bulk_modules, true);
             }
 
-            return redirect()->route('admin.courses.show', $course->slug)
+            return redirect()
+                ->route('admin.courses.show', $course->slug)
                 ->with('success', 'Course updated successfully!');
 
         } catch (\Exception $e) {
-            return back()->withInput()
-                ->with('error', 'Error updating course: ' . $e->getMessage());
+
+            \Log::error('Course update failed: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Error updating course. Please try again.');
         }
     }
 
