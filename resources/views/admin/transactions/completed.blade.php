@@ -3,7 +3,7 @@
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Completed Transactions</h6>
+        <h6 class="fw-semibold mb-0">Failed Transactions</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -16,7 +16,7 @@
                 <a href="{{ route('admin.transactions.index') }}" class="hover-text-primary">Transactions</a>
             </li>
             <li>-</li>
-            <li class="fw-medium">Completed</li>
+            <li class="fw-medium">Failed</li>
         </ul>
     </div>
 
@@ -34,28 +34,11 @@
                 <div class="card-body p-24">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div class="">
-                            <span class="mb-0 fw-medium text-secondary-light text-md">Total Completed</span>
-                            <h6 class="fw-semibold mb-0 mt-2 text-success-main">{{ $transactions->total() ?? 0 }}</h6>
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Total Failed</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-danger-main">{{ $transactions->total() ?? 0 }}</h6>
                         </div>
-                        <div class="w-50-px h-50-px bg-success-50 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:check-circle" class="icon text-2xl text-success-600"></iconify-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-sm-6">
-            <div class="card h-100 p-0 radius-12 overflow-hidden">
-                <div class="card-body p-24">
-                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
-                        <div class="">
-                            <span class="mb-0 fw-medium text-secondary-light text-md">Total Revenue</span>
-                            <h6 class="fw-semibold mb-0 mt-2 text-primary-light">
-                                ${{ number_format($totalRevenue ?? 0, 2) }}
-                            </h6>
-                        </div>
-                        <div class="w-50-px h-50-px bg-primary-50 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:cash-multiple" class="icon text-2xl text-primary-600"></iconify-icon>
+                        <div class="w-50-px h-50-px bg-danger-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:close-circle" class="icon text-2xl text-danger-600"></iconify-icon>
                         </div>
                     </div>
                 </div>
@@ -66,13 +49,28 @@
                 <div class="card-body p-24">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div class="">
-                            <span class="mb-0 fw-medium text-secondary-light text-md">Average Amount</span>
-                            <h6 class="fw-semibold mb-0 mt-2 text-info-main">
-                                ${{ number_format($averageAmount ?? 0, 2) }}
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Total Amount Failed</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-warning-main">
+                                ${{ number_format($totalFailedAmount ?? 0, 2) }}
                             </h6>
+                        </div>
+                        <div class="w-50-px h-50-px bg-warning-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="mdi:cash-remove" class="icon text-2xl text-warning-600"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-sm-6">
+            <div class="card h-100 p-0 radius-12 overflow-hidden">
+                <div class="card-body p-24">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div class="">
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Failure Rate</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-info-main">{{ $failureRate ?? 0 }}%</h6>
                         </div>
                         <div class="w-50-px h-50-px bg-info-50 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="mdi:chart-line" class="icon text-2xl text-info-600"></iconify-icon>
+                            <iconify-icon icon="mdi:percent" class="icon text-2xl text-info-600"></iconify-icon>
                         </div>
                     </div>
                 </div>
@@ -94,7 +92,7 @@
                 </form>
                 
                 <form class="navbar-search" method="GET">
-                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search completed transactions..." value="{{ request('search') }}">
+                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search failed transactions..." value="{{ request('search') }}">
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                 </form>
                 
@@ -103,11 +101,10 @@
                         <option value="">All Methods</option>
                         <option value="stripe" {{ request('payment_method') == 'stripe' ? 'selected' : '' }}>Stripe</option>
                         <option value="paypal" {{ request('payment_method') == 'paypal' ? 'selected' : '' }}>PayPal</option>
-                        <option value="free" {{ request('payment_method') == 'free' ? 'selected' : '' }}>Free</option>
                     </select>
                     
                     @if(request('search') || request('payment_method') || request('per_page') != 10)
-                        <a href="{{ route('admin.transactions.completed') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
+                        <a href="{{ route('admin.transactions.failed') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
                     @endif
                 </form>
             </div>
@@ -131,7 +128,7 @@
                             <th scope="col">Date</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Payment Method</th>
-                            <th scope="col">Paid At</th>
+                            <th scope="col">Error Details</th>
                             <th scope="col" class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -148,7 +145,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-12">
-                                        <img src="{{ asset('storage/' . ($transaction->user->avatar ?? 'default-avatar.jpeg')) }}" 
+                                        <img src="{{ asset('storage/' . ($transaction->user->avatar ?? 'default-avatar.jpg')) }}" 
                                              alt="{{ $transaction->user->name }}" 
                                              class="w-40-px h-40-px rounded-circle object-fit-cover">
                                     </div>
@@ -172,19 +169,18 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="fw-medium text-success">${{ number_format($transaction->amount, 2) }}</span>
+                                <span class="fw-medium text-danger">${{ number_format($transaction->amount, 2) }}</span>
                             </td>
                             <td>
                                 <span class="badge bg-secondary text-uppercase">{{ $transaction->payment_method }}</span>
                             </td>
                             <td>
-                                @if($transaction->paid_at)
-                                    <div class="d-flex flex-column">
-                                        <span>{{ $transaction->paid_at->format('M d, Y') }}</span>
-                                        <small class="text-muted">{{ $transaction->paid_at->format('h:i A') }}</small>
-                                    </div>
+                                @if($transaction->payment_details && isset($transaction->payment_details['error']))
+                                    <span class="text-danger" title="{{ $transaction->payment_details['error'] }}">
+                                        {{ Str::limit($transaction->payment_details['error'], 30) }}
+                                    </span>
                                 @else
-                                    <span class="text-muted">N/A</span>
+                                    <span class="text-muted">No error details</span>
                                 @endif
                             </td>
                             <td class="text-center">
@@ -195,27 +191,79 @@
                                         <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                     </a>
                                     
+                                    <button type="button" 
+                                            class="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#retryModal{{ $transaction->id }}"
+                                            title="Retry Payment">
+                                        <iconify-icon icon="mdi:refresh" class="menu-icon"></iconify-icon>
+                                    </button>
                                     
-                                    @if($transaction->enrollment)
-                                        <a href="{{ route('admin.enrollments.show', $transaction->enrollment) }}" 
-                                           class="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
-                                           title="View Enrollment">
-                                            <iconify-icon icon="mdi:account-school" class="menu-icon"></iconify-icon>
-                                        </a>
-                                    @endif
+                                    <form action="{{ route('admin.transactions.destroy', $transaction) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
+                                                onclick="return confirm('Are you sure you want to delete this failed transaction?')" 
+                                                title="Delete">
+                                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
 
-                       
+                        <!-- Retry Payment Modal -->
+                        <div class="modal fade" id="retryModal{{ $transaction->id }}" tabindex="-1" aria-labelledby="retryModalLabel{{ $transaction->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ route('admin.transactions.retry', $transaction) }}" method="POST">
+                                        @csrf
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="retryModalLabel{{ $transaction->id }}">Retry Payment</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Transaction Details</label>
+                                                <p class="mb-1"><strong>Student:</strong> {{ $transaction->user->name }}</p>
+                                                <p class="mb-1"><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
+                                                <p class="mb-1"><strong>Date:</strong> {{ $transaction->created_at->format('M d, Y') }}</p>
+                                                @if($transaction->payment_details && isset($transaction->payment_details['error']))
+                                                    <p class="mb-1 text-danger"><strong>Error:</strong> {{ $transaction->payment_details['error'] }}</p>
+                                                @endif
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="retry_notes_{{ $transaction->id }}" class="form-label">Additional Notes (Optional)</label>
+                                                <textarea class="form-control" 
+                                                          id="retry_notes_{{ $transaction->id }}" 
+                                                          name="retry_notes" 
+                                                          rows="2"></textarea>
+                                            </div>
+                                            
+                                            <div class="alert alert-warning">
+                                                <iconify-icon icon="mdi:alert" class="me-2"></iconify-icon>
+                                                This will create a new payment attempt for the customer. The customer will receive an email with payment instructions.
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-warning">Send Retry Notification</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         @empty
                         <tr>
                             <td colspan="9" class="text-center py-4">
                                 <div class="text-muted">
-                                    <iconify-icon icon="mdi:check-circle" class="icon-3x mb-2"></iconify-icon>
-                                    <p>No completed transactions found.</p>
+                                    <iconify-icon icon="mdi:check-circle" class="icon-3x mb-2 text-success"></iconify-icon>
+                                    <p class="mb-2">No failed transactions found!</p>
+                                    <p class="text-sm">All transactions are processing successfully.</p>
                                     @if(request('search') || request('payment_method'))
-                                        <a href="{{ route('admin.transactions.completed') }}" class="btn btn-sm btn-primary">Clear Filters</a>
+                                        <a href="{{ route('admin.transactions.failed') }}" class="btn btn-sm btn-primary mt-2">Clear Filters</a>
                                     @endif
                                 </div>
                             </td>
