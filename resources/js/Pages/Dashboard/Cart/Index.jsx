@@ -56,7 +56,7 @@ export default function Cart({ cart }) {
                                                     <p className="text-sm text-gray-600 mt-1">
                                                         Level: {item.course?.level} | Duration: {item.course?.duration}
                                                     </p>
-                                                </div>
+                                                </div> 
                                                 
                                                 <div className="text-right">
                                                     <p className="text-lg font-bold text-gray-900">
