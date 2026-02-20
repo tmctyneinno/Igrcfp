@@ -11,7 +11,7 @@ export default function Checkout({ cart, user }) {
         terms_accepted: false,
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e) => { 
         e.preventDefault();
         post(route('checkout.process'));
     };
@@ -70,7 +70,7 @@ export default function Checkout({ cart, user }) {
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             Phone Number
                                         </label>
-                                        <input
+                                        <input 
                                             type="tel"
                                             value={data.phone}
                                             onChange={e => setData('phone', e.target.value)}
