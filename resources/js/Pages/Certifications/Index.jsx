@@ -4,8 +4,9 @@ import CourseCard from '@/components/Courses/CourseCard';
 
 export default function Certifications({ auth, title, description, courses }) {
  
-
-    
+    // Handle both paginated and non-paginated data
+    const courseData = courses.data || courses;
+    const hasCourses = Array.isArray(courseData) ? courseData.length > 0 : false;
 
     return (
         <GuestLayout auth={auth}>
