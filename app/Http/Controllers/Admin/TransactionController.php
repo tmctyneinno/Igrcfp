@@ -35,14 +35,42 @@ class TransactionController extends Controller
         return view('admin.transactions.pending', compact('transactions'));
     }
 
-    public function completed()
+    public function completed(Request $request)
     {
-        $transactions = Transaction::with(['user', 'enrollment.course'])
-            ->where('status', 'completed')
-            ->latest()
-            ->paginate(15);
-            
-        return view('admin.transactions.completed', compact('transactions'));
+        $query = Transaction::with(['user', 'enrollment.course'])
+            ->where('status', 'completed');
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('transaction_id', 'like', "%{$search}%")
+                ->orWhere('reference', 'like', "%{$search}%")
+                ->orWhereHas('user', function($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Apply payment method filter
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        $transactions = $query->latest()->paginate($request->per_page ?? 15);
+
+        // Calculate summary data
+        $totalRevenue = Transaction::where('status', 'completed')->sum('amount');
+        $averageAmount = $transactions->total() > 0 
+            ? $totalRevenue / $transactions->total() 
+            : 0;
+
+        return view('admin.transactions.completed', compact(
+            'transactions', 
+            'totalRevenue', 
+            'averageAmount'
+        ));
     }
 
     public function failed()
