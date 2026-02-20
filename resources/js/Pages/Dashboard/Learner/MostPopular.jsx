@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext'; 
-
+ 
 export default function MostPopular({ initialCourses = [] }) {
     const { addToCart, cartItems } = useCart(); 
     const [addingToCart, setAddingToCart] = useState({});
