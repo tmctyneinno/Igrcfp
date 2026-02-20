@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function Certifications({ auth, title, description }) {
+export default function Certifications({ auth, title, description, courses }) {
  
-    const programs = [
+    const programs = [ 
     {
         title: 'Certified GRC & Financial Crime Specialist (CGFCS)',
         description:

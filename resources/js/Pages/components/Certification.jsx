@@ -6,7 +6,7 @@ export default function Certification({ courses }) { // Remove default value fro
 
     // Safe courses initialization
     const coursesData = Array.isArray(courses) ? courses : [];
- 
+  
     // Format price safely
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
