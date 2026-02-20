@@ -13,6 +13,6 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
             <LearningCenter enrolledCourses={enrolledCourses} />
             <MyLearning enrolledCourses={enrolledCourses} />
             <MostPopular initialCourses={popularCourses} />
-        </AuthenticatedLayout>
+        </AuthenticatedLayout> 
     );
 }
