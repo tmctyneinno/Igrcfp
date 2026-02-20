@@ -1,9 +1,9 @@
 // resources/js/Components/CourseCard.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function CourseCard({ course }) { 
+export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
     // Check if course has discount
     const hasDiscount = () => {
         if (!course?.discount_price || !course?.price) return false;
@@ -26,6 +26,14 @@ export default function CourseCard({ course }) {
     const discountPercentage = hasDisc && price > 0 
         ? Math.round(((price - discountPrice) / price) * 100) 
         : 0;
+
+    const handleAddToCartClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onAddToCart) {
+            onAddToCart(course);
+        }
+    };
 
     return (
         <div
@@ -105,36 +113,38 @@ export default function CourseCard({ course }) {
                         </span>
                     )}
                     
-                    {/* ENROLL BUTTON */}
-                    <Link
-                        // href={route('courses.enroll', course.slug)}
-                        onClick={(e) => handleAddToCart(course, e)}
-                        className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
-                    >
-                        Add to Cart
-                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </Link>
-                </div>
-
-                {/* BADGES */}
-                <div className="mt-1 flex flex-wrap gap-2">
-                    {/* {course?.is_featured && (
-                        <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
-                            ⭐ Featured
-                        </span>
+                    {/* ADD TO CART BUTTON */}
+                    {isInCart ? (
+                        <Link
+                            href={route('dashboard.cart.index')}
+                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                        >
+                            View in Cart
+                        </Link>
+                    ) : (
+                        <button
+                            onClick={handleAddToCartClick}
+                            disabled={isAdding}
+                            className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isAdding ? (
+                                <>
+                                    <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Adding...
+                                </>
+                            ) : (
+                                <>
+                                    Add to Cart
+                                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </>
+                            )}
+                        </button>
                     )}
-                    {course?.is_popular && (
-                        <span className="text-xs font-semibold px-2 py-1 bg-green-100 text-green-800 rounded">
-                            🔥 Popular
-                        </span>
-                    )}
-                    {course?.format && (
-                        <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
-                            {course.format}
-                        </span>
-                    )} */}
                 </div>
             </div>
         </div>
