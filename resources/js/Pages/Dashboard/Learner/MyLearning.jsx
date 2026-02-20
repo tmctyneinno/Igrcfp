@@ -123,7 +123,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
                                 {/* Content */}
                                 <div className="p-2">
-                                    <Link href={route('dashboard.courses.show', { course: course.slug })}>
+                                    <Link href={route('courses.show', course.slug || course.id)}>
                                         <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2 h-14">
                                             {course.title}
                                         </h4>
@@ -180,7 +180,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
                                     {/* Continue Button */}
                                     <Link
-                                        href={route('dashboard.courses.show', { course: course.slug })}
+                                        href={route('courses.show', course.slug || course.id)}
                                         className="block w-full rounded-lg bg-blue-900 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 transition-colors duration-200 transform hover:-translate-y-1"
                                     >
                                         {progress === 0 ? '🚀 Start Learning' : progress === 100 ? '🔄 Review Course' : '▶️ Continue Learning'}
