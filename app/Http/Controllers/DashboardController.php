@@ -116,163 +116,163 @@ class DashboardController extends Controller
     }
 
     public function courses(Request $request)
-{
-    $query = Course::published()
-        ->withCount('modules');
+    {
+        $query = Course::published()
+            ->withCount('modules');
 
-    // Search
-    if ($request->has('search') && !empty($request->search)) {
-        $searchTerm = $request->search;
-        $query->where(function($q) use ($searchTerm) {
-            $q->where('title', 'like', "%{$searchTerm}%")
-              ->orWhere('short_description', 'like', "%{$searchTerm}%")
-              ->orWhere('full_description', 'like', "%{$searchTerm}%");
-        });
-    }
-
-    // Filter by level
-    if ($request->has('level') && !empty($request->level)) {
-        $query->where('level', $request->level);
-    }
-
-    // Filter by price type
-    if ($request->has('price_type') && !empty($request->price_type)) {
-        if ($request->price_type === 'free') {
-            $query->where('price', 0);
-        } elseif ($request->price_type === 'paid') {
-            $query->where('price', '>', 0);
-        } elseif ($request->price_type === 'discounted') {
-            $query->whereNotNull('discount_price')
-                  ->whereColumn('discount_price', '<', 'price');
+        // Search
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                ->orWhere('short_description', 'like', "%{$searchTerm}%")
+                ->orWhere('full_description', 'like', "%{$searchTerm}%");
+            });
         }
-    }
 
-    // Filter by featured/popular
-    if ($request->has('featured') && $request->featured) {
-        $query->where('is_featured', true);
-    }
+        // Filter by level
+        if ($request->has('level') && !empty($request->level)) {
+            $query->where('level', $request->level);
+        }
 
-    if ($request->has('popular') && $request->popular) {
-        $query->where('is_popular', true);
-    }
+        // Filter by price type
+        if ($request->has('price_type') && !empty($request->price_type)) {
+            if ($request->price_type === 'free') {
+                $query->where('price', 0);
+            } elseif ($request->price_type === 'paid') {
+                $query->where('price', '>', 0);
+            } elseif ($request->price_type === 'discounted') {
+                $query->whereNotNull('discount_price')
+                    ->whereColumn('discount_price', '<', 'price');
+            }
+        }
 
-    // Filter by format
-    if ($request->has('format') && !empty($request->format)) {
-        $query->where('format', $request->format);
-    }
+        // Filter by featured/popular
+        if ($request->has('featured') && $request->featured) {
+            $query->where('is_featured', true);
+        }
 
-    // Handle sorting - supports both combined format (field_direction) and separate parameters
-    $sortInput = $request->get('sort_field', 'created_at_desc');
-    
-    // Parse sort field and direction
-    if (str_contains($sortInput, '_')) {
-        $parts = explode('_', $sortInput);
-        $direction = array_pop($parts); // Get the last part (asc/desc)
-        $field = implode('_', $parts); // The rest is the field name
+        if ($request->has('popular') && $request->popular) {
+            $query->where('is_popular', true);
+        }
+
+        // Filter by format
+        if ($request->has('format') && !empty($request->format)) {
+            $query->where('format', $request->format);
+        }
+
+        // Handle sorting - supports both combined format (field_direction) and separate parameters
+        $sortInput = $request->get('sort_field', 'created_at_desc');
         
-        // Validate direction
-        $sortDirection = in_array(strtolower($direction), ['asc', 'desc']) ? strtolower($direction) : 'desc';
-        
-        // Map the field to actual column names
-        $sortField = $field;
-    } else {
-        // Fallback to separate parameters if combined format not used
-        $sortField = $request->get('sort_field', 'created_at');
-        $sortDirection = $request->get('sort_direction', 'desc');
-        
-        // Validate direction
-        $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? strtolower($sortDirection) : 'desc';
-    }
-
-    // Allowed sort fields
-    $allowedSortFields = ['title', 'price', 'created_at', 'modules_count'];
-    
-    // Apply sorting
-    if (in_array($sortField, $allowedSortFields)) {
-        if ($sortField === 'modules_count') {
-            $query->orderBy('modules_count', $sortDirection);
+        // Parse sort field and direction
+        if (str_contains($sortInput, '_')) {
+            $parts = explode('_', $sortInput);
+            $direction = array_pop($parts); // Get the last part (asc/desc)
+            $field = implode('_', $parts); // The rest is the field name
+            
+            // Validate direction
+            $sortDirection = in_array(strtolower($direction), ['asc', 'desc']) ? strtolower($direction) : 'desc';
+            
+            // Map the field to actual column names
+            $sortField = $field;
         } else {
-            $query->orderBy($sortField, $sortDirection);
+            // Fallback to separate parameters if combined format not used
+            $sortField = $request->get('sort_field', 'created_at');
+            $sortDirection = $request->get('sort_direction', 'desc');
+            
+            // Validate direction
+            $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? strtolower($sortDirection) : 'desc';
         }
-    } else {
-        // Default sorting
-        $query->orderBy('is_featured', 'desc')
-              ->orderBy('is_popular', 'desc')
-              ->orderBy('created_at', 'desc');
-    }
 
-    // Get filter options for dropdowns
-    $levels = Course::published()->select('level')->distinct()->pluck('level');
-    
-    // Get unique formats if they exist
-    $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
+        // Allowed sort fields
+        $allowedSortFields = ['title', 'price', 'created_at', 'modules_count'];
+        
+        // Apply sorting
+        if (in_array($sortField, $allowedSortFields)) {
+            if ($sortField === 'modules_count') {
+                $query->orderBy('modules_count', $sortDirection);
+            } else {
+                $query->orderBy($sortField, $sortDirection);
+            }
+        } else {
+            // Default sorting
+            $query->orderBy('is_featured', 'desc')
+                ->orderBy('is_popular', 'desc')
+                ->orderBy('created_at', 'desc');
+        }
 
-    // Paginate results
-    $courses = $query->paginate(12)->withQueryString();
+        // Get filter options for dropdowns
+        $levels = Course::published()->select('level')->distinct()->pluck('level');
+        
+        // Get unique formats if they exist
+        $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
 
-    // Transform courses for the frontend
-    $courses->getCollection()->transform(function ($course) {
-        // Handle instructor relationship if it exists
-        $instructorData = null;
-        if (isset($course->instructor) && $course->instructor) {
-            $instructorData = [
-                'name' => $course->instructor->name,
-                'avatar' => $course->instructor->avatar ?? null
+        // Paginate results
+        $courses = $query->paginate(12)->withQueryString();
+
+        // Transform courses for the frontend
+        $courses->getCollection()->transform(function ($course) {
+            // Handle instructor relationship if it exists
+            $instructorData = null;
+            if (isset($course->instructor) && $course->instructor) {
+                $instructorData = [
+                    'name' => $course->instructor->name,
+                    'avatar' => $course->instructor->avatar ?? null
+                ];
+            }
+
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'short_description' => $course->short_description,
+                'full_description' => $course->full_description,
+                'banner_image' => $course->banner_image,
+                'image_url' => $course->image_url,
+                'level' => $course->level,
+                'duration' => $course->duration,
+                'price' => $course->price,
+                'discount_price' => $course->discount_price,
+                'modules_count' => $course->modules_count,
+                'is_featured' => $course->is_featured,
+                'is_popular' => $course->is_popular,
+                'format' => $course->format,
+                'instructor' => $instructorData,
+                'created_at' => $course->created_at->format('M d, Y')
             ];
-        }
+        });
 
-        return [
-            'id' => $course->id,
-            'title' => $course->title,
-            'slug' => $course->slug,
-            'short_description' => $course->short_description,
-            'full_description' => $course->full_description,
-            'banner_image' => $course->banner_image,
-            'image_url' => $course->image_url,
-            'level' => $course->level,
-            'duration' => $course->duration,
-            'price' => $course->price,
-            'discount_price' => $course->discount_price,
-            'modules_count' => $course->modules_count,
-            'is_featured' => $course->is_featured,
-            'is_popular' => $course->is_popular,
-            'format' => $course->format,
-            'instructor' => $instructorData,
-            'created_at' => $course->created_at->format('M d, Y')
-        ];
-    });
-
-    return Inertia::render('Dashboard/Courses/Index', [
-        'filters' => [
-            'search' => $request->search ?? '',
-            'level' => $request->level ?? '',
-            'price_type' => $request->price_type ?? '',
-            'featured' => $request->featured ?? false,
-            'popular' => $request->popular ?? false,
-            'format' => $request->format ?? '',
-            'sort_field' => $sortInput, // Return the combined format for consistency
-        ],
-        'courses' => $courses,
-        'filterOptions' => [
-            'levels' => $levels,
-            'formats' => $formats,
-            'priceTypes' => [
-                ['value' => '', 'label' => 'All Prices'],
-                ['value' => 'free', 'label' => 'Free'],
-                ['value' => 'paid', 'label' => 'Paid'],
-                ['value' => 'discounted', 'label' => 'Discounted'],
+        return Inertia::render('Dashboard/Courses/Index', [
+            'filters' => [
+                'search' => $request->search ?? '',
+                'level' => $request->level ?? '',
+                'price_type' => $request->price_type ?? '',
+                'featured' => $request->featured ?? false,
+                'popular' => $request->popular ?? false,
+                'format' => $request->format ?? '',
+                'sort_field' => $sortInput, // Return the combined format for consistency
             ],
-            'sortOptions' => [
-                ['value' => 'created_at_desc', 'label' => 'Newest First'],
-                ['value' => 'created_at_asc', 'label' => 'Oldest First'],
-                ['value' => 'price_asc', 'label' => 'Price: Low to High'],
-                ['value' => 'price_desc', 'label' => 'Price: High to Low'],
-                ['value' => 'title_asc', 'label' => 'Title: A to Z'],
-                ['value' => 'title_desc', 'label' => 'Title: Z to A'],
-                ['value' => 'modules_count_desc', 'label' => 'Most Modules'],
+            'courses' => $courses,
+            'filterOptions' => [
+                'levels' => $levels,
+                'formats' => $formats,
+                'priceTypes' => [
+                    ['value' => '', 'label' => 'All Prices'],
+                    ['value' => 'free', 'label' => 'Free'],
+                    ['value' => 'paid', 'label' => 'Paid'],
+                    ['value' => 'discounted', 'label' => 'Discounted'],
+                ],
+                'sortOptions' => [
+                    ['value' => 'created_at_desc', 'label' => 'Newest First'],
+                    ['value' => 'created_at_asc', 'label' => 'Oldest First'],
+                    ['value' => 'price_asc', 'label' => 'Price: Low to High'],
+                    ['value' => 'price_desc', 'label' => 'Price: High to Low'],
+                    ['value' => 'title_asc', 'label' => 'Title: A to Z'],
+                    ['value' => 'title_desc', 'label' => 'Title: Z to A'],
+                    ['value' => 'modules_count_desc', 'label' => 'Most Modules'],
+                ]
             ]
-        ]
-    ]);
-}
+        ]);
+    }
 
 }
