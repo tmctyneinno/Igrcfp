@@ -308,7 +308,7 @@ export default function AIPathway({ auth}) {
                         Equip yourself with the knowledge and skills to govern advanced technologies responsibly and effectively
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/programmes/all-courses" className="bg-white text-yellow-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-50 transition duration-300">
+                        <a href="/courses" className="bg-white text-yellow-900 px-8 py-3 rounded-lg font-semibold hover:bg-yellow-50 transition duration-300">
                             View All Courses
                         </a>
                         <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-yellow-900 transition duration-300">
