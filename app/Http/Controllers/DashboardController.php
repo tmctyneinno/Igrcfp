@@ -237,7 +237,6 @@ class DashboardController extends Controller
             'is_featured' => $course->is_featured,
             'is_popular' => $course->is_popular,
             'format' => $course->format,
-            'tags' => $course->tags,
             'instructor' => $instructorData,
             'created_at' => $course->created_at->format('M d, Y')
         ];
