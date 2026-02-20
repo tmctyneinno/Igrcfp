@@ -10,7 +10,7 @@ export default function LearningCenter({ enrolledCourses = [] }) {
         // Calculate total hours (assuming each course has duration in hours)
         const totalHours = enrolledCourses.reduce((sum, course) => {
             return sum + (parseInt(course.duration) || 0);
-        }, 0);
+        }, 0); 
         
         return {
             totalCourses,
