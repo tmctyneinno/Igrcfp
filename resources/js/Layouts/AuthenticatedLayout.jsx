@@ -66,11 +66,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Dashboard
                                 </NavLink>
                                 <NavLink
-                                    href={route('courses.index')}
+                                    href={route('dashboard.courses.index')}
                                     active={route().current('dashboard.courses.index')}
                                 > 
                                     Courses
-                                </NavLink>
+                                </NavLink>  
                                 <NavLink
                                     href={route('dashboard.my-courses')}
                                     active={route().current('dashboard.my-courses')}

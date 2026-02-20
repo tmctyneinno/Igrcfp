@@ -59,7 +59,7 @@ class DashboardController extends Controller
         $enrolledCourses = $user->enrollments()
             ->with(['course' => function($query) {
                 $query->withCount('modules');
-            }])
+            }]) 
             ->take(4)
             ->get()
             ->map(function ($enrollment) {
