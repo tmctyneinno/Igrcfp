@@ -1,10 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import CourseCard from '@/components/Courses/CourseCard';
 
 export default function Certifications({ auth, title, description, courses }) {
  
-    // Safe courses initialization
-    const coursesData = Array.isArray(courses) ? courses : [];
 
     
 
@@ -141,12 +140,6 @@ export default function Certifications({ auth, title, description, courses }) {
                             <p className="text-gray-600 mb-6">
                                 Try adjusting your search or filter criteria
                             </p>
-                            <button
-                                onClick={resetFilters}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Clear All Filters
-                            </button>
                         </div>
                     )}
 
