@@ -82,8 +82,8 @@ class EnrollmentController extends Controller
 
     public function pending()
     {
-        $enrollments = Enrollment::with(['user', 'course'])
-            ->where('status', 'pending')
+        $enrollments = Enrollment::with(['user', 'course', 'transaction'])
+            ->where('status', 'pending_payment')
             ->latest()
             ->paginate(15);
             
@@ -92,7 +92,7 @@ class EnrollmentController extends Controller
 
     public function completed()
     {
-        $enrollments = Enrollment::with(['user', 'course'])
+        $enrollments = Enrollment::with(['user', 'course', 'transaction'])
             ->where('status', 'completed')
             ->latest()
             ->paginate(15);
