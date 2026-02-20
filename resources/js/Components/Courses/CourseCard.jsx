@@ -3,7 +3,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function CourseCard({ course }) {
+export default function CourseCard({ course }) { 
     // Check if course has discount
     const hasDiscount = () => {
         if (!course?.discount_price || !course?.price) return false;
