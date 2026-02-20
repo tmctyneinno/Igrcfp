@@ -1,5 +1,3 @@
-// resources/js/Pages/Dashboard/Courses/Show.jsx
-
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
