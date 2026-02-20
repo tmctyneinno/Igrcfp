@@ -15,7 +15,7 @@ export default function CourseCard({ course }) {
     const getCleanDescription = () => {
         const text = course?.short_description || course?.description;
         if (!text) return 'No description available';
-        
+         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
         return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
