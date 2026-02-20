@@ -117,10 +117,10 @@ export default function Cart({ cart }) {
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
                         <p className="text-gray-600 mb-6">Start adding courses to your cart</p>
                         <Link
-                            href={route('dashboard.index')}
+                            href={route('dashboard.courses')}
                             className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
                         >
-                            Explore More Programs
+                            Explore More Courses
                         </Link>
                     </div>
                 )} 
