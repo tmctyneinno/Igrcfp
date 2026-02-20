@@ -101,10 +101,10 @@ export default function Cart({ cart }) {
                                 </Link>
                                 
                                 <Link
-                                    href={route('dashboard.index')}
+                                    href={route('dashboard.courses')}
                                     className="block w-full text-center py-2 px-4 mt-3 text-blue-900 hover:text-blue-700 font-semibold"
                                 >
-                                    Explore More Programs
+                                    Explore More Courses
                                 </Link>
                             </div>
                         </div>
