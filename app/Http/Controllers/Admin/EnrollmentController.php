@@ -100,15 +100,62 @@ class EnrollmentController extends Controller
         return view('admin.enrollments.completed', compact('enrollments'));
     }
 
-    public function cancelled()
-    {
-        $enrollments = Enrollment::with(['user', 'course'])
-            ->where('status', 'cancelled')
-            ->latest()
-            ->paginate(15);
-            
-        return view('admin.enrollments.cancelled', compact('enrollments'));
+    public function cancelled(Request $request)
+{
+    $query = Enrollment::with(['user', 'course', 'transaction'])
+        ->where('status', 'cancelled');
+
+    // Apply search filter
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->whereHas('user', function($userQuery) use ($search) {
+                $userQuery->where('name', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
+            })->orWhereHas('course', function($courseQuery) use ($search) {
+                $courseQuery->where('title', 'like', "%{$search}%");
+            });
+        });
     }
+
+    // Apply refund status filter
+    if ($request->filled('refund_status')) {
+        if ($request->refund_status === 'refunded') {
+            $query->whereHas('transaction', function($q) {
+                $q->where('status', 'refunded');
+            });
+        } elseif ($request->refund_status === 'pending_refund') {
+            $query->whereHas('transaction', function($q) {
+                $q->where('status', 'pending_refund');
+            });
+        } elseif ($request->refund_status === 'no_refund') {
+            $query->whereDoesntHave('transaction', function($q) {
+                $q->whereIn('status', ['refunded', 'pending_refund']);
+            });
+        }
+    }
+
+    $enrollments = $query->latest()->paginate($request->per_page ?? 15);
+
+    // Calculate summary data
+    $totalRefunded = Enrollment::where('status', 'cancelled')
+        ->whereHas('transaction', function($q) {
+            $q->where('status', 'refunded');
+        })
+        ->sum('amount');
+
+    $totalEnrollments = Enrollment::count();
+    $cancelledCount = Enrollment::where('status', 'cancelled')->count();
+    $cancellationRate = $totalEnrollments > 0 
+        ? round(($cancelledCount / $totalEnrollments) * 100, 2) 
+        : 0;
+
+    return view('admin.enrollments.cancelled', compact(
+        'enrollments', 
+        'totalRefunded', 
+        'cancellationRate'
+    ));
+}
 
     public function show(Enrollment $enrollment)
     {
