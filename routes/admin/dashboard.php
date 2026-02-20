@@ -73,6 +73,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::get('/cancelled', [EnrollmentController::class, 'cancelled'])->name('cancelled');
         Route::get('/{enrollment}', [EnrollmentController::class, 'show'])->name('show');
         Route::put('/{enrollment}/status', [EnrollmentController::class, 'updateStatus'])->name('status');
+        Route::get('/export', [EnrollmentController::class, 'export'])->name('export'); 
+        Route::patch('/{enrollment}/status', [EnrollmentController::class, 'updateStatus'])->name('update-status');
+        Route::post('/bulk-action', [EnrollmentController::class, 'bulkAction'])->name('bulk-action');
+        Route::delete('/{enrollment}', [EnrollmentController::class, 'destroy'])->name('destroy');
     });
 
      // Transactions Routes
