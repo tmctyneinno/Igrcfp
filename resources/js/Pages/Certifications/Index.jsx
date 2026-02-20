@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { motion } from 'framer-motion';
 import CourseCard from '@/components/Courses/CourseCard';
 
 export default function Certifications({ auth, title, description, courses }) {
