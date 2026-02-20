@@ -354,7 +354,7 @@ class HomeController extends Controller
                 'created_at' => $course->created_at->format('M d, Y')
             ];
         });
-
+ 
         return Inertia::render('Courses/Index', [
             'filters' => [
                 'search' => $request->search ?? '',
