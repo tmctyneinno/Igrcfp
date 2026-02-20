@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('lesson_completions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('lesson_id')->constrained()->onDelete('cascade');
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
+            
+            $table->unique(['user_id', 'lesson_id']);
         });
     }
 

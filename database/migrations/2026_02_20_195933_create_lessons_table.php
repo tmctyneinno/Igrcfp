@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('module_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->longText('content')->nullable();
+            $table->string('video_url')->nullable();
+            $table->string('duration')->nullable();
+            $table->integer('order')->default(0);
+            $table->boolean('is_free')->default(false);
+            $table->string('status')->default('published');
             $table->timestamps();
         });
     }
