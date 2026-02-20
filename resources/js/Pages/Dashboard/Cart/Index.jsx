@@ -81,7 +81,8 @@ export default function Cart({ cart }) {
                                 <div className="space-y-3 mb-4">
                                     <div className="flex justify-between text-gray-600">
                                         <span>Subtotal ({cart.item_count} items)</span>
-                                        <span>${calculateTotal().toFixed(2)}</span>
+                                        {/* <span>${calculateTotal().toFixed(2)}</span> */}
+                                        <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
                                         <span>Tax</span>
@@ -89,7 +90,8 @@ export default function Cart({ cart }) {
                                     </div>
                                     <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
                                         <span>Total</span>
-                                        <span>${calculateTotal().toFixed(2)}</span>
+                                        {/* <span>${calculateTotal().toFixed(2)}</span> */}
+                                        <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                 </div>
                                 
