@@ -69,7 +69,7 @@ class EnrollmentController extends Controller
                     $enrollment->created_at->format('Y-m-d H:i:s'),
                     $enrollment->amount ?? 0,
                     $enrollment->transaction->status ?? 'No Payment',
-                    $enrollment->status,
+                    $enrollment->status, 
                     ($enrollment->progress ?? 0) . '%',
                 ]);
             }
