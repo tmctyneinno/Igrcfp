@@ -10,7 +10,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
     const { url } = usePage();
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
