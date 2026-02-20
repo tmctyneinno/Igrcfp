@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Cart({ cart }) {
@@ -7,6 +7,20 @@ export default function Cart({ cart }) {
     
     const calculateTotal = () => {
         return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
+    };
+
+    const handleRemove = (itemId) => {
+        if (confirm('Are you sure you want to remove this item from your cart?')) {
+            router.delete(route('cart.remove', itemId), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // Optional: Add any success callback
+                },
+                onError: (errors) => {
+                    console.error('Error removing item:', errors);
+                }
+            });
+        }
     };
 
     return (
@@ -56,13 +70,16 @@ export default function Cart({ cart }) {
                                                     <p className="text-sm text-gray-600 mt-1">
                                                         Level: {item.course?.level} | Duration: {item.course?.duration}
                                                     </p>
-                                                </div> 
+                                                </div>
                                                 
                                                 <div className="text-right">
                                                     <p className="text-lg font-bold text-gray-900">
                                                         <span>${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                                     </p>
-                                                    <button className="text-sm text-red-600 hover:text-red-800 mt-1">
+                                                    <button 
+                                                        onClick={() => handleRemove(item.id)}
+                                                        className="text-sm text-red-600 hover:text-red-800 mt-1"
+                                                    >
                                                         Remove
                                                     </button>
                                                 </div>
@@ -81,7 +98,6 @@ export default function Cart({ cart }) {
                                 <div className="space-y-3 mb-4">
                                     <div className="flex justify-between text-gray-600">
                                         <span>Subtotal ({cart.item_count} items)</span>
-                                        {/* <span>${calculateTotal().toFixed(2)}</span> */}
                                         <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
@@ -90,7 +106,6 @@ export default function Cart({ cart }) {
                                     </div>
                                     <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
                                         <span>Total</span>
-                                        {/* <span>${calculateTotal().toFixed(2)}</span> */}
                                         <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                 </div>
