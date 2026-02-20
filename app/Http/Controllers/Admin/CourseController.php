@@ -276,9 +276,8 @@ class CourseController extends Controller
 
             // Convert target audience from textarea to array
             if ($request->filled('target_audience')) {
-                // $lines = explode("\n", $request->target_audience);
-                // $validated['target_audience'] = array_map('trim', array_filter($lines));
-                $validated['target_audience'] = $request->target_audience;
+                $lines = explode("\n", $request->target_audience);
+                $validated['target_audience'] = array_map('trim', array_filter($lines));
             }
 
             // Update course
