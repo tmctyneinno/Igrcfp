@@ -60,7 +60,6 @@ export default function Cart({ cart }) {
                                                 
                                                 <div className="text-right">
                                                     <p className="text-lg font-bold text-gray-900">
-                                                        ${item.price}
                                                         <span>${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                                     </p>
                                                     <button className="text-sm text-red-600 hover:text-red-800 mt-1">
