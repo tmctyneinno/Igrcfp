@@ -15,7 +15,7 @@ class CourseModule extends Model
         'full_content',
         'learning_objectives',
         'key_concepts',
-        'topics_covered',
+        'topics_covered', 
         'case_study',
         'exercise',
         'additional_notes',
@@ -94,5 +94,13 @@ class CourseModule extends Model
             ->first();
         
         return $lastModule ? $lastModule->module_number + 1 : 1;
+    }
+
+    /**
+     * Get the lessons for this module
+     */
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class, 'module_id');
     }
 }
