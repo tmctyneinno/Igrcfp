@@ -10,7 +10,7 @@ import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
-    const { addToCart, cartItems } = useCart(); // Use your existing cart method
+    const { addToCart, cartItems } = useCart();
     const [addingToCart, setAddingToCart] = useState({});
 
     const { url } = usePage();
@@ -279,7 +279,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         >
                                             <CourseCard course={course} />
                                         </motion.div>
-                                    ))}
+                                    ))} 
                                 </div>
                             ) : (
                                 <div className="text-center py-16 bg-white rounded-xl">
