@@ -101,107 +101,52 @@ export default function NavBar({ auth }) {
                             <div className="max-h-[480px] overflow-y-auto">
                                 {/* GRC Pathway */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/grc">
+                                    <Link href={route('programmes.grc')}>
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                                             <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
                                         </div>
                                     </Link>
-                                    {/* <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Advanced Diploma in GRC & Financial Crime Prevention
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Enterprise Risk Management
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Board Governance & Ethical Leadership
-                                        </Link>
-                                    </div> */}
                                 </div>
                                 
                                 {/* Financial Crime Prevention */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/financial-crime">
+                                    <Link href={route('programmes.financial-crime')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
                                     </div>
                                     </Link>
-                                    {/* <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Advanced AML & Financial Intelligence
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Fraud & Corruption Systems
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Sanctions Risk & Screening
-                                        </Link>
-                                    </div> */}
                                 </div>
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/crypto">
+                                    <Link href={route('programmes.crypto')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
                                     </div>
                                     </Link>
-                                    {/* <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Crypto-Asset Regulation & Compliance
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Blockchain Risk & Governance
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            DeFi Risk & Oversight
-                                        </Link>
-                                    </div> */}
                                 </div>
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="/programmes/cybersecurity">
+                                    <Link href={route('programmes.cybersecurity')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
                                     </div>
                                     </Link>
-                                    {/* <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Cyber Risk Governance
-                                        </Link>
-                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Data Protection & Privacy
-                                        </Link>
-                                        <Link href="programmes/cybersecurity" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Incident Response & Breach Management
-                                        </Link>
-                                    </div> */}
                                 </div>
                                 
                                 {/* AI & Emerging Technology */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="programmes/ai">
+                                    <Link href={route('programmes.ai')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
                                     </div>
                                     </Link>
-                                    {/* <div className="ml-5 mt-2 space-y-1">
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            AI Governance & Ethics
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            RegTech & SupTech Applications
-                                        </Link>
-                                        <Link href="#" className="block text-sm text-gray-600 hover:text-blue-900">
-                                            Data Governance & Protection
-                                        </Link>
-                                    </div> */}
                                 </div>
                             </div>
                             
