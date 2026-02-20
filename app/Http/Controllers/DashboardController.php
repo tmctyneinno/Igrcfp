@@ -28,6 +28,7 @@ class DashboardController extends Controller
             
             return inertia('Dashboard/Index', [
                 'enrollmentRedirect' => $enrollmentRedirect,
+                
             ]);
         }
         
@@ -113,6 +114,12 @@ class DashboardController extends Controller
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
             'popularCourses' => $popularCourses,
+            'enrolledCourses' => $enrolledCourses,
+            'stats' => [
+                'total_courses' => $enrolledCourses->count(),
+                'completed' => $enrolledCourses->where('enrollment_status', 'completed')->count(),
+                'in_progress' => $enrolledCourses->where('enrollment_status', 'enrolled')->count(),
+            ]
         ]);
     }
 
