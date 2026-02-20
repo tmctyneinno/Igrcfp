@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminDashboardController;TransactionController
+use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
@@ -59,10 +61,28 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::patch('/{article}/toggle-status', [NewsController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/bulk-action', [NewsController::class, 'bulkAction'])->name('bulk-action');
         Route::patch('/{event}/toggle-featured', [NewsController::class, 'toggleFeatured'])->name('toggle-featured');
-
         Route::post('/categories', [NewsController::class, 'storeCategory'])->name('articleCategories.store');
+    });
 
+    // Enrollments Routes
+    Route::prefix('enrollments')->name('enrollments.')->group(function () {
+        Route::get('/', [EnrollmentController::class, 'index'])->name('index');
+        Route::get('/pending', [EnrollmentController::class, 'pending'])->name('pending');
+        Route::get('/completed', [EnrollmentController::class, 'completed'])->name('completed');
+        Route::get('/cancelled', [EnrollmentController::class, 'cancelled'])->name('cancelled');
+        Route::get('/{enrollment}', [EnrollmentController::class, 'show'])->name('show');
+        Route::put('/{enrollment}/status', [EnrollmentController::class, 'updateStatus'])->name('status');
+    });
 
+     // Transactions Routes
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::get('/pending', [TransactionController::class, 'pending'])->name('pending');
+        Route::get('/completed', [TransactionController::class, 'completed'])->name('completed');
+        Route::get('/failed', [TransactionController::class, 'failed'])->name('failed');
+        Route::get('/refunded', [TransactionController::class, 'refunded'])->name('refunded');
+        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
+        Route::put('/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('status');
     });
  
 });
