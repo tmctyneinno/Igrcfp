@@ -61,6 +61,44 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
         });
     };
 
+    // Check if course is already in cart
+    const isInCart = (courseId) => {
+        return cartItems?.some(item => item.id === courseId);
+    };
+
+    // Handle Add to Cart
+    const handleAddToCart = async (course) => {
+        // Check if already in cart
+        if (isInCart(course.id)) {
+            alert('Course is already in your cart!');
+            return;
+        }
+
+        setAddingToCart(prev => ({ ...prev, [course.id]: true }));
+        
+        try {
+            const success = await addToCart({
+                id: course.id,
+                title: course.title,
+                slug: course.slug,
+                price: course.price,
+                discount_price: course.discount_price,
+                image_url: course.image_url,
+                level: course.level,
+                duration: course.duration
+            });
+
+            if (success) {
+                alert('Course added to cart successfully!');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Failed to add course to cart. Please try again.');
+        } finally {
+            setAddingToCart(prev => ({ ...prev, [course.id]: false }));
+        }
+    };
+
     // Get active filter count
     const getActiveFilterCount = () => {
         return Object.entries(selectedFilters).filter(([key, value]) => 
@@ -189,25 +227,6 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         </select>
                                     </div>
 
-                                    {/* Category Filter */}
-                                    <div className="mb-6">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Category
-                                        </label>
-                                        {/* <select
-                                            value={selectedFilters.category}
-                                            onChange={(e) => handleFilterChange('category', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        >
-                                            <option value="">All Categories</option>
-                                            {filterOptions.categories.map((category) => (
-                                                <option key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </option>
-                                            ))}
-                                        </select> */}
-                                    </div>
-
                                     {/* Price Type Filter */}
                                     <div className="mb-6">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -277,7 +296,12 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
                                         >
-                                            <CourseCard course={course} />
+                                            <CourseCard 
+                                                course={course} 
+                                                onAddToCart={handleAddToCart}
+                                                isInCart={isInCart(course.id)}
+                                                isAdding={addingToCart[course.id]}
+                                            /> 
                                         </motion.div>
                                     ))} 
                                 </div>
