@@ -85,17 +85,43 @@ class CartController extends Controller
         ]);
     } 
 
-    public function remove(Request $request, $itemId)
-    {
-        $cart = $request->user()->carts()->where('status', 'active')->first();
-        
-        if ($cart) {
-            $cart->items()->where('id', $itemId)->delete();
-            $cart->updateTotals();
-        }
+    // app/Http/Controllers/CartController.php
 
-        return redirect()->back()->with('success', 'Item removed from cart.');
+public function remove(Request $request, $itemId)
+{
+    $cart = $request->user()->carts()->where('status', 'active')->first();
+    
+    if ($cart) {
+        $cart->items()->where('id', $itemId)->delete();
+        $cart->updateTotals();
     }
+
+    // Get updated cart data
+    $updatedCart = $request->user()->carts()
+        ->with(['items.course'])
+        ->where('status', 'active')
+        ->latest()
+        ->first();
+
+    return redirect()->back()->with([
+        'success' => 'Item removed from cart.',
+        'cart' => $updatedCart ? [
+            'id' => $updatedCart->id,
+            'item_count' => $updatedCart->item_count,
+            'items' => $updatedCart->items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'course_id' => $item->course_id,
+                    'course' => [
+                        'id' => $item->course->id,
+                        'title' => $item->course->title,
+                        // ... other course fields
+                    ]
+                ];
+            })
+        ] : null
+    ]);
+}
 
     public function clear(Request $request)
     {
