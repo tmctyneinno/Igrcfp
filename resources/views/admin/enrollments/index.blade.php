@@ -203,7 +203,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0 me-12">
-                                            <img src="{{ asset('storage/' . ($enrollment->user->avatar ?? 'default-avatar.jpg')) }}" 
+                                            <img src="{{ asset('storage/' . ($enrollment->user->avatar ?? 'default-avatar.jpeg')) }}" 
                                                  alt="{{ $enrollment->user->name }}" 
                                                  class="w-40-px h-40-px rounded-circle object-fit-cover">
                                         </div> 
@@ -224,9 +224,10 @@
                                         <span>{{ $enrollment->created_at->format('M d, Y') }}</span>
                                         <small class="text-muted">{{ $enrollment->created_at->format('h:i A') }}</small>
                                     </div>
-                                </td>
+                                </td> 
                                 <td>
                                     <div class="d-flex flex-column">
+                                        {{ $enrollment }}
                                         <span class="fw-medium">${{ number_format($enrollment->amount ?? 0, 2) }}</span>
                                         @if($enrollment->transaction)
                                             <small class="text-muted">Ref: {{ substr($enrollment->transaction->reference, -8) }}</small>
