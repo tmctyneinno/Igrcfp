@@ -83,7 +83,7 @@ class CartController extends Controller
             'success' => 'Course added to cart.',
             'cart_count' => $cartCount
         ]);
-    }
+    } 
 
     public function remove(Request $request, $itemId)
     {
