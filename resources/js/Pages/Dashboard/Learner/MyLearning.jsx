@@ -180,7 +180,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
                                     {/* Continue Button */}
                                     <Link
-                                        href={route('courses.show', course.slug || course.id)}
+                                        href={route('dashboard.courses.show', course.slug || course.id)}
                                         className="block w-full rounded-lg bg-blue-900 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 transition-colors duration-200 transform hover:-translate-y-1"
                                     >
                                         {progress === 0 ? '🚀 Start Learning' : progress === 100 ? '🔄 Review Course' : '▶️ Continue Learning'}
