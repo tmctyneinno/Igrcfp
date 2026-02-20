@@ -206,7 +206,7 @@
                                             <img src="{{ asset('storage/' . ($enrollment->user->avatar ?? 'default-avatar.jpg')) }}" 
                                                  alt="{{ $enrollment->user->name }}" 
                                                  class="w-40-px h-40-px rounded-circle object-fit-cover">
-                                        </div>
+                                        </div> 
                                         <div class="flex-grow-1">
                                             <h6 class="text-md mb-0 fw-medium">{{ $enrollment->user->name }}</h6>
                                             <span class="text-sm text-secondary-light">{{ $enrollment->user->email }}</span>
