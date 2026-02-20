@@ -1,4 +1,5 @@
 <?php
+// database/migrations/[timestamp]_create_lessons_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,12 +14,13 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('module_id')->constrained()->onDelete('cascade');
+            // Change this line - use course_modules table if that's your table name
+            $table->foreignId('module_id')->constrained('course_modules')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->longText('content')->nullable();
             $table->string('video_url')->nullable();
-            $table->string('duration')->nullable();
+            $table->string('duration')->nullable(); // e.g., "10:30" or "15 mins"
             $table->integer('order')->default(0);
             $table->boolean('is_free')->default(false);
             $table->string('status')->default('published');
