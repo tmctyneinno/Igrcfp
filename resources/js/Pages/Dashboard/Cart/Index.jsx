@@ -142,6 +142,6 @@ export default function Cart({ cart }) {
                     </div>
                 )} 
             </div>
-        </AuthenticatedLayout>
+        </AuthenticatedLayout> 
     );
 }
