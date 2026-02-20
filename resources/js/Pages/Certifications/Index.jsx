@@ -113,13 +113,9 @@ export default function Certifications({ auth, title, description, courses }) {
                     </div>
 
                     {/* Courses */}
-                    {courses.data && courses.data.length > 0 ? (
-                        <div className={`grid gap-6 ${
-                            showFilters 
-                                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                        }`}>
-                            {courses.data.map((course, index) => (
+                    {hasCourses ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12">
+                            {courseData.map((course, index) => (
                                 <motion.div
                                     key={course.id}
                                     initial={{ opacity: 0, y: 20 }}
@@ -139,7 +135,7 @@ export default function Certifications({ auth, title, description, courses }) {
                                 No courses found
                             </h3>
                             <p className="text-gray-600 mb-6">
-                                Try adjusting your search or filter criteria
+                                Check back later for new certifications
                             </p>
                         </div>
                     )}
