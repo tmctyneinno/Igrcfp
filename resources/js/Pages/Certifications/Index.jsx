@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Certifications({ auth, title, description }) {
-
+ 
     const programs = [
     {
         title: 'Certified GRC & Financial Crime Specialist (CGFCS)',
@@ -10,7 +10,7 @@ export default function Certifications({ auth, title, description }) {
             'Our flagship certification equipping professionals with practical skills in governance, risk, compliance, and financial crime prevention. Globally benchmarked and CPD-accredited.',
         image: '/assets/images/programs/diploma.png',
     },
-    {
+    { 
         title: 'Advanced Diploma in GRC & Financial Crime Prevention',
         description:
             'A deep-dive, multi-disciplinary programme covering advanced governance, risk, compliance, and financial crime prevention with real-world case projects.',
