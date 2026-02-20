@@ -121,7 +121,7 @@ class CourseController extends Controller
         try {
             // Handle image uploads
             
-             if ($request->hasFile('image')) {
+            if ($request->hasFile('image')) {
                 $validated['image'] = $request->file('image')->store('courses/images', 'public');
             }
             
