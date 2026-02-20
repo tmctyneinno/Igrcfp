@@ -84,5 +84,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
         Route::put('/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('status');
     });
+    
  
 });
