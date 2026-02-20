@@ -158,7 +158,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                     
                                     <p className="text-gray-600 text-sm mb-1">
                                         {getCleanDescription(course)}
-                                    </p>
+                                    </p> 
 
                                     {/* COURSE METADATA */}
                                     <div className="flex items-center justify-between mb-2">
