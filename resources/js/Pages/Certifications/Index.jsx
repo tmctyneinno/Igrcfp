@@ -142,6 +142,17 @@ export default function Certifications({ auth, title, description, courses }) {
                     )}
 
                 </div>
+                {/* VIEW ALL BUTTON */}
+                {hasCourses > 0 && (
+                    <div className="text-center mt-12">
+                        <Link
+                            href="/courses"
+                            className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+                        >
+                            View All Courses →
+                        </Link>
+                    </div>
+                )}
             </section>
 
 
