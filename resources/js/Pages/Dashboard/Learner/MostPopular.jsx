@@ -150,7 +150,7 @@ export default function MostPopular({ initialCourses = [] }) {
 
                                 {/* CONTENT */}
                                 <div className="p-2">
-                                    <Link href={route('courses.show', course.slug || course.id)}>
+                                    <Link href={route('dashboard.courses.show', course.slug || course.id)}>
                                         <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition">
                                             {course?.title || 'Untitled Course'}
                                         </h4>
