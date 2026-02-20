@@ -7,6 +7,7 @@ use App\Models\Course;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use App\Models\Enrollment;
 use App\Models\EventRegistration;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -373,5 +374,28 @@ class DashboardController extends Controller
         ]);
     } 
  
-    
+    public function showCourse($slug)
+    {
+        $course = Course::where('slug', $slug)->firstOrFail();
+        
+        $enrollment = Enrollment::where('user_id', auth()->id())
+            ->where('course_id', $course->id)
+            ->first();
+
+        if (!$enrollment) {
+            return redirect()->route('dashboard')->with('error', 'You are not enrolled in this course.');
+        }
+
+        return Inertia::render('Dashboard/Courses/Show', [
+            'course' => $course,
+            'enrollment' => $enrollment,
+            'modules' => $course->modules()->with('lessons')->get()
+        ]);
+    }
+
+    // Alternative method name if you're using courseSlug()
+    public function courseSlug($slug)
+    {
+        return $this->showCourse($slug);
+    }
 }
