@@ -127,8 +127,7 @@ class DashboardController extends Controller
             $query->where(function($q) use ($searchTerm) {
                 $q->where('title', 'like', "%{$searchTerm}%")
                   ->orWhere('short_description', 'like', "%{$searchTerm}%")
-                  ->orWhere('full_description', 'like', "%{$searchTerm}%")
-                  ->orWhere('tags', 'like', "%{$searchTerm}%");
+                  ->orWhere('full_description', 'like', "%{$searchTerm}%");
             });
         }
 
