@@ -169,10 +169,10 @@
                 <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
                     <h5 class="mb-0">Revenue Details</h5>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('admin.reports.revenue.export', request()->query()) }}" class="btn btn-sm btn-success">
+                        {{-- <a href="{{ route('admin.reports.revenue.export', request()->query()) }}" class="btn btn-sm btn-success">
                             <iconify-icon icon="mdi:export" class="me-1"></iconify-icon>
                             Export CSV
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
                 <div class="card-body p-24">
