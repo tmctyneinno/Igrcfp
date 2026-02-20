@@ -7,7 +7,7 @@ import { useCartCount } from '@/contexts/CartContext';
 
 export default function Dashboard({ auth, courses, enrolledCourses, popularCourses }) {
     const { cartCount, cartItems } = useCartCount(); 
-    return ( 
+    return (  
         <AuthenticatedLayout> 
             <Head title="Dashboard" />
             <LearningCenter enrolledCourses={enrolledCourses} />
