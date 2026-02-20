@@ -3,7 +3,7 @@
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Pending Enrollments</h6>
+        <h6 class="fw-semibold mb-0">Completed Enrollments</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -16,7 +16,7 @@
                 <a href="{{ route('admin.enrollments.index') }}" class="hover-text-primary">Enrollments</a>
             </li>
             <li>-</li>
-            <li class="fw-medium">Pending</li>
+            <li class="fw-medium">Completed</li>
         </ul>
     </div>
 
@@ -41,12 +41,12 @@
                 </form>
                 
                 <form class="navbar-search" method="GET">
-                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search pending enrollments..." value="{{ request('search') }}">
+                    <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search completed enrollments..." value="{{ request('search') }}">
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                 </form>
                 
                 @if(request('search') || request('per_page') != 10)
-                    <a href="{{ route('admin.enrollments.pending') }}" class="btn btn-sm btn-outline-secondary">Clear</a>
+                    <a href="{{ route('admin.enrollments.completed') }}" class="btn btn-sm btn-outline-secondary">Clear</a>
                 @endif
             </div>
             <div>
@@ -66,8 +66,8 @@
                             <th scope="col">Student</th>
                             <th scope="col">Course</th>
                             <th scope="col">Enrollment Date</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Payment Status</th>
+                            <th scope="col">Completed Date</th>
+                            <th scope="col">Certificate</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -93,26 +93,18 @@
                                     <span class="fw-medium">{{ Str::limit($enrollment->course->title, 30) }}</span>
                                 </div>
                             </td>
+                            <td>{{ $enrollment->created_at->format('M d, Y') }}</td>
+                            <td>{{ $enrollment->completed_at ? $enrollment->completed_at->format('M d, Y') : 'N/A' }}</td>
                             <td>
-                                <div class="d-flex flex-column">
-                                    <span>{{ $enrollment->created_at->format('M d, Y') }}</span>
-                                    <small class="text-muted">{{ $enrollment->created_at->format('h:i A') }}</small>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="fw-medium">${{ number_format($enrollment->amount ?? 0, 2) }}</span>
-                            </td>
-                            <td>
-                                @if($enrollment->transaction)
-                                    @if($enrollment->transaction->status == 'completed')
-                                        <span class="badge bg-success">Paid</span>
-                                    @elseif($enrollment->transaction->status == 'pending')
-                                        <span class="badge bg-warning">Pending</span>
-                                    @elseif($enrollment->transaction->status == 'failed')
-                                        <span class="badge bg-danger">Failed</span>
+                                @if($enrollment->certificate_issued)
+                                    <span class="badge bg-success">Issued</span>
+                                    @if($enrollment->certificate_url)
+                                        <a href="{{ $enrollment->certificate_url }}" target="_blank" class="ms-1">
+                                            <iconify-icon icon="mdi:download" class="text-info"></iconify-icon>
+                                        </a>
                                     @endif
                                 @else
-                                    <span class="badge bg-warning">Pending Payment</span>
+                                    <span class="badge bg-secondary">Not Issued</span>
                                 @endif
                             </td>
                             <td>
@@ -122,29 +114,6 @@
                                        title="View Details">
                                         <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                     </a>
-                                    
-                                    <form action="{{ route('admin.enrollments.update-status', $enrollment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="status" value="completed">
-                                        <button type="submit" 
-                                                class="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
-                                                onclick="return confirm('Mark this enrollment as completed?')"
-                                                title="Mark Completed">
-                                            <iconify-icon icon="mdi:check" class="menu-icon"></iconify-icon>
-                                        </button>
-                                    </form>
-                                    
-                                    <form action="{{ route('admin.enrollments.destroy', $enrollment) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
-                                                onclick="return confirm('Are you sure you want to delete this enrollment?')" 
-                                                title="Delete">
-                                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -152,11 +121,8 @@
                         <tr>
                             <td colspan="7" class="text-center py-4">
                                 <div class="text-muted">
-                                    <iconify-icon icon="mdi:clock-outline" class="icon-3x mb-2"></iconify-icon>
-                                    <p>No pending enrollments found.</p>
-                                    @if(request('search'))
-                                        <a href="{{ route('admin.enrollments.pending') }}" class="btn btn-sm btn-primary">Clear Filters</a>
-                                    @endif
+                                    <iconify-icon icon="mdi:check-circle-outline" class="icon-3x mb-2"></iconify-icon>
+                                    <p>No completed enrollments found.</p>
                                 </div>
                             </td>
                         </tr>
