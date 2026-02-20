@@ -134,10 +134,10 @@
                 </form>
             </div>
             <div>
-                <a href="{{ route('admin.transactions.export') }}" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2 me-2">
+                {{-- <a href="{{ route('admin.transactions.export') }}" class="btn btn-success text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2 me-2">
                     <iconify-icon icon="mdi:export" class="icon text-xl line-height-1"></iconify-icon>
                     Export
-                </a>
+                </a> --}}
             </div>
         </div>
 
