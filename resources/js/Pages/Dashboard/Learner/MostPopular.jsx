@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext'; 
 
 export default function MostPopular({ initialCourses = [] }) {
-    const { addToCart, cartItems } = useCart(); // Use your existing cart method
+    const { addToCart, cartItems } = useCart(); 
     const [addingToCart, setAddingToCart] = useState({});
  
     // Helper function to get level badge color
