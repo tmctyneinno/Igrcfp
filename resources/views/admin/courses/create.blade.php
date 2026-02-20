@@ -75,10 +75,7 @@
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
                                 <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required >{{ old('short_description') }}</textarea>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">Maximum 500 characters</small>
-                                    <small class="character-count" data-target="short_description">0/500</small>
-                                </div>
+                              
                                 @error('short_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
