@@ -6,7 +6,7 @@ import { useCart } from '@/contexts/CartContext'; // Import your cart context
 export default function MostPopular({ initialCourses = [] }) {
     const { addToCart, cartItems } = useCart(); // Use your existing cart method
     const [addingToCart, setAddingToCart] = useState({});
-
+ 
     // Helper function to get level badge color
     const getLevelBadgeColor = (level) => {
         const levelMap = { 
@@ -16,7 +16,7 @@ export default function MostPopular({ initialCourses = [] }) {
             'Expert': 'bg-purple-100 text-purple-800'
         };
         return levelMap[level] || 'bg-blue-100 text-blue-800';
-    };
+    }; 
 
     // Check if course has discount
     const hasDiscount = (course) => {
