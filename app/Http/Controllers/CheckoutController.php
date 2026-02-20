@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Enrollment;
+use App\Models\Enrollment; 
+use App\Models\Transaction; 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Stripe\Stripe;
