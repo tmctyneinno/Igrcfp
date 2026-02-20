@@ -230,7 +230,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Total Modules <span class="text-danger">*</span></label>
                                 <input type="number" name="total_modules" id="totalModules" class="form-control @error('total_modules') is-invalid @enderror" 
-                                       placeholder="10" value="{{ old('total_modules') }}" min="1" required>
+                                       value="{{ old('total_modules') }}" min="1" required>
                                 @error('total_modules')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -239,7 +239,7 @@
                             <div class="col-md-6">
                                 <label class="form-label">Total Hours <span class="text-danger">*</span></label>
                                 <input type="number" name="total_hours" id="totalHours" class="form-control @error('total_hours') is-invalid @enderror" 
-                                       placeholder="40" value="{{ old('total_hours') }}" min="1" required>
+                                        value="{{ old('total_hours') }}" min="1" required>
                                 @error('total_hours')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
