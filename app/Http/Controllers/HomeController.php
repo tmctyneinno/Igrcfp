@@ -232,16 +232,14 @@ class HomeController extends Controller
     {
         $query = Course::published()
             ->withCount('modules');
-            // ->with(['instructor']); // Only load instructor relationship if it exists
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
                 $q->where('title', 'like', "%{$searchTerm}%")
-                  ->orWhere('short_description', 'like', "%{$searchTerm}%")
-                  ->orWhere('description', 'like', "%{$searchTerm}%")
-                  ->orWhere('tags', 'like', "%{$searchTerm}%");
+                ->orWhere('short_description', 'like', "%{$searchTerm}%")
+                ->orWhere('full_description', 'like', "%{$searchTerm}%");
             });
         }
 
@@ -258,7 +256,7 @@ class HomeController extends Controller
                 $query->where('price', '>', 0);
             } elseif ($request->price_type === 'discounted') {
                 $query->whereNotNull('discount_price')
-                      ->whereColumn('discount_price', '<', 'price');
+                    ->whereColumn('discount_price', '<', 'price');
             }
         }
 
@@ -271,11 +269,38 @@ class HomeController extends Controller
             $query->where('is_popular', true);
         }
 
-        // Sorting
-        $sortField = $request->get('sort_field', 'created_at');
-        $sortDirection = $request->get('sort_direction', 'desc');
+        // Filter by format
+        if ($request->has('format') && !empty($request->format)) {
+            $query->where('format', $request->format);
+        }
+
+        // Handle sorting - supports both combined format (field_direction) and separate parameters
+        $sortInput = $request->get('sort_field', 'created_at_desc');
         
+        // Parse sort field and direction
+        if (str_contains($sortInput, '_')) {
+            $parts = explode('_', $sortInput);
+            $direction = array_pop($parts); // Get the last part (asc/desc)
+            $field = implode('_', $parts); // The rest is the field name
+            
+            // Validate direction
+            $sortDirection = in_array(strtolower($direction), ['asc', 'desc']) ? strtolower($direction) : 'desc';
+            
+            // Map the field to actual column names
+            $sortField = $field;
+        } else {
+            // Fallback to separate parameters if combined format not used
+            $sortField = $request->get('sort_field', 'created_at');
+            $sortDirection = $request->get('sort_direction', 'desc');
+            
+            // Validate direction
+            $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? strtolower($sortDirection) : 'desc';
+        }
+
+        // Allowed sort fields
         $allowedSortFields = ['title', 'price', 'created_at', 'modules_count'];
+        
+        // Apply sorting
         if (in_array($sortField, $allowedSortFields)) {
             if ($sortField === 'modules_count') {
                 $query->orderBy('modules_count', $sortDirection);
@@ -283,9 +308,10 @@ class HomeController extends Controller
                 $query->orderBy($sortField, $sortDirection);
             }
         } else {
+            // Default sorting
             $query->orderBy('is_featured', 'desc')
-                  ->orderBy('is_popular', 'desc')
-                  ->orderBy('created_at', 'desc');
+                ->orderBy('is_popular', 'desc')
+                ->orderBy('created_at', 'desc');
         }
 
         // Get filter options for dropdowns
@@ -299,12 +325,21 @@ class HomeController extends Controller
 
         // Transform courses for the frontend
         $courses->getCollection()->transform(function ($course) {
+            // Handle instructor relationship if it exists
+            $instructorData = null;
+            if (isset($course->instructor) && $course->instructor) {
+                $instructorData = [
+                    'name' => $course->instructor->name,
+                    'avatar' => $course->instructor->avatar ?? null
+                ];
+            }
+
             return [
                 'id' => $course->id,
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'short_description' => $course->short_description,
-                'description' => $course->description,
+                'full_description' => $course->full_description,
                 'banner_image' => $course->banner_image,
                 'image_url' => $course->image_url,
                 'level' => $course->level,
@@ -315,11 +350,7 @@ class HomeController extends Controller
                 'is_featured' => $course->is_featured,
                 'is_popular' => $course->is_popular,
                 'format' => $course->format,
-                'tags' => $course->tags,
-                'instructor' => $course->instructor ? [
-                    'name' => $course->instructor->name,
-                    'avatar' => $course->instructor->avatar
-                ] : null,
+                'instructor' => $instructorData,
                 'created_at' => $course->created_at->format('M d, Y')
             ];
         });
@@ -332,8 +363,7 @@ class HomeController extends Controller
                 'featured' => $request->featured ?? false,
                 'popular' => $request->popular ?? false,
                 'format' => $request->format ?? '',
-                'sort_field' => $sortField,
-                'sort_direction' => $sortDirection,
+                'sort_field' => $sortInput, // Return the combined format for consistency
             ],
             'courses' => $courses,
             'filterOptions' => [
