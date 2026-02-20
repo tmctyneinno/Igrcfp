@@ -1,147 +1,182 @@
-import React from 'react';
-import { Head, Link, usePage, router } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+// resources/js/Components/CourseCard.jsx
 
-export default function Cart({ cart }) {
+import React, { useState, useEffect } from 'react';
+import { Link, usePage } from '@inertiajs/react';
+
+export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
     const { props } = usePage();
+    const [isCourseInCart, setIsCourseInCart] = useState(isInCart);
+
+    // Update local state when prop changes or when page props update
+    useEffect(() => {
+        setIsCourseInCart(isInCart);
+    }, [isInCart]);
+
+    // Also check against page props for real-time updates
+    useEffect(() => {
+        if (props.cart?.items) {
+            const inCart = props.cart.items.some(item => {
+                // Handle different cart item structures
+                if (item.course) {
+                    return item.course.id === course.id;
+                }
+                return item.id === course.id;
+            });
+            setIsCourseInCart(inCart);
+        }
+    }, [props.cart, course.id]);
+
+    // Check if course has discount 
+    const hasDiscount = () => {
+        if (!course?.discount_price || !course?.price) return false;
+        const price = parseFloat(course.price);
+        const discountPrice = parseFloat(course.discount_price);
+        return !isNaN(price) && !isNaN(discountPrice) && discountPrice < price;
+    };
     
-    const calculateTotal = () => {
-        return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
+    const getCleanDescription = () => {
+        const text = course?.short_description || course?.description;
+        if (!text) return 'No description available';
+         
+        const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+        return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
 
-    const handleRemove = (itemId) => {
-        if (confirm('Are you sure you want to remove this item from your cart?')) {
-            router.delete(route('cart.remove', itemId), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    // Optional: Add any success callback
-                },
-                onError: (errors) => {
-                    console.error('Error removing item:', errors);
-                }
-            });
+    const price = parseFloat(course?.price || 0);
+    const discountPrice = parseFloat(course?.discount_price || 0);
+    const hasDisc = hasDiscount();
+    const discountPercentage = hasDisc && price > 0 
+        ? Math.round(((price - discountPrice) / price) * 100) 
+        : 0;
+
+    const handleAddToCartClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onAddToCart) {
+            onAddToCart(course);
         }
     };
 
+    const handleViewCartClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Navigate to cart page
+        window.location.href = route('dashboard.cart.index');
+    };
+
     return (
-        <AuthenticatedLayout> 
-            <Head title="Shopping Cart" />
-             
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Cart</h1>
+        <div
+            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2 h-full flex flex-col"
+            data-aos="fade-up"
+        > 
+            {/* IMAGE */}
+            <Link href={`/courses/${course?.slug || '#'}`} className="block h-48 overflow-hidden">
+                <img
+                    src={course?.image_url || '/images/fallback-course.jpg'}
+                    alt={course?.title || 'Course image'}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-110 cursor-zoom-in"
+                    onError={(e) => {
+                        e.target.src = '/images/fallback-course.jpg';
+                    }}
+                />
+            </Link>
+
+            {/* CONTENT */}
+            <div className="p-2 flex-1 flex flex-col">
+                <Link href={`/courses/${course?.slug || '#'}`}>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2">
+                        {course?.title || 'Untitled Course'}
+                    </h4>
+                </Link> 
                 
-                {props.flash?.success && (
-                    <div className="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                        {props.flash.success}
+                <p className="text-gray-600 text-sm mb-1 line-clamp-2 flex-1">
+                    {getCleanDescription()}
+                </p>
+
+                {/* COURSE METADATA */}
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold px-3 capitalize py-1 bg-blue-100 text-blue-800 rounded-full">
+                        {course?.level || 'All Levels'}
+                    </span>
+                    
+                    <div className="flex items-center space-x-3">
+                        {course?.duration && (
+                            <span className="text-sm text-gray-500">
+                                ⏱️ {course.duration}
+                            </span>
+                        )}
+                        {course?.modules_count > 0 && (
+                            <span className="text-sm text-gray-500">
+                                📚 {course.modules_count} modules
+                            </span>
+                        )}
                     </div>
-                )}
-                
-                {props.flash?.info && (
-                    <div className="mb-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
-                        {props.flash.info}
-                    </div>
-                )}
-                
-                {cart && cart.items && cart.items.length > 0 ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Cart Items */}
-                        <div className="lg:col-span-2">
-                            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                                <div className="p-6">
-                                    <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                                        Cart Items ({cart.item_count})
-                                    </h2>
-                                    
-                                    <div className="space-y-4">
-                                        {cart.items.map((item) => (
-                                            <div key={item.id} className="flex items-center space-x-4 py-4 border-b last:border-0">
-                                                <img 
-                                                    src={item.course?.image_url || '/images/fallback-course.jpg'}
-                                                    alt={item.course?.title}
-                                                    className="w-20 h-20 object-cover rounded-lg"
-                                                />
-                                                
-                                                <div className="flex-1">
-                                                    <Link href={`/courses/${item.course?.slug}`}>
-                                                        <h3 className="font-semibold text-gray-900 hover:text-blue-700">
-                                                            {item.course?.title}
-                                                        </h3>
-                                                    </Link>
-                                                    <p className="text-sm text-gray-600 mt-1">
-                                                        Level: {item.course?.level} | Duration: {item.course?.duration}
-                                                    </p>
-                                                </div>
-                                                
-                                                <div className="text-right">
-                                                    <p className="text-lg font-bold text-gray-900">
-                                                        <span>${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                                    </p>
-                                                    <button 
-                                                        onClick={() => handleRemove(item.id)}
-                                                        className="text-sm text-red-600 hover:text-red-800 mt-1"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+
+                {/* PRICE SECTION */}
+                <div className="flex items-center justify-between pt-1 border-t">
+                    
+                    {price > 0 ? (
+                        <div className="text-right">
+                            {hasDisc ? (
+                                <>
+                                    <span className="text-lg font-bold text-gray-900">
+                                        ${discountPrice.toFixed(0)}
+                                    </span>
+                                    <span className="text-sm text-gray-500 line-through ml-2">
+                                        ${price.toFixed(0)}
+                                    </span>
+                                    <span className="text-xs font-semibold text-red-600 ml-2">
+                                        -{discountPercentage}%
+                                    </span>
+                                </>
+                            ) : (
+                                <span className="text-lg font-bold text-gray-900">
+                                    ${price.toFixed(2)}
+                                </span>
+                            )}
                         </div>
-                        
-                        {/* Cart Summary */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
-                                <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
-                                
-                                <div className="space-y-3 mb-4">
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Subtotal ({cart.item_count} items)</span>
-                                        <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                    </div>
-                                    <div className="flex justify-between text-gray-600">
-                                        <span>Tax</span>
-                                        <span>$0.00</span>
-                                    </div>
-                                    <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
-                                        <span>Total</span>
-                                        <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                    </div>
-                                </div>
-                                
-                                <Link
-                                    href={route('checkout.index')}
-                                    className="block w-full text-center py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
-                                >
-                                    Complete Enrollment
-                                </Link>
-                                
-                                <Link
-                                    href={route('dashboard.courses.index')}
-                                    className="block w-full text-center py-2 px-4 mt-3 text-blue-900 hover:text-blue-700 font-semibold"
-                                >
-                                    Explore More Courses
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="text-center py-16 bg-white rounded-xl shadow-md">
-                        <svg className="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                         </svg>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
-                        <p className="text-gray-600 mb-6">Start adding courses to your cart</p>
+                    ) : (
+                        <span className="text-lg font-bold text-green-600">
+                            FREE
+                        </span>
+                    )}
+                    
+                    {/* ADD TO CART BUTTON */}
+                    {isCourseInCart ? (
                         <Link
-                            href={route('dashboard.courses.index')}
-                            className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+                            href={route('dashboard.cart.index')}
+                            onClick={handleViewCartClick}
+                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                         >
-                            Explore More Courses
+                            View in Cart
                         </Link>
-                    </div>
-                )} 
+                    ) : (
+                        <button
+                            onClick={handleAddToCartClick}
+                            disabled={isAdding}
+                            className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isAdding ? (
+                                <>
+                                    <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Adding...
+                                </>
+                            ) : (
+                                <>
+                                    Add to Cart
+                                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </>
+                            )}
+                        </button>
+                    )}
+                </div>
             </div>
-        </AuthenticatedLayout> 
+        </div>
     );
 }
