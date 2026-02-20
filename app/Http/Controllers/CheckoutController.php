@@ -80,7 +80,7 @@ class CheckoutController extends Controller
                 'enrollment_date' => now(),
             ]);
             $enrollments[] = $enrollment;
-        }
+        } 
 
         // Store enrollment IDs in session for later
         session(['pending_enrollments' => array_map(fn($e) => $e->id, $enrollments)]);
