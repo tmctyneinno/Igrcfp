@@ -29,7 +29,7 @@ export default function Welcome({ auth, courses }) {
             <div className="pt-0">
                 <SplitHeroSlider auth={auth} />
             </div>
-
+ 
             <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
             </section>

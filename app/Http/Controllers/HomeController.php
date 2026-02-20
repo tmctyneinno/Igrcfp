@@ -86,7 +86,43 @@ class HomeController extends Controller
     }
 
     public function certifications(){
+        $featuredCourses = Course::published()
+            ->withCount('modules')
+            ->where('is_featured', true)
+            ->orWhere('is_popular', true)
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
+ 
+        // Get 4 random courses from the remaining
+        $randomCourses = Course::published()
+            ->withCount('modules')
+            ->whereNotIn('id', $featuredCourses->pluck('id'))
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
+
+        // Merge and shuffle the collections
+        $courses = $featuredCourses->merge($randomCourses)
+            ->shuffle()
+            ->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'slug' => $course->slug,
+                    'short_description' => $course->short_description,
+                    'banner_image' => $course->banner_image, 
+                    'image_url' => $course->image_url, 
+                    'level' => $course->level,
+                    'duration' => $course->duration,
+                    'price' => $course->price,
+                    'discount_price' => $course->discount_price,
+                    'modules_count' => $course->modules_count,
+                ];
+            });
+
         return Inertia::render('Certifications/Index', [
+            'courses' => $courses,
             'title' => 'Certifications & Trainings ',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
