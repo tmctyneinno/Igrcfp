@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
@@ -84,6 +85,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
         Route::put('/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('status');
     });
-    
+
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
+    });
  
 });
