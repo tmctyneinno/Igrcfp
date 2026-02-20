@@ -276,7 +276,7 @@ class DashboardController extends Controller
     }
 
     public function myCourse(Request $request)
-   {
+    {
         // Pass enrollment redirect to frontend if it exists
         $enrollmentRedirect = session('enrollment_redirect');
         
@@ -371,5 +371,7 @@ class DashboardController extends Controller
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
         ]);
-    }
+    } 
+ 
+    
 }
