@@ -195,16 +195,7 @@
                                         <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                     </a>
                                     
-                                    @if(!$transaction->refunded_at)
-                                        <button type="button" 
-                                                class="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#refundModal{{ $transaction->id }}"
-                                                title="Process Refund">
-                                            <iconify-icon icon="mdi:cash-refund" class="menu-icon"></iconify-icon>
-                                        </button>
-                                    @endif
-
+                                    
                                     @if($transaction->enrollment)
                                         <a href="{{ route('admin.enrollments.show', $transaction->enrollment) }}" 
                                            class="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
@@ -216,55 +207,7 @@
                             </td>
                         </tr>
 
-                        <!-- Refund Modal -->
-                        @if(!$transaction->refunded_at)
-                        <div class="modal fade" id="refundModal{{ $transaction->id }}" tabindex="-1" aria-labelledby="refundModalLabel{{ $transaction->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('admin.transactions.refund', $transaction) }}" method="POST">
-                                        @csrf
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="refundModalLabel{{ $transaction->id }}">Process Refund</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Transaction Details</label>
-                                                <p class="mb-1"><strong>Student:</strong> {{ $transaction->user->name }}</p>
-                                                <p class="mb-1"><strong>Amount:</strong> ${{ number_format($transaction->amount, 2) }}</p>
-                                                <p class="mb-1"><strong>Date:</strong> {{ $transaction->created_at->format('M d, Y') }}</p>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="refund_amount_{{ $transaction->id }}" class="form-label">Refund Amount ($)</label>
-                                                <input type="number" 
-                                                       step="0.01" 
-                                                       class="form-control" 
-                                                       id="refund_amount_{{ $transaction->id }}" 
-                                                       name="refund_amount" 
-                                                       value="{{ $transaction->amount }}"
-                                                       max="{{ $transaction->amount }}"
-                                                       required>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label for="refund_reason_{{ $transaction->id }}" class="form-label">Refund Reason</label>
-                                                <textarea class="form-control" 
-                                                          id="refund_reason_{{ $transaction->id }}" 
-                                                          name="refund_reason" 
-                                                          rows="3" 
-                                                          required></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-warning">Process Refund</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
+                       
                         @empty
                         <tr>
                             <td colspan="9" class="text-center py-4">
