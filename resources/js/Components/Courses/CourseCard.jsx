@@ -1,9 +1,36 @@
 // resources/js/Components/CourseCard.jsx
 
-import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
+    const { props } = usePage();
+    const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
+
+    // Update local state when prop changes or when page props update
+    useEffect(() => {
+        setIsCourseInCart(isInCart || false);
+    }, [isInCart]);
+
+    // Also check against page props for real-time updates
+    useEffect(() => {
+        if (props.cart?.items && course?.id) {
+            const inCart = props.cart.items.some(item => {
+                // Handle different cart item structures
+                if (item.course) {
+                    return item.course.id === course.id;
+                }
+                return item.id === course.id;
+            });
+            setIsCourseInCart(inCart);
+        }
+    }, [props.cart, course?.id]);
+
+    // If course is undefined, return null or a placeholder
+    if (!course) {
+        return null;
+    }
+
     // Check if course has discount 
     const hasDiscount = () => {
         if (!course?.discount_price || !course?.price) return false;
@@ -30,8 +57,17 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     const handleAddToCartClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (onAddToCart) {
+        if (onAddToCart && course) {
             onAddToCart(course);
+        }
+    };
+
+    const handleViewCartClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // Navigate to cart page using Inertia
+        if (typeof route === 'function') {
+            window.location.href = route('dashboard.cart.index');
         }
     };
 
@@ -114,9 +150,10 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
                     )}
                     
                     {/* ADD TO CART BUTTON */}
-                    {isInCart ? (
+                    {isCourseInCart ? (
                         <Link
                             href={route('dashboard.cart.index')}
+                            onClick={handleViewCartClick}
                             className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                         >
                             View in Cart
