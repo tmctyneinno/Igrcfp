@@ -3,12 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/contexts/CartContext'; 
 import CourseCard from '@/components/Courses/CourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
+    const { addToCart, cartItems } = useCart(); // Use your existing cart method
+    const [addingToCart, setAddingToCart] = useState({});
+
     const { url } = usePage();
     const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters);
@@ -62,7 +66,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
         return Object.entries(selectedFilters).filter(([key, value]) => 
             value && value !== '' && value !== false && key !== 'sort_field' && key !== 'sort_direction'
         ).length;
-    };
+    }; 
 
     return (
         <AuthenticatedLayout auth={auth}> 

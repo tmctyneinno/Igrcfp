@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
-import { useCart } from '@/contexts/CartContext'; // Import your cart context
+import { useCart } from '@/contexts/CartContext'; 
 
 export default function MostPopular({ initialCourses = [] }) {
     const { addToCart, cartItems } = useCart(); // Use your existing cart method
