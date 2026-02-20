@@ -75,7 +75,7 @@ export default function Welcome({ auth, courses }) {
                         Join thousands of successful learners who have transformed their careers with our platform.
                     </p>
                     <Link
-                        href={auth.user ? route('dashboard') : route('register')}
+                        href={auth.user ? route('dashboard.index') : route('register')}
                         className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
                         data-aos="fade-up"
                         data-aos-delay="300"
