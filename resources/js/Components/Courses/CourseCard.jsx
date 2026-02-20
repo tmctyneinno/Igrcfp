@@ -107,7 +107,8 @@ export default function CourseCard({ course }) {
                     
                     {/* ENROLL BUTTON */}
                     <Link
-                        href={route('courses.enroll', course.slug)}
+                        // href={route('courses.enroll', course.slug)}
+                        onClick={(e) => handleAddToCart(course, e)}
                         className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
                     >
                         Enroll Now
