@@ -224,10 +224,10 @@
                                         <span>{{ $enrollment->created_at->format('M d, Y') }}</span>
                                         <small class="text-muted">{{ $enrollment->created_at->format('h:i A') }}</small>
                                     </div>
-                                </td> 
+                                </td>
                                 <td>
                                     <div class="d-flex flex-column">
-                                        {{ $enrollment }}
+                                        
                                         <span class="fw-medium">${{ number_format($enrollment->amount ?? 0, 2) }}</span>
                                         @if($enrollment->transaction)
                                             <small class="text-muted">Ref: {{ substr($enrollment->transaction->reference, -8) }}</small>
