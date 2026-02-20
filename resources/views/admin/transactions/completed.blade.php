@@ -148,7 +148,7 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0 me-12">
-                                        <img src="{{ asset('storage/' . ($transaction->user->avatar ?? 'default-avatar.jpg')) }}" 
+                                        <img src="{{ asset('storage/' . ($transaction->user->avatar ?? 'default-avatar.jpeg')) }}" 
                                              alt="{{ $transaction->user->name }}" 
                                              class="w-40-px h-40-px rounded-circle object-fit-cover">
                                     </div>
