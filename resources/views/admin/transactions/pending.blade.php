@@ -77,4 +77,81 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class
+                                    <div class="flex-shrink-0 me-12">
+                                        <img src="{{ asset('storage/' . ($transaction->user->avatar ?? 'default-avatar.jpg')) }}" 
+                                             alt="{{ $transaction->user->name }}" 
+                                             class="w-40-px h-40-px rounded-circle object-fit-cover">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="text-md mb-0 fw-medium">{{ $transaction->user->name }}</h6>
+                                        <span class="text-sm text-secondary-light">{{ $transaction->user->email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @if($transaction->enrollment && $transaction->enrollment->course)
+                                    <span class="fw-medium">{{ Str::limit($transaction->enrollment->course->title, 30) }}</span>
+                                @else
+                                    <span class="text-muted">N/A</span>
+                                @endif
+                            </td>
+                            <td>{{ $transaction->created_at->format('M d, Y') }}</td>
+                            <td>
+                                <span class="fw-medium">${{ number_format($transaction->amount, 2) }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary text-uppercase">{{ $transaction->payment_method }}</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex align-items-center gap-10 justify-content-center">
+                                    <a href="{{ route('admin.transactions.show', $transaction) }}" 
+                                       class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none">
+                                        <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
+                                    </a>
+                                    
+                                    <form action="{{ route('admin.transactions.update-status', $transaction) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" 
+                                                class="bg-success-focus bg-hover-success-200 text-success-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
+                                                onclick="return confirm('Mark this transaction as completed?')">
+                                            <iconify-icon icon="mdi:check" class="menu-icon"></iconify-icon>
+                                        </button>
+                                    </form>
+                                    
+                                    <form action="{{ route('admin.transactions.update-status', $transaction) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="status" value="failed">
+                                        <button type="submit" 
+                                                class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
+                                                onclick="return confirm('Mark this transaction as failed?')">
+                                            <iconify-icon icon="mdi:close" class="menu-icon"></iconify-icon>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                    <iconify-icon icon="mdi:hourglass-empty" class="icon-3x mb-2"></iconify-icon>
+                                    <p>No pending transactions found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
+                <span>Showing {{ $transactions->firstItem() ?? 0 }} to {{ $transactions->lastItem() ?? 0 }} of {{ $transactions->total() }} entries</span>
+                {{ $transactions->appends(request()->query())->links('vendor.pagination.custom') }}
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
