@@ -10,13 +10,28 @@ import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
-    const { addToCart, cartItems } = useCart();
+    const { addToCart, cartItems, refreshCart } = useCart();
+    const { props } = usePage();
     const [addingToCart, setAddingToCart] = useState({});
+    const [localCartItems, setLocalCartItems] = useState(cartItems || []);
 
     const { url } = usePage();
     const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+    const [showNotification, setShowNotification] = useState({ show: false, message: '', type: '' });
+
+    // Sync cart items with context and page props
+    useEffect(() => {
+        setLocalCartItems(cartItems || []);
+    }, [cartItems]);
+
+    // Also sync with page props when they change (after cart operations)
+    useEffect(() => {
+        if (props.cart?.items) {
+            setLocalCartItems(props.cart.items);
+        }
+    }, [props.cart]);
 
     // Update filters when props change
     useEffect(() => {
@@ -63,37 +78,64 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
 
     // Check if course is already in cart
     const isInCart = (courseId) => {
-        return cartItems?.some(item => item.id === courseId);
+        // Check both local state and page props
+        return localCartItems?.some(item => {
+            if (item.course) {
+                return item.course.id === courseId;
+            }
+            return item.id === courseId;
+        }) || props.cart?.items?.some(item => {
+            if (item.course) {
+                return item.course.id === courseId;
+            }
+            return item.id === courseId;
+        });
+    };
+
+    // Show notification
+    const showNotificationMessage = (message, type = 'success') => {
+        setShowNotification({ show: true, message, type });
+        setTimeout(() => {
+            setShowNotification({ show: false, message: '', type: '' });
+        }, 3000);
     };
 
     // Handle Add to Cart
     const handleAddToCart = async (course) => {
+        // Check if user is authenticated
+        if (!auth.user) {
+            showNotificationMessage('Please login to add courses to cart', 'error');
+            router.visit(route('login'));
+            return;
+        }
+
         // Check if already in cart
         if (isInCart(course.id)) {
-            alert('Course is already in your cart!');
+            showNotificationMessage('Course is already in your cart!', 'info');
             return;
         }
 
         setAddingToCart(prev => ({ ...prev, [course.id]: true }));
         
         try {
-            const success = await addToCart({
-                id: course.id,
-                title: course.title,
-                slug: course.slug,
-                price: course.price,
-                discount_price: course.discount_price,
-                image_url: course.image_url,
-                level: course.level,
-                duration: course.duration
-            });
+            const success = await addToCart(course);
 
             if (success) {
-                alert('Course added to cart successfully!');
+                // Refresh cart data
+                await refreshCart();
+                
+                // Update local cart items
+                if (props.cart?.items) {
+                    setLocalCartItems(props.cart.items);
+                }
+                
+                showNotificationMessage('Course added to cart successfully!');
+            } else {
+                showNotificationMessage('Failed to add course to cart. Please try again.', 'error');
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
-            alert('Failed to add course to cart. Please try again.');
+            showNotificationMessage('Failed to add course to cart. Please try again.', 'error');
         } finally {
             setAddingToCart(prev => ({ ...prev, [course.id]: false }));
         }
@@ -102,15 +144,51 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
     // Get active filter count
     const getActiveFilterCount = () => {
         return Object.entries(selectedFilters).filter(([key, value]) => 
-            value && value !== '' && value !== false && key !== 'sort_field' && key !== 'sort_direction'
+            value && value !== '' && value !== false && 
+            key !== 'sort_field' && key !== 'sort_direction' &&
+            key !== 'page'
         ).length;
-    }; 
+    };
 
     return (
         <AuthenticatedLayout auth={auth}> 
             <Head title='IGRCFP | Courses' />
             <div className="min-h-screen bg-gray-50">
-               
+                {/* Notification Toast */}
+                <AnimatePresence>
+                    {showNotification.show && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -50 }}
+                            className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg ${
+                                showNotification.type === 'success' ? 'bg-green-500' :
+                                showNotification.type === 'error' ? 'bg-red-500' :
+                                'bg-blue-500'
+                            } text-white`}
+                        >
+                            {showNotification.message}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Flash Messages from Server */}
+                {props.flash?.success && (
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                            {props.flash.success}
+                        </div>
+                    </div>
+                )}
+                
+                {props.flash?.info && (
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                        <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+                            {props.flash.info}
+                        </div>
+                    </div>
+                )}
+
                 {/* Main Content */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     {/* Search and Filter Bar */}
@@ -119,7 +197,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                             {/* Search */}
                             <div className="w-full lg:w-96">
                                 <SearchBar
-                                    value={selectedFilters.search}
+                                    value={selectedFilters.search || ''}
                                     onChange={(value) => handleFilterChange('search', value)}
                                     placeholder="Search courses by title, description, or tags..."
                                 />
@@ -129,11 +207,11 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                             <div className="flex items-center gap-4 w-full lg:w-auto">
                                 {/* Sort Dropdown */}
                                 <select
-                                    value={`${selectedFilters.sort_field}_${selectedFilters.sort_direction}`}
+                                    value={`${selectedFilters.sort_field || 'created_at'}_${selectedFilters.sort_direction || 'desc'}`}
                                     onChange={handleSortChange}
                                     className="flex-1 lg:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                 >
-                                    {filterOptions.sortOptions.map((option) => (
+                                    {filterOptions?.sortOptions?.map((option) => (
                                         <option key={option.value} value={option.value}>
                                             {option.label}
                                         </option>
@@ -214,12 +292,12 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                             Level
                                         </label>
                                         <select
-                                            value={selectedFilters.level}
+                                            value={selectedFilters.level || ''}
                                             onChange={(e) => handleFilterChange('level', e.target.value)}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             <option value="">All Levels</option>
-                                            {filterOptions.levels.map((level) => (
+                                            {filterOptions?.levels?.map((level) => (
                                                 <option key={level} value={level}>
                                                     {level}
                                                 </option>
@@ -232,7 +310,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Price
                                         </label>
-                                        {filterOptions.priceTypes.map((type) => (
+                                        {filterOptions?.priceTypes?.map((type) => (
                                             <label key={type.value} className="flex items-center mb-2">
                                                 <input
                                                     type="radio"
@@ -255,7 +333,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         <label className="flex items-center mb-2">
                                             <input
                                                 type="checkbox"
-                                                checked={selectedFilters.featured}
+                                                checked={selectedFilters.featured || false}
                                                 onChange={(e) => handleFilterChange('featured', e.target.checked)}
                                                 className="mr-2 rounded"
                                             />
@@ -264,13 +342,21 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         <label className="flex items-center">
                                             <input
                                                 type="checkbox"
-                                                checked={selectedFilters.popular}
+                                                checked={selectedFilters.popular || false}
                                                 onChange={(e) => handleFilterChange('popular', e.target.checked)}
                                                 className="mr-2 rounded"
                                             />
                                             <span className="text-sm text-gray-700">Popular Only</span>
                                         </label>
                                     </div>
+
+                                    {/* Apply Filters Button (Mobile) */}
+                                    <button
+                                        onClick={() => setMobileFiltersOpen(false)}
+                                        className="w-full lg:hidden mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                    >
+                                        Apply Filters
+                                    </button>
                                 </div>
                             </motion.div>
                         )}
