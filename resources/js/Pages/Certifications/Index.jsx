@@ -3,6 +3,9 @@ import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Certifications({ auth, title, description, courses }) {
  
+    // Safe courses initialization
+    const coursesData = Array.isArray(courses) ? courses : [];
+    
     const programs = [ 
     {
         title: 'Certified GRC & Financial Crime Specialist (CGFCS)',
