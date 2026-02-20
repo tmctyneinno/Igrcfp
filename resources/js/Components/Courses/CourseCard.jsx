@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
-    // Check if course has discount
+    // Check if course has discount 
     const hasDiscount = () => {
         if (!course?.discount_price || !course?.price) return false;
         const price = parseFloat(course.price);
