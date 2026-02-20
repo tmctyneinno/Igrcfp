@@ -1,4 +1,5 @@
 <?php
+// app/Models/Enrollment.php
 
 namespace App\Models;
 
@@ -12,81 +13,61 @@ class Enrollment extends Model
     protected $fillable = [
         'user_id',
         'course_id',
+        'name',
+        'email',
+        'phone',
+        'payment_method',
+        'amount',
         'status',
-        'progress',
-        'completed_modules',
-        'completed_lessons',
-        'enrolled_at',
+        'enrollment_date',
         'completed_at',
+        'certificate_issued',
+        'certificate_url',
+        'notes',
+        'progress',
     ];
 
     protected $casts = [
-        'enrolled_at' => 'datetime',
+        'enrollment_date' => 'datetime',
         'completed_at' => 'datetime',
-        'progress' => 'integer',
-        'completed_modules' => 'integer',
-        'completed_lessons' => 'integer',
+        'certificate_issued' => 'boolean',
+        'amount' => 'decimal:2',
     ];
 
-    /**
-     * Get the user that owns the enrollment
-     */
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the course that owns the enrollment
-     */
     public function course()
     {
         return $this->belongsTo(Course::class);
     }
 
-    /**
-     * Scope for active enrollments
-     */
-    public function scopeActive($query)
+    public function transaction()
     {
-        return $query->where('status', 'active');
+        return $this->hasOne(Transaction::class);
     }
 
-    /**
-     * Scope for completed enrollments
-     */
+    // Scopes
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending_payment');
+    }
+
+    public function scopeEnrolled($query)
+    {
+        return $query->where('status', 'enrolled');
+    }
+
     public function scopeCompleted($query)
     {
         return $query->where('status', 'completed');
     }
 
-    /**
-     * Mark enrollment as completed
-     */
-    public function markAsCompleted()
+    public function scopeCancelled($query)
     {
-        $this->update([
-            'status' => 'completed',
-            'progress' => 100,
-            'completed_at' => now(),
-        ]);
-    }
-
-    /**
-     * Update progress
-     */
-    public function updateProgress($completedModules, $totalModules)
-    {
-        $progress = $totalModules > 0 ? round(($completedModules / $totalModules) * 100) : 0;
-        
-        $this->update([
-            'progress' => $progress,
-            'completed_modules' => $completedModules,
-        ]);
-
-        // Auto-complete if progress is 100%
-        if ($progress >= 100 && $this->status !== 'completed') {
-            $this->markAsCompleted();
-        }
+        return $query->where('status', 'cancelled');
     }
 }
