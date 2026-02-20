@@ -5,57 +5,8 @@ export default function Certifications({ auth, title, description, courses }) {
  
     // Safe courses initialization
     const coursesData = Array.isArray(courses) ? courses : [];
+
     
-    const programs = [ 
-    {
-        title: 'Certified GRC & Financial Crime Specialist (CGFCS)',
-        description:
-            'Our flagship certification equipping professionals with practical skills in governance, risk, compliance, and financial crime prevention. Globally benchmarked and CPD-accredited.',
-        image: '/assets/images/programs/diploma.png',
-    },
-    { 
-        title: 'Advanced Diploma in GRC & Financial Crime Prevention',
-        description:
-            'A deep-dive, multi-disciplinary programme covering advanced governance, risk, compliance, and financial crime prevention with real-world case projects.',
-        image: '/assets/images/programs/prevention.png',
-    },
-    {
-        title: 'Cybersecurity & Data Security for Financial Institutions',
-        description:
-            'Focused training on cyber resilience, data protection, and information governance in the digital-first financial sector.',
-        image: '/assets/images/programs/cybersecurity.png',
-    },
-    {
-        title: 'Monitoring, Reporting & Risk Analytics',
-        description:
-            'Equips compliance teams with tools to design monitoring frameworks, track key risk indicators, and use analytics for regulatory reporting.',
-        image: '/assets/images/programs/diploma.png',
-    }, 
-    {
-        title: 'Regulatory Compliance & Supervisory Engagement',
-        description:
-            'Covers global regulatory requirements, reporting obligations, and effective engagement with supervisors including mock interviews.',
-        image: '/assets/images/programs/diploma.png',
-    }, 
-    {
-        title: 'RegTech, SupTech & Innovation in Compliance',
-        description:
-            'Explores cutting-edge compliance technologies including AI, blockchain, real-time monitoring, and data-driven oversight.',
-        image: '/assets/images/programs/diploma.png',
-    },
-    {
-        title: 'InsurTech, FinTech & Emerging Market Compliance',
-        description:
-            'Addresses compliance challenges for FinTech and InsurTech models in Africa and global markets, including mobile money and crypto.',
-        image: '/assets/images/programs/diploma.png',
-    },
-    {
-        title: 'Executive Masterclasses & Short Courses',
-        description:
-            'Focused electives on emerging topics including AI, ESG, forensic investigations, sanctions, and leadership in governance.',
-        image: '/assets/images/programs/diploma.png',
-    },
-];
 
     return (
         <GuestLayout auth={auth}>
@@ -161,41 +112,43 @@ export default function Certifications({ auth, title, description, courses }) {
                         </div>
                     </div>
 
-                    {/* Cards Grid */}
-                    <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {programs.map((program, index) => (
-                            <div
-                                key={index}
-                                className="group bg-white rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden"
+                    {/* Courses */}
+                    {courses.data && courses.data.length > 0 ? (
+                        <div className={`grid gap-6 ${
+                            showFilters 
+                                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                        }`}>
+                            {courses.data.map((course, index) => (
+                                <motion.div
+                                    key={course.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                >
+                                    <CourseCard course={course} />
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-16 bg-white rounded-xl">
+                            <svg className="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                No courses found
+                            </h3>
+                            <p className="text-gray-600 mb-6">
+                                Try adjusting your search or filter criteria
+                            </p>
+                            <button
+                                onClick={resetFilters}
+                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                             >
-                                <div className="h-48 overflow-hidden">
-                                    <img
-                                        src={program.image}
-                                        alt={program.title}
-                                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                    />
-                                </div>
-
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold text-gray-900">
-                                        {program.title}
-                                    </h3>
-                                    <p className="mt-3 text-sm text-gray-600 leading-relaxed">
-                                        {program.description}
-                                    </p>
-
-                                    <div className="mt-5">
-                                        <Link
-                                            href="#"
-                                            className="text-sm font-medium text-blue-800 hover:underline"
-                                        >
-                                            Learn More
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                Clear All Filters
+                            </button>
+                        </div>
+                    )}
 
                 </div>
             </section>
