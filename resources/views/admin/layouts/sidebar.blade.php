@@ -83,9 +83,6 @@
                     <li>
                         <a href="{{ route('admin.transactions.failed') }}"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Failed</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.transactions.refunded') }}"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Refunded</a>
-                    </li>
                 </ul>
             </li>
 
