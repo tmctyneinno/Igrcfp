@@ -211,7 +211,7 @@ class DashboardController extends Controller
             ];
         });
 
-        return Inertia::render('Courses/Index', [
+        return Inertia::render('Dashboard/Courses/Index', [
             'filters' => [
                 'search' => $request->search ?? '',
                 'level' => $request->level ?? '',
