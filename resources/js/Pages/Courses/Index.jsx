@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CourseCard from '@/components/Courses/CourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
     const { url } = usePage();
@@ -65,7 +65,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
     };
 
     return (
-        <AuthenticatedLayout auth={auth}> 
+        <GuestLayout auth={auth}> 
             <Head title='IGRCFP | Courses' />
             <div className="min-h-screen bg-gray-50">
                
@@ -324,6 +324,6 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                     </div>
                 </section>
             </div>
-        </AuthenticatedLayout>
+        </GuestLayout>
     );
 }
