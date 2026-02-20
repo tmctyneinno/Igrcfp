@@ -9,7 +9,7 @@ import SearchBar from '@/components/Courses/SearchBar';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Courses({ auth, courses, filters, filterOptions }) {
-    const { url } = usePage();
+    const { url } = usePage(); 
     const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);

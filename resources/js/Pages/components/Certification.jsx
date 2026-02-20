@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 export default function Certification({ courses }) { // Remove default value from parameter
 
     // Safe courses initialization
-    const coursesData = Array.isArray(courses) ? courses : [];
+    const coursesData = Array.isArray(courses) ? courses : []; 
   
     // Format price safely
     const formatPrice = (price) => {
@@ -204,7 +204,7 @@ export default function Certification({ courses }) { // Remove default value fro
                     </div>
                 )}
             </div>
-
+ 
             {/* VIEW ALL BUTTON */}
             {coursesData.length > 0 && (
                 <div className="text-center mt-12">
