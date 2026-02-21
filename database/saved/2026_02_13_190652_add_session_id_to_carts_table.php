@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('session_id')->nullable()->after('user_id');
         });
     }
-
+ 
     /**
      * Reverse the migrations.
      */
