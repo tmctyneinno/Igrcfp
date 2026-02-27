@@ -94,7 +94,6 @@ class CartController extends Controller
             $cart->updateTotals();
         }
 
-        // Redirect back to the cart page which will reload with fresh data
         return redirect()->route('dashboard.cart.index')->with([
             'success' => 'Item removed from cart.'
         ]);

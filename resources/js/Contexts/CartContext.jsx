@@ -92,11 +92,9 @@ export function CartProvider({ children, initialCount = 0 }) {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props.flash?.success) {
-                    toast.success(page.props.flash.success, {
-                        duration: 4000,
-                        position: 'top-right'
-                    });
+                
+                if (page.props.flash?.cart) {
+                   
                     // Update local cart items based on the returned cart data
                     const updatedCart = page.props.flash.cart;
                     
@@ -112,6 +110,12 @@ export function CartProvider({ children, initialCount = 0 }) {
                 } else {
                     // If no cart data, refresh from server
                     refreshCart();
+                }
+                if (page.props.flash?.success) {
+                    toast.success(page.props.flash.success, {
+                        duration: 4000,
+                        position: 'top-right'
+                    });
                 }
             },
             onError: (errors) => {
