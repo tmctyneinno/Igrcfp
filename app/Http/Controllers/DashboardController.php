@@ -398,7 +398,7 @@ class DashboardController extends Controller
             // return redirect()->route('dashboard.index')->with('error', 'You are not enrolled in this course.');
         }
 
-        return Inertia::render('Dashboard/Courses/Show', [
+        return Inertia::render('Dashboard/Courses/Enrollment', [
             'course' => $course,
             'enrollment' => $enrollment,
             'modules' => $course->modules()->with('lessons')->get()
