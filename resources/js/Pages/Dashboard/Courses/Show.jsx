@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useEnrollment } from '@/Contexts/EnrollmentContext';
 import { 
   CheckCircleIcon, 
   ClockIcon,  
