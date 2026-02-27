@@ -12,6 +12,7 @@ import {
 export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
     // Calculate progress
     const progress = enrollment?.progress || 0;
+    const hasCertificate = enrollment?.certificate_generated === fals;
     
     // Get status badge color
     const getStatusBadge = (status) => {
