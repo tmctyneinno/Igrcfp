@@ -25,7 +25,7 @@
         
         /* Decorative border */
         .certificate-border {
-            border: 2px solid #c9a959;
+            border: 2px solid #06307C;
             padding: 30px;
             position: relative;
             background: linear-gradient(to bottom, #ffffff, #faf9f6);
@@ -39,7 +39,7 @@
             left: 10px;
             right: 10px;
             bottom: 10px;
-            border: 1px solid #c9a959;
+            border: 1px solid #06307C;
             pointer-events: none;
         }
         
@@ -48,7 +48,7 @@
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 20px;
-            border-bottom: 2px solid #c9a959;
+            border-bottom: 2px solid #06307C;
         }
         
         .logo {
@@ -108,7 +108,7 @@
         .student-name {
             text-align: center;
             font-size: 48px;
-            color: #c9a959;
+            color: #06307C;
             font-weight: bold;
             margin: 20px 0;
             text-transform: uppercase;
@@ -167,7 +167,7 @@
             color: #2c3e50;
             font-weight: bold;
             margin-top: 5px;
-            border-bottom: 2px solid #c9a959;
+            border-bottom: 2px solid #06307C;
             padding-bottom: 5px;
             display: inline-block;
         }
@@ -224,7 +224,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: radial-gradient(circle, #f1c40f, #c9a959);
+            background: radial-gradient(circle, #f1c40f, #06307C);
             opacity: 0.1;
             z-index: 1;
         }
@@ -234,7 +234,7 @@
             position: absolute;
             width: 30px;
             height: 30px;
-            border: 2px solid #c9a959;
+            border: 2px solid #06307C;
         }
         
         .corner-tl {
