@@ -232,6 +232,10 @@ class Course extends Model
     // {
     //     return $this->hasMany(Module::class);
     // }
+    public function modules()
+    {
+        return $this->hasMany(CourseModule::class)->orderBy('module_number');
+    }  
 
     // Relationship: Course has many Lessons through Modules
     public function lessons()
