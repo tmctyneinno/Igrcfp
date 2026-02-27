@@ -32,7 +32,18 @@ export default function Show({ course, enrollment, modules = [] }) {
         };
         return statusMap[status] || 'bg-gray-100 text-gray-800';
     };
+    
+    // Safe parsing functions
+    const parseFloatSafe = (value) => {
+        if (value === null || value === undefined || value === '') return 0;
+        const num = parseFloat(value);
+        return isNaN(num) ? 0 : num;
+    };
 
+    const formatPrice = (price) => {
+        const numPrice = parseFloatSafe(price);
+        return numPrice === 0 ? 'Free' : `$${numPrice.toFixed(2)}`;
+    };
 
     // Parse prices safely
     const price = parseFloatSafe(course.price);
