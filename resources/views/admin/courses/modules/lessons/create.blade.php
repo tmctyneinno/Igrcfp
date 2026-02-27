@@ -17,11 +17,11 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+                <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.modules.edit', [$course->id, $module->id]) }}" class="hover-text-primary">
+                <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" class="hover-text-primary">
                     {{ Str::limit($module->title, 20) }}
                 </a>
             </li>
@@ -151,7 +151,7 @@
                                         <button type="submit" class="btn btn-primary flex-grow-1">
                                             Create Lesson
                                         </button>
-                                        <a href="{{ route('admin.courses.modules.edit', [$course->id, $module->id]) }}" 
+                                        <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" 
                                            class="btn btn-outline-secondary">
                                             Cancel
                                         </a>
