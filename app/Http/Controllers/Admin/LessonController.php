@@ -42,7 +42,7 @@ class LessonController extends Controller
 
         Lesson::create($validated);
 
-        return redirect()->route('admin.courses.modules.lessons.index', [$course->id, $module->id])
+        return redirect()->route('admin.courses.modules.lessons.index', [$course->slug, $module->id])
             ->with('success', 'Lesson created successfully.');
     }
 
