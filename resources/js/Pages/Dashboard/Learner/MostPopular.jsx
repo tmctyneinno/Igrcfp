@@ -105,7 +105,7 @@ export default function MostPopular({ initialCourses = [] }) {
 
                 {initialCourses.length > 0 && (
                     <Link
-                        href={route('courses.index', { popular: 1 })}
+                        href={route('dashboard.courses.index', { popular: 1 })}
                         className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
                     >
                         View All Popular →

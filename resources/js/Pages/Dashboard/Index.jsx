@@ -14,5 +14,5 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
             <MyLearning enrolledCourses={enrolledCourses} />
             <MostPopular initialCourses={popularCourses} />
         </AuthenticatedLayout>  
-    ); 
+    );  
 }
