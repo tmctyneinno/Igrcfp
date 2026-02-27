@@ -102,11 +102,6 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                 </div>
                             </div>
 
-                            {/* Description */}
-                            <div className="prose max-w-none">
-                                <h3 className="text-lg font-semibold mb-2">About this course</h3>
-                                <p className="text-gray-600">{course.description || 'No description available.'}</p>
-                            </div>
                         </div>
                     </div>
 
