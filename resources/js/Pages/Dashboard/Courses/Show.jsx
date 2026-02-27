@@ -273,7 +273,7 @@ const startEnrollment = (course) => {
                   ) : (
                     <button
                       onClick={() => startEnrollment(course)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition transform hover:-translate-y-0.5 mb-4"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl transition transform hover:-translate-y-0.5 mb-4"
                     >
                       Enroll Now
                     </button>
