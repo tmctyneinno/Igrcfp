@@ -51,14 +51,12 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <h6 class="card-title mb-0">All Lessons</h6>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                    <a href="{{ route('admin.courses.modules.lessons.create', [$course->slug, $module->id]) }}" 
                        class="btn btn-sm btn-primary">
-                        <iconify-icon icon="mdi:plus"></iconify-icon>
                         Add New Lesson
                     </a>
-                    <a href="{{ route('admin.courses.modules.edit', [$course->id, $module->id]) }}" 
+                    <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" 
                        class="btn btn-sm btn-outline-secondary">
-                        <iconify-icon icon="mdi:arrow-left"></iconify-icon>
                         Back to Module
                     </a>
                 </div>
@@ -120,14 +118,14 @@
                                     <td>{{ $lesson->created_at->format('M d, Y') }}</td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <a href="{{ route('admin.courses.modules.lessons.edit', [$course->id, $module->id, $lesson->id]) }}" 
+                                            <a href="{{ route('admin.courses.modules.lessons.edit', [$course->, $module->id, $lesson->id]) }}" 
                                                class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <iconify-icon icon="mdi:pencil"></iconify-icon>
                                             </a>
                                             <a href="#" class="btn btn-sm btn-outline-info" title="Preview" target="_blank">
                                                 <iconify-icon icon="mdi:eye"></iconify-icon>
                                             </a>
-                                            <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" 
+                                            <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->slug, $module->id, $lesson->id]) }}" 
                                                   method="POST" class="d-inline"
                                                   onsubmit="return confirm('Delete this lesson? This action cannot be undone.')">
                                                 @csrf
