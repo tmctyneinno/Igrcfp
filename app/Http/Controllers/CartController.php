@@ -92,7 +92,7 @@ class CartController extends Controller
         if ($cart) {
             $cart->items()->where('id', $itemId)->delete();
             $cart->updateTotals();
-        }
+        } 
 
         return redirect()->route('dashboard.cart.index')->with([
             'success' => 'Item removed from cart.'
