@@ -69,10 +69,7 @@ class Course extends Model
     /**
      * Relationships
      */
-    public function modules()
-    {
-        return $this->hasMany(CourseModule::class)->orderBy('module_number');
-    }  
+   
 
     public function materials()
     {
@@ -212,15 +209,6 @@ class Course extends Model
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = courses.id AND created_at >= ?) * 1.5
             ) DESC', [now()->subDays(30)]);
     }
-    // public function scopePopular($query)
-    // {
-    //     return $query->where('is_popular', true);
-    // }
-
-    public function enrollments()
-    {
-        return $this->hasMany(Enrollment::class);
-    }
 
     public function enrolledUsers()
     {
@@ -240,9 +228,32 @@ class Course extends Model
         return $this->enrollments()->count();
     }
 
-    public function modules()
+    // public function modules()
+    // {
+    //     return $this->hasMany(Module::class);
+    // }
+
+    // Relationship: Course has many Lessons through Modules
+    public function lessons()
     {
-        return $this->hasMany(Module::class);
+        return $this->hasManyThrough(Lesson::class, Module::class);
+    }
+
+    // Alternative: Get lessons count
+    public function getLessonsCountAttribute()
+    {
+        return $this->lessons()->count();
+    }
+
+    // Your other relationships...
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function instructors()
+    {
+        return $this->belongsToMany(User::class, 'course_instructor', 'course_id', 'user_id');
     }
 
 }
