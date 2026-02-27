@@ -25,24 +25,23 @@ class CertificateController extends Controller
             $enrollment->certificate_number = $this->generateCertificateNumber($enrollment);
         }
 
-        // Set certificate as generated
+        // Mark certificate as generated
         $enrollment->certificate_generated = true;
         $enrollment->certificate_generated_date = now();
         $enrollment->save();
 
-        // Prepare data for certificate
+        // Prepare data for the view - MAKE SURE ALL VARIABLES ARE INCLUDED
         $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => now()->format('F d, Y'),
-            'certificate_number' => $enrollment->certificate_number
+            'certificate_number' => $enrollment->certificate_number // THIS IS CRITICAL
         ];
 
-        // Load view and generate PDF
-        $pdf = Pdf::loadView('certificates.template', $data);
-        
-        // Download the PDF
+        // Generate PDF
+        $pdf = PDF::loadView('certificates.template', $data);
+
         return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
     }
 
@@ -58,7 +57,8 @@ class CertificateController extends Controller
             'course' => $enrollment->course,
             'completion_date' => $enrollment->certificate_generated_date 
                 ? $enrollment->certificate_generated_date->format('F d, Y')
-                : now()->format('F d, Y')
+                : now()->format('F d, Y'),
+            'certificate_number' => $enrollment->certificate_number ?? 'Pending' // ADD THIS
         ]);
     }
 
@@ -72,15 +72,16 @@ class CertificateController extends Controller
             return back()->with('error', 'Certificate not found. Please generate it first.');
         }
 
+        // Prepare data for the view - MAKE SURE ALL VARIABLES ARE INCLUDED
         $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => $enrollment->certificate_generated_date->format('F d, Y'),
-            'certificate_number' => $enrollment->certificate_number
+            'certificate_number' => $enrollment->certificate_number // THIS IS CRITICAL
         ];
 
-        $pdf = Pdf::loadView('certificates.template', $data);
+        $pdf = PDF::loadView('certificates.template', $data);
         
         return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
     }
