@@ -119,7 +119,7 @@ export default function Show({ course, enrollment, modules = [] }) {
         <div className="absolute inset-0 bg-black opacity-50"></div>
         {course.banner_image && (
           <img 
-            src={course.banner_image} 
+            src={course.image_url} 
             alt="" 
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
