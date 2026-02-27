@@ -164,13 +164,6 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
         setAddingToCart(prev => ({ ...prev, [course.id]: true }));
         
         // Show loading toast
-        const loadingToast = toast.loading('Adding to cart...', {
-            style: {
-                background: '#6b7280',
-                color: '#fff',
-            }
-        });
-        
         try {
             const success = await addToCart(course);
 
@@ -184,7 +177,6 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                 }
                 
                 // Dismiss loading toast and show success
-                toast.dismiss(loadingToast);
                 toast.success('Course added to cart successfully!', {
                     duration: 3000,
                     icon: '🎓',
