@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useEnrollment } from '@/Contexts/EnrollmentContext';
 import { 
@@ -368,23 +369,8 @@ export default function Show({ course, enrollment, modules = [] }) {
                       )}
                     </div>
 
-                    {/* Enrollment CTA at Bottom */}
-                    {!isEnrolled && (
-                      <div className="p-6 bg-blue-50 border-t border-blue-100">
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                          <div>
-                            <h4 className="font-bold text-gray-900 mb-1">Ready to start learning?</h4>
-                            <p className="text-gray-600 text-sm">Enroll today to unlock all {modules.length} modules</p>
-                          </div>
-                          <button
-                            onClick={() => startEnrollment(course)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
-                          >
-                            {user ? 'Enroll Now' : 'Sign In & Enroll'}
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    
+                    
                   </div>
                 </motion.div>
               )}
