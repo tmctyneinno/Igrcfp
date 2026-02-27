@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function Show({ course, enrollment, modules = [] }) {
+export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
     // Calculate progress
     const progress = enrollment?.progress || 0;
     
