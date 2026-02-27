@@ -83,70 +83,77 @@ export function CartProvider({ children, initialCount = 0 }) {
         });
     };
 
-    // Remove from cart
-    const removeFromCart = (courseId, courseTitle) => {
-        const item = cartItems.find(item => item.id === courseId);
-        if (!item) return;
-        
-        // Show confirmation toast with action
-        toast((t) => (
-            <div className="flex flex-col gap-2">
-                <p>Remove "{courseTitle || item.title}" from cart?</p>
-                <div className="flex gap-2 justify-end">
-                    <button
-                        onClick={() => {
-                            toast.dismiss(t.id);
-                            performRemove(courseId);
-                        }}
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                    >
-                        Yes, Remove
-                    </button>
-                    <button
-                        onClick={() => toast.dismiss(t.id)}
-                        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        ), {
-            duration: 8000,
-            position: 'top-center'
-        });
-    };
+    // resources/js/contexts/CartContext.jsx
 
-    const performRemove = (courseId) => {
-        const removeToast = toast.loading('Removing from cart...');
-        
-        router.delete(route('cart.remove', courseId), {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: (page) => {
-                toast.dismiss(removeToast);
-                
-                const newCartItems = cartItems.filter(item => item.id !== courseId);
-                setCartItems(newCartItems);
-                setCartCount(newCartItems.length);
-                
-                if (page.props.flash?.success) {
-                    toast.success(page.props.flash.success, {
-                        duration: 4000,
-                        position: 'top-right'
-                    });
-                }
-            },
-            onError: (errors) => {
-                toast.dismiss(removeToast);
-                console.error('Error removing from cart:', errors);
-                
-                toast.error('Failed to remove item from cart.', {
+// Add this to your CartProvider component
+const removeFromCart = (courseId, courseTitle) => {
+    const item = cartItems.find(item => item.id === courseId);
+    if (!item) return;
+    
+    // Show confirmation toast with action
+    toast((t) => (
+        <div className="flex flex-col gap-2">
+            <p>Remove "{courseTitle || item.title}" from cart?</p>
+            <div className="flex gap-2 justify-end">
+                <button
+                    onClick={() => {
+                        toast.dismiss(t.id);
+                        performRemove(courseId);
+                    }}
+                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                    Yes, Remove
+                </button>
+                <button
+                    onClick={() => toast.dismiss(t.id)}
+                    className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    ), {
+        duration: 8000,
+        position: 'top-center'
+    });
+};
+
+const performRemove = (courseId) => {
+    const removeToast = toast.loading('Removing from cart...');
+    
+    // Fix the route - make sure it matches your backend route
+    router.delete(route('cart.remove', courseId), {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: (page) => {
+            toast.dismiss(removeToast);
+            
+            // Update local state
+            const newCartItems = cartItems.filter(item => item.id !== courseId);
+            setCartItems(newCartItems);
+            setCartCount(newCartItems.length);
+            
+            // Also update localStorage
+            localStorage.setItem('cart', JSON.stringify(newCartItems));
+            
+            if (page.props.flash?.success) {
+                toast.success(page.props.flash.success, {
                     duration: 4000,
                     position: 'top-right'
                 });
             }
-        });
-    };
+        },
+        onError: (errors) => {
+            toast.dismiss(removeToast);
+            console.error('Error removing from cart:', errors);
+            
+            toast.error('Failed to remove item from cart.', {
+                duration: 4000,
+                position: 'top-right'
+            });
+        }
+    });
+};
 
     // Clear cart
     const clearCart = () => {
