@@ -389,9 +389,12 @@ class DashboardController extends Controller
             ->where('course_id', $course->id)
             ->first();
 
-        // if (!$enrollment) {
-        //     return redirect()->route('dashboard.index')->with('error', 'You are not enrolled in this course.');
-        // }
+        if (!$enrollment) {
+            return redirect()->route('dashboard.index')->with('error', 'You are not enrolled in this course.');
+        }else{
+                return redirect()->route('dashboard.index')->with('error', 'You are not enrolled in this course.');
+        
+        }
 
         return Inertia::render('Dashboard/Courses/Show', [
             'course' => $course,
