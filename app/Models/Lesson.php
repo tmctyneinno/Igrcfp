@@ -92,4 +92,12 @@ class Lesson extends Model
             ->withPivot('completed', 'completed_at', 'enrollment_id')
             ->withTimestamps();
     }
+
+    public function completionsForEnrollment(Enrollment $enrollment)
+    {
+        return $this->users()
+            ->wherePivot('enrollment_id', $enrollment->id)
+            ->get();
+    }
+    
 }

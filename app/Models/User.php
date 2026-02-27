@@ -105,6 +105,31 @@ class User extends Authenticatable
         );
     }
 
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class)
+            ->using(LessonUser::class)
+            ->withPivot('completed', 'completed_at', 'enrollment_id', 'time_spent', 'attempts', 'metadata')
+            ->withTimestamps();
+    }
+
+    public function isLessonCompleted(Lesson $lesson, Enrollment $enrollment): bool
+    {
+        return $this->lessons()
+            ->wherePivot('lesson_id', $lesson->id)
+            ->wherePivot('enrollment_id', $enrollment->id)
+            ->wherePivot('completed', true)
+            ->exists();
+    }
+    
+    public function completedLessonsForEnrollment(Enrollment $enrollment)
+    {
+        return $this->lessons()
+            ->wherePivot('enrollment_id', $enrollment->id)
+            ->wherePivot('completed', true)
+            ->get();
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new CustomResetPasswordNotification($token));
