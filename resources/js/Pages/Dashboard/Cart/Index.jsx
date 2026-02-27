@@ -11,7 +11,12 @@ export default function CartIndex({ cart }) {
     const { removeFromCart, clearCart } = useCart();
     
     const calculateTotal = () => {
-        return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
+        if (!cart?.items || cart.items.length === 0) return 0;
+        return cart.items.reduce((total, item) => {
+            const itemPrice = Number(item.price) || 0;
+            const itemQuantity = Number(item.quantity) || 1;
+            return total + (itemPrice * itemQuantity);
+        }, 0);
     };
  
     const handleRemove = (item) => {
