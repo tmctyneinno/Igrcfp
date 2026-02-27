@@ -75,11 +75,11 @@ class Course extends Model
     }
 
     /**
-     * Modules relationship - using course_modules table
+     * Modules relationship - using CourseModule model
      */
     public function modules()
     {
-        return $this->hasMany(CourseModule::class, 'course_id')->orderBy('module_number');
+        return $this->hasMany(CourseModule::class)->orderBy('module_number');
     }
 
     /**
@@ -87,14 +87,7 @@ class Course extends Model
      */
     public function lessons()
     {
-        return $this->hasManyThrough(
-            Lesson::class, 
-            CourseModule::class, 
-            'course_id', // Foreign key on course_modules table
-            'module_id', // Foreign key on lessons table
-            'id', // Local key on courses table
-            'id' // Local key on course_modules table
-        );
+        return $this->hasManyThrough(Lesson::class, CourseModule::class, 'course_id', 'module_id');
     }
 
     /**
@@ -103,6 +96,14 @@ class Course extends Model
     public function getLessonsCountAttribute()
     {
         return $this->lessons()->count();
+    }
+
+    /**
+     * Calculate total lessons count from all modules
+     */
+    public function getTotalLessonsAttribute()
+    {
+        return $this->modules()->withCount('lessons')->get()->sum('lessons_count');
     }
 
     /**
