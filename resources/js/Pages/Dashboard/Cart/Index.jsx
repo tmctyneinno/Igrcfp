@@ -3,66 +3,26 @@
 import React from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { useCart } from '@/contexts/CartContext'; // Add this import
-import toast from 'react-hot-toast'; // Add this import
+import { useCart } from '@/contexts/CartContext';
 
 export default function CartIndex({ cart }) {
     const { props } = usePage();
-    const { removeFromCart, clearCart } = useCart(); // Use the cart context
+    const { removeFromCart, clearCart } = useCart();
     
     const calculateTotal = () => {
         return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
     };
  
-    // Use the context's removeFromCart instead of direct router.delete
     const handleRemove = (item) => {
-        // Get course title for the confirmation message
+        // Pass the course ID and title to the context's removeFromCart
+        const courseId = item.course?.id || item.id;
         const courseTitle = item.course?.title || 'this item';
-        removeFromCart(item.course?.id || item.id, courseTitle);
+        removeFromCart(courseId, courseTitle);
     };
 
-    // Add a clear cart handler
     const handleClearCart = () => {
         clearCart();
     };
-
-    // Show flash messages as toasts
-    React.useEffect(() => {
-        if (props.flash?.success) {
-            toast.success(props.flash.success, {
-                duration: 4000,
-                position: 'top-right',
-                icon: '✅',
-                style: {
-                    background: '#10b981',
-                    color: '#fff',
-                }
-            });
-        }
-        
-        if (props.flash?.info) {
-            toast(props.flash.info, {
-                duration: 4000,
-                position: 'top-right',
-                icon: 'ℹ️',
-                style: {
-                    background: '#3b82f6',
-                    color: '#fff',
-                }
-            });
-        }
-        
-        if (props.flash?.error) {
-            toast.error(props.flash.error, {
-                duration: 4000,
-                position: 'top-right',
-                style: {
-                    background: '#ef4444',
-                    color: '#fff',
-                }
-            });
-        }
-    }, [props.flash]);
 
     return (
         <AuthenticatedLayout> 
@@ -70,8 +30,6 @@ export default function CartIndex({ cart }) {
              
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Cart</h1>
-                
-                {/* Remove the old flash message divs since we're using toasts now */}
                 
                 {cart && cart.items && cart.items.length > 0 ? (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -84,7 +42,7 @@ export default function CartIndex({ cart }) {
                                             Cart Items ({cart.item_count})
                                         </h2>
                                         
-                                        {/* Add Clear Cart button */}
+                                        {/* Clear Cart button */}
                                         <button
                                             onClick={handleClearCart}
                                             className="text-sm text-red-600 hover:text-red-800 font-medium"
