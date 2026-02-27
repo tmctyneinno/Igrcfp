@@ -42,6 +42,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/certificates/generate/{enrollment}', [CertificateController::class, 'generate'])->name('dashboard.certificates.generate');
     Route::get('dashboard/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('dashboard.certificates.preview');
     Route::get('dashboard/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('dashboard.certificates.download');
+
+    Route::post('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markComplete'])
+        ->name('lessons.complete');
+    Route::delete('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markIncomplete'])
+        ->name('lessons.incomplete');
 });
 
 
