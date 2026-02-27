@@ -160,9 +160,9 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                                     </p> 
                                                 )}
                                             </div>
-                                            <div className="flex items-center gap-4 text-sm text-gray-500">
-                                                <span className="flex items-center gap-1 w-10">
-                                                    <ClockIcon className="w-2 h-4" />
+                                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                                                <span className="flex items-center gap-1 w-50">
+                                                    <ClockIcon className="w-4 h-4" />
                                                     {module.estimated_hours} hrs
                                                 </span>
                                                 <span className="flex items-center gap-1">
