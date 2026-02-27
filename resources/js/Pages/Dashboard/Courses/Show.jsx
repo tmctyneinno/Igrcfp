@@ -297,6 +297,53 @@ export default function Show({ course, enrollment, modules = [] }) {
                                         </div>
                                     </div>
                                     <div className="lg:w-1/3 w-full">
+                                    <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
+                            <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold">Enroll Now</h3>
+                            {hasDiscount && (
+                                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
+                                {discountPercentage}% OFF
+                                </span>
+                            )}
+                            </div>
+                            
+                            <div className="mb-6">
+                            {hasDiscount ? (
+                                <div className="space-y-2">
+                                <div className="flex items-center">
+                                    <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
+                                    <span className="text-lg line-through text-gray-500 ml-2">${price.toFixed(2)}</span>
+                                </div>
+                                <p className="text-sm text-green-600 font-medium">Limited time offer</p>
+                                </div>
+                            ) : (
+                                <div className="text-3xl font-bold">{formatPrice(price)}</div>
+                            )}
+                            <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
+                            </div>
+        
+                            <button 
+                            onClick={() => startEnrollment(course)}
+                            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
+                            >
+                            {user ? 'Enroll Now' : 'Sign In to Enroll'}
+                            </button>
+                            
+                            <div className="space-y-3 text-sm">
+                            <div className="flex items-center">
+                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                                <span>30-day money-back guarantee</span>
+                            </div>
+                            <div className="flex items-center">
+                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                                <span>Certificate of completion</span>
+                            </div>
+                            <div className="flex items-center">
+                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
+                                <span>24/7 support access</span>
+                            </div>
+                            </div>
+                        </div>
                                     </div>
                                 </div>
                                 
