@@ -25,12 +25,6 @@ export default function CartIndex({ cart }) {
 
     // Show flash messages as toasts
     useEffect(() => {
-        // if (props.flash?.success) {
-        //     toast.success(props.flash.success, {
-        //         duration: 4000,
-        //         position: 'top-right',
-        //     });
-        // }
         
         if (props.flash?.info) {
             toast.info(props.flash.info, {
@@ -120,7 +114,7 @@ export default function CartIndex({ cart }) {
                                 <div className="space-y-3 mb-4">
                                     <div className="flex justify-between text-gray-600">
                                         <span>Subtotal ({cart.item_count} items)</span>
-                                        <span>${calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        <span>${(calculateTotal() || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
                                         <span>Tax</span>
