@@ -37,7 +37,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
     Route::get('dashboard/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
 
-    
+    // Certificate routes
+    Route::get('/certificates/generate/{enrollment}', [CertificateController::class, 'generate'])->name('certificates.generate');
+    Route::get('/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('certificates.preview');
+    Route::get('/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('certificates.download');
 });
 
 
