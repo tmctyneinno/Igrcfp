@@ -153,20 +153,6 @@ export default function Show({ course, enrollment, modules = [] }) {
                                             {user ? 'Enroll Now' : 'Sign In to Enroll'}
                                             </button>
                             
-                                            <div className="space-y-3 text-sm">
-                                            <div className="flex items-center">
-                                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                                <span>30-day money-back guarantee</span>
-                                            </div>
-                                            <div className="flex items-center">
-                                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                                <span>Certificate of completion</span>
-                                            </div>
-                                            <div className="flex items-center">
-                                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                                <span>24/7 support access</span>
-                                            </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
