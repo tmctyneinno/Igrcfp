@@ -83,4 +83,38 @@ class Enrollment extends Model
     {
         return $this->certificate_generated && $this->certificate_number;
     }
+
+   
+    public function updateProgress()
+    {
+        // Get all lessons for this course
+        $totalLessons = $this->course->lessons()->count();
+        
+        if ($totalLessons === 0) {
+            return 0;
+        }
+        
+        // Get completed lessons for this user in this enrollment
+        $completedLessons = DB::table('lesson_user')
+            ->where('user_id', $this->user_id)
+            ->where('enrollment_id', $this->id)
+            ->where('completed', true)
+            ->count();
+        
+        // Calculate percentage
+        $progress = round(($completedLessons / $totalLessons) * 100);
+        
+        // Update enrollment
+        $this->update(['progress' => $progress]);
+        
+        // Auto-complete enrollment if progress is 100%
+        if ($progress === 100 && $this->status !== 'completed') {
+            $this->update([
+                'status' => 'completed',
+                'completed_at' => now()
+            ]);
+        }
+        
+        return $progress;
+    }
 }

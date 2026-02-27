@@ -85,4 +85,11 @@ class Lesson extends Model
         }
         return $minutes . ' min';
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('completed', 'completed_at', 'enrollment_id')
+            ->withTimestamps();
+    }
 }
