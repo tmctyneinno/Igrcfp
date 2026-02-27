@@ -18,7 +18,7 @@ class LessonController extends Controller
         return view('admin.courses.modules.lessons.index', compact('course', 'module', 'lessons'));
     }
 
-    public function create( $course,  $module)
+    public function create(Course $course, CourseModule $module)
     {
         return view('admin.courses.modules.lessons.create', compact('course', 'module'));
     }
