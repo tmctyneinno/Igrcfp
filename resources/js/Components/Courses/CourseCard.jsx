@@ -72,15 +72,6 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
         }
     };
 
-    const handleRemoveFromCart = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsRemoving(true);
-        removeFromCart(course.id, course.title);
-        // Reset removing state after a delay (the toast will handle the UI)
-        setTimeout(() => setIsRemoving(false), 1000);
-    };
-
     return (
         <div
             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2 h-full flex flex-col"
