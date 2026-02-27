@@ -86,102 +86,12 @@ export default function Show({ course, enrollment, modules = [] }) {
                     </div>
 
                     {/* Hero Banner */}
-            <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
-                <div className="absolute inset-0 bg-black/50"></div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="flex flex-col lg:flex-row items-start gap-8">
-                    {/* Course Title & Basic Info */}
-                    <div className="lg:w-2/3">
-                        <div className="flex items-center gap-2 mb-4">
-                            <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
-                            {course.level || 'All Levels'}
-                            </span>
-                            <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
-                            {course.format || 'Self-Paced'}
-                            </span>
-                            {course.is_featured && (
-                            <span className="px-3 py-1 bg-yellow-500/20 rounded-full text-sm font-medium flex items-center">
-                                <StarIcon className="h-3 w-3 mr-1" /> Featured
-                            </span>
-                            )}
-                        </div>
-                    
-                        <h1 className="text-4xl lg:text-5xl font-bold mb-4">{course.title}</h1>
-                        
-                        <div className="flex flex-wrap gap-6 mb-8">
-                            <div className="flex items-center">
-                            <ClockIcon className="h-5 w-5 mr-2" />
-                            <span>{course.duration || 'Flexible Schedule'} hours</span>
-                            </div>
-                            <div className="flex items-center">
-                            <BookOpenIcon className="h-5 w-5 mr-2" />
-                            <span>{course.total_modules || modules.length || 0} Modules</span>
-                            </div>
-                            <div className="flex items-center">
-                            <CalendarIcon className="h-5 w-5 mr-2" />
-                            <span>{course.total_hours || 'Flexible'} Hours Total</span>
-                            </div>
-                        </div>
-                    </div>
-    
-                    {/* Pricing Card */}
-                    <div className="lg:w-1/3 w-full">
-                        <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
-                            <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold">Enroll Now</h3>
-                            {hasDiscount && (
-                                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
-                                {discountPercentage}% OFF
-                                </span>
-                            )}
-                            </div>
-                            
-                            <div className="mb-6">
-                            {hasDiscount ? (
-                                <div className="space-y-2">
-                                <div className="flex items-center">
-                                    <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
-                                    <span className="text-lg line-through text-gray-500 ml-2">${price.toFixed(2)}</span>
-                                </div>
-                                <p className="text-sm text-green-600 font-medium">Limited time offer</p>
-                                </div>
-                            ) : (
-                                <div className="text-3xl font-bold">{formatPrice(price)}</div>
-                            )}
-                            <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
-                            </div>
-        
-                            <button 
-                            onClick={() => startEnrollment(course)}
-                            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
-                            >
-                            {user ? 'Enroll Now' : 'Sign In to Enroll'}
-                            </button>
-                            
-                            <div className="space-y-3 text-sm">
-                            <div className="flex items-center">
-                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                <span>30-day money-back guarantee</span>
-                            </div>
-                            <div className="flex items-center">
-                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                <span>Certificate of completion</span>
-                            </div>
-                            <div className="flex items-center">
-                                <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
-                                <span>24/7 support access</span>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            </div>
+           
 
                     {/* Course Header */}
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
                         {/* Cover Image */}
-                        <div className="h-64 w-full bg-gradient-to-r from-blue-900 to-indigo-900 relative">
+                        <div className=" w-full bg-gradient-to-r from-blue-900 to-indigo-900 relative">
                             {course.image_url || course.banner_image ? (
                                 <img 
                                     src={course.image_url || course.banner_image}
