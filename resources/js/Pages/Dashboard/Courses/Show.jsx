@@ -50,7 +50,7 @@ const truncateText = (text, length = 160) => {
 };
 
 export default function Show({ course, enrollment, modules = [] }) {
-  const { startEnrollment, user } = useEnrollment();
+//   const { startEnrollment, user } = useEnrollment();
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModule, setExpandedModule] = useState(null);
   
@@ -74,15 +74,46 @@ export default function Show({ course, enrollment, modules = [] }) {
     { id: 'certification', label: 'Certification', icon: AcademicCapIcon },
   ];
 
-  const getStatusBadge = (status) => {
-    const badges = {
-      pending_payment: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      enrolled: 'bg-green-100 text-green-800 border-green-200',
-      completed: 'bg-blue-100 text-blue-800 border-blue-200',
-      cancelled: 'bg-red-100 text-red-800 border-red-200'
-    };
-    return badges[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+  // In your EnrollmentContext.jsx or wherever startEnrollment is defined
+
+const startEnrollment = (course) => {
+    // Check if user is authenticated
+    if (!user) {
+        toast.error('Please login to enroll');
+        router.visit(route('login'));
+        return;
+    }
+
+    // For paid courses, add to cart and go to checkout
+    if (course.price > 0) {
+        // Show loading
+        const loadingToast = toast.loading('Processing...');
+        
+        // Add to cart first
+        router.post(route('dashboard.cart.add', course.slug), {}, {
+            preserveState: true,
+            onSuccess: (page) => {
+                toast.dismiss(loadingToast);
+                
+                if (page.props.flash?.success) {
+                    // Redirect to checkout
+                    router.visit(route('checkout.index'));
+                } else {
+                    toast.success('Course added to cart!');
+                    // Optional: redirect to cart instead
+                    router.visit(route('dashboard.cart.index'));
+                }
+            },
+            onError: (errors) => {
+                toast.dismiss(loadingToast);
+                toast.error('Failed to add course to cart');
+            }
+        });
+    } else {
+        // For free courses, enroll directly
+        directEnrollment(course);
+    }
+};
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
