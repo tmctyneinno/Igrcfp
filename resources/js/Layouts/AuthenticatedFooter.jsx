@@ -22,7 +22,7 @@ export default function AuthenticatedFooter() {
                                 Version 1.0.0
                             </span>
                             <span className="text-sm text-gray-500">
-                                Built with Laravel & React
+                                <aBuilt by Tyneside Innivation
                             </span>
                         </div>
                     </div>
