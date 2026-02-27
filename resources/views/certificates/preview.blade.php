@@ -281,9 +281,9 @@
             <!-- Logo Section -->
             <div class="logo-section">
                
-                <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="{{ $organization_name }}" class="logo">
+                <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="IGRCFP" class="logo">
                 
-                <div class="org-name">{{ $organization_name ?? 'ACME INSTITUTE' }}</div>
+                <div class="org-name">{{ $organization_name ?? 'IGRCFP INSTITUTE' }}</div>
                 <div class="org-tagline">{{ $organization_tagline ?? 'Excellence in Education' }}</div>
             </div>
             
