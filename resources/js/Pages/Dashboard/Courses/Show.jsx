@@ -273,13 +273,13 @@ const startEnrollment = (course) => {
                   ) : (
                     <button
                       onClick={() => startEnrollment(course)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl transition transform hover:-translate-y-0.5 mb-4"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-2 rounded-xl transition transform hover:-translate-y-0.5 mb-4"
                     >
                       Enroll Now
                     </button>
                   )}
 
-                  <div className="border-t border-gray-100 pt-6 mt-4">
+                  <div className="border-t border-gray-100 pt-6 mt-2">
                     <h4 className="font-semibold text-gray-900 mb-3">This includes:</h4>
                     <ul className="space-y-2 text-sm text-gray-600">
                       <li className="flex items-center gap-2">
