@@ -118,7 +118,7 @@
                                     <td>{{ $lesson->created_at->format('M d, Y') }}</td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <a href="{{ route('admin.courses.modules.lessons.edit', [$course->, $module->id, $lesson->id]) }}" 
+                                            <a href="{{ route('admin.courses.modules.lessons.edit', [$course->slug, $module->id, $lesson->id]) }}" 
                                                class="btn btn-sm btn-outline-primary" title="Edit">
                                                 <iconify-icon icon="mdi:pencil"></iconify-icon>
                                             </a>
