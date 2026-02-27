@@ -17,7 +17,7 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+                <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
             </li>
             <li>-</li>
             <li class="fw-medium">Edit Module</li>
@@ -471,15 +471,15 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('admin.courses.show', $course->slug) }}" class="btn btn-sm btn-outline-primary">
                                 <iconify-icon icon="mdi:arrow-left"></iconify-icon>
                                 Back to Course
                             </a>
-                            <a href="{{ route('admin.courses.modules.create', $course->id) }}" class="btn btn-sm btn-outline-success">
+                            <a href="{{ route('admin.courses.modules.create', $course->slug) }}" class="btn btn-sm btn-outline-success">
                                 <iconify-icon icon="mdi:plus"></iconify-icon>
                                 Add New Module
                             </a>
-                            <a href="{{ route('admin.courses.edit', $course->id) }}" class="btn btn-sm btn-outline-info">
+                            <a href="{{ route('admin.courses.edit', $course->slug) }}" class="btn btn-sm btn-outline-info">
                                 <iconify-icon icon="mdi:pencil"></iconify-icon>
                                 Edit Course
                             </a>
@@ -642,7 +642,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove the _method field for auto-save
         formData.delete('_method');
         
-        fetch('{{ route("admin.courses.modules.update", ["course" => $course->id, "module" => $module->id]) }}', {
+        fetch('{{ route("admin.courses.modules.update", ["course" => $course->slug, "module" => $module->id]) }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
