@@ -88,7 +88,7 @@ class CartController extends Controller
     // app/Http/Controllers/CartController.php
 
 public function remove(Request $request, $itemId)
-{
+{ 
     $cart = $request->user()->carts()->where('status', 'active')->first();
     
     if ($cart) {
