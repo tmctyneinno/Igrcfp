@@ -107,7 +107,6 @@ export default function Show({ course, enrollment, modules = [] }) {
                     </div>
                     
                     <h1 className="text-4xl lg:text-5xl font-bold mb-4">{course.title}</h1>
-                    <p className="text-xl text-gray-200 mb-8 max-w-3xl">{getCleanDescription(course.short_description)}</p>
                     
                     <div className="flex flex-wrap gap-6 mb-8">
                         <div className="flex items-center">
@@ -195,6 +194,8 @@ export default function Show({ course, enrollment, modules = [] }) {
                             
                             <div className="absolute bottom-0 left-0 p-8 text-white">
                                 <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+                                <p className="text-xl text-gray-200 mb-8 max-w-3xl">{getCleanDescription(course.short_description)}</p>
+
                                 <div className="flex items-center gap-4">
                                     <span className="flex items-center gap-1">
                                         <span className="text-yellow-400">★</span>
