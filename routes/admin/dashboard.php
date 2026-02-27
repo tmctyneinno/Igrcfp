@@ -94,5 +94,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
     });
- 
+  
 });
