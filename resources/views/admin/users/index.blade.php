@@ -114,7 +114,7 @@
                                 <td>{{ $user->created_at->format('d M Y') }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden">
+                                        {{-- <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"> --}}
                                         <div class="flex-grow-1">
                                             <span class="text-md mb-0 fw-normal text-secondary-light">{{ $user->name }}</span>
                                         </div>
