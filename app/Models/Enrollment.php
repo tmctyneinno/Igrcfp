@@ -1,4 +1,5 @@
 <?php
+
 // app/Models/Enrollment.php
 
 namespace App\Models;
@@ -23,6 +24,10 @@ class Enrollment extends Model
         'completed_at',
         'certificate_issued',
         'certificate_url',
+        'certificate_generated',      // ADD THIS
+        'certificate_generated_date',  // ADD THIS
+        'certificate_number',          // ADD THIS
+        'final_grade',                  // ADD THIS
         'notes',
         'progress',
     ];
@@ -31,6 +36,8 @@ class Enrollment extends Model
         'enrollment_date' => 'datetime',
         'completed_at' => 'datetime',
         'certificate_issued' => 'boolean',
+        'certificate_generated' => 'boolean',  // ADD THIS
+        'certificate_generated_date' => 'datetime',  // ADD THIS
         'amount' => 'decimal:2',
     ];
 
@@ -71,5 +78,9 @@ class Enrollment extends Model
         return $query->where('status', 'cancelled');
     }
 
-    
+    // Helper method to check if certificate is available
+    public function hasCertificate()
+    {
+        return $this->certificate_generated && $this->certificate_number;
+    }
 }
