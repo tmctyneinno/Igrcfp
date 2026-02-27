@@ -92,9 +92,6 @@ export function CartProvider({ children, initialCount = 0 }) {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                // Don't try to filter by course ID - let the server response handle it
-                // Instead, we'll refresh the cart data
-                
                 if (page.props.flash?.success) {
                     toast.success(page.props.flash.success, {
                         duration: 4000,
@@ -104,6 +101,24 @@ export function CartProvider({ children, initialCount = 0 }) {
                 
                 // Refresh cart data from server to get updated list
                 refreshCart();
+                // Check if the response includes updated cart data
+            if (page.props.flash?.cart) {
+                // Update local cart items based on the returned cart data
+                const updatedCart = page.props.flash.cart;
+                
+                // Convert the cart items to your local format
+                const newCartItems = updatedCart.items.map(item => ({
+                    id: item.course.id,
+                    title: item.course.title,
+                    // ... map other fields
+                }));
+                
+                setCartItems(newCartItems);
+                setCartCount(newCartItems.length);
+            } else {
+                // If no cart data, refresh from server
+                refreshCart();
+            }
             },
             onError: (errors) => {
                 toast.dismiss(removeToast);
