@@ -30,10 +30,15 @@ export function CartProvider({ children, initialCount = 0 }) {
         return new Promise((resolve, reject) => {
             const url = route('dashboard.cart.add', course.slug);
             
+            // Show loading toast
+            const loadingToast = toast.loading('Adding to cart...');
+            
             router.post(url, {}, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
+                    toast.dismiss(loadingToast);
+                    
                     if (page.props.flash?.success) {
                         const existingItem = cartItems.find(item => item.id === course.id);
                         
@@ -52,11 +57,11 @@ export function CartProvider({ children, initialCount = 0 }) {
                             setCartCount(newCartItems.length);
                         }
                         
-                        // toast.success(page.props.flash.success, {
-                        //     duration: 4000,
-                        //     position: 'top-right',
-                        //     icon: '🛒'
-                        // });
+                        toast.success(page.props.flash.success, {
+                            duration: 4000,
+                            position: 'top-right',
+                            icon: '🛒'
+                        });
                         resolve(true);
                     } else if (page.props.flash?.info) {
                         toast.info(page.props.flash.info, {
@@ -83,40 +88,35 @@ export function CartProvider({ children, initialCount = 0 }) {
         });
     };
 
-    // Remove from cart - now expects cart item ID
-    const removeFromCart = (cartItemId) => {
+    // Remove from cart - expects cart item ID
+    const removeFromCart = (cartItemId, courseId) => {
         if (!cartItemId) return;
         
         // Show loading toast
+        const removeToast = toast.loading('Removing from cart...');
+        
         router.delete(route('cart.remove', cartItemId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
+                toast.dismiss(removeToast);
                 
-                if (page.props.flash?.cart) {
-                   
-                    // Update local cart items based on the returned cart data
-                    const updatedCart = page.props.flash.cart;
-                    
-                    // Convert the cart items to your local format
-                    const newCartItems = updatedCart.items.map(item => ({
-                        id: item.course.id,
-                        title: item.course.title,
-                        // ... map other fields
-                    }));
-                    
+                // IMPORTANT: Remove the item from local state using the course ID
+                if (courseId) {
+                    const newCartItems = cartItems.filter(item => item.id !== courseId);
                     setCartItems(newCartItems);
                     setCartCount(newCartItems.length);
-                } else {
-                    // If no cart data, refresh from server
-                    refreshCart();
                 }
+                
                 if (page.props.flash?.success) {
                     toast.success(page.props.flash.success, {
                         duration: 4000,
                         position: 'top-right'
                     });
                 }
+                
+                // Also refresh from server to be safe
+                refreshCart();
             },
             onError: (errors) => {
                 toast.dismiss(removeToast);
@@ -133,10 +133,13 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Clear cart
     const clearCart = () => {
         // Show loading toast
+        const clearToast = toast.loading('Clearing cart...');
+        
         router.post(route('cart.clear'), {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
+                toast.dismiss(clearToast);
                 
                 setCartItems([]);
                 setCartCount(0);
