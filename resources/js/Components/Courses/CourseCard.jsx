@@ -77,8 +77,8 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2 h-full flex flex-col"
             data-aos="fade-up"
         > 
-            {/* IMAGE */}
-            <Link href={`/courses/${course?.slug || '#'}`} className="block h-48 overflow-hidden">
+            {/* IMAGE */} 
+            <Link href={`dashboard/courses/${course?.slug || '#'}`} className="block h-48 overflow-hidden">
                 <img
                     src={course?.image_url || '/images/fallback-course.jpg'}
                     alt={course?.title || 'Course image'}

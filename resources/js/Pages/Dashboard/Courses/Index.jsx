@@ -418,7 +418,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
                                         >
-                                            <CourseCard  
+                                            <CourseCard   
                                                 course={course}  
                                                 onAddToCart={handleAddToCart}
                                                 isInCart={isInCart(course.id)}
