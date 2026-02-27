@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { useCart } from '@/contexts/CartContext';
 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
     const { props } = usePage();
+    const { removeFromCart } = useCart();
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
 
     // Update local state when prop changes or when page props update
