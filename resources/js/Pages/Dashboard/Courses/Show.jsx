@@ -50,8 +50,8 @@ const truncateText = (text, length = 160) => {
     : cleanText;
 };
 
-export default function Show({ course, enrollment, modules = [] }) {
-  const { startEnrollmentc, user } = useEnrollment();
+export default function Show({ course, enrollment, modules = [], auth }) {
+  const { user } = auth;
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModule, setExpandedModule] = useState(null);
   
