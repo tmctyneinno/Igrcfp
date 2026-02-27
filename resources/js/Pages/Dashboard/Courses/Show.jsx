@@ -142,7 +142,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                                             ) : (
                                                 <div className="text-3xl font-bold">{formatPrice(price)}</div>
                                             )}
-                                            <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
+                                            <p className="text-sm text-green-600 mt-2">One-time payment • Lifetime access</p>
                                             </div>
                         
                                             <button 
