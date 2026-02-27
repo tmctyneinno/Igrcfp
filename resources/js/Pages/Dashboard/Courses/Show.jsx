@@ -101,7 +101,7 @@ export default function Show({ course, enrollment, modules = [] }) {
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 text-sm">
-            <Link href={route('dashboard')} className="text-gray-500 hover:text-gray-700 transition">
+            <Link href={route('dashboard.index')} className="text-gray-500 hover:text-gray-700 transition">
               Dashboard
             </Link>
             <ChevronRightIcon className="w-4 h-4 mx-2 text-gray-400" />
