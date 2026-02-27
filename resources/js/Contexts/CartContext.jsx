@@ -57,16 +57,28 @@ export function CartProvider({ children, initialCount = 0 }) {
                         setCartCount(newCartItems.length);
                     }
                     
-                    alert(page.props.flash.success);
+                    toast.success(page.props.flash.success, {
+                        duration: 4000,
+                        position: 'top-right',
+                        icon: '🛒'
+                    });
                     resolve(true);
                 } else if (page.props.flash?.info) {
-                    alert(page.props.flash.info);
+                    toast.info(page.props.flash.info, {
+                        duration: 4000,
+                        position: 'top-right'
+                    });
                     resolve(false);
                 }
             },
             onError: (errors) => {
+                toast.dismiss(loadingToast);
                 console.error('Error adding to cart:', errors);
-                alert('Failed to add course to cart. Please try again.');
+                
+                toast.error('Failed to add course to cart. Please try again.', {
+                    duration: 5000,
+                    position: 'top-right'
+                });
                 reject(errors);
             }
         });
