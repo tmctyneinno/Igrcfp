@@ -19,17 +19,17 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+                <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.modules.edit', [$course->id, $module->id]) }}" class="hover-text-primary">
+                <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" class="hover-text-primary">
                     {{ Str::limit($module->title, 15) }}
                 </a>
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.modules.lessons.index', [$course->id, $module->id]) }}" class="hover-text-primary">
+                <a href="{{ route('admin.courses.modules.lessons.index', [$course->slug, $module->id]) }}" class="hover-text-primary">
                     Lessons
                 </a>
             </li>
@@ -164,7 +164,7 @@
                                     <button type="submit" class="btn btn-primary flex-grow-1">
                                         Update Lesson
                                     </button>
-                                    <a href="{{ route('admin.courses.modules.lessons.index', [$course->id, $module->id]) }}" 
+                                    <a href="{{ route('admin.courses.modules.lessons.index', [$course->slug, $module->id]) }}" 
                                        class="btn btn-outline-secondary">
                                         Cancel
                                     </a>
@@ -221,7 +221,7 @@
                     </div>
                     <div class="card-body">
                         <p class="text-muted small mb-3">Once you delete a lesson, there is no going back. Please be certain.</p>
-                        <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" 
+                        <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->slug, $module->id, $lesson->id]) }}" 
                               method="POST" 
                               onsubmit="return confirm('Are you absolutely sure you want to delete this lesson? This action cannot be undone.');">
                             @csrf
