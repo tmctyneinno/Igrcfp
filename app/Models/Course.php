@@ -240,6 +240,9 @@ class Course extends Model
         return $this->enrollments()->count();
     }
 
-    
+    public function modules()
+    {
+        return $this->hasMany(Module::class);
+    }
 
 }
