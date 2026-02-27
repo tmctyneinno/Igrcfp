@@ -23,7 +23,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const cartCount = props.cart_count || 0;
 
     
-
+ 
     // Check for enrollment redirect on dashboard load
     useEffect(() => {
         const enrollmentRedirect = sessionStorage.getItem('enrollment_redirect');
