@@ -99,5 +99,13 @@ class Lesson extends Model
             ->wherePivot('enrollment_id', $enrollment->id)
             ->get();
     }
-    
+
+     public function isCompletedBy(User $user, Enrollment $enrollment): bool
+    {
+        return $this->users()
+            ->wherePivot('user_id', $user->id)
+            ->wherePivot('enrollment_id', $enrollment->id)
+            ->wherePivot('completed', true)
+            ->exists();
+    }
 }

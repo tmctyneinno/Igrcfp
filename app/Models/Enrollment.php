@@ -84,25 +84,57 @@ class Enrollment extends Model
         return $this->certificate_generated && $this->certificate_number;
     }
 
-   
-    public function updateProgress()
+   public function completeLesson(Lesson $lesson, int $timeSpent = null, array $metadata = []): LessonUser
     {
-        // Get all lessons for this course
+        $lessonUser = LessonUser::updateOrCreate(
+            [
+                'user_id' => $this->user_id,
+                'lesson_id' => $lesson->id,
+                'enrollment_id' => $this->id
+            ],
+            [
+                'completed' => true,
+                'completed_at' => now(),
+                'time_spent' => $timeSpent,
+                'metadata' => $metadata
+            ]
+        );
+        
+        // Update progress
+        $this->updateProgress();
+        
+        return $lessonUser;
+    }
+
+    public function lessonCompletions()
+    {
+        return $this->hasMany(LessonUser::class);
+    }
+
+    public function completedLessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_user')
+            ->wherePivot('completed', true)
+            ->withPivot('completed_at', 'time_spent', 'attempts', 'metadata')
+            ->withTimestamps();
+    }
+
+    public function updateProgress(): int
+    {
+        // Get total lessons in this course
         $totalLessons = $this->course->lessons()->count();
         
         if ($totalLessons === 0) {
             return 0;
         }
         
-        // Get completed lessons for this user in this enrollment
-        $completedLessons = DB::table('lesson_user')
-            ->where('user_id', $this->user_id)
-            ->where('enrollment_id', $this->id)
+        // Get completed lessons count
+        $completedLessons = LessonUser::where('enrollment_id', $this->id)
             ->where('completed', true)
             ->count();
         
         // Calculate percentage
-        $progress = round(($completedLessons / $totalLessons) * 100);
+        $progress = (int) round(($completedLessons / $totalLessons) * 100);
         
         // Update enrollment
         $this->update(['progress' => $progress]);
@@ -117,4 +149,5 @@ class Enrollment extends Model
         
         return $progress;
     }
+
 }
