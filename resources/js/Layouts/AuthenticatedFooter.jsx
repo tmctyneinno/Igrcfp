@@ -22,7 +22,9 @@ export default function AuthenticatedFooter() {
                                 Version 1.0.0
                             </span>
                             <span className="text-sm text-gray-500">
-                                <aBuilt by Tyneside Innivation
+                                <a href="https://tynesideinnovation.com/">
+                                Built by Tyneside Innivation
+                                </a>
                             </span>
                         </div>
                     </div>
