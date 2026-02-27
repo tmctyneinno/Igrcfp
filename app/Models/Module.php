@@ -11,7 +11,7 @@ class Module extends Model
     use HasFactory;
 
     protected $fillable = [
-        'course_id',
+        'course_id', 
         'title',
         'slug',
         'description',
