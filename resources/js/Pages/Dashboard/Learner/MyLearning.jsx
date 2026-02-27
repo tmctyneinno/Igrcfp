@@ -123,7 +123,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
                                 {/* Content */}
                                 <div className="p-2">
-                                    <Link href={route('dashboar.courses.show', course.slug || course.id)}>
+                                    <Link href={route('dashboard.courses.show', course.slug || course.id)}>
                                         <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2 h-14">
                                             {course.title}
                                         </h4>
