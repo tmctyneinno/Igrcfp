@@ -120,80 +120,80 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                 </div>
                             </div>
                             {/* Certificate Section - Show when progress is 100% */}
-{progress === 100 && (
-    <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden border-2 border-green-200">
-        <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50">
-            <div className="flex items-start justify-between">
-                <div className="flex items-start gap-4">
-                    <div className="bg-green-100 rounded-lg p-3">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations! 🎉</h2>
-                        <p className="text-gray-600 mb-4">
-                            You've successfully completed all modules for {course.title}. 
-                            You're now eligible to receive your certificate of completion.
-                        </p>
-                        <div className="flex gap-3">
-                            <Link
-                                href={route('dashboard.certificates.generate', { enrollment: enrollment.id })}
-                                className="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
-                            >
-                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Generate Certificate
-                            </Link>
-                            <Link
-                                href={route('dashboard.certificates.preview', { enrollment: enrollment.id })}
-                                className="inline-flex items-center px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 transition"
-                            >
-                                Preview Certificate
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-                <div className="text-right">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                        Completed
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-)}
+                            {100 === 100 && (
+                                <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden border-2 border-green-200">
+                                    <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50">
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-start gap-4">
+                                                <div className="bg-green-100 rounded-lg p-3">
+                                                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations! 🎉</h2>
+                                                    <p className="text-gray-600 mb-4">
+                                                        You've successfully completed all modules for {course.title}. 
+                                                        You're now eligible to receive your certificate of completion.
+                                                    </p>
+                                                    <div className="flex gap-3">
+                                                        <Link
+                                                            href={route('dashboard.certificates.generate', { enrollment: enrollment.id })}
+                                                            className="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+                                                        >
+                                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            Generate Certificate
+                                                        </Link>
+                                                        <Link
+                                                            href={route('dashboard.certificates.preview', { enrollment: enrollment.id })}
+                                                            className="inline-flex items-center px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 transition"
+                                                        >
+                                                            Preview Certificate
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                                    Completed
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
-{/* Show if certificate already generated */}
-{enrollment?.certificate_generated && (
-    <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="bg-blue-100 rounded-lg p-2">
-                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 className="font-semibold text-gray-900">Your Certificate</h3>
-                        <p className="text-sm text-gray-500">Generated on {new Date(enrollment.certificate_generated_date).toLocaleDateString()}</p>
-                    </div>
-                </div>
-                <Link
-                    href={route('dashboard.certificates.download', { enrollment: enrollment.id })}
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download Certificate
-                </Link>
-            </div>
-        </div>
-    </div>
-)}
+                            {/* Show if certificate already generated */}
+                            {enrollment?.certificate_generated && (
+                                <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+                                    <div className="p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-blue-100 rounded-lg p-2">
+                                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-gray-900">Your Certificate</h3>
+                                                    <p className="text-sm text-gray-500">Generated on {new Date(enrollment.certificate_generated_date).toLocaleDateString()}</p>
+                                                </div>
+                                            </div>
+                                            <Link
+                                                href={route('dashboard.certificates.download', { enrollment: enrollment.id })}
+                                                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                            >
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                                Download Certificate
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
