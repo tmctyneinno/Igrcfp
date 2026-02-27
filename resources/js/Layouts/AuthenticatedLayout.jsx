@@ -22,32 +22,7 @@ export default function AuthenticatedLayout({ header, children }) {
     
     const cartCount = props.cart_count || 0;
 
-    {/* Add Toaster component here - it should be at the root level */}
-    <Toaster 
-        position="top-right"
-        toastOptions={{
-            duration: 4000,
-            style: {
-                background: '#363636',
-                color: '#fff',
-                zIndex: 9999,
-            },
-            success: {
-                duration: 3000,
-                icon: '✅',
-                style: {
-                    background: '#10b981',
-                },
-            },
-            error: {
-                duration: 4000,
-                icon: '❌',
-                style: {
-                    background: '#ef4444',
-                },
-            },
-        }}
-    />
+    
 
     // Check for enrollment redirect on dashboard load
     useEffect(() => {
