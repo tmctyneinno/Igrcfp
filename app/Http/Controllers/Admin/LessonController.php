@@ -10,7 +10,7 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 
 class LessonController extends Controller
-{
+{ 
     public function index(Course $course, CourseModule $module)
     {
         $lessons = $module->lessons()->ordered()->get();
