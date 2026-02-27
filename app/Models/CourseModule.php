@@ -99,8 +99,9 @@ class CourseModule extends Model
     /**
      * Get the lessons for this module
      */
+    
     public function lessons()
     {
-        return $this->hasMany(Lesson::class, 'module_id');
+        return $this->hasManyThrough(Lesson::class, CourseModule::class, 'course_id', 'module_id');
     }
 }
