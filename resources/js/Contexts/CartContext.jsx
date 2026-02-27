@@ -97,28 +97,22 @@ export function CartProvider({ children, initialCount = 0 }) {
                         duration: 4000,
                         position: 'top-right'
                     });
+                    // Update local cart items based on the returned cart data
+                    const updatedCart = page.props.flash.cart;
+                    
+                    // Convert the cart items to your local format
+                    const newCartItems = updatedCart.items.map(item => ({
+                        id: item.course.id,
+                        title: item.course.title,
+                        // ... map other fields
+                    }));
+                    
+                    setCartItems(newCartItems);
+                    setCartCount(newCartItems.length);
+                } else {
+                    // If no cart data, refresh from server
+                    refreshCart();
                 }
-                
-                // Refresh cart data from server to get updated list
-                refreshCart();
-                // Check if the response includes updated cart data
-            if (page.props.flash?.cart) {
-                // Update local cart items based on the returned cart data
-                const updatedCart = page.props.flash.cart;
-                
-                // Convert the cart items to your local format
-                const newCartItems = updatedCart.items.map(item => ({
-                    id: item.course.id,
-                    title: item.course.title,
-                    // ... map other fields
-                }));
-                
-                setCartItems(newCartItems);
-                setCartCount(newCartItems.length);
-            } else {
-                // If no cart data, refresh from server
-                refreshCart();
-            }
             },
             onError: (errors) => {
                 toast.dismiss(removeToast);
