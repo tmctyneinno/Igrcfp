@@ -2,7 +2,7 @@ import React from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function Cart({ cart }) {
+export default function CartIndex({ cart }) {
     const { props } = usePage();
     
     const calculateTotal = () => {
