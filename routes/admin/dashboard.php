@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
@@ -93,6 +94,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Reports Routes
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
+    });
+
+    // Lesson routes (nested under modules)
+    Route::prefix('admin/courses/{course}/modules/{module}/lessons')->name('admin.courses.modules.lessons.')->group(function () {
+        Route::get('/', [LessonController::class, 'index'])->name('index');
+        Route::get('/create', [LessonController::class, 'create'])->name('create');
+        Route::post('/', [LessonController::class, 'store'])->name('store');
+        Route::get('/{lesson}/edit', [LessonController::class, 'edit'])->name('edit');
+        Route::put('/{lesson}', [LessonController::class, 'update'])->name('update');
+        Route::delete('/{lesson}', [LessonController::class, 'destroy'])->name('destroy');
+        Route::post('/reorder', [LessonController::class, 'reorder'])->name('reorder');
     });
   
 });
