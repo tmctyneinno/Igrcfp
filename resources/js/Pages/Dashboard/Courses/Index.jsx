@@ -408,8 +408,8 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                             {courses.data && courses.data.length > 0 ? (
                                 <div className={`grid gap-6 ${
                                     showFilters 
-                                        ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                                        : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                                        ? 'grid-cols-1 md:grid-cols-3 xl:grid-cols-4' 
+                                        : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4'
                                 }`}>
                                     {courses.data.map((course, index) => (
                                         <motion.div
