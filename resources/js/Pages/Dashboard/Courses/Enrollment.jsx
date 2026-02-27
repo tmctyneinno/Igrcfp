@@ -291,35 +291,43 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                                     Lessons
                                                 </h3>
                                                 <div className="space-y-2">
-                                                    {module.lessons.map((lesson, lessonIndex) => (
-                                                        <div 
-                                                            key={lesson.id} 
-                                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition group cursor-pointer"
-                                                        >
-                                                            <span className="text-sm text-gray-400 w-6">
-                                                                {lessonIndex + 1}.
+                                                    <div 
+                                                        key={lesson.id} 
+                                                        className={`flex items-center gap-3 p-3 rounded-lg transition group ${lesson.is_completed ? 'bg-green-50' : 'hover:bg-gray-50 cursor-pointer'}`}
+                                                        onClick={() => !lesson.is_completed && handleLessonClick(lesson)}
+                                                    >
+                                                        <span className="text-sm text-gray-400 w-6">
+                                                            {lessonIndex + 1}.
+                                                        </span>
+                                                        <div className="flex-1">
+                                                            <span className={`font-medium ${lesson.is_completed ? 'text-green-700' : 'text-gray-900'}`}>
+                                                                {lesson.title}
                                                             </span>
-                                                            <div className="flex-1">
-                                                                <span className="text-gray-900 font-medium">
-                                                                    {lesson.title}
-                                                                </span>
-                                                                {lesson.description && (
-                                                                    <p className="text-sm text-gray-500">
-                                                                        {lesson.description}
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            {lesson.duration && (
-                                                                <span className="text-sm text-gray-400 flex items-center gap-1">
-                                                                    <ClockIcon className="w-4 h-4" />
-                                                                    {lesson.duration}
-                                                                </span>
-                                                            )}
-                                                            {lesson.is_completed && (
-                                                                <span className="text-green-600 font-bold">✓</span>
+                                                            {lesson.description && (
+                                                                <p className="text-sm text-gray-500">
+                                                                    {lesson.description}
+                                                                </p>
                                                             )}
                                                         </div>
-                                                    ))}
+                                                        {lesson.duration && (
+                                                            <span className="text-sm text-gray-400 flex items-center gap-1">
+                                                                <ClockIcon className="w-4 h-4" />
+                                                                {lesson.duration}
+                                                            </span>
+                                                        )}
+                                                        {lesson.is_completed ? (
+                                                            <span className="text-green-600 font-bold flex items-center">
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                                Completed
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-blue-600 text-sm opacity-0 group-hover:opacity-100 transition">
+                                                                Click to complete
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
