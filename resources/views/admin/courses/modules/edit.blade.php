@@ -334,7 +334,7 @@
                                         <button type="submit" class="btn btn-primary flex-grow-1">
                                             Update Module
                                         </button>
-                                        <a href="{{ route('admin.courses.show', $course->slug }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.courses.show', $course->slug) }}" class="btn btn-outline-secondary">
                                             Cancel
                                         </a>
                                     </div>
