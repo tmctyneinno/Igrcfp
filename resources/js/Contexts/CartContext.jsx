@@ -57,11 +57,11 @@ export function CartProvider({ children, initialCount = 0 }) {
                             setCartCount(newCartItems.length);
                         }
                         
-                        toast.success(page.props.flash.success, {
-                            duration: 4000,
-                            position: 'top-right',
-                            icon: '🛒'
-                        });
+                        // toast.success(page.props.flash.success, {
+                        //     duration: 4000,
+                        //     position: 'top-right',
+                        //     icon: '🛒'
+                        // });
                         resolve(true);
                     } else if (page.props.flash?.info) {
                         toast.info(page.props.flash.info, {
