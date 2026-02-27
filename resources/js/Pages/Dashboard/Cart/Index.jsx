@@ -1,28 +1,51 @@
 // resources/js/Pages/Dashboard/Cart/Index.jsx
 
-import React from 'react';
-import { Head, Link, usePage, router } from '@inertiajs/react';
+import React, { useEffect } from 'react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useCart } from '@/contexts/CartContext';
+import toast from 'react-hot-toast';
 
 export default function CartIndex({ cart }) {
     const { props } = usePage();
-    const { removeFromCart, clearCart } = useCart();
+    const { removeFromCart, clearCart, refreshCart } = useCart();
     
     const calculateTotal = () => {
         return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
     };
  
     const handleRemove = (item) => {
-        // Pass the course ID and title to the context's removeFromCart
-        const courseId = item.course?.id || item.id;
-        const courseTitle = item.course?.title || 'this item';
-        removeFromCart(courseId, courseTitle);
+        // Pass the cart item ID (from the cart.items table)
+        removeFromCart(item.id);
     };
 
     const handleClearCart = () => {
         clearCart();
     };
+
+    // Show flash messages as toasts
+    useEffect(() => {
+        if (props.flash?.success) {
+            toast.success(props.flash.success, {
+                duration: 4000,
+                position: 'top-right',
+            });
+        }
+        
+        if (props.flash?.info) {
+            toast.info(props.flash.info, {
+                duration: 4000,
+                position: 'top-right',
+            });
+        }
+        
+        if (props.flash?.error) {
+            toast.error(props.flash.error, {
+                duration: 4000,
+                position: 'top-right',
+            });
+        }
+    }, [props.flash]);
 
     return (
         <AuthenticatedLayout> 

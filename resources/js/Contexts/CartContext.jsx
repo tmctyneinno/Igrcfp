@@ -28,10 +28,7 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Add to cart - connects to backend CartController
     const addToCart = (course) => {
         return new Promise((resolve, reject) => {
-            // Use course.slug instead of course.id
             const url = route('dashboard.cart.add', course.slug);
-            console.log('Adding to cart - URL:', url);
-            console.log('Route parameter:', course.slug);
             
             // Show loading toast
             const loadingToast = toast.loading('Adding to cart...');
@@ -41,7 +38,6 @@ export function CartProvider({ children, initialCount = 0 }) {
                 preserveScroll: true,
                 onSuccess: (page) => {
                     toast.dismiss(loadingToast);
-                    console.log('Success response:', page);
                     
                     if (page.props.flash?.success) {
                         const existingItem = cartItems.find(item => item.id === course.id);
@@ -92,39 +88,21 @@ export function CartProvider({ children, initialCount = 0 }) {
         });
     };
 
-    // Remove from cart - updated to handle both cart item ID and course ID
-    const removeFromCart = (identifier, isCartItemId = false) => {
-        let itemToRemove;
-        let removeId;
-        
-        if (isCartItemId) {
-            // If it's a cart item ID, we need to find the course ID from cart items
-            // This is more complex - we'll rely on the backend to handle this
-            removeId = identifier;
-        } else {
-            // It's a course ID
-            itemToRemove = cartItems.find(item => item.id === identifier);
-            if (!itemToRemove) return;
-            removeId = identifier; // This is the course ID
-        }
+    // Remove from cart - now expects cart item ID
+    const removeFromCart = (cartItemId) => {
+        if (!cartItemId) return;
         
         // Show loading toast
         const removeToast = toast.loading('Removing from cart...');
         
-        // The backend expects the cart item ID, not the course ID
-        // You need to pass the correct ID based on your route
-        router.delete(route('cart.remove', removeId), {
+        router.delete(route('cart.remove', cartItemId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
                 toast.dismiss(removeToast);
                 
-                // Update local state - filter by course ID if we used course ID
-                if (!isCartItemId) {
-                    const newCartItems = cartItems.filter(item => item.id !== identifier);
-                    setCartItems(newCartItems);
-                    setCartCount(newCartItems.length);
-                }
+                // Don't try to filter by course ID - let the server response handle it
+                // Instead, we'll refresh the cart data
                 
                 if (page.props.flash?.success) {
                     toast.success(page.props.flash.success, {
@@ -133,7 +111,7 @@ export function CartProvider({ children, initialCount = 0 }) {
                     });
                 }
                 
-                // Always refresh cart data from server to ensure sync
+                // Refresh cart data from server to get updated list
                 refreshCart();
             },
             onError: (errors) => {
@@ -210,7 +188,6 @@ export function useCart() {
     return context;
 }
 
-// ADD THIS - export useCartCount as well
 export function useCartCount() {
     const { cartCount } = useCart();
     return cartCount;
