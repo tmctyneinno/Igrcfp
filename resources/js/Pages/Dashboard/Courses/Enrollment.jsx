@@ -166,8 +166,9 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                             )}
 
                             {/* Show if certificate already generated */}
-                            {enrollment?.certificate_generated && (
-                                <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+                            {/* Show if certificate already generated */}
+                            {hasCertificate && (
+                                <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden border border-blue-200">
                                     <div className="p-6">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
@@ -178,7 +179,12 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                                 </div>
                                                 <div>
                                                     <h3 className="font-semibold text-gray-900">Your Certificate</h3>
-                                                    <p className="text-sm text-gray-500">Generated on {new Date(enrollment.certificate_generated_date).toLocaleDateString()}</p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Certificate #: {enrollment.certificate_number}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Generated on {enrollment.certificate_generated_date ? new Date(enrollment.certificate_generated_date).toLocaleDateString() : 'N/A'}
+                                                    </p>
                                                 </div>
                                             </div>
                                             <Link
@@ -194,6 +200,8 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                     </div>
                                 </div>
                             )}
+                        
+                    
                         </div>
                     </div>
 
