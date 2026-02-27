@@ -23,6 +23,16 @@ export default function Show({ course, enrollment, modules = [] }) {
     // Calculate progress
     const progress = enrollment?.progress || 0;
     const { startEnrollment, user } = useEnrollment();
+    const [activeTab, setActiveTab] = useState('overview');
+
+    // Tab content
+    const tabs = [
+    { id: 'overview', label: 'Overview', icon: BookOpenIcon },
+    { id: 'curriculum', label: 'Curriculum', icon: DocumentTextIcon },
+    { id: 'outcomes', label: 'Outcomes', icon: ChartBarIcon },
+    { id: 'audience', label: 'Who is this for', icon: UsersIcon },
+    { id: 'certification', label: 'Certification', icon: AcademicCapIcon },
+    ];
     
     // Get status badge color
     const getStatusBadge = (status) => {
