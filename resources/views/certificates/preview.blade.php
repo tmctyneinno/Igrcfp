@@ -330,7 +330,7 @@
                 
                 <div class="signature-box">
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ $instructor_name ?? 'Dr. John Smith' }}</div>
+                    <div class="signature-name">{{ $instructor_name ?? 'Dr. Foluso Amusa' }}</div>
                     <div class="signature-title">Course Instructor</div>
                 </div>
             </div>
