@@ -132,7 +132,7 @@
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="card-title mb-0">Module Lessons</h6>
-                            <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                            <a href="{{ route('admin.courses.modules.lessons.create', [$course->slug, $module->id]) }}" 
                                class="btn btn-sm btn-primary">
                                 <iconify-icon icon="mdi:plus"></iconify-icon>
                                 Add Lesson
@@ -215,7 +215,7 @@
                                 <iconify-icon icon="mdi:play-box-outline" class="icon-3x text-muted mb-3"></iconify-icon>
                                 <h6 class="text-muted">No lessons yet</h6>
                                 <p class="text-muted small mb-3">Start adding lessons to this module</p>
-                                <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                                <a href="{{ route('admin.courses.modules.lessons.create', [$course->slug, $module->id]) }}" 
                                    class="btn btn-primary">
                                     Add First Lesson
                                 </a>
