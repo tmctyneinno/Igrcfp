@@ -36,6 +36,38 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
         return icons[type] || DocumentTextIcon;
     };
 
+    const handleLessonClick = (lesson) => {
+        // Show loading state
+        toast.loading('Marking lesson as complete...', { id: 'lesson-complete' });
+        
+        // Make API call to mark lesson as complete
+        router.post(route('lessons.complete', lesson.id), {
+            enrollment_id: enrollment.id
+        }, {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                // Update local state with new data
+                const updatedModules = page.props.modules;
+                setModules(updatedModules);
+                setProgress(page.props.enrollment.progress);
+                
+                toast.success('Lesson completed! 🎉', { id: 'lesson-complete' });
+                
+                // If progress reached 100%, show certificate option
+                if (page.props.enrollment.progress === 100) {
+                    toast.success('Congratulations! You completed the course! You can now generate your certificate.', {
+                        duration: 5000,
+                        icon: '🎓'
+                    });
+                }
+            },
+            onError: (errors) => {
+                toast.error('Failed to mark lesson as complete', { id: 'lesson-complete' });
+                console.error(errors);
+            }
+        });
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title={`${course.title} | My Learning`} />
