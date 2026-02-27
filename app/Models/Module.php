@@ -18,7 +18,7 @@ class Module extends Model
         'order',
         'is_published',
         'duration',
-    ];
+    ]; 
 
     protected static function boot()
     {
