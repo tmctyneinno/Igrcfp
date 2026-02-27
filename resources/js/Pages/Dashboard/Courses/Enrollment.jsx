@@ -146,24 +146,23 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                                 </h2>
                                                 {module.short_description && (
                                                     <p className="text-gray-600 mt-2">
-                                                        {module.short_description}
                                                         <div 
-                                                        className="
-                                                        prose-headings:font-bold prose-headings:text-gray-900
-                                                        prose-p:text-gray-600 prose-p:leading-relaxed
-                                                        prose-ul:list-disc prose-ul:pl-5
-                                                        prose-li:text-gray-600
-                                                        prose-strong:text-gray-900
-                                                        prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
-                                                        "
-                                                        dangerouslySetInnerHTML={{ __html: course.full_description }}
-                                                    />
+                                                            className="
+                                                            prose-headings:font-bold prose-headings:text-gray-900
+                                                            prose-p:text-gray-600 prose-p:leading-relaxed
+                                                            prose-ul:list-disc prose-ul:pl-5
+                                                            prose-li:text-gray-600
+                                                            prose-strong:text-gray-900
+                                                            prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                                                            "
+                                                            dangerouslySetInnerHTML={{ __html: module.short_description}}
+                                                        />
                                                     </p> 
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-4 text-sm text-gray-500">
                                                 <span className="flex items-center gap-1">
-                                                    <ClockIcon className="w-4 h-4" />
+                                                    <ClockIcon className="w-8 h-4" />
                                                     {module.estimated_hours} hrs
                                                 </span>
                                                 <span className="flex items-center gap-1">
