@@ -125,7 +125,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
                 <div className="flex items-center justify-between pt-1 border-t">
                     
                     {price > 0 ? (
-                        <div className="text-right">
+                        <div className="">
                             {hasDisc ? (
                                 <>
                                     <span className="text-lg font-bold text-gray-900">
