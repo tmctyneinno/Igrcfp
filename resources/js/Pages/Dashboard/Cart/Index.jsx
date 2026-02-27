@@ -8,15 +8,15 @@ import toast from 'react-hot-toast';
 
 export default function CartIndex({ cart }) {
     const { props } = usePage();
-    const { removeFromCart, clearCart, refreshCart } = useCart();
+    const { removeFromCart, clearCart } = useCart();
     
     const calculateTotal = () => {
         return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
     };
  
     const handleRemove = (item) => {
-        // Pass the cart item ID (from the cart.items table)
-        removeFromCart(item.id);
+        // Pass both the cart item ID and the course ID
+        removeFromCart(item.id, item.course?.id);
     };
 
     const handleClearCart = () => {
@@ -26,10 +26,10 @@ export default function CartIndex({ cart }) {
     // Show flash messages as toasts
     useEffect(() => {
         if (props.flash?.success) {
-            // toast.success(props.flash.success, {
-            //     duration: 4000,
-            //     position: 'top-right',
-            // });
+            toast.success(props.flash.success, {
+                duration: 4000,
+                position: 'top-right',
+            });
         }
         
         if (props.flash?.info) {
