@@ -89,31 +89,45 @@ export function CartProvider({ children, initialCount = 0 }) {
     const removeFromCart = (courseId) => {
         const item = cartItems.find(item => item.id === courseId);
         if (!item) return;
+        const removeToast = toast.loading('Removing from cart...');
         
         router.delete(route('cart.remove', courseId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
+                toast.dismiss(removeToast);
                 const newCartItems = cartItems.filter(item => item.id !== courseId);
                 setCartItems(newCartItems);
                 setCartCount(newCartItems.length);
                 
                 if (page.props.flash?.success) {
-                    alert(page.props.flash.success);
+                    toast.success(page.props.flash.success, {
+                        duration: 4000,
+                        position: 'top-right'
+                    });
                 }
             },
             onError: (errors) => {
+                toast.dismiss(removeToast);
                 console.error('Error removing from cart:', errors);
+                
+                toast.error('Failed to remove item from cart.', {
+                    duration: 4000,
+                    position: 'top-right'
+                });
             }
         });
     };
 
     // Clear cart
     const clearCart = () => {
+        // Show loading toast
+        const clearToast = toast.loading('Clearing cart...');
         router.post(route('cart.clear'), {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
+                toast.dismiss(clearToast);
                 setCartItems([]);
                 setCartCount(0);
                 
