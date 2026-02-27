@@ -104,12 +104,12 @@ export function CartProvider({ children, initialCount = 0 }) {
                 // Don't try to filter by course ID - let the server response handle it
                 // Instead, we'll refresh the cart data
                 
-                if (page.props.flash?.success) {
-                    toast.success(page.props.flash.success, {
-                        duration: 4000,
-                        position: 'top-right'
-                    });
-                }
+                // if (page.props.flash?.success) {
+                //     toast.success(page.props.flash.success, {
+                //         duration: 4000,
+                //         position: 'top-right'
+                //     });
+                // }
                 
                 // Refresh cart data from server to get updated list
                 refreshCart();
