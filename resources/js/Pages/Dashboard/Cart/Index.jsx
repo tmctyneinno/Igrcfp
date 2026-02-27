@@ -25,12 +25,12 @@ export default function CartIndex({ cart }) {
 
     // Show flash messages as toasts
     useEffect(() => {
-        if (props.flash?.success) {
-            toast.success(props.flash.success, {
-                duration: 4000,
-                position: 'top-right',
-            });
-        }
+        // if (props.flash?.success) {
+        //     toast.success(props.flash.success, {
+        //         duration: 4000,
+        //         position: 'top-right',
+        //     });
+        // }
         
         if (props.flash?.info) {
             toast.info(props.flash.info, {
