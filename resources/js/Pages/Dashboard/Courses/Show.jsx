@@ -33,6 +33,13 @@ export default function Show({ course, enrollment, modules = [] }) {
         return statusMap[status] || 'bg-gray-100 text-gray-800';
     };
 
+    const getCleanDescription = (text) => {
+        if (!text) return 'No description available';
+        
+        const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+        return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
+    };
+
     return (
         <AuthenticatedLayout>
             <Head title={`${course.title} | My Learning`} />
