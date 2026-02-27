@@ -9,7 +9,7 @@ import CourseCard from '@/components/Courses/CourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-
+ 
 export default function Courses({ auth, courses, filters, filterOptions }) {
     const { addToCart, cartItems, refreshCart } = useCart();
     const { props } = usePage();
@@ -427,7 +427,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
                                         >
                                             <CourseCard  
-                                                course={course} 
+                                                course={course}  
                                                 onAddToCart={handleAddToCart}
                                                 isInCart={isInCart(course.id)}
                                                 isAdding={addingToCart[course.id]}

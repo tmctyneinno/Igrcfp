@@ -145,7 +145,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                     />
                                     <div className="absolute top-3 left-3 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                         🔥 Popular
-                                    </div>
+                                    </div> 
                                 </div>
 
                                 {/* CONTENT */}
