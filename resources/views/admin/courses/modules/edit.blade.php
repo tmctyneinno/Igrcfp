@@ -127,6 +127,105 @@
                     </div>
                 </div>
 
+                <!-- ========== LESSONS MANAGEMENT SECTION - INSERT HERE ========== -->
+                <div class="card mt-24">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="card-title mb-0">Module Lessons</h6>
+                            <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                               class="btn btn-sm btn-primary">
+                                <iconify-icon icon="mdi:plus"></iconify-icon>
+                                Add Lesson
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if($module->lessons->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th width="50">#</th>
+                                            <th>Lesson Title</th>
+                                            <th>Duration</th>
+                                            <th>Preview</th>
+                                            <th>Status</th>
+                                            <th width="150">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lessonSortable">
+                                        @foreach($module->lessons->sortBy('sort_order') as $lesson)
+                                            <tr data-id="{{ $lesson->id }}">
+                                                <td>
+                                                    <span class="sort-handle" style="cursor: move;">
+                                                        <iconify-icon icon="mdi:drag"></iconify-icon>
+                                                        {{ $loop->iteration }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <strong>{{ $lesson->title }}</strong>
+                                                        @if($lesson->short_description)
+                                                            <p class="text-muted small mb-0">{{ Str::limit($lesson->short_description, 50) }}</p>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td>{{ $lesson->formatted_duration ?? $lesson->duration . ' min' }}</td>
+                                                <td>
+                                                    @if($lesson->is_free)
+                                                        <span class="badge bg-success">Free Preview</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">Enrolled Only</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($lesson->is_published)
+                                                        <span class="badge bg-success">Published</span>
+                                                    @else
+                                                        <span class="badge bg-warning">Draft</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex gap-1">
+                                                        <a href="{{ route('admin.courses.modules.lessons.edit', [$course->id, $module->id, $lesson->id]) }}" 
+                                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                                            <iconify-icon icon="mdi:pencil"></iconify-icon>
+                                                        </a>
+                                                        <a href="#" class="btn btn-sm btn-outline-info" title="Preview" target="_blank">
+                                                            <iconify-icon icon="mdi:eye"></iconify-icon>
+                                                        </a>
+                                                        <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" 
+                                                              method="POST" class="d-inline"
+                                                              onsubmit="return confirm('Delete this lesson? This action cannot be undone.')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                                <iconify-icon icon="mdi:trash"></iconify-icon>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <iconify-icon icon="mdi:play-box-outline" class="icon-3x text-muted mb-3"></iconify-icon>
+                                <h6 class="text-muted">No lessons yet</h6>
+                                <p class="text-muted small mb-3">Start adding lessons to this module</p>
+                                <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                                   class="btn btn-primary">
+                                    Add First Lesson
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <!-- ========== END LESSONS MANAGEMENT SECTION ========== -->
+
+
                 <!-- Learning Objectives -->
                 <div class="card mt-24">
                     <div class="card-header">
