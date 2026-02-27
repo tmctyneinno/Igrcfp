@@ -19,7 +19,7 @@ class CourseModule extends Model
         'case_study',
         'exercise',
         'additional_notes',
-        'estimated_hours',
+        'estimated_hours', 
         'sort_order',
         'is_active',
     ];
