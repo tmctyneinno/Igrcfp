@@ -30,15 +30,10 @@ export function CartProvider({ children, initialCount = 0 }) {
         return new Promise((resolve, reject) => {
             const url = route('dashboard.cart.add', course.slug);
             
-            // Show loading toast
-            const loadingToast = toast.loading('Adding to cart...');
-            
             router.post(url, {}, {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: (page) => {
-                    toast.dismiss(loadingToast);
-                    
                     if (page.props.flash?.success) {
                         const existingItem = cartItems.find(item => item.id === course.id);
                         
@@ -93,14 +88,10 @@ export function CartProvider({ children, initialCount = 0 }) {
         if (!cartItemId) return;
         
         // Show loading toast
-        const removeToast = toast.loading('Removing from cart...');
-        
         router.delete(route('cart.remove', cartItemId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                toast.dismiss(removeToast);
-                
                 // Don't try to filter by course ID - let the server response handle it
                 // Instead, we'll refresh the cart data
                 
@@ -129,13 +120,10 @@ export function CartProvider({ children, initialCount = 0 }) {
     // Clear cart
     const clearCart = () => {
         // Show loading toast
-        const clearToast = toast.loading('Clearing cart...');
-        
         router.post(route('cart.clear'), {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                toast.dismiss(clearToast);
                 
                 setCartItems([]);
                 setCartCount(0);
