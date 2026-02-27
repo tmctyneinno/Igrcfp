@@ -14,7 +14,7 @@
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.courses.index') }}" class="hover-text-primary">Courses</a>
-            </li>
+            </li> 
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
