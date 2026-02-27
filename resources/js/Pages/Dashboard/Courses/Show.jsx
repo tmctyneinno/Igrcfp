@@ -33,6 +33,17 @@ export default function Show({ course, enrollment, modules = [] }) {
         return statusMap[status] || 'bg-gray-100 text-gray-800';
     };
 
+
+    // Parse prices safely
+    const price = parseFloatSafe(course.price);
+    const discountPrice = parseFloatSafe(course.discount_price);
+
+    // Check for discount
+    const hasDiscount = discountPrice > 0 && discountPrice < price;
+    const discountPercentage = hasDiscount && price > 0 
+        ? Math.round(((price - discountPrice) / price) * 100) 
+        : 0;
+
     const getCleanDescription = (text) => {
         if (!text) return 'No description available';
         
