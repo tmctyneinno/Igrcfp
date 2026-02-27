@@ -68,7 +68,24 @@ export default function Show({ course, enrollment, modules = [] }) {
         <AuthenticatedLayout>
             <Head title={`${course.title} | My Learning`} />
 
-            {/* Hero Banner */}
+            
+
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {/* Breadcrumb */}
+                    <div className="mb-6 flex items-center text-sm">
+                        <Link href={route('dashboard.index')} className="text-gray-500 hover:text-gray-700">
+                            Dashboard
+                        </Link>
+                        <span className="mx-2 text-gray-400">/</span>
+                        <Link href={route('dashboard.my-courses')} className="text-gray-500 hover:text-gray-700">
+                            Courses
+                        </Link>
+                        <span className="mx-2 text-gray-400">/</span>
+                        <span className="text-gray-900 font-medium">{course.title}</span>
+                    </div>
+
+                    {/* Hero Banner */}
             <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
                 <div className="absolute inset-0 bg-black/50"></div>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -161,21 +178,6 @@ export default function Show({ course, enrollment, modules = [] }) {
                 </div>
                 </div>
             </div>
-
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {/* Breadcrumb */}
-                    <div className="mb-6 flex items-center text-sm">
-                        <Link href={route('dashboard.index')} className="text-gray-500 hover:text-gray-700">
-                            Dashboard
-                        </Link>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <Link href={route('dashboard.my-courses')} className="text-gray-500 hover:text-gray-700">
-                            Courses
-                        </Link>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-gray-900 font-medium">{course.title}</span>
-                    </div>
 
                     {/* Course Header */}
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
