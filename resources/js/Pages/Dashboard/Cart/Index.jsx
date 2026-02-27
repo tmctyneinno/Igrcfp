@@ -8,7 +8,7 @@ export default function Cart({ cart }) {
     const calculateTotal = () => {
         return cart?.items?.reduce((total, item) => total + (item.price * item.quantity), 0) || 0;
     };
-
+ 
     const handleRemove = (itemId) => {
         if (confirm('Are you sure you want to remove this item from your cart?')) {
             router.delete(route('cart.remove', itemId), {

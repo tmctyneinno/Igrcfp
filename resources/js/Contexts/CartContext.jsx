@@ -5,7 +5,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children, initialCount = 0 }) {
     const [cartCount, setCartCount] = useState(initialCount);
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState([]); 
 
     // Load cart from localStorage on mount
     useEffect(() => {
