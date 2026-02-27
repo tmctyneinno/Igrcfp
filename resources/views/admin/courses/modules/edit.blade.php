@@ -187,14 +187,14 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex gap-1">
-                                                        <a href="{{ route('admin.courses.modules.lessons.edit', [$course->id, $module->id, $lesson->id]) }}" 
+                                                        <a href="{{ route('admin.courses.modules.lessons.edit', [$course->slug, $module->id, $lesson->id]) }}" 
                                                            class="btn btn-sm btn-outline-primary" title="Edit">
                                                             <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                         </a>
                                                         <a href="#" class="btn btn-sm btn-outline-info" title="Preview" target="_blank">
                                                             <iconify-icon icon="mdi:eye"></iconify-icon>
                                                         </a>
-                                                        <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->id, $module->id, $lesson->id]) }}" 
+                                                        <form action="{{ route('admin.courses.modules.lessons.destroy', [$course->slug, $module->id, $lesson->id]) }}" 
                                                               method="POST" class="d-inline"
                                                               onsubmit="return confirm('Delete this lesson? This action cannot be undone.')">
                                                             @csrf
@@ -334,7 +334,7 @@
                                         <button type="submit" class="btn btn-primary flex-grow-1">
                                             Update Module
                                         </button>
-                                        <a href="{{ route('admin.courses.show', $course->id) }}" class="btn btn-outline-secondary">
+                                        <a href="{{ route('admin.courses.show', $course->slug }}" class="btn btn-outline-secondary">
                                             Cancel
                                         </a>
                                     </div>
@@ -345,7 +345,7 @@
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-grid gap-2">
                                         <!-- Toggle Active Status -->
-                                        <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                        <form action="{{ route('admin.courses.modules.toggle-active', ['course' => $course->slug, 'module' => $module->id]) }}" 
                                               method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-{{ $module->is_active ? 'warning' : 'success' }} w-100">
@@ -355,7 +355,7 @@
                                         </form>
 
                                         <!-- Duplicate Module -->
-                                        <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                        <form action="{{ route('admin.courses.modules.duplicate', ['course' => $course->slug, 'module' => $module->id]) }}" 
                                               method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" class="btn btn-sm btn-outline-info w-100" 
@@ -366,7 +366,7 @@
                                         </form>
 
                                         <!-- Delete Module -->
-                                        <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->id, 'module' => $module->id]) }}" 
+                                        <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->id]) }}" 
                                               method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
