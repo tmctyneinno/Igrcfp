@@ -280,14 +280,9 @@
         <div class="certificate-border">
             <!-- Logo Section -->
             <div class="logo-section">
-                @if(isset($organization_logo) && $organization_logo)
-                    <img src="{{ $organization_logo }}" alt="{{ $organization_name }}" class="logo">
-                @else
-                    <!-- Placeholder logo - replace with your actual logo -->
-                    <div style="width: 120px; height: 120px; margin: 0 auto; background: #2c3e50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold;">
-                        {{ substr($organization_name ?? 'AI', 0, 2) }}
-                    </div>
-                @endif
+               
+                <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="{{ $organization_name }}" class="logo">
+                
                 <div class="org-name">{{ $organization_name ?? 'ACME INSTITUTE' }}</div>
                 <div class="org-tagline">{{ $organization_tagline ?? 'Excellence in Education' }}</div>
             </div>
