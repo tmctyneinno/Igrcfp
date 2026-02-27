@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Head, Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -50,7 +51,7 @@ const truncateText = (text, length = 160) => {
 };
 
 export default function Show({ course, enrollment, modules = [] }) {
-//   const { startEnrollment, user } = useEnrollment();
+  const { startEnrollmentc, user } = useEnrollment();
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModule, setExpandedModule] = useState(null);
   
