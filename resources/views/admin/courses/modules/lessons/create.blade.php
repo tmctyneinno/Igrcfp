@@ -30,7 +30,7 @@
         </ul>
     </div>
 
-    <form action="{{ route('admin.courses.modules.lessons.store', [$course->id, $module->id]) }}" method="POST">
+    <form action="{{ route('admin.courses.modules.lessons.store', [$course->slug, $module->id]) }}" method="POST">
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
