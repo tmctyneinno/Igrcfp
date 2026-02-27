@@ -21,6 +21,7 @@ import {
 export default function Show({ course, enrollment, modules = [] }) {
     // Calculate progress
     const progress = enrollment?.progress || 0;
+    const { startEnrollment, user } = useEnrollment();
     
     // Get status badge color
     const getStatusBadge = (status) => {
@@ -32,7 +33,7 @@ export default function Show({ course, enrollment, modules = [] }) {
         };
         return statusMap[status] || 'bg-gray-100 text-gray-800';
     };
-    
+
     // Safe parsing functions
     const parseFloatSafe = (value) => {
         if (value === null || value === undefined || value === '') return 0;
