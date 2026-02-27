@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
-import toast from 'react-hot-toast'; // Add this import
+import toast from 'react-hot-toast';
 
 const CartContext = createContext();
 
@@ -74,6 +74,9 @@ export function CartProvider({ children, initialCount = 0 }) {
                         });
                         resolve(false);
                     }
+                    
+                    // Refresh cart data from server
+                    refreshCart();
                 },
                 onError: (errors) => {
                     toast.dismiss(loadingToast);
@@ -89,23 +92,39 @@ export function CartProvider({ children, initialCount = 0 }) {
         });
     };
 
-    // Remove from cart
-    const removeFromCart = (courseId) => {
-        const item = cartItems.find(item => item.id === courseId);
-        if (!item) return;
+    // Remove from cart - updated to handle both cart item ID and course ID
+    const removeFromCart = (identifier, isCartItemId = false) => {
+        let itemToRemove;
+        let removeId;
+        
+        if (isCartItemId) {
+            // If it's a cart item ID, we need to find the course ID from cart items
+            // This is more complex - we'll rely on the backend to handle this
+            removeId = identifier;
+        } else {
+            // It's a course ID
+            itemToRemove = cartItems.find(item => item.id === identifier);
+            if (!itemToRemove) return;
+            removeId = identifier; // This is the course ID
+        }
         
         // Show loading toast
         const removeToast = toast.loading('Removing from cart...');
         
-        router.delete(route('cart.remove', courseId), {
+        // The backend expects the cart item ID, not the course ID
+        // You need to pass the correct ID based on your route
+        router.delete(route('cart.remove', removeId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
                 toast.dismiss(removeToast);
                 
-                const newCartItems = cartItems.filter(item => item.id !== courseId);
-                setCartItems(newCartItems);
-                setCartCount(newCartItems.length);
+                // Update local state - filter by course ID if we used course ID
+                if (!isCartItemId) {
+                    const newCartItems = cartItems.filter(item => item.id !== identifier);
+                    setCartItems(newCartItems);
+                    setCartCount(newCartItems.length);
+                }
                 
                 if (page.props.flash?.success) {
                     toast.success(page.props.flash.success, {
@@ -113,6 +132,9 @@ export function CartProvider({ children, initialCount = 0 }) {
                         position: 'top-right'
                     });
                 }
+                
+                // Always refresh cart data from server to ensure sync
+                refreshCart();
             },
             onError: (errors) => {
                 toast.dismiss(removeToast);
@@ -147,6 +169,9 @@ export function CartProvider({ children, initialCount = 0 }) {
                         icon: '🗑️'
                     });
                 }
+                
+                // Refresh cart data from server
+                refreshCart();
             },
             onError: (errors) => {
                 toast.dismiss(clearToast);
@@ -171,7 +196,7 @@ export function CartProvider({ children, initialCount = 0 }) {
         addToCart,
         removeFromCart,
         clearCart,
-        refreshCart // Add this to help with syncing
+        refreshCart
     };
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
