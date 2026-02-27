@@ -69,11 +69,59 @@ class Course extends Model
     /**
      * Relationships
      */
-   
-
     public function materials()
     {
         return $this->hasMany(CourseMaterial::class)->orderBy('sort_order');
+    }
+
+    /**
+     * CORRECTED: Modules relationship - use Module model, not CourseModule
+     */
+    public function modules()
+    {
+        return $this->hasMany(Module::class)->orderBy('module_number');
+    }
+
+    /**
+     * Relationship: Course has many Lessons through Modules
+     */
+    public function lessons()
+    {
+        return $this->hasManyThrough(Lesson::class, Module::class);
+    }
+
+    /**
+     * Get lessons count attribute
+     */
+    public function getLessonsCountAttribute()
+    {
+        return $this->lessons()->count();
+    }
+
+    /**
+     * Relationship: Course has many Enrollments
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Relationship: Course belongs to many Users (instructors)
+     */
+    public function instructors()
+    {
+        return $this->belongsToMany(User::class, 'course_instructor', 'course_id', 'user_id');
+    }
+
+    /**
+     * Relationship: Course belongs to many Users (enrolled students)
+     */
+    public function enrolledUsers()
+    {
+        return $this->belongsToMany(User::class, 'enrollments')
+            ->withPivot(['progress', 'completed_at', 'status'])
+            ->withTimestamps();
     }
 
     /**
@@ -88,11 +136,48 @@ class Course extends Model
     {
         return $query->where('is_featured', true);
     }
-
     
     public function scopeWithCode($query, $code)
     {
         return $query->where('code', $code);
+    }
+
+    /**
+     * Popular courses scope
+     */
+    public function scopePopular($query)
+    {
+        return $query->published()
+            ->withCount(['enrollments'])
+            ->orderByRaw('(
+                (enrollments_count * 2) + 
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = courses.id AND created_at >= ?) * 1.5
+            ) DESC', [now()->subDays(30)]);
+    }
+
+    /**
+     * Calculate popularity score
+     */
+    public function calculatePopularityScore()
+    {
+        $enrollmentWeight = 2;
+        $recentEnrollmentWeight = 1.5;
+        
+        // Get enrollments from last 30 days
+        $recentEnrollments = $this->enrollments()
+            ->where('created_at', '>=', now()->subDays(30))
+            ->count();
+        
+        return ($this->enrollments()->count() * $enrollmentWeight) 
+            + ($recentEnrollments * $recentEnrollmentWeight);
+    }
+
+    /**
+     * Get enrollments count attribute
+     */
+    public function getEnrollmentsCountAttribute()
+    {
+        return $this->enrollments()->count();
     }
 
     /**
@@ -181,83 +266,4 @@ class Course extends Model
     {
         return 'slug';
     }
-
-    public function calculatePopularityScore()
-    {
-        $enrollmentWeight = 2;
-        $ratingWeight = 3;
-        $recentEnrollmentWeight = 1.5;
-        
-        // Get enrollments from last 30 days
-        $recentEnrollments = $this->enrollments()
-            ->where('created_at', '>=', now()->subDays(30))
-            ->count();
-        
-        return ($this->enrollments_count * $enrollmentWeight) 
-            + (($this->rating ?: 0) * $ratingWeight)
-            + ($recentEnrollments * $recentEnrollmentWeight);
-    }
-
-    // Scope for popular courses
-    public function scopePopular($query)
-    {
-        return $query->published()
-            ->withCount(['enrollments', 'reviews'])
-            ->orderByRaw('(
-                (enrollments_count * 2) + 
-                (COALESCE(rating, 0) * 3) + 
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = courses.id AND created_at >= ?) * 1.5
-            ) DESC', [now()->subDays(30)]);
-    }
-
-    public function enrolledUsers()
-    {
-        return $this->belongsToMany(User::class, 'enrollments')
-            ->withPivot(['progress', 'completed_modules', 'completed_at'])
-            ->withTimestamps();
-    }
-
-    public function enrollmentsCount()
-    {
-        return $this->enrollments()->count();
-    }
-
-    // Add these methods for popular courses calculation
-    public function getEnrollmentsCountAttribute()
-    {
-        return $this->enrollments()->count();
-    }
-
-    public function modules()
-    {
-        return $this->hasMany(Module::class);
-    }
-    public function modules()
-    {
-        return $this->hasMany(CourseModule::class)->orderBy('module_number');
-    }  
-
-    // Relationship: Course has many Lessons through Modules
-    public function lessons()
-    {
-        return $this->hasManyThrough(Lesson::class, Module::class);
-    }
-
-    // Alternative: Get lessons count
-    public function getLessonsCountAttribute()
-    {
-        return $this->lessons()->count();
-    }
-
-    // Your other relationships...
-    public function enrollments()
-    {
-        return $this->hasMany(Enrollment::class);
-    }
-
-    public function instructors()
-    {
-        return $this->belongsToMany(User::class, 'course_instructor', 'course_id', 'user_id');
-    }
-
 }
