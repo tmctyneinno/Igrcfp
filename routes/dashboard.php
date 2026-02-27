@@ -3,6 +3,8 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardController;CertificateController
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,9 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
 
     // Certificate routes
-    Route::get('/certificates/generate/{enrollment}', [CertificateController::class, 'generate'])->name('certificates.generate');
-    Route::get('/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('certificates.preview');
-    Route::get('/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('certificates.download');
+    Route::get('/certificates/generate/{enrollment}', [CertificateController::class, 'generate'])->name('dashboard.certificates.generate');
+    Route::get('/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('dashboard.certificates.preview');
+    Route::get('/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('dashboard.certificates.download');
 });
 
 
