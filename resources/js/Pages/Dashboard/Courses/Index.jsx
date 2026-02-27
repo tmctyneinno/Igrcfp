@@ -35,15 +35,15 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
 
     // Show flash messages from server as toasts
     useEffect(() => {
-        if (props.flash?.success) {
-            toast.success(props.flash.success, {
-                icon: '🎉',
-                style: {
-                    background: '#10b981',
-                    color: '#fff',
-                }
-            });
-        }
+        // if (props.flash?.success) {
+        //     toast.success(props.flash.success, {
+        //         icon: '🎉',
+        //         style: {
+        //             background: '#10b981',
+        //             color: '#fff',
+        //         }
+        //     });
+        // }
         
         if (props.flash?.info) {
             toast(props.flash.info, {
