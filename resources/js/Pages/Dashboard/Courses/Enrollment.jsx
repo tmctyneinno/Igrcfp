@@ -14,7 +14,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     // Calculate progress
     const [modules, setModules] = useState(initialModules);
     const [progress, setProgress] = useState(enrollment?.progress || 0);
-    const hasCertificate = enrollment?.certificate_generated === true;
+    const hasCertificate = enrollment?.certificate_generated === false;
     
     // Get status badge color
     const getStatusBadge = (status) => {
@@ -156,7 +156,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                             </div>
                             
                             {/* Certificate Section - Show when progress is 100% and certificate not generated */}
-                            {progress === 100 && !hasCertificate && (
+                            {100 === 100 && !hasCertificate && (
                                 <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden border-2 border-green-200">
                                     <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50">
                                         <div className="flex items-start justify-between">
