@@ -50,7 +50,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.courses.modules.lessons.update', [$course->id, $module->id, $lesson->id]) }}" method="POST">
+    <form action="{{ route('admin.courses.modules.lessons.update', [$course->slug, $module->id, $lesson->id]) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="row">
