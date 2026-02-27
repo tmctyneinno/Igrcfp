@@ -125,7 +125,7 @@ export default function MostPopular({ initialCourses = [] }) {
                             : 0;
                         const isAdding = addingToCart[course.id] || false;
                         const inCart = isInCart(course.id);
-
+ 
                         return (
                             <div
                                 key={course?.id || index}
