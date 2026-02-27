@@ -125,34 +125,37 @@ class Enrollment extends Model
     }
 
     public function updateProgress(): int
-    {
-        // Get total lessons in this course
-        $totalLessons = $this->course->lessons()->count();
-        
-        if ($totalLessons === 0) {
-            return 0;
-        }
-        
-        // Get completed lessons count
-        $completedLessons = LessonUser::where('enrollment_id', $this->id)
-            ->where('completed', true)
-            ->count();
-        
-        // Calculate percentage
-        $progress = (int) round(($completedLessons / $totalLessons) * 100);
-        
-        // Update enrollment
-        $this->update(['progress' => $progress]);
-        
-        // Auto-complete enrollment if progress is 100%
-        if ($progress === 100 && $this->status !== 'completed') {
-            $this->update([
-                'status' => 'completed',
-                'completed_at' => now()
-            ]);
-        }
-        
-        return $progress;
+{
+    // Get total lessons in this course through modules
+    $totalLessons = 0;
+    foreach ($this->course->modules as $module) {
+        $totalLessons += $module->lessons()->count();
     }
+    
+    if ($totalLessons === 0) {
+        return 0;
+    }
+    
+    // Get completed lessons count
+    $completedLessons = LessonUser::where('enrollment_id', $this->id)
+        ->where('completed', true)
+        ->count();
+    
+    // Calculate percentage
+    $progress = (int) round(($completedLessons / $totalLessons) * 100);
+    
+    // Update enrollment
+    $this->update(['progress' => $progress]);
+    
+    // Auto-complete enrollment if progress is 100%
+    if ($progress === 100 && $this->status !== 'completed') {
+        $this->update([
+            'status' => 'completed',
+            'completed_at' => now()
+        ]);
+    }
+    
+    return $progress;
+}
 
 }
