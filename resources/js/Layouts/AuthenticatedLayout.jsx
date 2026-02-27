@@ -4,6 +4,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { 
   BellIcon, 
   ShoppingCartIcon, 
@@ -11,7 +12,7 @@ import {
   CogIcon,
   ArrowRightOnRectangleIcon,
   ChevronDownIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
 
 export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
@@ -20,6 +21,33 @@ export default function AuthenticatedLayout({ header, children }) {
     const [notificationCount, setNotificationCount] = useState(0);
     
     const cartCount = props.cart_count || 0;
+
+    {/* Add Toaster component here - it should be at the root level */}
+    <Toaster 
+        position="top-right"
+        toastOptions={{
+            duration: 4000,
+            style: {
+                background: '#363636',
+                color: '#fff',
+                zIndex: 9999,
+            },
+            success: {
+                duration: 3000,
+                icon: '✅',
+                style: {
+                    background: '#10b981',
+                },
+            },
+            error: {
+                duration: 4000,
+                icon: '❌',
+                style: {
+                    background: '#ef4444',
+                },
+            },
+        }}
+    />
 
     // Check for enrollment redirect on dashboard load
     useEffect(() => {
