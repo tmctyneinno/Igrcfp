@@ -341,7 +341,7 @@
                     Certificate ID: {{ $certificate_number }}
                 </div>
                 <div class="verification">
-                    Verify this certificate at {{ $verification_url ?? 'https://yourdomain.com/verify' }}
+                    Verify this certificate at {{ $verification_url ?? 'https://https://www.igrcfp.org/verify' }}
                 </div>
             </div>
         </div>
