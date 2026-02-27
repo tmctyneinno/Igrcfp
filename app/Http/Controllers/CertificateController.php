@@ -31,12 +31,18 @@ class CertificateController extends Controller
         $enrollment->save();
 
         // Prepare data for the view - MAKE SURE ALL VARIABLES ARE INCLUDED
+        // Prepare data for the view
         $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => now()->format('F d, Y'),
-            'certificate_number' => $enrollment->certificate_number // THIS IS CRITICAL
+            'certificate_number' => $enrollment->certificate_number,
+            'organization_name' => config('app.name'), // or your organization name
+            'organization_tagline' => 'Excellence in Education', // customize this
+            'organization_logo' => public_path('images/logo.png'), // path to your logo
+            'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
+            'verification_url' => route('certificates.verify', $enrollment->certificate_number)
         ];
 
         // Generate PDF
