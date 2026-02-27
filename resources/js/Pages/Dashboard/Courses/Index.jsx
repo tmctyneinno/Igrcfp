@@ -177,14 +177,14 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                 }
                 
                 // Dismiss loading toast and show success
-                toast.success('Course added to cart successfully!', {
-                    duration: 3000,
-                    icon: '🎓',
-                    style: {
-                        background: '#10b981',
-                        color: '#fff',
-                    }
-                });
+                // toast.success('Course added to cart successfully!', {
+                //     duration: 3000,
+                //     icon: '🎓',
+                //     style: {
+                //         background: '#10b981',
+                //         color: '#fff',
+                //     }
+                // });
             } else {
                 toast.dismiss(loadingToast);
                 toast.error('Failed to add course to cart. Please try again.', {
