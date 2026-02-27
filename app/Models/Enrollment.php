@@ -119,6 +119,11 @@ class Enrollment extends Model
             ->withTimestamps();
     }
 
+     public function isCompleted(): bool
+    {
+        return $this->progress === 100;
+    }
+
     public function updateProgress(): int
     {
         // Get total lessons in this course
