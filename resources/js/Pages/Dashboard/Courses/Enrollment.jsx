@@ -156,7 +156,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                             </div>
                             
                             {/* Certificate Section - Show when progress is 100% and certificate not generated */}
-                            {100 === 100 && !hasCertificate && (
+                      
                                 <div className="mt-8 bg-white rounded-xl shadow-sm overflow-hidden border-2 border-green-200">
                                     <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50">
                                         <div className="flex items-start justify-between">
@@ -201,7 +201,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            
 
                             {/* Show if certificate already generated */}
                             {hasCertificate && (
