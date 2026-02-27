@@ -1,6 +1,22 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { 
+  CheckCircleIcon, 
+  ClockIcon,  
+  BookOpenIcon, 
+  AcademicCapIcon, 
+  UsersIcon,
+  LockClosedIcon,
+  PlayIcon,
+  StarIcon,
+  DocumentTextIcon,
+  ArrowDownTrayIcon,
+  ChevronRightIcon,
+  CalendarIcon,
+  UserGroupIcon, 
+  ChartBarIcon
+} from '@heroicons/react/24/outline';
 
 export default function Show({ course, enrollment, modules = [] }) {
     // Calculate progress
