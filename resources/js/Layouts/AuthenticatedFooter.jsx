@@ -8,7 +8,7 @@ export default function AuthenticatedFooter() {
      
     return (  
        
-        <footer className="border-t border-gray-200 bg-white mt-auto">
+        <footer className=" bg-white mt-auto">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
               
                 {/* Bottom Bar */}
@@ -19,7 +19,7 @@ export default function AuthenticatedFooter() {
                         </p>
                         <div className="flex space-x-6 mt-4 md:mt-0">
                             <span className="text-sm text-gray-500">
-                                Version 2.0.0
+                                Version 1.0.0
                             </span>
                             <span className="text-sm text-gray-500">
                                 Built with Laravel & React
