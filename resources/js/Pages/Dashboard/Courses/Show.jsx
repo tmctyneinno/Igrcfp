@@ -103,7 +103,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                             )}
 
                           
-                            <div className="absolute bottom-0 left-0 p-8 text-white">
+                            <div className="absolute bottom-0 left-0 p-2 text-white">
                                 <div className="flex flex-col lg:flex-row items-start gap-8">
                                     <div className="lg:w-2/3">
                                         <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
@@ -123,7 +123,6 @@ export default function Show({ course, enrollment, modules = [] }) {
                                     <div className="lg:w-1/3 w-full">
                                         <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
                                             <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-bold">Enroll Now</h3>
                                             {hasDiscount && (
                                                 <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
                                                 {discountPercentage}% OFF
