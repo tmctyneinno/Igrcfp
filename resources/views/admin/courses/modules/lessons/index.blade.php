@@ -146,7 +146,7 @@
                     <iconify-icon icon="mdi:play-box-outline" class="icon-3x text-muted mb-3"></iconify-icon>
                     <h5 class="text-muted mb-2">No Lessons Yet</h5>
                     <p class="text-muted mb-4">Start adding lessons to this module</p>
-                    <a href="{{ route('admin.courses.modules.lessons.create', [$course->id, $module->id]) }}" 
+                    <a href="{{ route('admin.courses.modules.lessons.create', [$course->slug, $module->id]) }}" 
                        class="btn btn-primary">
                         <iconify-icon icon="mdi:plus"></iconify-icon>
                         Add First Lesson
