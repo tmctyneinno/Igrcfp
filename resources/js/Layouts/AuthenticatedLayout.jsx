@@ -5,6 +5,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
+import {AuthenticatedFooter} from '@/Layouts/AuthenticatedFooter'
 import { 
   BellIcon, 
   ShoppingCartIcon, 
@@ -292,6 +293,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     {children}
                 </div>
             </main>
+            <AuthenticatedFooter/>
         </div>
     );
 }
