@@ -91,7 +91,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                     {/* Course Header */}
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
                         {/* Cover Image */}
-                        <div className="h-80 w-full bg-gradient-to-r from-blue-900 to-indigo-900 relative">
+                        <div className="h-80 w-full bg-gradient-to-r from-blue-800 to-indigo-800 relative">
                             {course.image_url || course.banner_image ? (
                                 <img 
                                     src={course.image_url || course.banner_image}
