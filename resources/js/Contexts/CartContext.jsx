@@ -29,11 +29,14 @@ export function CartProvider({ children, initialCount = 0 }) {
         const url = route('dashboard.cart.add', course.slug);
         console.log('Adding to cart - URL:', url);
         console.log('Route parameter:', course.slug);
+        // Show loading toast
+        const loadingToast = toast.loading('Adding to cart...');
         
         router.post(url, {}, {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
+                toast.dismiss(loadingToast);
                 console.log('Success response:', page);
                 
                 if (page.props.flash?.success) {
