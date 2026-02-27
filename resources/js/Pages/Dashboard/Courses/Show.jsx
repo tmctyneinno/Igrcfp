@@ -30,7 +30,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                         </Link>
                         <span className="mx-2 text-gray-400">/</span>
                         <Link href={route('dashboard.my-courses')} className="text-gray-500 hover:text-gray-700">
-                            My Courses
+                            Courses
                         </Link>
                         <span className="mx-2 text-gray-400">/</span>
                         <span className="text-gray-900 font-medium">{course.title}</span>
