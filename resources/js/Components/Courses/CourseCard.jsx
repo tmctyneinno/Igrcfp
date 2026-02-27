@@ -8,7 +8,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
 
     // Update local state when prop changes or when page props update
-    useEffect(() => {
+    useEffect(() => { 
         setIsCourseInCart(isInCart || false);
     }, [isInCart]);
 
