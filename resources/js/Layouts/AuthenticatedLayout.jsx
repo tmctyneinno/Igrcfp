@@ -46,6 +46,32 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            {/* Add Toaster component here - it should be at the root level */}
+            <Toaster 
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#363636',
+                        color: '#fff',
+                        zIndex: 9999,
+                    },
+                    success: {
+                        duration: 3000,
+                        icon: '✅',
+                        style: {
+                            background: '#10b981',
+                        },
+                    },
+                    error: {
+                        duration: 4000,
+                        icon: '❌',
+                        style: {
+                            background: '#ef4444',
+                        },
+                    },
+                }}
+            />
             <nav className="border-b border-gray-200 bg-white shadow-sm">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
