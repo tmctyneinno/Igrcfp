@@ -3,42 +3,86 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Lesson extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'module_id',
         'title',
-        'description',
+        'slug',
+        'short_description',
         'content',
         'video_url',
+        'video_embed_code',
         'duration',
-        'order',
+        'sort_order',
         'is_free',
-        'status'
+        'is_published',
+        'attachments',
+        'resources',
     ];
 
     protected $casts = [
+        'duration' => 'integer',
+        'sort_order' => 'integer',
         'is_free' => 'boolean',
+        'is_published' => 'boolean',
+        'attachments' => 'array',
+        'resources' => 'array',
     ];
 
-    /**
-     * Get the module that owns the lesson
-     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($lesson) {
+            if (empty($lesson->slug)) {
+                $lesson->slug = Str::slug($lesson->title) . '-' . uniqid();
+            }
+        });
+    }
+
     public function module()
     {
         return $this->belongsTo(CourseModule::class, 'module_id');
     }
 
-    /**
-     * Get the completions for this lesson
-     */
-    public function completions()
+    public function progress()
     {
-        return $this->hasMany(LessonCompletion::class);
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    /**
+     * Scope to order lessons by sort_order
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order');
+    }
+
+    /**
+     * Scope to get only published lessons
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
+    }
+
+    public function getFormattedDurationAttribute()
+    {
+        if (!$this->duration) return 'N/A';
+        
+        $hours = floor($this->duration / 60);
+        $minutes = $this->duration % 60;
+        
+        if ($hours > 0) {
+            return $hours . 'h ' . $minutes . 'm';
+        }
+        return $minutes . ' min';
     }
 }
