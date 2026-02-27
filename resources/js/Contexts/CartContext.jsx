@@ -50,7 +50,7 @@ export function CartProvider({ children, initialCount = 0 }) {
                             level: course.level,
                             duration: course.duration
                         }];
-                        setCartItems(newCartItems);
+                        setCartItems(newCartItems); 
                         setCartCount(newCartItems.length);
                     }
                     

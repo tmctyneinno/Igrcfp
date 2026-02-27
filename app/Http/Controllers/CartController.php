@@ -82,7 +82,7 @@ class CartController extends Controller
         return redirect()->route('dashboard.cart.index')->with([
             'success' => 'Course added to cart.',
             'cart_count' => $cartCount
-        ]);
+        ]); 
     } 
 
     // app/Http/Controllers/CartController.php
