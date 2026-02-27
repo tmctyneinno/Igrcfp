@@ -20,22 +20,29 @@ class CertificateController extends Controller
             return back()->with('error', 'You need to complete the course first.');
         }
 
-        // Mark certificate as generated
-        $enrollment->update([
-            'certificate_generated' => true,
-            'certificate_generated_date' => now(),
-            'certificate_number' => $this->generateCertificateNumber($enrollment)
-        ]);
+        // Generate certificate number if not exists
+        if (!$enrollment->certificate_number) {
+            $enrollment->certificate_number = $this->generateCertificateNumber($enrollment);
+        }
 
-        // Generate PDF
-        $pdf = PDF::loadView('certificates.template', [
+        // Set certificate as generated
+        $enrollment->certificate_generated = true;
+        $enrollment->certificate_generated_date = now();
+        $enrollment->save();
+
+        // Prepare data for certificate
+        $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => now()->format('F d, Y'),
             'certificate_number' => $enrollment->certificate_number
-        ]);
+        ];
 
+        // Load view and generate PDF
+        $pdf = Pdf::loadView('certificates.template', $data);
+        
+        // Download the PDF
         return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
     }
 
@@ -48,7 +55,10 @@ class CertificateController extends Controller
         return view('certificates.preview', [
             'enrollment' => $enrollment,
             'student' => auth()->user(),
-            'course' => $enrollment->course
+            'course' => $enrollment->course,
+            'completion_date' => $enrollment->certificate_generated_date 
+                ? $enrollment->certificate_generated_date->format('F d, Y')
+                : now()->format('F d, Y')
         ]);
     }
 
@@ -59,22 +69,24 @@ class CertificateController extends Controller
         }
 
         if (!$enrollment->certificate_generated) {
-            return back()->with('error', 'Certificate not found.');
+            return back()->with('error', 'Certificate not found. Please generate it first.');
         }
 
-        $pdf = PDF::loadView('certificates.template', [
+        $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => $enrollment->certificate_generated_date->format('F d, Y'),
             'certificate_number' => $enrollment->certificate_number
-        ]);
+        ];
 
+        $pdf = Pdf::loadView('certificates.template', $data);
+        
         return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
     }
 
     private function generateCertificateNumber($enrollment)
     {
-        return 'CERT-' . strtoupper(uniqid()) . '-' . $enrollment->id;
+        return 'CERT-' . date('Y') . '-' . str_pad($enrollment->id, 6, '0', STR_PAD_LEFT) . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
     }
 }
