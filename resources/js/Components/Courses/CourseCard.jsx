@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/contexts/CartContext'; // Add this import
 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
     const { props } = usePage();
-    const { removeFromCart } = useCart();
+    const { removeFromCart } = useCart(); // Add this line
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
+    const [isRemoving, setIsRemoving] = useState(false);
 
     // Update local state when prop changes or when page props update
     useEffect(() => { 
@@ -18,7 +19,6 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     useEffect(() => {
         if (props.cart?.items && course?.id) {
             const inCart = props.cart.items.some(item => {
-                // Handle different cart item structures
                 if (item.course) {
                     return item.course.id === course.id;
                 }
@@ -67,10 +67,18 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     const handleViewCartClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        // Navigate to cart page using Inertia
         if (typeof route === 'function') {
             window.location.href = route('dashboard.cart.index');
         }
+    };
+
+    const handleRemoveFromCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsRemoving(true);
+        removeFromCart(course.id, course.title);
+        // Reset removing state after a delay (the toast will handle the UI)
+        setTimeout(() => setIsRemoving(false), 1000);
     };
 
     return (
@@ -151,15 +159,33 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
                         </span>
                     )}
                     
-                    {/* ADD TO CART BUTTON */}
+                    {/* CART BUTTON - Now with remove option when in cart */}
                     {isCourseInCart ? (
-                        <Link
-                            href={route('dashboard.cart.index')}
-                            onClick={handleViewCartClick}
-                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
-                        >
-                            View in Cart
-                        </Link>
+                        <div className="flex gap-2">
+                            <Link
+                                href={route('dashboard.cart.index')}
+                                onClick={handleViewCartClick}
+                                className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                            >
+                                View Cart
+                            </Link>
+                            <button
+                                onClick={handleRemoveFromCart}
+                                disabled={isRemoving}
+                                className="inline-flex items-center px-3 py-1.5 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition transform hover:-translate-y-1 disabled:opacity-50"
+                            >
+                                {isRemoving ? (
+                                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                ) : (
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
                     ) : (
                         <button
                             onClick={handleAddToCartClick}
