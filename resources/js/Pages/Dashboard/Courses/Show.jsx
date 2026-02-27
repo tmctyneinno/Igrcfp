@@ -150,7 +150,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                                             onClick={() => startEnrollment(course)}
                                             className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
                                             >
-                                            {user ? 'Enroll Now' : 'Sign In to Enroll'}
+                                            {user ? 'Enroll Now' : 'Add to cart'}
                                             </button>
                             
                                         </div>
