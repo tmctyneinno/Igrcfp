@@ -78,7 +78,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
             data-aos="fade-up"
         > 
             {/* IMAGE */} 
-            <Link href={`dashboard/courses/${course?.slug || '#'}`} className="block h-48 overflow-hidden">
+            <Link href={{ route('dashboard.courses.show', course?.slug)}} className="block h-48 overflow-hidden">
                 <img
                     src={course?.image_url || '/images/fallback-course.jpg'}
                     alt={course?.title || 'Course image'}
