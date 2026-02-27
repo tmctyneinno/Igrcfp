@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import toast from 'react-hot-toast';
 import { 
     BookOpenIcon, 
     ClockIcon, 
@@ -9,9 +10,10 @@ import {
     PresentationChartBarIcon
 } from '@heroicons/react/24/outline';
 
-export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
+export default function EnrollmentIndex({ course, enrollment, modules: initialModules = [] }) {
     // Calculate progress
-    const progress = enrollment?.progress || 0;
+    const [modules, setModules] = useState(initialModules);
+    const [progress, setProgress] = useState(enrollment?.progress || 0);
     const hasCertificate = enrollment?.certificate_generated === true;
     
     // Get status badge color
