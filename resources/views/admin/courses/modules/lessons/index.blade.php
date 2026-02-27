@@ -19,11 +19,11 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.show', $course->id) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
+                <a href="{{ route('admin.courses.show', $course->slug) }}" class="hover-text-primary">{{ Str::limit($course->title, 20) }}</a>
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.courses.modules.edit', [$course->id, $module->id]) }}" class="hover-text-primary">
+                <a href="{{ route('admin.courses.modules.edit', [$course->slug, $module->id]) }}" class="hover-text-primary">
                     {{ Str::limit($module->title, 15) }}
                 </a>
             </li>
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
 
-                fetch('{{ route("admin.courses.modules.lessons.reorder", [$course->id, $module->id]) }}', {
+                fetch('{{ route("admin.courses.modules.lessons.reorder", [$course->slug, $module->id]) }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
