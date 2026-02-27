@@ -75,19 +75,26 @@ class Course extends Model
     }
 
     /**
-     * CORRECTED: Modules relationship - use Module model, not CourseModule
+     * Modules relationship - using course_modules table
      */
     public function modules()
     {
-        return $this->hasMany(Module::class)->orderBy('module_number');
+        return $this->hasMany(CourseModule::class, 'course_id')->orderBy('module_number');
     }
 
     /**
-     * Relationship: Course has many Lessons through Modules
+     * Relationship: Course has many Lessons through CourseModules
      */
     public function lessons()
     {
-        return $this->hasManyThrough(Lesson::class, Module::class);
+        return $this->hasManyThrough(
+            Lesson::class, 
+            CourseModule::class, 
+            'course_id', // Foreign key on course_modules table
+            'module_id', // Foreign key on lessons table
+            'id', // Local key on courses table
+            'id' // Local key on course_modules table
+        );
     }
 
     /**
