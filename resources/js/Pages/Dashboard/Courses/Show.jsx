@@ -161,7 +161,7 @@ export default function Show({ course, enrollment, modules = [] }) {
                         />
                       ))}
                     </div>
-                    <span>{course.rating.toFixed(1)}</span>
+                    <span>{course.rating}</span>
                   </div>
                 )}
                 
