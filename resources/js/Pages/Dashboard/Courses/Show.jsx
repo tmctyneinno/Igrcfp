@@ -282,23 +282,24 @@ export default function Show({ course, enrollment, modules = [] }) {
                             <div className="absolute bottom-0 left-0 p-8 text-white">
                                 <div className="flex flex-col lg:flex-row items-start gap-8">
                                     <div className="lg:w-2/3">
+                                        <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
+                                        <p className="text-xl text-gray-200 mb-8 max-w-3xl">{getCleanDescription(course.short_description)}</p>
+
+                                        <div className="flex items-center gap-4">
+                                            <span className="flex items-center gap-1">
+                                                <span className="text-yellow-400">★</span>
+                                                <span>{course.rating || 'New'}</span>
+                                            </span>
+                                            <span>•</span>
+                                            <span>{course.modules_count || 0} modules</span>
+                                            <span>•</span>
+                                            <span>{course.duration}</span>
+                                        </div>
                                     </div>
                                     <div className="lg:w-1/3 w-full">
                                     </div>
                                 </div>
-                                <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
-                                <p className="text-xl text-gray-200 mb-8 max-w-3xl">{getCleanDescription(course.short_description)}</p>
-
-                                <div className="flex items-center gap-4">
-                                    <span className="flex items-center gap-1">
-                                        <span className="text-yellow-400">★</span>
-                                        <span>{course.rating || 'New'}</span>
-                                    </span>
-                                    <span>•</span>
-                                    <span>{course.modules_count || 0} modules</span>
-                                    <span>•</span>
-                                    <span>{course.duration}</span>
-                                </div>
+                                
                             </div>
                         </div>
 
