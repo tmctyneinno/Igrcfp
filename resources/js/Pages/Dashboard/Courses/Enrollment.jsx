@@ -1,6 +1,13 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { 
+    BookOpenIcon, 
+    ClockIcon, 
+    DocumentTextIcon,
+    VideoCameraIcon,
+    PresentationChartBarIcon
+} from '@heroicons/react/24/outline';
 
 export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
     // Calculate progress
@@ -15,6 +22,17 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
             'cancelled': 'bg-red-100 text-red-800'
         };
         return statusMap[status] || 'bg-gray-100 text-gray-800';
+    };
+
+    // Get icon based on material type
+    const getMaterialIcon = (type) => {
+        const icons = {
+            'video': VideoCameraIcon,
+            'document': DocumentTextIcon,
+            'presentation': PresentationChartBarIcon,
+            'quiz': BookOpenIcon,
+        };
+        return icons[type] || DocumentTextIcon;
     };
 
     return (
@@ -58,7 +76,7 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                         <span>{course.rating || 'New'}</span>
                                     </span>
                                     <span>•</span>
-                                    <span>{course.modules_count || 0} modules</span>
+                                    <span>{modules.length} modules</span>
                                     <span>•</span>
                                     <span>{course.duration}</span>
                                 </div>
@@ -101,55 +119,148 @@ export default function EnrollmentIndex({ course, enrollment, modules = [] }) {
                                     ></div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
                     {/* Course Modules */}
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <div className="p-6 border-b">
-                            <h2 className="text-xl font-semibold">Course Content</h2>
-                        </div>
-                        
+                    <div className="space-y-6">
                         {modules.length > 0 ? (
-                            <div className="divide-y">
-                                {modules.map((module, index) => (
-                                    <div key={module.id} className="p-6">
-                                        <div className="flex items-start justify-between mb-3">
+                            modules.map((module, moduleIndex) => (
+                                <div key={module.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                    {/* Module Header */}
+                                    <div className="p-6 border-b bg-gray-50">
+                                        <div className="flex items-start justify-between">
                                             <div>
-                                                <h3 className="font-semibold text-lg">
-                                                    Module {index + 1}: {module.title}
-                                                </h3>
-                                                {module.description && (
-                                                    <p className="text-sm text-gray-500 mt-1">{module.description}</p>
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                                                        Module {module.module_number}
+                                                    </span>
+                                                    {module.code && (
+                                                        <span className="text-sm text-gray-500">
+                                                            {module.code}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <h2 className="text-xl font-semibold text-gray-900">
+                                                    {module.title}
+                                                </h2>
+                                                {module.short_description && (
+                                                    <p className="text-gray-600 mt-2">
+                                                        {module.short_description}
+                                                    </p>
                                                 )}
                                             </div>
-                                            <span className="text-sm text-gray-500">
-                                                {module.lessons?.length || 0} lessons
-                                            </span>
+                                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                                                <span className="flex items-center gap-1">
+                                                    <ClockIcon className="w-4 h-4" />
+                                                    {module.estimated_hours} hrs
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <DocumentTextIcon className="w-4 h-4" />
+                                                    {module.lesson_count} lessons
+                                                </span>
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    {/* Module Content */}
+                                    <div className="p-6">
+                                        {/* Sections */}
+                                        {module.sections && module.sections.length > 0 && (
+                                            <div className="mb-6">
+                                                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                                                    Sections
+                                                </h3>
+                                                <div className="space-y-3">
+                                                    {module.sections.map((section) => (
+                                                        <div key={section.id} className="bg-gray-50 rounded-lg p-4">
+                                                            <h4 className="font-medium text-gray-900 mb-2">
+                                                                {section.title}
+                                                            </h4>
+                                                            {section.content && (
+                                                                <p className="text-sm text-gray-600">
+                                                                    {section.content}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Lessons */}
                                         {module.lessons && module.lessons.length > 0 && (
-                                            <div className="ml-4 space-y-2">
-                                                {module.lessons.map((lesson, lessonIndex) => (
-                                                    <div key={lesson.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg">
-                                                        <span className="text-sm text-gray-400 w-6">{lessonIndex + 1}.</span>
-                                                        <span className="flex-1">{lesson.title}</span>
-                                                        <span className="text-xs text-gray-400">{lesson.duration}</span>
-                                                        {lesson.is_completed && (
-                                                            <span className="text-green-600">✓</span>
-                                                        )}
-                                                    </div>
-                                                ))}
+                                            <div className="mb-6">
+                                                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                                                    Lessons
+                                                </h3>
+                                                <div className="space-y-2">
+                                                    {module.lessons.map((lesson, lessonIndex) => (
+                                                        <div 
+                                                            key={lesson.id} 
+                                                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition group cursor-pointer"
+                                                        >
+                                                            <span className="text-sm text-gray-400 w-6">
+                                                                {lessonIndex + 1}.
+                                                            </span>
+                                                            <div className="flex-1">
+                                                                <span className="text-gray-900 font-medium">
+                                                                    {lesson.title}
+                                                                </span>
+                                                                {lesson.description && (
+                                                                    <p className="text-sm text-gray-500">
+                                                                        {lesson.description}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            {lesson.duration && (
+                                                                <span className="text-sm text-gray-400 flex items-center gap-1">
+                                                                    <ClockIcon className="w-4 h-4" />
+                                                                    {lesson.duration}
+                                                                </span>
+                                                            )}
+                                                            {lesson.is_completed && (
+                                                                <span className="text-green-600 font-bold">✓</span>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Materials */}
+                                        {module.materials && module.materials.length > 0 && (
+                                            <div>
+                                                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">
+                                                    Materials
+                                                </h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {module.materials.map((material) => {
+                                                        const Icon = getMaterialIcon(material.type);
+                                                        return (
+                                                            <a
+                                                                key={material.id}
+                                                                href={material.file_path || material.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                                                            >
+                                                                <Icon className="w-5 h-5 text-blue-600" />
+                                                                <span className="text-sm text-gray-900">
+                                                                    {material.title}
+                                                                </span>
+                                                            </a>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))
                         ) : (
-                            <div className="p-12 text-center">
-                                <div className="text-gray-400 mb-2">📚</div>
+                            <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+                                <div className="text-gray-400 mb-2 text-4xl">📚</div>
                                 <h3 className="text-lg font-medium text-gray-900 mb-1">No modules yet</h3>
                                 <p className="text-gray-500">This course content is being prepared.</p>
                             </div>
