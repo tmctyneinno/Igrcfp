@@ -326,7 +326,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                     </div>
                                     
                                     <button
-                                        onClick={goToExamUI}
+                                        onClick={route('dashboard.exam.show')}
                                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                     >
                                         <CameraIcon className="w-5 h-5" />
