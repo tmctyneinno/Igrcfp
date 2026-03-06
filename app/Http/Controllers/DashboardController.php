@@ -143,6 +143,12 @@ class DashboardController extends Controller
                     'discount_price' => $course->discount_price,
                     'is_featured' => $course->is_featured,
                     'rating' => $course->rating,
+                    'category' => $course->category ? [
+                        'id' => $course->category->id,
+                        'name' => $course->category->name,
+                        'slug' => $course->category->slug,
+                        'icon' => $course->category->icon,
+                    ] : null,
                 ];
             });
         
@@ -151,12 +157,14 @@ class DashboardController extends Controller
             'total_courses' => $enrolledCourses->count(),
             'completed' => $enrolledCourses->where('status', 'completed')->count(),
             'in_progress' => $enrolledCourses->where('status', 'enrolled')->count(),
+            'total_categories' => $categories->count(),
         ];
         
         return Inertia::render('Dashboard/Index', [
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
             'popularCourses' => $popularCourses,
+            'categories' => $categories,
             'stats' => $stats,
         ]);
     }
