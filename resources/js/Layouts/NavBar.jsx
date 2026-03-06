@@ -193,7 +193,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Financial Crime Prevention */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
+                                    <Link href={route('courses.by-category', { slug: 'anti-money-laundering' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Anti Money Laundering</h4>
@@ -203,7 +203,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.crypto')}>
+                                    <Link href={route('courses.by-category', { slug: 'financial-crime' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Financial Crime</h4>
@@ -213,7 +213,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.cybersecurity')}>
+                                     <Link href={route('courses.by-category', { slug: 'regtech' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">RegTech</h4>
@@ -223,7 +223,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* AI & Emerging Technology */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.ai')}>
+                                     <Link href={route('courses.by-category', { slug: 'esg-risk' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">ESG Risk</h4>
