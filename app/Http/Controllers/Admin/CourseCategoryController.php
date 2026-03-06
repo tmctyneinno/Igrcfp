@@ -16,12 +16,12 @@ class CourseCategoryController extends Controller
                        ->orderBy('name')
                        ->get();
         
-        return view('admin.course.categories.index', compact('categories'));
+        return view('admin.courses.categories.index', compact('categories'));
     }
 
     public function create()
     {
-        return view('admin.course.categories.create');
+        return view('admin.courses.categories.create');
     }
 
     public function store(Request $request)
