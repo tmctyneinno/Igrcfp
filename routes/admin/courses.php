@@ -36,9 +36,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     // Course Categories Routes
     Route::get('/courses/categories/index', [CourseCategoryController::class, 'index'])
         ->name('course-categories.index');
-     Route::get('/courses/categories/index', [CourseCategoryController::class, 'create'])
-        ->name('course-categories.index'); 
-    Route::resource('course-categories', CourseCategoryController::class);
+    Route::get('/courses/categories/create', [CourseCategoryController::class, 'create'])
+        ->name('course-categories.create'); 
+    Route::get('/courses/categories/store', [CourseCategoryController::class, 'create'])
+        ->name('course-categories.create'); 
+    // Route::resource('course-categories', CourseCategoryController::class);
     
     // Course Enrollments
     Route::get('/courses/{course}/enrollments', [CourseController::class, 'enrollments'])
