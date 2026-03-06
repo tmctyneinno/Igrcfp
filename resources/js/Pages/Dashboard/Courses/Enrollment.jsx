@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
@@ -21,7 +21,8 @@ import {
     CameraIcon,
     LockClosedIcon,
     ClipboardDocumentCheckIcon,
-    PhotoIcon
+    PhotoIcon,
+    ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 
 export default function EnrollmentIndex({ course, enrollment, modules: initialModules = [], candidate, examResults }) {
@@ -33,6 +34,9 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     const [isVerifying, setIsVerifying] = useState(false);
     const [cameraActive, setCameraActive] = useState(false);
     const [cameraError, setCameraError] = useState(null);
+    const [isCameraSupported, setIsCameraSupported] = useState(true);
+    const [availableCameras, setAvailableCameras] = useState([]);
+    const [selectedCamera, setSelectedCamera] = useState('');
     
     // Refs for camera
     const videoRef = useRef(null);
@@ -42,55 +46,123 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     
-    // Get status badge color
-    const getStatusBadge = (status) => {
-        const statusMap = {
-            'pending_payment': 'bg-yellow-100 text-yellow-800',
-            'enrolled': 'bg-green-100 text-green-800',
-            'in_progress': 'bg-blue-100 text-blue-800',
-            'completed': 'bg-purple-100 text-purple-800',
-            'certified': 'bg-indigo-100 text-indigo-800',
-            'cancelled': 'bg-red-100 text-red-800'
+    // Check camera support on mount
+    useEffect(() => {
+        checkCameraSupport();
+        
+        // Cleanup on unmount
+        return () => {
+            stopCamera();
         };
-        return statusMap[status] || 'bg-gray-100 text-gray-800';
-    };
+    }, []);
 
+    // Check if camera is supported
+    const checkCameraSupport = async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setIsCameraSupported(false);
+            setCameraError('Camera is not supported in this browser. Please use Chrome, Firefox, or Safari.');
+            return;
+        }
+
+        try {
+            // Check if we can enumerate devices
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            setAvailableCameras(videoDevices);
+            
+            if (videoDevices.length === 0) {
+                setCameraError('No camera detected. Please connect a camera and try again.');
+            }
+        } catch (error) {
+            console.error('Error enumerating devices:', error);
+        }
+    };
+    
     // Start camera
     const startCamera = async () => {
         setCameraError(null);
+        
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setCameraError('Your browser does not support camera access. Please use a modern browser like Chrome, Firefox, or Safari.');
+            return;
+        }
+
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
+            // First check if we have permission by trying to enumerate devices
+            await navigator.mediaDevices.getUserMedia({ video: true });
+            
+            // If permission granted, start the camera
+            const constraints = {
+                video: {
                     facingMode: 'user',
                     width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
-            });
+                    height: { ideal: 720 },
+                    aspectRatio: { ideal: 1.7777777778 }
+                }
+            };
+            
+            // If a specific camera is selected, use its deviceId
+            if (selectedCamera) {
+                constraints.video.deviceId = { exact: selectedCamera };
+            }
+            
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
             
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 streamRef.current = stream;
                 setCameraActive(true);
+                
+                // Wait for video to be ready
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(e => {
+                        console.error('Error playing video:', e);
+                        setCameraError('Could not start video playback.');
+                    });
+                };
             }
         } catch (error) {
             console.error('Camera error:', error);
-            setCameraError('Unable to access camera. Please ensure camera permissions are granted.');
-            toast.error('Camera access denied. Please check your permissions.');
+            
+            // Handle specific error types
+            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                setCameraError('Camera access denied. Please allow camera permissions in your browser settings.');
+            } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                setCameraError('No camera found. Please connect a camera and try again.');
+            } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+                setCameraError('Camera is already in use by another application. Please close other apps using your camera.');
+            } else if (error.name === 'OverconstrainedError') {
+                setCameraError('Camera cannot meet the required constraints. Try a different camera.');
+            } else if (error.name === 'TypeError') {
+                setCameraError('Invalid camera constraints. Please try again.');
+            } else {
+                setCameraError(`Unable to access camera: ${error.message || 'Unknown error'}`);
+            }
+            
+            toast.error('Failed to start camera. Please check permissions.');
         }
     };
 
     // Stop camera
     const stopCamera = () => {
         if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current.getTracks().forEach(track => {
+                track.stop();
+                track.enabled = false;
+            });
             streamRef.current = null;
         }
+        
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+        
         setCameraActive(false);
     };
 
     // Capture photo from camera
     const capturePhoto = () => {
-        if (videoRef.current && canvasRef.current) {
+        if (videoRef.current && canvasRef.current && cameraActive) {
             const video = videoRef.current;
             const canvas = canvasRef.current;
             const context = canvas.getContext('2d');
@@ -102,14 +174,16 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
             // Draw video frame to canvas
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Convert to base64 image
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            // Convert to base64 image with reduced quality for smaller payload
+            const imageData = canvas.toDataURL('image/jpeg', 0.7);
             setCapturedImage(imageData);
             
             // Stop camera after capture
             stopCamera();
             
             toast.success('Photo captured successfully!');
+        } else {
+            toast.error('Camera not active. Please start the camera first.');
         }
     };
 
@@ -121,26 +195,46 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
     // Handle identity verification
     const handleIdentityVerification = async () => {
+        if (!capturedImage) {
+            toast.error('Please capture a photo first.');
+            return;
+        }
+
         setIsVerifying(true);
+        
+        // Show loading toast
+        const loadingToast = toast.loading('Verifying identity...');
+        
         try {
             await router.post(route('exam.verify-identity', enrollment.id), {
                 image: capturedImage
             }, {
                 preserveScroll: true,
-                onSuccess: () => {
+                onSuccess: (response) => {
+                    toast.dismiss(loadingToast);
                     toast.success('Identity verified successfully!', { icon: '✓' });
                     setShowIdentityVerification(false);
                     setCapturedImage(null);
                     stopCamera();
+                    
+                    // Refresh the page to show updated status
+                    router.reload({ only: ['enrollment'] });
                 },
                 onError: (errors) => {
+                    toast.dismiss(loadingToast);
                     console.error('Verification error:', errors);
-                    toast.error('Identity verification failed. Please try again.');
+                    
+                    if (errors.image) {
+                        toast.error(`Image error: ${errors.image}`);
+                    } else {
+                        toast.error('Identity verification failed. Please try again.');
+                    }
                 }
             });
         } catch (error) {
+            toast.dismiss(loadingToast);
             console.error('Verification error:', error);
-            toast.error('Verification failed');
+            toast.error('Verification failed. Please check your connection and try again.');
         } finally {
             setIsVerifying(false);
         }
@@ -152,6 +246,23 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         setCapturedImage(null);
         setCameraError(null);
         stopCamera();
+    };
+
+    // Handle camera selection
+    const handleCameraChange = (e) => {
+        setSelectedCamera(e.target.value);
+    };
+
+    // Handle file upload fallback
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCapturedImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     // Handle exam start
@@ -428,7 +539,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         <button
                                             onClick={() => {
                                                 setShowIdentityVerification(true);
-                                                startCamera();
+                                                setTimeout(() => startCamera(), 100);
                                             }}
                                             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                         >
@@ -476,11 +587,30 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                             <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
                                                 {cameraError ? (
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                                                        <PhotoIcon className="w-12 h-12 text-gray-400 mb-2" />
-                                                        <p className="text-sm text-red-600">{cameraError}</p>
+                                                        <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mb-2" />
+                                                        <p className="text-sm text-red-600 mb-3">{cameraError}</p>
+                                                        
+                                                        {/* Fallback file upload */}
+                                                        <div className="mt-2">
+                                                            <p className="text-xs text-gray-500 mb-2">Or upload a photo instead:</p>
+                                                            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                                                                <PhotoIcon className="w-5 h-5" />
+                                                                Upload Photo
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    className="hidden"
+                                                                    onChange={handleFileUpload}
+                                                                />
+                                                            </label>
+                                                        </div>
+                                                        
                                                         <button
-                                                            onClick={startCamera}
-                                                            className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
+                                                            onClick={() => {
+                                                                setCameraError(null);
+                                                                startCamera();
+                                                            }}
+                                                            className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
                                                         >
                                                             Try Again
                                                         </button>
@@ -492,12 +622,20 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : cameraActive ? (
-                                                    <video
-                                                        ref={videoRef}
-                                                        autoPlay
-                                                        playsInline
-                                                        className="w-full h-full object-cover"
-                                                    />
+                                                    <>
+                                                        <video
+                                                            ref={videoRef}
+                                                            autoPlay
+                                                            playsInline
+                                                            muted
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        {/* Camera active indicator */}
+                                                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                                                            <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                                                            Live
+                                                        </div>
+                                                    </>
                                                 ) : (
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                         <CameraIcon className="w-12 h-12 text-gray-400 mb-2" />
@@ -506,23 +644,60 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                 )}
                                             </div>
 
+                                            {/* Camera Selection (if multiple cameras available) */}
+                                            {availableCameras.length > 1 && !capturedImage && !cameraError && (
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Select Camera
+                                                    </label>
+                                                    <select
+                                                        onChange={handleCameraChange}
+                                                        value={selectedCamera}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                                    >
+                                                        <option value="">Default Camera</option>
+                                                        {availableCameras.map((camera) => (
+                                                            <option key={camera.deviceId} value={camera.deviceId}>
+                                                                {camera.label || `Camera ${camera.deviceId.slice(0, 5)}...`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
+
                                             <div className="flex gap-3">
                                                 {!capturedImage ? (
                                                     <>
-                                                        {!cameraActive ? (
+                                                        {!cameraActive && !cameraError ? (
                                                             <button
                                                                 onClick={startCamera}
                                                                 className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                                             >
                                                                 Start Camera
                                                             </button>
-                                                        ) : (
+                                                        ) : cameraActive ? (
                                                             <button
                                                                 onClick={capturePhoto}
                                                                 className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                                             >
                                                                 Capture Photo
                                                             </button>
+                                                        ) : null}
+                                                        
+                                                        {/* Fallback option if camera fails */}
+                                                        {cameraError && !capturedImage && (
+                                                            <div className="w-full">
+                                                                <label className="w-full cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                                                                    <PhotoIcon className="w-5 h-5" />
+                                                                    Upload Photo Instead
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        className="hidden"
+                                                                        onChange={handleFileUpload}
+                                                                    />
+                                                                </label>
+                                                            </div>
                                                         )}
                                                     </>
                                                 ) : (
@@ -718,7 +893,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                         {/* Certification Registry Link */}
                                         <Link
-                                            href={route('dashboard.certificate.registry')}
+                                            href={route('dasboardcertificate.registry')}
                                             className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
                                         >
                                             <GlobeAltIcon className="w-4 h-4" />
