@@ -38,8 +38,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
         ->name('course-categories.index');
     Route::get('/courses/categories/create', [CourseCategoryController::class, 'create'])
         ->name('course-categories.create'); 
-    Route::get('/courses/categories/store', [CourseCategoryController::class, 'create'])
-        ->name('course-categories.create'); 
+    Route::post('/courses/categories/store', [CourseCategoryController::class, 'store'])
+        ->name('course-categories.store'); 
     // Route::resource('course-categories', CourseCategoryController::class);
     
     // Course Enrollments
