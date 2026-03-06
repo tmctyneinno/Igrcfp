@@ -21,7 +21,11 @@ class CourseCategoryController extends Controller
 
     public function create()
     {
-        return view('admin.courses.categories.create');
+        $categories = CourseCategory::withCount('courses')
+                       ->orderBy('sort_order')
+                       ->orderBy('name')
+                       ->get();
+        return view('admin.courses.categories.create', compact('categories'));
     }
 
     public function store(Request $request)
