@@ -271,7 +271,7 @@ export default function Index({ auth, courses, filters, filterOptions, category 
                             </p>
                             <Link
                                 href="/courses"
-                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                className="px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-700 transition"
                             >
                                 View All Courses
                             </Link>
