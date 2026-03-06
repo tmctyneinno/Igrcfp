@@ -284,27 +284,64 @@ class CourseController extends Controller
         ]);
     }
 
-    public function byCategory($slug)
+    public function byCategory(Request $request, $slug)
     {
         // Find the category by slug
         $category = CourseCategory::where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
         
-        // Get courses for this category
-        $courses = Course::with('category')
+        // Start building the query
+        $query = Course::with('category')
             ->published()
-            ->where('category_id', $category->id)
-            ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            ->where('category_id', $category->id);
+        
+        // Apply filters from request
+        if ($request->has('level') && $request->level != '') {
+            $query->where('level', $request->level);
+        }
+        
+        if ($request->has('price_type') && $request->price_type != '') {
+            if ($request->price_type === 'free') {
+                $query->where('price', 0);
+            } elseif ($request->price_type === 'paid') {
+                $query->where('price', '>', 0);
+            } elseif ($request->price_type === 'discounted') {
+                $query->where('discount_price', '>', 0);
+            }
+        }
+        
+        if ($request->boolean('featured')) {
+            $query->where('is_featured', true);
+        }
+        
+        if ($request->boolean('popular')) {
+            $query->where('is_popular', true);
+        }
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                ->orWhere('short_description', 'LIKE', "%{$search}%")
+                ->orWhere('full_description', 'LIKE', "%{$search}%");
+            });
+        }
+        
+        // Apply sorting
+        $sortField = $request->get('sort_field', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        $query->orderBy($sortField, $sortDirection);
+        
+        // Get paginated results
+        $courses = $query->paginate(12)->withQueryString();
         
         // Get all categories for filter options
         $categories = CourseCategory::where('is_active', true)
             ->orderBy('name')
             ->get();
         
-        return Inertia::render('Courses/ByCategory', [
+        return Inertia::render('Courses/ByCategory', [ // Use the same view
             'courses' => $courses,
             'category' => [
                 'id' => $category->id,
@@ -313,7 +350,7 @@ class CourseController extends Controller
                 'description' => $category->description,
                 'icon' => $category->icon,
             ],
-            'filters' => ['category_slug' => $category->slug],
+            'filters' => $request->all(),
             'filterOptions' => [
                 'levels' => ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
                 'categories' => $categories,
