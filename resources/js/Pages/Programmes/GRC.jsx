@@ -15,7 +15,7 @@ export default function GRCPathway({auth}) {
                 "Lead organisational compliance transformation"
             ]
         },
-        {
+        { 
             title: "Enterprise Risk Management for Senior Leaders",
             duration: "3 months",
             level: "Executive",
