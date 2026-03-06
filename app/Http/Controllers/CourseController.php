@@ -81,9 +81,7 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * Show a single course detail
-     */
+    
     public function show($slug)
     {
         $course = Course::with(['modules', 'materials', 'category']) // Add 'category' here
@@ -222,9 +220,7 @@ class CourseController extends Controller
         return redirect()->route('cart.index')->with('success', 'Course added to cart successfully!');
     }
 
-    /**
-     * Process the enrollment
-     */
+    
     public function processEnrollment(Request $request, Course $course)
     {
         // Validate request
@@ -284,6 +280,42 @@ class CourseController extends Controller
         return Inertia::render('Courses/EnrollmentSuccess', [
             'course' => $course,
             'enrollment' => $enrollment
+        ]);
+    }
+
+    public function byCategory($slug)
+    {
+        $category = CourseCategory::where('slug', $slug)
+            ->where('is_active', true)
+            ->firstOrFail();
+        
+        $courses = Course::with('category')
+            ->published()
+            ->where('category_id', $category->id)
+            ->latest()
+            ->paginate(12);
+        
+        return Inertia::render('Courses/Index', [
+            'courses' => $courses,
+            'category' => $category,
+            'filters' => ['category_id' => $category->id],
+            'filterOptions' => [
+                'levels' => ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
+                'categories' => CourseCategory::where('is_active', true)->get(),
+                'priceTypes' => [
+                    ['value' => 'free', 'label' => 'Free'],
+                    ['value' => 'paid', 'label' => 'Paid'],
+                    ['value' => 'discounted', 'label' => 'Discounted'],
+                ],
+                'sortOptions' => [
+                    ['value' => 'title_asc', 'label' => 'Title: A to Z'],
+                    ['value' => 'title_desc', 'label' => 'Title: Z to A'],
+                    ['value' => 'price_asc', 'label' => 'Price: Low to High'],
+                    ['value' => 'price_desc', 'label' => 'Price: High to Low'],
+                    ['value' => 'created_at_desc', 'label' => 'Newest First'],
+                    ['value' => 'created_at_asc', 'label' => 'Oldest First'],
+                ],
+            ],
         ]);
     }
 }
