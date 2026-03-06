@@ -140,7 +140,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* AI & Emerging Technology */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href="/courses?category_id=5">
+                                    <Link href={route('courses.by-category', { id: 5 })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
