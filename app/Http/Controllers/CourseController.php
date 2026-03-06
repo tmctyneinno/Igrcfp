@@ -59,7 +59,25 @@ class CourseController extends Controller
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
             'courses' => $courses,
-            'categories' => CourseCategory::active()->ordered()->get()
+            'categories' => CourseCategory::active()->ordered()->get(),
+            'filters' => $request->all(),
+            'filterOptions' => [
+                'levels' => ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
+                'categories' => CourseCategory::all(),
+                'priceTypes' => [
+                    ['value' => 'free', 'label' => 'Free'],
+                    ['value' => 'paid', 'label' => 'Paid'],
+                    ['value' => 'discounted', 'label' => 'Discounted'],
+                ],
+                'sortOptions' => [
+                    ['value' => 'title_asc', 'label' => 'Title: A to Z'],
+                    ['value' => 'title_desc', 'label' => 'Title: Z to A'],
+                    ['value' => 'price_asc', 'label' => 'Price: Low to High'],
+                    ['value' => 'price_desc', 'label' => 'Price: High to Low'],
+                    ['value' => 'created_at_desc', 'label' => 'Newest First'],
+                    ['value' => 'created_at_asc', 'label' => 'Oldest First'],
+                ],
+            ],
         ]);
     }
 
