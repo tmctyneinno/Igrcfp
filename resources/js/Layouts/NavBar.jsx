@@ -196,7 +196,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.financial-crime')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">AML - Anti</h4>
+                                        <h4 className="font-semibold text-gray-800">AML - Anti Money Laundering</h4>
                                     </div>
                                     </Link>
                                 </div>
@@ -206,7 +206,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.crypto')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
+                                        <h4 className="font-semibold text-gray-800">Financial Crime</h4>
                                     </div>
                                     </Link>
                                 </div>
@@ -216,7 +216,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.cybersecurity')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
+                                        <h4 className="font-semibold text-gray-800">RegTech</h4>
                                     </div>
                                     </Link>
                                 </div>
@@ -226,7 +226,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.ai')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
+                                        <h4 className="font-semibold text-gray-800">ESG Rix</h4>
                                     </div>
                                     </Link>
                                 </div>
