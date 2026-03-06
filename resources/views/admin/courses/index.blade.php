@@ -104,6 +104,7 @@
                                 </th>
                                 <th scope="col">Course Image</th>
                                 <th scope="col">Course Title</th>
+                                <th scope="col">Category</th> 
                                 <th scope="col">Short Title</th>
                                 <th scope="col">Level</th>
                                 <th scope="col" class="text-center">Modules</th>
@@ -146,6 +147,20 @@
                                             <small class="badge bg-light text-dark">{{ $course->code }}</small>
                                         </div>
                                     </div>
+                                </td>
+                                 <td> <!-- New category column -->
+                                    @if($course->category)
+                                        <div class="d-flex flex-column">
+                                            <span class="badge bg-primary">{{ $course->category->name }}</span>
+                                            @if($course->category->icon)
+                                                <small class="mt-1">
+                                                    <iconify-icon icon="{{ $course->category->icon }}" class="text-muted"></iconify-icon>
+                                                </small>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="badge bg-secondary">Uncategorized</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="badge bg-primary">{{ $course->short_title }}</span>
