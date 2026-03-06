@@ -222,8 +222,11 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        $course->load(['modules.sections', 'materials']);
-        return view('admin.courses.show', compact('course'));
+        $course->load(['modules.sections', 'materials', 'category']);
+        $categories = CourseCategory::where('is_active', true)
+                   ->orderBy('name')
+                   ->get();
+        return view('admin.courses.show', compact('course','categories'));
     }
 
     /**
