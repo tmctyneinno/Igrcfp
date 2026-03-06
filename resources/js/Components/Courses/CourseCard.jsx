@@ -5,7 +5,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext'; // Add this import
 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
-    const { props } = usePage();
+    const { props } = usePage(); 
     const { removeFromCart } = useCart(); // Add this line
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
     const [isRemoving, setIsRemoving] = useState(false);
