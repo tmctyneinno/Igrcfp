@@ -30,14 +30,7 @@
                         @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Icon (Iconify icon name)</label>
-                        <input type="text" name="icon" class="form-control @error('icon') is-invalid @enderror" 
-                               value="{{ old('icon', $category->icon ?? '') }}" 
-                               placeholder="e.g., mdi:folder">
-                        @error('icon') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        <small class="text-muted">Browse icons at <a href="https://iconify.design" target="_blank">iconify.design</a></small>
-                    </div>
+                   
 
                     <div class="col-12 mb-3">
                         <label class="form-label">Description</label>
