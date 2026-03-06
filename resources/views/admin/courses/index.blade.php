@@ -149,13 +149,13 @@
                                     </div>
                                 </td>
                                  <td> <!-- New category column -->
-                                    <td>
-    @if($course->category)
-        <span class="badge bg-info">{{ $course->category->name }}</span>
-    @else
-        <span class="badge bg-secondary">Uncategorized</span>
-    @endif
-</td>
+                                   
+                                    @if($course->category)
+                                        <span class="badge bg-info">{{ $course->category->name }}</span>
+                                    @else
+                                        <span class="badge bg-secondary">Uncategorized</span>
+                                    @endif
+                                </td>
                                 </td>
                                 <td>
                                     <span class="badge bg-primary">{{ $course->short_title }}</span>
