@@ -1,4 +1,5 @@
 <?php
+// app/Http/Middleware/CheckAdminRole.php
 
 namespace App\Http\Middleware;
 
@@ -17,14 +18,19 @@ class CheckAdminRole
             return redirect()->route('admin.login');
         }
 
+        // If no specific roles are required, just check if it's any admin
+        if (empty($roles)) {
+            return $next($request);
+        }
+
         foreach ($roles as $role) {
-            if ($role === 'super_admin' && $admin->isSuperAdmin()) {
+            if ($role === 'super_admin' && method_exists($admin, 'isSuperAdmin') && $admin->isSuperAdmin()) {
                 return $next($request);
             }
-            if ($role === 'admin' && $admin->isAdmin()) {
+            if ($role === 'admin' && method_exists($admin, 'isAdmin') && $admin->isAdmin()) {
                 return $next($request);
             }
-            if ($role === 'moderator' && $admin->isModerator()) {
+            if ($role === 'moderator' && method_exists($admin, 'isModerator') && $admin->isModerator()) {
                 return $next($request);
             }
         }
