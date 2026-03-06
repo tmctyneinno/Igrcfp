@@ -46,8 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('dashboard.certificates.preview');
     Route::get('dashboard/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('dashboard.certificates.download');
     Route::get('dashboard/badge/{enrollment}', [CertificateController::class, 'badge'])->name('dashboard.certificates.badge');
-    Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificates.verify');
-    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificates.registry');
+    Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificate.verify');
+    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry');
 
     // Exam Routes
     Route::middleware(['auth'])->prefix('dashboard/exam')->name('exam.')->group(function () {
