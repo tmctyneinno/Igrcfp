@@ -918,7 +918,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         </div>
 
                                         <Link
-                                            href={route('certificate.badge', enrollment.id)}
+                                            href={route('dashboard.certificate.badge', enrollment.id)}
                                             className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg hover:from-amber-100 hover:to-yellow-100 transition"
                                         >
                                             <div className="flex items-center gap-3">
