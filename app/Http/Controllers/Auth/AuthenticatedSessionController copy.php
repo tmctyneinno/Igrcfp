@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /** 
+    /**
      * Display the registration view.
      */
     public function showRegister(): Response
@@ -42,30 +42,24 @@ class AuthenticatedSessionController extends Controller
     public function login(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+ 
         $request->session()->regenerate();
-        
-        // Log for debugging
-        \Log::info('User logged in successfully', [
-            'user_id' => Auth::id(),
+        // Log the redirect parameter for debugging
+        \Log::info('Login Redirect Parameter:', [
             'redirect' => $request->input('redirect'),
-            'intended' => session('url.intended')
+            'all_input' => $request->all(),
+            'query_params' => $request->query()
         ]);
         
-        // Check for redirect parameter (for enrollment or specific pages)
+        // Check for redirect parameter
+        \Log::info('Redirect:', [ $request->input('redirect')]);
         $redirect = $request->input('redirect');
         
         if ($redirect) {
             return redirect($redirect);
         }
-        
-        // Check if there's an intended URL (from auth middleware)
-        if (session()->has('url.intended')) {
-            return redirect()->intended();
-        }
-
-        // Default redirect to dashboard - use the correct route name
-        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
+ 
+        return redirect()->intended(route('dashboard.index', absolute: false));
     }
 
     /**
@@ -89,8 +83,7 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($user);
 
-        // Redirect to dashboard after registration
-        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
+        return redirect(route('dashboard.index', absolute: false));
     }
 
     /**
