@@ -46,10 +46,10 @@ export default function CourseCategories({ categories = [] }) {
 
                 {categories.length > 0 && (
                     <Link
-                        href={route('courses.index')}
+                        href={route('dashboard.courses.index')}
                         className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
                     >
-                        View All Categories →
+                        View All Course →
                     </Link>
                 )}
             </div>
