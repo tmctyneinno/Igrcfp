@@ -115,17 +115,14 @@
                         <hr>
                         <div class="d-flex gap-3">
                             <button type="submit" class="btn btn-primary px-4">
-                                <iconify-icon icon="{{ isset($category) ? 'mdi:content-save' : 'mdi:plus' }}" class="icon me-1"></iconify-icon>
                                 {{ isset($category) ? 'Update' : 'Create' }} Category
                             </button>
                             <a href="{{ route('admin.course-categories.index') }}" class="btn btn-outline-secondary px-4">
-                                <iconify-icon icon="mdi:close" class="icon me-1"></iconify-icon>
                                 Cancel
                             </a>
                             @if(isset($category))
                                 <button type="button" class="btn btn-outline-danger ms-auto" 
                                         onclick="confirmDelete()">
-                                    <iconify-icon icon="mdi:delete" class="icon me-1"></iconify-icon>
                                     Delete Category
                                 </button>
                             @endif
