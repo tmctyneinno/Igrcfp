@@ -879,14 +879,14 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                             
                                             <div className="flex gap-2">
                                                 <Link
-                                                    href={route('certificate.download', enrollment.id)}
+                                                    href={route('dashboard.certificate.download', enrollment.id)}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
                                                 >
                                                     <DocumentTextIcon className="w-4 h-4" />
                                                     Download PDF
                                                 </Link>
                                                 <Link
-                                                    href={route('certificate.preview', enrollment.id)}
+                                                    href={route('dashboard.certificate.preview', enrollment.id)}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition text-sm"
                                                 >
                                                     <GlobeAltIcon className="w-4 h-4" />
@@ -896,7 +896,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         </div>
 
                                         <Link
-                                            href={route('certificate.badge', enrollment.id)}
+                                            href={route('dashboard.certificate.badge', enrollment.id)}
                                             className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg hover:from-amber-100 hover:to-yellow-100 transition"
                                         >
                                             <div className="flex items-center gap-3">
@@ -941,7 +941,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                         {/* Certification Registry Link */}
                                         <Link
-                                            href={route('certificate.registry')}
+                                            href={route('dashboard.certificate.registry')}
                                             className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
                                         >
                                             <GlobeAltIcon className="w-4 h-4" />
