@@ -265,7 +265,6 @@ class CourseController extends Controller
             \Log::info('Before update - category_id value:', [
                 'category_id_in_validated' => $validated['category_id'] ?? 'NOT SET'
             ]);
-            
             if ($request->hasFile('image')) {
                 if ($course->image && Storage::disk('public')->exists($course->image)) {
                     Storage::disk('public')->delete($course->image);
@@ -276,11 +275,6 @@ class CourseController extends Controller
                     ->store('courses/images', 'public');
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | BANNER IMAGE UPLOAD
-            |--------------------------------------------------------------------------
-            */
             if ($request->hasFile('banner_image')) {
                 if ($course->banner_image && Storage::disk('public')->exists($course->banner_image)) {
                     Storage::disk('public')->delete($course->banner_image);
@@ -291,11 +285,6 @@ class CourseController extends Controller
                     ->store('courses/banner', 'public');
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | VIDEO HANDLING
-            |--------------------------------------------------------------------------
-            */
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
                 if ($course->video && Storage::disk('public')->exists($course->video)) {
                     Storage::disk('public')->delete($course->video);
@@ -306,27 +295,16 @@ class CourseController extends Controller
                     ->store('courses/videos', 'public');
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | TARGET AUDIENCE (STORE AS HTML STRING)
-            |--------------------------------------------------------------------------
-            */
             if ($request->filled('target_audience')) {
                 $validated['target_audience'] = $request->target_audience;
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | UPDATE COURSE
-            |--------------------------------------------------------------------------
-            */
+            
             $course->update($validated);
-
-            /*
-            |--------------------------------------------------------------------------
-            | BULK MODULES
-            |--------------------------------------------------------------------------
-            */
+             \Log::info('After update - check if category changed:', [
+            'new_category_id' => $course->fresh()->category_id,
+            'new_category' => $course->fresh()->category?->name
+        ]);
             if ($request->filled('bulk_modules')) {
                 $this->processBulkModules($course, $request->bulk_modules, true);
             }
