@@ -120,7 +120,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.crypto')}>
+                                    <Link href="/courses?category=crypto-digital">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
@@ -130,7 +130,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.cybersecurity')}>
+                                    <Link href="/courses?category=cybersecurity">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
@@ -140,7 +140,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* AI & Emerging Technology */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('programmes.ai')}>
+                                    <Link href="/courses?category=ai-emerging-tech">
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
