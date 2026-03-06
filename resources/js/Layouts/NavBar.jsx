@@ -167,7 +167,8 @@ export default function NavBar({ auth }) {
                     {/* Certifications */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                            Certifications
+                            <Link 
+                                    href="courses" Certifications ></Link>
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
@@ -226,24 +227,12 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.ai')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">ESG Rix</h4>
+                                        <h4 className="font-semibold text-gray-800">ESG Risk</h4>
                                     </div>
                                     </Link>
                                 </div>
                             </div>
                             
-                            {/* Footer */}
-                            <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
-                                <Link 
-                                    href="courses" 
-                                    className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
-                                >
-                                    View All Programmes
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </Link>
-                            </div>
                         </div>
                     </div>
                     
