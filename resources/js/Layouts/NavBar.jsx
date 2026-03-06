@@ -173,22 +173,77 @@ export default function NavBar({ auth }) {
                             </svg>
                         </button>
                         
+                        {/* Invisible hover bridge */}
                         <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                         
-                        <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 z-50 hidden group-hover:block">
-                            <Link href="/certifications/cgrc" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Certified GRC Professional (CGRC)
-                            </Link>
-                            <Link href="/certifications/cfc" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Certified Financial Crime Specialist (CFCS)
-                            </Link>
-                            <Link href="/certifications/cyber" className="block px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-200">
-                                Certified Cyber Risk Leader (CCRL)
-                            </Link>
-                            <div className="border-t border-gray-100 my-2"></div>
-                            <Link href="/certifications/apply" className="block px-4 py-3 text-blue-900 hover:bg-blue-50 font-medium transition duration-200">
-                                Apply for Certification
-                            </Link>
+                        {/* Dropdown Menu - Expanded with programme details */}
+                        <div className="absolute left-0 mt-2 w-96 bg-white rounded-lg shadow-xl py-3 border border-gray-100 z-50 hidden group-hover:block">
+                            
+                            {/* Programme List */}
+                            <div className="max-h-[480px] overflow-y-auto">
+                                {/* GRC Pathway */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('programmes.grc')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800"> GRC - Governance, Risk & Compliance</h4>
+                                        </div>
+                                    </Link>
+                                </div>
+                                
+                                {/* Financial Crime Prevention */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('programmes.financial-crime')}>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">AML - Anti</h4>
+                                    </div>
+                                    </Link>
+                                </div>
+                                
+                                {/* Crypto & Digital Assets */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('programmes.crypto')}>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
+                                    </div>
+                                    </Link>
+                                </div>
+                                
+                                {/* Cybersecurity & Digital Risk */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('programmes.cybersecurity')}>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
+                                    </div>
+                                    </Link>
+                                </div>
+                                
+                                {/* AI & Emerging Technology */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('programmes.ai')}>
+                                    <div className="flex items-center">
+                                        <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
+                                        <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
+                                    </div>
+                                    </Link>
+                                </div>
+                            </div>
+                            
+                            {/* Footer */}
+                            <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+                                <Link 
+                                    href="courses" 
+                                    className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
+                                >
+                                    View All Programmes
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+                            </div>
                         </div>
                     </div>
                     
