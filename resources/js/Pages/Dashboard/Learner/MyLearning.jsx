@@ -10,7 +10,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
             'Intermediate': 'bg-amber-100 text-amber-800',
             'Advanced': 'bg-emerald-100 text-emerald-800',
             'Expert': 'bg-purple-100 text-purple-800'
-        }; 
+        };  
         return levelMap[level] || 'bg-blue-100 text-blue-800';
     };
 
