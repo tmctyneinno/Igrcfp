@@ -97,5 +97,127 @@ class CertificateController extends Controller
         return 'CERT-' . date('Y') . '-' . str_pad($enrollment->id, 6, '0', STR_PAD_LEFT) . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
     }
 
-    
+    public function badge(Enrollment $enrollment)
+    {
+        if ($enrollment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Generate badge data
+        $badge = [
+            'id' => $enrollment->certificate?->certificate_number,
+            'name' => $enrollment->course->title . ' Badge',
+            'image' => asset('images/badges/' . strtolower(str_replace(' ', '-', $enrollment->course->title)) . '.png'),
+            'criteria' => route('certificate.verify', $enrollment->certificate?->certificate_number),
+            'issuer' => [
+                'name' => 'IGRCFP',
+                'url' => config('app.url')
+            ]
+        ];
+
+        return Inertia::render('Certificate/Badge', [
+            'badge' => $badge,
+            'enrollment' => $enrollment
+        ]);
+    }
+
+    /**
+     * Verify certificate by number
+     */
+    public function verify($certificateNumber)
+    {
+        $certificate = Certificate::where('certificate_number', $certificateNumber)
+            ->with(['enrollment.course', 'enrollment.user'])
+            ->first();
+
+        if (!$certificate) {
+            return Inertia::render('Certificate/Verify', [
+                'valid' => false,
+                'message' => 'Certificate not found'
+            ]);
+        }
+
+        return Inertia::render('Certificate/Verify', [
+            'valid' => true,
+            'certificate' => [
+                'number' => $certificate->certificate_number,
+                'issue_date' => $certificate->created_at->format('F d, Y'),
+                'recipient' => $certificate->enrollment->user->name,
+                'course' => $certificate->enrollment->course->title,
+                'grade' => $certificate->grade,
+                'status' => $certificate->status
+            ]
+        ]);
+    }
+
+    /**
+     * Public certificate registry
+     */
+    public function registry(Request $request)
+    {
+        $query = Certificate::with(['enrollment.course', 'enrollment.user'])
+            ->where('status', 'active');
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('certificate_number', 'LIKE', "%{$search}%")
+                  ->orWhereHas('enrollment.user', function($q) use ($search) {
+                      $q->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('enrollment.course', function($q) use ($search) {
+                      $q->where('title', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        $certificates = $query->paginate(20);
+
+        return Inertia::render('Certificate/Registry', [
+            'certificates' => $certificates,
+            'filters' => $request->only(['search'])
+        ]);
+    }
+
+    /**
+     * Generate certificate
+     */
+    private function generateCertificate(Enrollment $enrollment)
+    {
+        // Generate unique certificate number
+        $certificateNumber = 'IGRCFP-' . strtoupper(uniqid()) . '-' . $enrollment->id;
+
+        return Certificate::create([
+            'enrollment_id' => $enrollment->id,
+            'certificate_number' => $certificateNumber,
+            'issue_date' => now(),
+            'status' => 'active',
+            'grade' => $this->calculateGrade($enrollment),
+            'metadata' => [
+                'generated_by' => 'system',
+                'verification_url' => route('certificate.verify', $certificateNumber)
+            ]
+        ]);
+    }
+
+    /**
+     * Calculate grade based on exam results
+     */
+    private function calculateGrade(Enrollment $enrollment)
+    {
+        $exams = $enrollment->examResults;
+        
+        if ($exams->isEmpty()) {
+            return 'Pass';
+        }
+
+        $average = $exams->avg('score');
+        
+        if ($average >= 90) return 'Distinction';
+        if ($average >= 75) return 'Merit';
+        if ($average >= 60) return 'Pass';
+        
+        return 'Pass';
+    }
 }
