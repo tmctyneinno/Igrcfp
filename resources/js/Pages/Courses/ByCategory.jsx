@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
-export default function GRCPathway({auth}) {
+export default function Index({ auth, courses, filters, filterOptions }) {
     const courses = [
         {
             title: "Advanced Diploma in Governance, Risk, Compliance & Financial Crime Prevention",

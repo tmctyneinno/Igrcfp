@@ -14,7 +14,7 @@ export default function GRCPathway({auth}) {
                 "Develop financial crime prevention strategies",
                 "Lead organisational compliance transformation"
             ]
-        }, 
+        },
         { 
             title: "Enterprise Risk Management for Senior Leaders",
             duration: "3 months",
