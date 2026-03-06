@@ -61,9 +61,26 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     };
 
     // Simple navigation to exam UI (just UI demonstration)
+    // Simple navigation to exam UI - connects to controller
     const goToExamUI = () => {
-        // This just scrolls to the exam section or could navigate in a real app
-        document.getElementById('exams-section')?.scrollIntoView({ behavior: 'smooth' });
+        // Navigate to the exam page using Inertia
+        router.get(route('dashboard.exam.show', { 
+            enrollment: enrollment.id 
+        }), {}, {
+            preserveState: false,
+            preserveScroll: true,
+            onStart: () => {
+                toast.loading('Loading exam...', { id: 'exam-loading' });
+            },
+            onSuccess: () => {
+                toast.dismiss('exam-loading');
+            },
+            onError: (errors) => {
+                toast.dismiss('exam-loading');
+                console.error('Failed to load exam:', errors);
+                toast.error('Failed to load exam. Please try again.');
+            }
+        });
     };
 
     return (
