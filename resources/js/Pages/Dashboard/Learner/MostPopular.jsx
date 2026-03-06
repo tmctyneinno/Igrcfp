@@ -168,7 +168,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                         {/* Add Category Badge */}
                                         {course?.category && (
                                             <Link 
-                                                href={route('courses.by-category', { slug: course.category.slug })}
+                                                href={route('dashboard.courses.by-category', { slug: course.category.slug })}
                                                 className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
                                             >
                                                 {course.category.icon && <span className="mr-1">{course.category.icon}</span>}
