@@ -33,7 +33,6 @@ class CourseCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:course_categories',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:100',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'boolean'
         ]);
