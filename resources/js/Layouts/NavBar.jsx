@@ -189,7 +189,7 @@ export default function NavBar({ auth }) {
                                             <h4 className="font-semibold text-gray-800"> GRC - Governance, Risk & Compliance</h4>
                                         </div>
                                     </Link>
-                                </div>
+                                </div> 
                                 
                                 {/* Financial Crime Prevention */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
