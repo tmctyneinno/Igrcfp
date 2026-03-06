@@ -140,7 +140,8 @@ class DashboardController extends Controller
                 'price',
                 'discount_price',
                 'is_featured',
-                'rating'
+                'rating',
+                'category_id' 
             ])
             ->orderBy('created_at', 'desc')
             ->take(4)
