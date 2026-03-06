@@ -7,8 +7,6 @@ import {
     BookOpenIcon, 
     ClockIcon, 
     DocumentTextIcon,
-    VideoCameraIcon,
-    PresentationChartBarIcon,
     AcademicCapIcon,
     ShieldCheckIcon,
     IdentificationIcon,
@@ -17,7 +15,6 @@ import {
     GlobeAltIcon,
     CheckBadgeIcon,
     SparklesIcon,
-    ArrowPathIcon,
     CameraIcon,
     LockClosedIcon,
     ClipboardDocumentCheckIcon,
@@ -34,7 +31,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     const [isVerifying, setIsVerifying] = useState(false);
     const [cameraActive, setCameraActive] = useState(false);
     const [cameraError, setCameraError] = useState(null);
-    const [isCameraSupported, setIsCameraSupported] = useState(true);
     const [availableCameras, setAvailableCameras] = useState([]);
     const [selectedCamera, setSelectedCamera] = useState('');
     
@@ -46,26 +42,37 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     
-    // Check camera support on mount
-    useEffect(() => {
-        checkCameraSupport();
-        
-        // Cleanup on unmount
-        return () => {
-            stopCamera();
+    // ============== HELPER FUNCTIONS ==============
+    
+    // Get status badge color - THIS WAS MISSING
+    const getStatusBadge = (status) => {
+        const statusMap = {
+            'pending_payment': 'bg-yellow-100 text-yellow-800',
+            'enrolled': 'bg-green-100 text-green-800',
+            'in_progress': 'bg-blue-100 text-blue-800',
+            'completed': 'bg-purple-100 text-purple-800',
+            'certified': 'bg-indigo-100 text-indigo-800',
+            'cancelled': 'bg-red-100 text-red-800'
         };
-    }, []);
+        return statusMap[status] || 'bg-gray-100 text-gray-800';
+    };
+    
+    // Format candidate ID
+    const formatCandidateId = (id) => {
+        if (!id) return 'IGRCFP-' + enrollment?.id?.toString().padStart(6, '0');
+        return id;
+    };
 
+    // ============== CAMERA FUNCTIONS ==============
+    
     // Check if camera is supported
     const checkCameraSupport = async () => {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            setIsCameraSupported(false);
             setCameraError('Camera is not supported in this browser. Please use Chrome, Firefox, or Safari.');
             return;
         }
 
         try {
-            // Check if we can enumerate devices
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
             setAvailableCameras(videoDevices);
@@ -88,16 +95,14 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         }
 
         try {
-            // First check if we have permission by trying to enumerate devices
+            // First check if we have permission
             await navigator.mediaDevices.getUserMedia({ video: true });
             
-            // If permission granted, start the camera
             const constraints = {
                 video: {
                     facingMode: 'user',
                     width: { ideal: 1280 },
-                    height: { ideal: 720 },
-                    aspectRatio: { ideal: 1.7777777778 }
+                    height: { ideal: 720 }
                 }
             };
             
@@ -113,7 +118,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                 streamRef.current = stream;
                 setCameraActive(true);
                 
-                // Wait for video to be ready
                 videoRef.current.onloadedmetadata = () => {
                     videoRef.current.play().catch(e => {
                         console.error('Error playing video:', e);
@@ -124,17 +128,12 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         } catch (error) {
             console.error('Camera error:', error);
             
-            // Handle specific error types
             if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
                 setCameraError('Camera access denied. Please allow camera permissions in your browser settings.');
             } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
                 setCameraError('No camera found. Please connect a camera and try again.');
             } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-                setCameraError('Camera is already in use by another application. Please close other apps using your camera.');
-            } else if (error.name === 'OverconstrainedError') {
-                setCameraError('Camera cannot meet the required constraints. Try a different camera.');
-            } else if (error.name === 'TypeError') {
-                setCameraError('Invalid camera constraints. Please try again.');
+                setCameraError('Camera is already in use by another application.');
             } else {
                 setCameraError(`Unable to access camera: ${error.message || 'Unknown error'}`);
             }
@@ -148,7 +147,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
                 track.stop();
-                track.enabled = false;
             });
             streamRef.current = null;
         }
@@ -167,18 +165,14 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
             const canvas = canvasRef.current;
             const context = canvas.getContext('2d');
             
-            // Set canvas dimensions to match video
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             
-            // Draw video frame to canvas
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Convert to base64 image with reduced quality for smaller payload
             const imageData = canvas.toDataURL('image/jpeg', 0.7);
             setCapturedImage(imageData);
             
-            // Stop camera after capture
             stopCamera();
             
             toast.success('Photo captured successfully!');
@@ -193,6 +187,20 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         startCamera();
     };
 
+    // Handle file upload fallback
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCapturedImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // ============== VERIFICATION FUNCTIONS ==============
+    
     // Handle identity verification
     const handleIdentityVerification = async () => {
         if (!capturedImage) {
@@ -202,7 +210,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
         setIsVerifying(true);
         
-        // Show loading toast
         const loadingToast = toast.loading('Verifying identity...');
         
         try {
@@ -210,7 +217,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                 image: capturedImage
             }, {
                 preserveScroll: true,
-                onSuccess: (response) => {
+                onSuccess: () => {
                     toast.dismiss(loadingToast);
                     toast.success('Identity verified successfully!', { icon: '✓' });
                     setShowIdentityVerification(false);
@@ -253,18 +260,8 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         setSelectedCamera(e.target.value);
     };
 
-    // Handle file upload fallback
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCapturedImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
+    // ============== EXAM FUNCTIONS ==============
+    
     // Handle exam start
     const handleStartExam = (examId) => {
         router.post(route('exam.start', { enrollment: enrollment.id, exam: examId }), {}, {
@@ -287,11 +284,17 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         }
     };
 
-    // Format candidate ID
-    const formatCandidateId = (id) => {
-        if (!id) return 'IGRCFP-' + enrollment?.id?.toString().padStart(6, '0');
-        return id;
-    };
+    // ============== EFFECTS ==============
+    
+    // Check camera support on mount
+    useEffect(() => {
+        checkCameraSupport();
+        
+        // Cleanup on unmount
+        return () => {
+            stopCamera();
+        };
+    }, []);
 
     return (
         <AuthenticatedLayout>
@@ -393,6 +396,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                 <div className="p-6">
                                     <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                                         <div className="flex items-center gap-3">
+                                            {/* Using getStatusBadge here */}
                                             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(enrollment?.status)}`}>
                                                 {enrollment?.status?.replace('_', ' ') || 'Enrolled'}
                                             </span>
@@ -403,7 +407,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                             )}
                                         </div>
                                         <div className="text-sm text-gray-500">
-                                            Enrolled: {new Date(enrollment?.enrollment_date).toLocaleDateString()}
+                                            Enrolled: {enrollment?.enrollment_date ? new Date(enrollment.enrollment_date).toLocaleDateString() : 'N/A'}
                                         </div>
                                     </div>
 
@@ -580,7 +584,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                 Please take a clear photo of your face for verification purposes.
                                             </p>
                                             
-                                            {/* Hidden canvas for capturing */}
                                             <canvas ref={canvasRef} className="hidden" />
                                             
                                             {/* Camera Preview or Captured Image */}
@@ -590,7 +593,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                         <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mb-2" />
                                                         <p className="text-sm text-red-600 mb-3">{cameraError}</p>
                                                         
-                                                        {/* Fallback file upload */}
                                                         <div className="mt-2">
                                                             <p className="text-xs text-gray-500 mb-2">Or upload a photo instead:</p>
                                                             <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
@@ -630,7 +632,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                             muted
                                                             className="w-full h-full object-cover"
                                                         />
-                                                        {/* Camera active indicator */}
                                                         <div className="absolute top-2 right-2 flex items-center gap-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                                                             <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
                                                             Live
@@ -644,7 +645,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                 )}
                                             </div>
 
-                                            {/* Camera Selection (if multiple cameras available) */}
+                                            {/* Camera Selection */}
                                             {availableCameras.length > 1 && !capturedImage && !cameraError && (
                                                 <div className="mb-4">
                                                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -684,7 +685,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                             </button>
                                                         ) : null}
                                                         
-                                                        {/* Fallback option if camera fails */}
                                                         {cameraError && !capturedImage && (
                                                             <div className="w-full">
                                                                 <label className="w-full cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
@@ -893,7 +893,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                         {/* Certification Registry Link */}
                                         <Link
-                                            href={route('dasboard.certificate.registry')}
+                                            href={route('dashboard.certificate.registry')}
                                             className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
                                         >
                                             <GlobeAltIcon className="w-4 h-4" />
