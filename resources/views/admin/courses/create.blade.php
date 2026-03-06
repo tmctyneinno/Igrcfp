@@ -11,7 +11,7 @@
                     Dashboard
                 </a>
             </li>
-            <li>-</li>
+            <li>-</li> 
             <li class="fw-medium">
                 <a href="{{ route('admin.courses.index') }}" class="hover-text-primary">Courses</a>
             </li>
