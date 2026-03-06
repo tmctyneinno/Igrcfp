@@ -34,6 +34,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
         ->name('courses.destroy');
     
     // Course Categories Routes
+    Route::get('/courses/categories/index', [CourseCategoryController::class, 'index'])
+        ->name('course-categories.index');
+     Route::get('/courses/categories/index', [CourseCategoryController::class, 'create'])
+        ->name('course-categories.index'); 
     Route::resource('course-categories', CourseCategoryController::class);
     
     // Course Enrollments
