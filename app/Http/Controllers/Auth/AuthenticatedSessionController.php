@@ -88,7 +88,7 @@ class AuthenticatedSessionController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-
+ 
         // Redirect to dashboard after registration
         return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
     }
