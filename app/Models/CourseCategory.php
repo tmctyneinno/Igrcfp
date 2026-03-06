@@ -9,8 +9,9 @@ class CourseCategory extends Model
 {
     protected $fillable = ['name', 'slug', 'description', 'icon', 'sort_order', 'is_active'];
     
+   
     public function courses()
     {
-        return $this->hasMany(Course::class);
+        return $this->hasMany(Course::class, 'category_id'); // Specify the foreign key
     }
 }
