@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class CourseController extends Controller
 {
   
-    public function index()
+    public function index(Request $request)
     {
         $query = Course::with('instructor', 'category') // Add category here
             ->where('status', 'published');
@@ -68,16 +68,20 @@ class CourseController extends Controller
      */
     public function show($slug)
     {
-        $course = Course::with(['modules' => function($query) {
-            $query->orderBy('module_number');
-        }, 'materials' => function($query) {
-            $query->orderBy('sort_order');
-        }])->where('slug', $slug)->firstOrFail();
+        $course = Course::with(['modules', 'materials', 'category']) // Add 'category' here
+        ->where('slug', $slug)
+        ->firstOrFail();
 
         // Format course data for Inertia
         $formattedCourse = [
             'id' => $course->id,
             'title' => $course->title,
+            'category' => $course->category ? [
+                'id' => $course->category->id,
+                'name' => $course->category->name,
+                'slug' => $course->category->slug,
+                'icon' => $course->category->icon,
+            ] : null,
             'slug' => $course->slug,
             'short_title' => $course->short_title,
             'short_description' => $course->short_description,
