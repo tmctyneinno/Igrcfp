@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
@@ -47,6 +48,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/badge/{enrollment}', [CertificateController::class, 'badge'])->name('dashboard.certificates.badge');
     Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificates.verify');
     Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificates.registry');
+
+    // Exam Routes
+    Route::middleware(['auth'])->prefix('dashboard/exam')->name('exam.')->group(function () {
+        Route::post('/verify-identity/{enrollment}', [ExamController::class, 'verifyIdentity'])->name('verify-identity');
+        Route::post('/start/{enrollment}/{exam}', [ExamController::class, 'start'])->name('start');
+        Route::post('/submit/{enrollment}/{exam}', [ExamController::class, 'submit'])->name('submit');
+    });
 
 
     Route::post('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markComplete'])
