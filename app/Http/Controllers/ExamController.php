@@ -173,4 +173,51 @@ class ExamController extends Controller
             abort(403, 'Unauthorized access');
         }
     }
+
+    public function show(Enrollment $enrollment)
+    {
+        // Check if user owns this enrollment
+        if ($enrollment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access');
+        }
+
+        // Get the exam details
+        $exam = Exam::where('course_id', $enrollment->course_id)
+            ->with(['questions' => function($query) {
+                $query->inRandomOrder();
+            }])
+            ->first();
+
+        if (!$exam) {
+            return redirect()->back()->with('error', 'No exam found for this course');
+        }
+
+        return Inertia::render('Dashboard/Course/Exam', [
+            'enrollment' => [
+                'id' => $enrollment->id,
+                'course_id' => $enrollment->course_id,
+                'user_id' => $enrollment->user_id,
+                'status' => $enrollment->status,
+                'identity_verified' => $enrollment->identity_verified ?? false,
+            ],
+            'exam' => [
+                'id' => $exam->id,
+                'title' => $exam->title,
+                'description' => $exam->description,
+                'duration' => $exam->duration,
+                'total_questions' => $exam->questions->count(),
+                'questions' => $exam->questions->map(function($question) {
+                    return [
+                        'id' => $question->id,
+                        'text' => $question->text,
+                        'type' => $question->type,
+                        'options' => $question->options,
+                        'points' => $question->points ?? 1,
+                    ];
+                }),
+            ],
+            'time_limit' => now()->addMinutes($exam->duration)->toIso8601String(),
+        ]);
+    }
+
 }
