@@ -50,9 +50,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry');
 
     // Exam Routes
-    Route::middleware(['auth'])->prefix('dashboard/exam')->name('exam.')->group(function () {
+    Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
+        Route::get('/verify/{enrollment}', [ExamController::class, 'showVerification'])->name('verify');
         Route::post('/verify-identity/{enrollment}', [ExamController::class, 'verifyIdentity'])->name('verify-identity');
         Route::post('/start/{enrollment}/{exam}', [ExamController::class, 'start'])->name('start');
+        Route::get('/continue/{attempt}', [ExamController::class, 'continue'])->name('continue');
         Route::post('/submit/{enrollment}/{exam}', [ExamController::class, 'submit'])->name('submit');
     });
 
