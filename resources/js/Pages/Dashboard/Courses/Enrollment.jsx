@@ -62,25 +62,8 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
     // Simple navigation to exam UI (just UI demonstration)
     // Simple navigation to exam UI - connects to controller
-    const goToExamUI = () => {
-        // Navigate to the exam page using Inertia
-        router.get(route('dashboard.exam.show', { 
-            enrollment: enrollment.id 
-        }), {}, {
-            preserveState: false,
-            preserveScroll: true,
-            onStart: () => {
-                toast.loading('Loading exam...', { id: 'exam-loading' });
-            },
-            onSuccess: () => {
-                toast.dismiss('exam-loading');
-            },
-            onError: (errors) => {
-                toast.dismiss('exam-loading');
-                console.error('Failed to load exam:', errors);
-                toast.error('Failed to load exam. Please try again.');
-            }
-        });
+    const goToExam = () => {
+        router.get(route('dashboard.exam.show', { enrollment: enrollment.id }));
     };
 
     return (
@@ -326,7 +309,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                     </div>
                                     
                                     <button
-                                        onClick={route('dashboard.exam.show')}
+                                        onClick={goToExam}
                                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                     >
                                         <CameraIcon className="w-5 h-5" />
