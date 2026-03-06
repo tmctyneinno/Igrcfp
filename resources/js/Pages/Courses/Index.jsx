@@ -275,7 +275,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         >
                                             <CourseCard course={course} />
                                         </motion.div>
-                                    ))}
+                                    ))} 
                                 </div>
                             ) : (
                                 <div className="text-center py-16 bg-white rounded-xl">
