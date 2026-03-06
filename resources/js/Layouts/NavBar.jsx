@@ -186,7 +186,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.grc')}>
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                                            <h4 className="font-semibold text-gray-800"> GRC - Governance, Risk & Compliance</h4>
+                                            <h4 className="font-semibold text-gray-800"> Governance, Risk & Compliance</h4>
                                         </div>
                                     </Link>
                                 </div> 
@@ -196,7 +196,7 @@ export default function NavBar({ auth }) {
                                     <Link href={route('programmes.financial-crime')}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">AML - Anti Money Laundering</h4>
+                                        <h4 className="font-semibold text-gray-800">Anti Money Laundering</h4>
                                     </div>
                                     </Link>
                                 </div>
