@@ -83,6 +83,21 @@
                             </div>
 
                             <div class="col-12">
+                                <label class="form-label">Category</label>
+                                <select name="category_id" class="form-select @error('category_id') is-invalid @enderror">
+                                    <option value="">-- No Category --</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id', $course->category_id) == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('category_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
                                 <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required >{{ old('short_description', $course->short_description) }}</textarea>
