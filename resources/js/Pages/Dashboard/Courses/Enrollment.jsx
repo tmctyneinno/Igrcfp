@@ -893,7 +893,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                         {/* Certification Registry Link */}
                                         <Link
-                                            href={route('dasboardcertificate.registry')}
+                                            href={route('dasboard.certificate.registry')}
                                             className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
                                         >
                                             <GlobeAltIcon className="w-4 h-4" />
