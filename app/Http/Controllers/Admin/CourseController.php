@@ -217,9 +217,6 @@ class CourseController extends Controller
         return $request->validate($rules);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Course $course)
     {
         $course->load(['modules.sections', 'materials', 'category']);
@@ -229,9 +226,6 @@ class CourseController extends Controller
         return view('admin.courses.show', compact('course','categories'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Course $course)
     {
         $course->load(['modules', 'materials']);
