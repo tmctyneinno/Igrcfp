@@ -284,25 +284,38 @@ class CourseController extends Controller
         ]);
     }
 
-    public function byCategory($slug)
+    public function byCategory($id)
     {
-        $category = CourseCategory::where('slug', $slug)
+        // Find the category by ID
+        $category = CourseCategory::where('id', $id)
             ->where('is_active', true)
             ->firstOrFail();
         
+        // Get courses for this category
         $courses = Course::with('category')
             ->published()
             ->where('category_id', $category->id)
             ->latest()
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
         
-        return Inertia::render('Courses/Index', [
+        // Get all categories for filter options
+        $categories = CourseCategory::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+        
+        return Inertia::render('Courses/ByCourses', [
             'courses' => $courses,
-            'category' => $category,
+            'category' => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'description' => $category->description,
+                'icon' => $category->icon,
+            ],
             'filters' => ['category_id' => $category->id],
             'filterOptions' => [
                 'levels' => ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
-                'categories' => CourseCategory::where('is_active', true)->get(),
+                'categories' => $categories,
                 'priceTypes' => [
                     ['value' => 'free', 'label' => 'Free'],
                     ['value' => 'paid', 'label' => 'Paid'],
