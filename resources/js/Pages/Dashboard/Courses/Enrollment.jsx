@@ -928,4 +928,73 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                     <p className="text-xs text-amber-700">Claim your verifiable badge</p>
                                                 </div>
                                             </div>
-                                            <span className
+                                            <span className="text-amber-600">→</span>
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <p className="text-gray-600 text-sm">
+                                            Complete all exams and requirements to earn your digital certificate.
+                                        </p>
+                                        
+                                        <div className="bg-gray-50 rounded-lg p-4">
+                                            <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
+                                            <ul className="text-sm text-gray-600 space-y-1">
+                                                <li className="flex items-center gap-2">
+                                                    <span className={`w-4 h-4 rounded-full ${enrollment?.identity_verified ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
+                                                        {enrollment?.identity_verified ? '✓' : ''}
+                                                    </span>
+                                                    Identity verification
+                                                </li>
+                                                <li className="flex items-center gap-2">
+                                                    <span className={`w-4 h-4 rounded-full ${examResults?.passed ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
+                                                        {examResults?.passed ? '✓' : ''}
+                                                    </span>
+                                                    Pass all exams
+                                                </li>
+                                                <li className="flex items-center gap-2">
+                                                    <span className={`w-4 h-4 rounded-full ${progress === 100 ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
+                                                        {progress === 100 ? '✓' : ''}
+                                                    </span>
+                                                    100% course completion
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        {/* Certification Registry Link */}
+                                        <Link
+                                            href={route('certificate.registry')}
+                                            className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
+                                        >
+                                            <GlobeAltIcon className="w-4 h-4" />
+                                            View Certification Registry
+                                        </Link>
+                                    </div>
+                                )}
+                            </motion.div>
+
+                            {/* Plagiarism & Security Notice */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="bg-gray-50 rounded-xl p-4"
+                            >
+                                <div className="flex items-start gap-3">
+                                    <ShieldCheckIcon className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-900 mb-1">Academic Integrity</p>
+                                        <p className="text-xs text-gray-600">
+                                            All submissions are monitored by our plagiarism detection software. 
+                                            Your unique candidate ID ensures your work is properly attributed.
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}
