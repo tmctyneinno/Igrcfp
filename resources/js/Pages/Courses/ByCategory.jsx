@@ -155,7 +155,7 @@ export default function Index({ auth, courses, filters, filterOptions, category 
     return (
         <>
         <GuestLayout auth={auth}>
-            <Head title={currentCategory ? `${content.title} | IGRCFP` : 'All Courses | IGRCFP'} />
+            <Head title={currentCategory ? `${currentCategory.title} | IGRCFP` : 'All Courses | IGRCFP'} />
             
             {/* Hero Section */}
             <div className="relative bg-gradient-to-r from-blue-900 to-blue-800 py-20">
