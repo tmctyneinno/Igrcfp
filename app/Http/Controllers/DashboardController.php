@@ -53,6 +53,12 @@ class DashboardController extends Controller
                     'price' => $course->price,
                     'discount_price' => $course->discount_price,
                     'modules_count' => $course->modules_count,
+                    'category' => $course->category ? [
+                        'id' => $course->category->id,
+                        'name' => $course->category->name,
+                        'slug' => $course->category->slug,
+                        'icon' => $course->category->icon,
+                    ] : null,
                 ];
             });
         
@@ -63,7 +69,7 @@ class DashboardController extends Controller
         if ($user) {
             $enrolledCourses = Enrollment::where('user_id', $user->id)
                 ->with(['course' => function($query) {
-                    $query->withCount('modules');
+                   $query->withCount('modules')->with('category');
                 }])
                 ->take(4)
                 ->get()
@@ -88,6 +94,12 @@ class DashboardController extends Controller
                         'completed_modules' => $enrollment->completed_modules ?? 0,
                         'format' => $course->format,
                         'status' => $enrollment->status ?? 'enrolled',
+                        'category' => $course->category ? [
+                            'id' => $course->category->id,
+                            'name' => $course->category->name,
+                            'slug' => $course->category->slug,
+                            'icon' => $course->category->icon,
+                        ] : null,
                     ];
                 })
                 ->filter() // Remove null values
@@ -96,6 +108,7 @@ class DashboardController extends Controller
         
         // Get popular courses
         $popularCourses = Course::published()
+            ->with('category')
             ->where('is_popular', 1)
             ->select([
                 'id',
