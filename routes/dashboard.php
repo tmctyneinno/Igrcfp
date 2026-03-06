@@ -18,8 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
 
     Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
-    Route::get('/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
+    Route::get('dashboard/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
     Route::get('dashboard/courses/{slug}', [DashboardController::class, 'courseSlug'])->name('dashboard.courses.show');
+    Route::get('/dashboard/category/{slug}', [DashboardController::class, 'byCategory'])->name('dashboard.courses.by-category');
     // Cart routes
     Route::get('/cart/index', [CartController::class, 'index'])->name('dashboard.cart.index');
     // Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('dashboard.cart.add');
