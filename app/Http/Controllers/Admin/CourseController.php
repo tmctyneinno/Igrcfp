@@ -241,24 +241,31 @@ class CourseController extends Controller
      */
     public function update(Request $request, $slug)
     {
-        \Log::info('Update method called for course: ' . $slug);
-        \Log::info('Request data:', $request->except(['image', 'banner_image', 'video']));
-
+        \Log::info('=== COURSE UPDATE DEBUG ===');
+        \Log::info('Raw request category_id:', ['category_id' => $request->category_id]);
+    
         // Find course by slug or id
         $course = is_numeric($slug)
             ? Course::findOrFail($slug)
             : Course::where('slug', $slug)->firstOrFail();
-
+        \Log::info('Current course category before update:', [
+            'course_id' => $course->id,
+            'current_category_id' => $course->category_id,
+            'current_category' => $course->category?->name
+        ]);
         $validated = $this->validateRequest($request, $course);
+            \Log::info('After validation - category_id:', [
+            'validated_category_id' => $validated['category_id'] ?? null,
+            'all_validated_keys' => array_keys($validated)
+        ]);
         unset($validated['deleted_at']);
 
         try {
 
-            /*
-            |--------------------------------------------------------------------------
-            | IMAGE UPLOAD
-            |--------------------------------------------------------------------------
-            */
+            \Log::info('Before update - category_id value:', [
+                'category_id_in_validated' => $validated['category_id'] ?? 'NOT SET'
+            ]);
+            
             if ($request->hasFile('image')) {
                 if ($course->image && Storage::disk('public')->exists($course->image)) {
                     Storage::disk('public')->delete($course->image);
