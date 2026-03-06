@@ -39,6 +39,22 @@
                     <li>
                         <a href="{{ route('admin.courses.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
                     </li>
+                    <!-- Add separator line -->
+                    <li class="sidebar-separator">
+                        <hr class="my-2 mx-3 opacity-25">
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.course-categories.index') }}">
+                            <i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> 
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.course-categories.create') }}">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                            Add Category
+                        </a>
+                    </li>
                 </ul>
             </li>
 
