@@ -5,18 +5,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
 use App\Models\Exam;
+use App\Models\ExamAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ExamController extends Controller
 {
     /**
-     * Verify identity with photo capture
+     * Show identity verification page
+     */
+    public function showVerification(Enrollment $enrollment)
+    {
+        $this->authorize('access', $enrollment);
+
+        return Inertia::render('Exam/Verification', [
+            'enrollment' => $enrollment->load('course')
+        ]);
+    }
+
+    /**
+     * Verify identity with photo
      */
     public function verifyIdentity(Request $request, Enrollment $enrollment)
     {
+        $this->authorize('access', $enrollment);
+
         $request->validate([
-            'image' => 'required|string' // Base64 image
+            'image' => 'required|string'
         ]);
 
         // Store verification image
@@ -26,20 +42,15 @@ class ExamController extends Controller
         $filename = 'verifications/' . $enrollment->id . '/' . time() . '.jpg';
         Storage::disk('public')->put($filename, $image);
 
-        // Update enrollment with verification status
+        // Update enrollment
         $enrollment->update([
             'identity_verified' => true,
             'verified_at' => now(),
             'verification_image' => $filename
         ]);
 
-        // Log verification
-        activity()
-            ->performedOn($enrollment)
-            ->causedBy(auth()->user())
-            ->log('Identity verified');
-
-        return back()->with('success', 'Identity verified successfully');
+        return redirect()->route('dashboard.courses.show', $enrollment)
+            ->with('success', 'Identity verified successfully');
     }
 
     /**
@@ -47,111 +58,119 @@ class ExamController extends Controller
      */
     public function start(Enrollment $enrollment, Exam $exam)
     {
+        $this->authorize('access', $enrollment);
+
         // Check if identity is verified
         if (!$enrollment->identity_verified) {
-            return back()->with('error', 'Please verify your identity first');
+            return redirect()->back()->with('error', 'Please verify your identity first');
         }
 
-        // Check if exam already started
-        $examAttempt = $enrollment->examAttempts()
-            ->where('exam_id', $exam->id)
-            ->first();
-
-        if (!$examAttempt) {
-            // Create new attempt with randomised questions
-            $questions = $exam->questions()
-                ->inRandomOrder()
-                ->limit($exam->question_count)
-                ->get();
-
-            $examAttempt = $enrollment->examAttempts()->create([
-                'exam_id' => $exam->id,
+        // Check if exam already exists
+        $attempt = ExamAttempt::firstOrCreate(
+            [
+                'enrollment_id' => $enrollment->id,
+                'exam_id' => $exam->id
+            ],
+            [
                 'started_at' => now(),
                 'expires_at' => now()->addMinutes($exam->duration),
-                'questions' => $questions->pluck('id'),
                 'status' => 'in_progress'
+            ]
+        );
+
+        // If exam already completed, don't allow restart
+        if ($attempt->status === 'completed') {
+            return redirect()->back()->with('error', 'Exam already completed');
+        }
+
+        // Get randomized questions
+        $questions = $exam->questions()
+            ->inRandomOrder()
+            ->get()
+            ->map(fn($q) => [
+                'id' => $q->id,
+                'text' => $q->text,
+                'options' => $q->options,
+                'type' => $q->type
             ]);
-        }
 
-        return Inertia::render('Exam/Take', [
-            'exam' => $exam,
-            'attempt' => $examAttempt,
-            'enrollment' => $enrollment
+        return Inertia::render('Exam/Taking', [
+            'exam' => [
+                'id' => $exam->id,
+                'title' => $exam->title,
+                'duration' => $exam->duration,
+                'questions' => $questions,
+                'total_questions' => $questions->count()
+            ],
+            'attempt' => [
+                'id' => $attempt->id,
+                'started_at' => $attempt->started_at,
+                'expires_at' => $attempt->expires_at,
+                'status' => $attempt->status
+            ],
+            'enrollment' => [
+                'id' => $enrollment->id,
+                'course_id' => $enrollment->course_id
+            ]
         ]);
     }
 
     /**
-     * Submit exam answers
+     * Continue an in-progress exam
      */
-    public function submit(Request $request, Enrollment $enrollment, Exam $exam)
+    public function continue(ExamAttempt $attempt)
     {
-        $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required|string'
-        ]);
+        $this->authorize('access', $attempt->enrollment);
 
-        $examAttempt = $enrollment->examAttempts()
-            ->where('exam_id', $exam->id)
-            ->where('status', 'in_progress')
-            ->firstOrFail();
-
-        // Check if exam expired
-        if (now()->gt($examAttempt->expires_at)) {
-            return back()->with('error', 'Exam time expired');
+        if ($attempt->status !== 'in_progress') {
+            return redirect()->route('dashboard.courses.show', $attempt->enrollment)
+                ->with('error', 'Exam is no longer in progress');
         }
 
-        // Calculate score
-        $score = $this->calculateScore($exam, $request->answers);
-        
-        // Check for plagiarism
-        $plagiarismScore = $this->checkPlagiarism($request->answers);
+        $exam = $attempt->exam;
+        $enrollment = $attempt->enrollment;
 
-        // Update attempt
-        $examAttempt->update([
-            'answers' => $request->answers,
-            'score' => $score,
-            'plagiarism_score' => $plagiarismScore,
-            'completed_at' => now(),
-            'status' => $plagiarismScore > 30 ? 'flagged' : 'completed'
+        // Get questions (maintain order from original attempt)
+        $questions = $exam->questions()
+            ->whereIn('id', array_keys($attempt->answers ?? []))
+            ->orWhereNotIn('id', array_keys($attempt->answers ?? []))
+            ->get()
+            ->map(fn($q) => [
+                'id' => $q->id,
+                'text' => $q->text,
+                'options' => $q->options,
+                'type' => $q->type
+            ]);
+
+        return Inertia::render('Exam/Taking', [
+            'exam' => [
+                'id' => $exam->id,
+                'title' => $exam->title,
+                'duration' => $exam->duration,
+                'questions' => $questions,
+                'total_questions' => $questions->count()
+            ],
+            'attempt' => [
+                'id' => $attempt->id,
+                'started_at' => $attempt->started_at,
+                'expires_at' => $attempt->expires_at,
+                'answers' => $attempt->answers ?? [],
+                'status' => $attempt->status
+            ],
+            'enrollment' => [
+                'id' => $enrollment->id,
+                'course_id' => $enrollment->course_id
+            ]
         ]);
-
-        // If diploma level, mark for manual review
-        if ($exam->level === 'diploma' || $exam->level === 'advanced_diploma') {
-            $examAttempt->update(['needs_review' => true]);
-            
-            // Notify admins
-            event(new ExamNeedsReview($examAttempt));
-        }
-
-        return redirect()->route('dashboard.courses.show', $enrollment)
-            ->with('success', 'Exam submitted successfully');
     }
 
     /**
-     * Calculate exam score
+     * Authorize that user owns this enrollment
      */
-    private function calculateScore($exam, $answers)
+    private function authorize(string $ability, $enrollment)
     {
-        $totalQuestions = count($answers);
-        $correctAnswers = 0;
-
-        foreach ($answers as $questionId => $answer) {
-            $question = Question::find($questionId);
-            if ($question && $question->correct_answer === $answer) {
-                $correctAnswers++;
-            }
+        if ($enrollment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access');
         }
-
-        return ($correctAnswers / $totalQuestions) * 100;
-    }
-
-    /**
-     * Check for plagiarism
-     */
-    private function checkPlagiarism($answers)
-    {
-        // Implement plagiarism detection logic
-        // This could integrate with external services
-        return rand(0, 20); // Placeholder
     }
 }
