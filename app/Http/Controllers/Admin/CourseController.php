@@ -23,6 +23,7 @@ class CourseController extends Controller
     {
         $allCourses = Course::all();
         $query = Course::withCount('modules');
+        $categories = \App\Models\CourseCategory::orderBy('name')->get();
     
         $courses = $query->get();
         $totalCourses = Course::count();
