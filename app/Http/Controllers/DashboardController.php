@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseCategory;
 use App\Models\Course;
 
 use Illuminate\Foundation\Application;
@@ -47,7 +48,7 @@ class DashboardController extends Controller
                     'courses_count' => $category->courses_count,
                 ];
             });
-        // Get available courses
+        // Get available courses with category
         $courses = Course::published()
             ->with('category')
             ->withCount('modules')
