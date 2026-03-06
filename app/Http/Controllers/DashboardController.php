@@ -28,7 +28,6 @@ class DashboardController extends Controller
             
             return inertia('Dashboard/Index', [
                 'enrollmentRedirect' => $enrollmentRedirect,
-                
             ]);
         }
         
@@ -46,8 +45,8 @@ class DashboardController extends Controller
                     'title' => $course->title,
                     'slug' => $course->slug,
                     'short_description' => $course->short_description,
-                    'banner_image' => $course->banner_image, 
-                    'image_url' => $course->image_url, 
+                    'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                    'image_url' => $course->image_url,
                     'level' => $course->level,
                     'duration' => $course->duration,
                     'price' => $course->price,
@@ -56,35 +55,47 @@ class DashboardController extends Controller
                 ];
             });
         
-        // Get user's enrolled courses (you'll need to adjust based on your enrollment logic)
+        // Get user's enrolled courses - Check if user is authenticated first
         $user = auth()->user();
-        $enrolledCourses = $user->enrollments()
-            ->with(['course' => function($query) {
-                $query->withCount('modules');
-            }]) 
-            ->take(4)
-            ->get()
-            ->map(function ($enrollment) {
-                $course = $enrollment->course;
-                return [
-                    'id' => $course->id,
-                    'title' => $course->title,
-                    'slug' => $course->slug,
-                    'short_description' => $course->short_description,
-                    'banner_image' => $course->banner_image, 
-                    'image_url' => $course->image_url, 
-                    'level' => $course->level,
-                    'duration' => $course->duration,
-                    'progress' => $enrollment->progress, // Assuming you have progress tracking
-                    'modules_count' => $course->modules_count,
-                    'completed_modules' => $enrollment->completed_modules ?? 0,
-                    'format' => $course->format,
-                ];
-            });
+        $enrolledCourses = collect(); // Empty collection by default
         
+        if ($user) {
+            $enrolledCourses = Enrollment::where('user_id', $user->id)
+                ->with(['course' => function($query) {
+                    $query->withCount('modules');
+                }])
+                ->take(4)
+                ->get()
+                ->map(function ($enrollment) {
+                    // Check if course exists
+                    if (!$enrollment->course) {
+                        return null;
+                    }
+                    
+                    $course = $enrollment->course;
+                    return [
+                        'id' => $course->id,
+                        'title' => $course->title,
+                        'slug' => $course->slug,
+                        'short_description' => $course->short_description,
+                        'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                        'image_url' => $course->image_url,
+                        'level' => $course->level,
+                        'duration' => $course->duration,
+                        'progress' => $enrollment->progress ?? 0,
+                        'modules_count' => $course->modules_count ?? 0,
+                        'completed_modules' => $enrollment->completed_modules ?? 0,
+                        'format' => $course->format,
+                        'status' => $enrollment->status ?? 'enrolled',
+                    ];
+                })
+                ->filter() // Remove null values
+                ->values(); // Reset array keys
+        }
+        
+        // Get popular courses
         $popularCourses = Course::published()
             ->where('is_popular', 1)
-            // ->withCount('enrollments')
             ->select([
                 'id',
                 'title',
@@ -104,22 +115,35 @@ class DashboardController extends Controller
             ->take(4)
             ->get()
             ->map(function ($course) {
-            // Manually add the accessor values
-            $course->image = $course->image? Storage::url($course->image) : null;
-            $course->banner_image = $course->banner_image ? Storage::url($course->banner_image) : null;
-            return $course;
-        });
-         // dd($popularCourses);
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'slug' => $course->slug,
+                    'short_description' => $course->short_description,
+                    'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                    'image_url' => $course->image ? Storage::url($course->image) : null,
+                    'level' => $course->level,
+                    'format' => $course->format,
+                    'duration' => $course->duration,
+                    'price' => $course->price,
+                    'discount_price' => $course->discount_price,
+                    'is_featured' => $course->is_featured,
+                    'rating' => $course->rating,
+                ];
+            });
+        
+        // Calculate stats
+        $stats = [
+            'total_courses' => $enrolledCourses->count(),
+            'completed' => $enrolledCourses->where('status', 'completed')->count(),
+            'in_progress' => $enrolledCourses->where('status', 'enrolled')->count(),
+        ];
+        
         return Inertia::render('Dashboard/Index', [
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
             'popularCourses' => $popularCourses,
-            'enrolledCourses' => $enrolledCourses,
-            'stats' => [
-                'total_courses' => $enrolledCourses->count(),
-                'completed' => $enrolledCourses->where('enrollment_status', 'completed')->count(),
-                'in_progress' => $enrolledCourses->where('enrollment_status', 'enrolled')->count(),
-            ]
+            'stats' => $stats,
         ]);
     }
 
