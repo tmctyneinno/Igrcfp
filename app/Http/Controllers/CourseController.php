@@ -14,8 +14,16 @@ class CourseController extends Controller
   
     public function index()
     {
+        $query = Course::with('instructor', 'category') // Add category here
+            ->where('status', 'published');
+
+        // Filter by category if provided
+        if ($request->has('category') && $request->category) {
+            $query->where('category_id', $request->category);
+        }
+
         // Fetch courses with instructor and reviews count
-        $courses = Course::with('instructor')
+        $courses = Course::with('instructor','category')
             ->where('status', 'published') 
             ->orderBy('created_at', 'desc')
             ->get()
@@ -50,7 +58,8 @@ class CourseController extends Controller
             }); 
         // Return Inertia page (React)
         return Inertia::render('Welcome', [
-            'courses' => $courses
+            'courses' => $courses,
+            'categories' => CourseCategory::active()->ordered()->get()
         ]);
     }
 
