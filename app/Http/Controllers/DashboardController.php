@@ -33,6 +33,7 @@ class DashboardController extends Controller
         
         // Get available courses
         $courses = Course::published()
+            ->with('category')
             ->withCount('modules')
             ->orderBy('is_featured', 'desc')
             ->orderBy('is_popular', 'desc')
