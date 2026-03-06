@@ -152,7 +152,6 @@ export default function MostPopular({ initialCourses = [] }) {
                                             className="absolute top-3 left-3 rounded-full bg-purple-200 px-3 py-1 text-xs font-medium text-purple-800 shadow-lg"
                                             // className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
                                         >
-                                            {course.category.icon && <span className="mr-1">{course.category.icon}</span>}
                                             {course.category.name}
                                         </Link>
                                     )}
