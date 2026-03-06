@@ -308,13 +308,13 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         </p>
                                     </div>
                                     
-                                    <button
-                                        onClick={goToExam}
+                                   <Link
+                                        href={route('dashboard.exam.show', { enrollment: enrollment.id })}
                                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                     >
                                         <CameraIcon className="w-5 h-5" />
                                         Start Camera (UI Demo)
-                                    </button>
+                                    </Link>
                                 </div>
                             </motion.div>
 
