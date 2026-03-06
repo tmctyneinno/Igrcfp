@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/start/{enrollment}/{exam}', [ExamController::class, 'start'])->name('start');
         Route::get('/continue/{attempt}', [ExamController::class, 'continue'])->name('continue');
         Route::post('/submit/{enrollment}/{exam}', [ExamController::class, 'submit'])->name('submit');
+        Route::get('/submit/show', [ExamController::class, 'show'])->name('dashboard.exam.show');
     });
 
 
