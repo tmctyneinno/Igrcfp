@@ -176,7 +176,7 @@ export default function Index({ auth, courses, filters, filterOptions, category 
                             {category.name}
                         </h1>
                         <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-                            {content.description}
+                            {category.description}
                         </p>
                     </div>
                 </div>
@@ -243,7 +243,7 @@ export default function Index({ auth, courses, filters, filterOptions, category 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                            {currentCategory ? content.title : 'All'} Courses
+                            {currentCategory ? category.name : 'All'} Courses
                         </h2>
                         <p className="text-gray-600 text-lg">
                             {courses.total > 0 
