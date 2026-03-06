@@ -304,7 +304,7 @@ class CourseController extends Controller
             ->orderBy('name')
             ->get();
         
-        return Inertia::render('Courses/ByCourses', [
+        return Inertia::render('Courses/ByCategory', [
             'courses' => $courses,
             'category' => [
                 'id' => $category->id,
