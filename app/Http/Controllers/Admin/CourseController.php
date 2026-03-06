@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\CourseCategory;
 use DB;
 
 class CourseController extends Controller
@@ -23,7 +24,11 @@ class CourseController extends Controller
     {
         $allCourses = Course::all();
         $query = Course::withCount('modules');
-        $categories = \App\Models\CourseCategory::orderBy('name')->get();
+        $categories = CourseCategory::orderBy('name')->get();
+        // Add category filter to query
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
+        }
     
         $courses = $query->get();
         $totalCourses = Course::count();
@@ -57,7 +62,7 @@ class CourseController extends Controller
         $perPage = $request->get('per_page', 10);
         $courses = $query->paginate($perPage);
         
-        return view('admin.courses.index', compact('courses'));
+        return view('admin.courses.index', compact('courses', 'categories'));
     }
 
     public function bulkAction(Request $request)
