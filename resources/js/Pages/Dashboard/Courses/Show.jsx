@@ -602,7 +602,7 @@ const startEnrollment = (course) => {
               onClick={() => startEnrollment(course)}
               className="bg-white text-blue-900 font-bold py-4 px-12 rounded-xl hover:bg-gray-100 transition transform hover:-translate-y-0.5 text-lg"
             >
-              Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
+              Enroll Now - €{hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
             </button>
           </div>
         </section>
