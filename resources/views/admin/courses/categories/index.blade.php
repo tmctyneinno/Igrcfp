@@ -35,7 +35,6 @@
                         <th>Name</th>
                         <th>Slug</th>
                         <th>Courses Count</th>
-                        <th>Icon</th>
                         <th>Status</th>
                         <th>Sort Order</th>
                         <th>Actions</th>
@@ -48,13 +47,7 @@
                         <td>{{ $category->name }}</td>
                         <td><code>{{ $category->slug }}</code></td>
                         <td><span class="badge bg-primary">{{ $category->courses_count ?? 0 }}</span></td>
-                        <td>
-                            @if($category->icon)
-                                <iconify-icon icon="{{ $category->icon }}" class="icon"></iconify-icon>
-                            @else
-                                <span class="text-muted">—</span>
-                            @endif
-                        </td>
+                        
                         <td>
                             <span class="badge bg-{{ $category->is_active ? 'success' : 'secondary' }}">
                                 {{ $category->is_active ? 'Active' : 'Inactive' }}
