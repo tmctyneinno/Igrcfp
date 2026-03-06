@@ -43,6 +43,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show'); 
+Route::get('/courses/category/{slug}', [CourseController::class, 'byCategory'])->name('courses.by-category');
 // Course enrollment routes
 Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
 Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
