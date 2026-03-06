@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\ModuleController;
 use Illuminate\Support\Facades\Route;
@@ -32,18 +33,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])
         ->name('courses.destroy');
     
-    // Course Categories
-    Route::get('/course-categories', [CourseController::class, 'categories'])
-        ->name('course-categories.index');
-     
-    Route::post('/course-categories', [CourseCategoryController::class, 'storeCategory'])
-        ->name('course-categories.create');
-    
-    Route::put('/course-categories/{category}', [CourseController::class, 'updateCategory'])
-        ->name('courses.categories.update');
-    
-    Route::delete('/course-categories/{category}', [CourseController::class, 'destroyCategory'])
-        ->name('courses.categories.destroy');
+    // Course Categories Routes
+    Route::resource('course-categories', CourseCategoryController::class);
     
     // Course Enrollments
     Route::get('/courses/{course}/enrollments', [CourseController::class, 'enrollments'])
