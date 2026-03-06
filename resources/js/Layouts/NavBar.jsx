@@ -100,7 +100,7 @@ export default function NavBar({ auth }) {
                             <div className="max-h-[480px] overflow-y-auto">
                                 {/* GRC Pathway */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'grc' })}>
+                                    <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                                             <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
@@ -110,7 +110,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Financial Crime Prevention */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'grc' })}>
+                                    <Link href={route('courses.by-category', { slug: 'financial-crime' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
@@ -120,7 +120,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Crypto & Digital Assets */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'grc' })}>
+                                    <Link href={route('courses.by-category', { slug: 'crypto-digital-assets' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
@@ -130,7 +130,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* Cybersecurity & Digital Risk */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'grc' })}>
+                                    <Link href={route('courses.by-category', { slug: 'cybersecurity-digital-risk' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
@@ -140,7 +140,7 @@ export default function NavBar({ auth }) {
                                 
                                 {/* AI & Emerging Technology */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'grc' })}>
+                                    <Link href={route('courses.by-category', { slug: 'ai-emerging-technology' })}>
                                     <div className="flex items-center">
                                         <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
                                         <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
