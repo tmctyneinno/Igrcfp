@@ -15,6 +15,44 @@
         </ul>
     </div>
 
+     <!-- Success Message -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <iconify-icon icon="mdi:check-circle" class="icon text-xl"></iconify-icon>
+                <span>{{ session('success') }}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Error Message -->
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <iconify-icon icon="mdi:alert-circle" class="icon text-xl"></iconify-icon>
+                <span>{{ session('error') }}</span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Validation Errors -->
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <iconify-icon icon="mdi:alert-circle" class="icon text-xl"></iconify-icon>
+                <strong>Please fix the following errors:</strong>
+            </div>
+            <ul class="mb-0 ps-4">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <form action="{{ isset($category) ? route('admin.course-categories.update', $category) : route('admin.course-categories.store') }}" 
