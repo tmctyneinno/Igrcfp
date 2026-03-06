@@ -30,7 +30,23 @@ class DashboardController extends Controller
                 'enrollmentRedirect' => $enrollmentRedirect,
             ]);
         }
-        
+        // Get course categories with course counts
+        $categories = CourseCategory::where('is_active', true)
+            ->withCount('courses')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->take(6)
+            ->get()
+            ->map(function ($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'icon' => $category->icon,
+                    'description' => $category->description,
+                    'courses_count' => $category->courses_count,
+                ];
+            });
         // Get available courses
         $courses = Course::published()
             ->with('category')
