@@ -146,6 +146,15 @@ export default function MostPopular({ initialCourses = [] }) {
                                     <div className="absolute top-3 left-3 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                         🔥 Popular
                                     </div> 
+                                    {course?.category && (
+                                        <Link 
+                                            href={route('dashboard.courses.by-category', { slug: course.category.slug })}
+                                            className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
+                                        >
+                                            {course.category.icon && <span className="mr-1">{course.category.icon}</span>}
+                                            {course.category.name}
+                                        </Link>
+                                    )}
                                 </div>
 
                                 {/* CONTENT */}
@@ -165,16 +174,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                         <span className={`text-xs font-semibold px-3 capitalize py-1 rounded-full ${getLevelBadgeColor(course?.level)}`}>
                                             {course?.level || 'All Levels'}
                                         </span>
-                                        {/* Add Category Badge */}
-                                        {course?.category && (
-                                            <Link 
-                                                href={route('dashboard.courses.by-category', { slug: course.category.slug })}
-                                                className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
-                                            >
-                                                {course.category.icon && <span className="mr-1">{course.category.icon}</span>}
-                                                {course.category.name}
-                                            </Link>
-                                        )}
+                                        
                                         
                                         <div className="flex items-center space-x-3">
                                             {course?.duration && (
