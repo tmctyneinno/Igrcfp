@@ -47,7 +47,7 @@ class CourseCategoryController extends Controller
 
     public function edit(CourseCategory $courseCategory)
     {
-        return view('admin.course-categories.form', ['category' => $courseCategory]);
+        return view('admin.courses.categories.edit', ['category' => $courseCategory]);
     }
 
     public function update(Request $request, CourseCategory $courseCategory)
