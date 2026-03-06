@@ -49,7 +49,7 @@ export default function CourseCategories({ categories = [] }) {
                         href={route('dashboard.courses.index')}
                         className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
                     >
-                        View All Course →
+                        View All Courses →
                     </Link>
                 )}
             </div>
