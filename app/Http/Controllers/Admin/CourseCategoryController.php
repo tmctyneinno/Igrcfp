@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Admin/CourseCategoryController.php
 
 namespace App\Http\Controllers\Admin;
 
