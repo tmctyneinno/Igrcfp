@@ -46,13 +46,13 @@
                     <li>
                         <a href="{{ route('admin.course-categories.index') }}">
                             <i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> 
-                            Categories
+                            Add Category
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('admin.course-categories.create') }}">
                             <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
-                            Add Category
+                            Category
                         </a>
                     </li>
                 </ul>
