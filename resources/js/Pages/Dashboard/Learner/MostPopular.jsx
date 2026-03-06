@@ -143,9 +143,9 @@ export default function MostPopular({ initialCourses = [] }) {
                                             e.target.src = '/images/fallback-course.jpg';
                                         }}
                                     />
-                                    <div className="absolute top-3 left-3 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
+                                    {/* <div className="absolute top-3 left-3 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                         🔥 Popular
-                                    </div> 
+                                    </div>  */}
                                     {course?.category && (
                                         <Link 
                                             href={route('dashboard.courses.by-category', { slug: course.category.slug })}
