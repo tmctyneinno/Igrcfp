@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import toast from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
     BookOpenIcon, 
     ClockIcon, 
@@ -18,30 +17,13 @@ import {
     CameraIcon,
     LockClosedIcon,
     ClipboardDocumentCheckIcon,
-    PhotoIcon,
-    ExclamationTriangleIcon,
-    PlayCircleIcon,
-    ArrowPathIcon
+    PlayCircleIcon
 } from '@heroicons/react/24/outline';
 
 export default function EnrollmentIndex({ course, enrollment, modules: initialModules = [], candidate, examResults }) {
     // State management
     const [modules] = useState(initialModules);
     const [progress] = useState(enrollment?.progress || 0);
-    const [showIdentityVerification, setShowIdentityVerification] = useState(false);
-    const [capturedImage, setCapturedImage] = useState(null);
-    const [isVerifying, setIsVerifying] = useState(false);
-    const [cameraActive, setCameraActive] = useState(false);
-    const [cameraError, setCameraError] = useState(null);
-    const [availableCameras, setAvailableCameras] = useState([]);
-    const [selectedCamera, setSelectedCamera] = useState('');
-    const [processingExam, setProcessingExam] = useState(null);
-    const [pendingExamId, setPendingExamId] = useState(null);
-    
-    // Refs for camera
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const streamRef = useRef(null);
     
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
@@ -78,281 +60,11 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         return id;
     };
 
-    // ============== CAMERA FUNCTIONS ==============
-    
-    // Check if camera is supported
-    const checkCameraSupport = async () => {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            setCameraError('Camera is not supported in this browser. Please use Chrome, Firefox, or Safari.');
-            return;
-        }
-
-        try {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            setAvailableCameras(videoDevices);
-            
-            if (videoDevices.length === 0) {
-                setCameraError('No camera detected. Please connect a camera and try again.');
-            }
-        } catch (error) {
-            console.error('Error enumerating devices:', error);
-        }
+    // Simple navigation to exam UI (just UI demonstration)
+    const goToExamUI = () => {
+        // This just scrolls to the exam section or could navigate in a real app
+        document.getElementById('exams-section')?.scrollIntoView({ behavior: 'smooth' });
     };
-    
-    // Start camera
-    const startCamera = async () => {
-        setCameraError(null);
-        
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            setCameraError('Your browser does not support camera access. Please use a modern browser like Chrome, Firefox, or Safari.');
-            return;
-        }
-
-        try {
-            const constraints = {
-                video: {
-                    facingMode: 'user',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            };
-            
-            // If a specific camera is selected, use its deviceId
-            if (selectedCamera) {
-                constraints.video.deviceId = { exact: selectedCamera };
-            }
-            
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                streamRef.current = stream;
-                setCameraActive(true);
-                
-                videoRef.current.onloadedmetadata = () => {
-                    videoRef.current.play().catch(e => {
-                        console.error('Error playing video:', e);
-                        setCameraError('Could not start video playback.');
-                    });
-                };
-            }
-        } catch (error) {
-            console.error('Camera error:', error);
-            
-            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                setCameraError('Camera access denied. Please allow camera permissions in your browser settings.');
-            } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-                setCameraError('No camera found. Please connect a camera and try again.');
-            } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-                setCameraError('Camera is already in use by another application.');
-            } else {
-                setCameraError(`Unable to access camera: ${error.message || 'Unknown error'}`);
-            }
-            
-            toast.error('Failed to start camera. Please check permissions.');
-        }
-    };
-
-    // Stop camera
-    const stopCamera = () => {
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => {
-                track.stop();
-            });
-            streamRef.current = null;
-        }
-        
-        if (videoRef.current) {
-            videoRef.current.srcObject = null;
-        }
-        
-        setCameraActive(false);
-    };
-
-    // Capture photo from camera
-    const capturePhoto = () => {
-        if (videoRef.current && canvasRef.current && cameraActive) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
-            setCapturedImage(imageData);
-            
-            toast.success('Photo captured successfully!');
-            
-            // Auto-verify after capture
-            setTimeout(() => handleIdentityVerification(), 500);
-        } else {
-            toast.error('Camera not active. Please start the camera first.');
-        }
-    };
-
-    // Retake photo
-    const retakePhoto = () => {
-        setCapturedImage(null);
-        startCamera();
-    };
-
-    // Handle file upload fallback
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCapturedImage(reader.result);
-                // Auto-verify after upload
-                setTimeout(() => handleIdentityVerification(), 500);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    // ============== VERIFICATION FUNCTIONS ==============
-    
-    // Handle identity verification
-    const handleIdentityVerification = async () => {
-        if (!capturedImage) {
-            toast.error('Please capture a photo first.');
-            return;
-        }
-
-        setIsVerifying(true);
-        
-        const loadingToast = toast.loading('Verifying identity...');
-        
-        try {
-            await router.post(route('exam.verify-identity', enrollment.id), {
-                image: capturedImage
-            }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    toast.dismiss(loadingToast);
-                    toast.success('Identity verified successfully!', { icon: '✓' });
-                    setShowIdentityVerification(false);
-                    setCapturedImage(null);
-                    stopCamera();
-                    
-                    // If there's a pending exam, start it automatically
-                    if (pendingExamId) {
-                        setTimeout(() => {
-                            startExamAfterVerification(pendingExamId);
-                            setPendingExamId(null);
-                        }, 1000);
-                    } else {
-                        // Refresh the page to show updated status
-                        router.reload({ only: ['enrollment'] });
-                    }
-                },
-                onError: (errors) => {
-                    toast.dismiss(loadingToast);
-                    console.error('Verification error:', errors);
-                    
-                    if (errors.image) {
-                        toast.error(`Image error: ${errors.image}`);
-                    } else {
-                        toast.error('Identity verification failed. Please try again.');
-                    }
-                    setIsVerifying(false);
-                }
-            });
-        } catch (error) {
-            toast.dismiss(loadingToast);
-            console.error('Verification error:', error);
-            toast.error('Verification failed. Please check your connection and try again.');
-            setIsVerifying(false);
-        }
-    };
-
-    // Handle modal close
-    const handleModalClose = () => {
-        setShowIdentityVerification(false);
-        setCapturedImage(null);
-        setCameraError(null);
-        setPendingExamId(null);
-        stopCamera();
-    };
-
-    // Handle camera selection
-    const handleCameraChange = (e) => {
-        setSelectedCamera(e.target.value);
-    };
-
-    // ============== EXAM FUNCTIONS ==============
-    
-    // Start exam after verification
-    const startExamAfterVerification = (examId) => {
-        setProcessingExam(examId);
-        
-        router.post(route('exam.start', { 
-            enrollment: enrollment.id, 
-            exam: examId 
-        }), {}, {
-            preserveScroll: true,
-            onStart: () => {
-                toast.loading('Starting your exam...', { id: 'starting-exam' });
-            },
-            onSuccess: () => {
-                toast.dismiss('starting-exam');
-                setProcessingExam(null);
-                // Navigation handled by Inertia
-            },
-            onError: (errors) => {
-                toast.dismiss('starting-exam');
-                setProcessingExam(null);
-                console.error('Failed to start exam:', errors);
-                toast.error(errors.message || 'Failed to start exam. Please try again.');
-            }
-        });
-    };
-
-    // Handle exam start click
-    const handleStartExamClick = (examId) => {
-        // Check if identity is verified
-        if (enrollment?.identity_verified) {
-            // Already verified, start exam directly
-            startExamAfterVerification(examId);
-        } else {
-            // Not verified, show camera and store pending exam
-            setPendingExamId(examId);
-            setShowIdentityVerification(true);
-            setTimeout(() => startCamera(), 100);
-            toast.success('Please verify your identity first to start the exam.');
-        }
-    };
-
-    // Handle exam submission
-    const handleSubmitExam = (examId) => {
-        if (confirm('Are you sure you want to submit your exam? This action cannot be undone.')) {
-            router.post(route('exam.submit', { enrollment: enrollment.id, exam: examId }), {}, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    toast.success('Exam submitted successfully!');
-                },
-                onError: (errors) => {
-                    toast.error('Failed to submit exam. Please try again.');
-                }
-            });
-        }
-    };
-
-    // ============== EFFECTS ==============
-    
-    // Check camera support on mount
-    useEffect(() => {
-        checkCameraSupport();
-        
-        // Cleanup on unmount
-        return () => {
-            stopCamera();
-        };
-    }, []);
 
     return (
         <AuthenticatedLayout>
@@ -577,7 +289,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                         </div>
 
                         {/* Right Column - Exams & Certification */}
-                        <div className="space-y-6">
+                        <div className="space-y-6" id="exams-section">
                             {/* Identity Verification Card */}
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
@@ -585,216 +297,26 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                 className="bg-white rounded-xl shadow-sm p-6"
                             >
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <ShieldCheckIcon className="w-5 h-5 text-indigo-600" />
+                                    <CameraIcon className="w-5 h-5 text-indigo-600" />
                                     Identity Verification
                                 </h3>
                                 
-                                {!enrollment?.identity_verified ? (
-                                    <div className="space-y-4">
-                                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                            <p className="text-sm text-yellow-800">
-                                                Verify your identity to access exams and generate your certificate.
-                                            </p>
-                                        </div>
-                                        
-                                        <button
-                                            onClick={() => {
-                                                setShowIdentityVerification(true);
-                                                setTimeout(() => startCamera(), 100);
-                                            }}
-                                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                                        >
-                                            <CameraIcon className="w-5 h-5" />
-                                            Verify Identity Now
-                                        </button>
+                                <div className="space-y-4">
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                        <p className="text-sm text-yellow-800">
+                                            Click the button below to start the exam UI demonstration.
+                                        </p>
                                     </div>
-                                ) : (
-                                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-                                        <CheckBadgeIcon className="w-8 h-8 text-green-600" />
-                                        <div>
-                                            <p className="font-medium text-green-800">Identity Verified</p>
-                                            <p className="text-xs text-green-600">Verified on {enrollment?.verified_at ? new Date(enrollment.verified_at).toLocaleDateString() : 'N/A'}</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </motion.div>
-
-                            {/* Identity Verification Modal */}
-                            <AnimatePresence>
-                                {showIdentityVerification && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-                                        onClick={handleModalClose}
+                                    
+                                    <button
+                                        onClick={goToExamUI}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                     >
-                                        <motion.div
-                                            initial={{ scale: 0.9 }}
-                                            animate={{ scale: 1 }}
-                                            exit={{ scale: 0.9 }}
-                                            className="bg-white rounded-2xl max-w-md w-full p-6"
-                                            onClick={e => e.stopPropagation()}
-                                        >
-                                            <h3 className="text-xl font-bold text-gray-900 mb-4">Identity Verification</h3>
-                                            <p className="text-gray-600 mb-6">
-                                                Please take a clear photo of your face for verification purposes.
-                                                {pendingExamId && (
-                                                    <span className="block mt-2 text-sm font-medium text-indigo-600">
-                                                        After verification, your exam will start automatically.
-                                                    </span>
-                                                )}
-                                            </p>
-                                            
-                                            <canvas ref={canvasRef} className="hidden" />
-                                            
-                                            {/* Camera Preview or Captured Image */}
-                                            <div className="aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden relative">
-                                                {cameraError ? (
-                                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                                                        <ExclamationTriangleIcon className="w-12 h-12 text-red-500 mb-2" />
-                                                        <p className="text-sm text-red-600 mb-3">{cameraError}</p>
-                                                        
-                                                        <div className="mt-2">
-                                                            <p className="text-xs text-gray-500 mb-2">Or upload a photo instead:</p>
-                                                            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
-                                                                <PhotoIcon className="w-5 h-5" />
-                                                                Upload Photo
-                                                                <input
-                                                                    type="file"
-                                                                    accept="image/*"
-                                                                    className="hidden"
-                                                                    onChange={handleFileUpload}
-                                                                />
-                                                            </label>
-                                                        </div>
-                                                        
-                                                        <button
-                                                            onClick={() => {
-                                                                setCameraError(null);
-                                                                startCamera();
-                                                            }}
-                                                            className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
-                                                        >
-                                                            Try Again
-                                                        </button>
-                                                    </div>
-                                                ) : capturedImage ? (
-                                                    <img 
-                                                        src={capturedImage} 
-                                                        alt="Captured" 
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : cameraActive ? (
-                                                    <>
-                                                        <video
-                                                            ref={videoRef}
-                                                            autoPlay
-                                                            playsInline
-                                                            muted
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                                                            <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                                                            Live
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                        <CameraIcon className="w-12 h-12 text-gray-400 mb-2" />
-                                                        <p className="text-sm text-gray-500">Camera is off</p>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Camera Selection */}
-                                            {availableCameras.length > 1 && !capturedImage && !cameraError && (
-                                                <div className="mb-4">
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                        Select Camera
-                                                    </label>
-                                                    <select
-                                                        onChange={handleCameraChange}
-                                                        value={selectedCamera}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                                    >
-                                                        <option value="">Default Camera</option>
-                                                        {availableCameras.map((camera) => (
-                                                            <option key={camera.deviceId} value={camera.deviceId}>
-                                                                {camera.label || `Camera ${camera.deviceId.slice(0, 5)}...`}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            )}
-
-                                            <div className="flex gap-3">
-                                                {!capturedImage ? (
-                                                    <>
-                                                        {!cameraActive && !cameraError ? (
-                                                            <button
-                                                                onClick={startCamera}
-                                                                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                                                            >
-                                                                Start Camera
-                                                            </button>
-                                                        ) : cameraActive ? (
-                                                            <button
-                                                                onClick={capturePhoto}
-                                                                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                                                            >
-                                                                Capture Photo
-                                                            </button>
-                                                        ) : null}
-                                                        
-                                                        {cameraError && !capturedImage && (
-                                                            <div className="w-full">
-                                                                <label className="w-full cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-                                                                    <PhotoIcon className="w-5 h-5" />
-                                                                    Upload Photo Instead
-                                                                    <input
-                                                                        type="file"
-                                                                        accept="image/*"
-                                                                        className="hidden"
-                                                                        onChange={handleFileUpload}
-                                                                    />
-                                                                </label>
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <button
-                                                            onClick={retakePhoto}
-                                                            className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-                                                        >
-                                                            Retake
-                                                        </button>
-                                                        <button
-                                                            onClick={handleIdentityVerification}
-                                                            disabled={isVerifying}
-                                                            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-                                                        >
-                                                            {isVerifying ? 'Verifying...' : 'Submit & Continue'}
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
-                                            
-                                            {/* Close button */}
-                                            <button
-                                                onClick={handleModalClose}
-                                                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
-                                            >
-                                                <span className="sr-only">Close</span>
-                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </motion.div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                        <CameraIcon className="w-5 h-5" />
+                                        Start Camera (UI Demo)
+                                    </button>
+                                </div>
+                            </motion.div>
 
                             {/* Exams Card */}
                             <motion.div
@@ -829,27 +351,17 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                                 {exam.status === 'pending' && (
                                                     <button
-                                                        onClick={() => handleStartExamClick(exam.id)}
-                                                        disabled={processingExam === exam.id}
-                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
+                                                        onClick={() => alert('Exam UI would open here')}
+                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
                                                     >
-                                                        {processingExam === exam.id ? (
-                                                            <>
-                                                                <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                                                                <span>Starting...</span>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <PlayCircleIcon className="w-4 h-4" />
-                                                                <span>Start Exam</span>
-                                                            </>
-                                                        )}
+                                                        <PlayCircleIcon className="w-4 h-4" />
+                                                        Start Exam
                                                     </button>
                                                 )}
 
                                                 {exam.status === 'in_progress' && (
                                                     <button
-                                                        onClick={() => router.get(route('exam.continue', exam.attempt_id))}
+                                                        onClick={() => alert('Continue Exam UI would open here')}
                                                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                                     >
                                                         <PlayCircleIcon className="w-4 h-4" />
