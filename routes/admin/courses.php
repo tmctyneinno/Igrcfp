@@ -34,10 +34,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     
     // Course Categories
     Route::get('/course-categories', [CourseController::class, 'categories'])
-        ->name('courses.categories.index');
-    
-    Route::post('/course-categories', [CourseController::class, 'storeCategory'])
-        ->name('courses.categories.store');
+        ->name('course-categories.index');
+     
+    Route::post('/course-categories', [CourseCategoryController::class, 'storeCategory'])
+        ->name('course-categories.create');
     
     Route::put('/course-categories/{category}', [CourseController::class, 'updateCategory'])
         ->name('courses.categories.update');
