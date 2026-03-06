@@ -274,4 +274,9 @@ class Course extends Model
     {
         return 'slug';
     }
+
+    public function category()
+    {
+        return $this->belongsTo(CourseCategory::class);
+    }
 }
