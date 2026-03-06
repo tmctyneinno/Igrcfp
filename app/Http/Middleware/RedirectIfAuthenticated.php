@@ -1,4 +1,5 @@
 <?php
+// app/Http/Middleware/RedirectIfAuthenticated.php
 
 namespace App\Http\Middleware;
 
@@ -19,14 +20,18 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Check if trying to access admin login while authenticated as admin
-                if ($guard === 'admin' && $request->routeIs('admin.login')) {
+                // If it's an admin guard, redirect to admin dashboard
+                if ($guard === 'admin') {
                     return redirect()->route('admin.dashboard');
                 }
-                // Check if trying to access user login while authenticated as user
-                if ($guard === 'web' && $request->routeIs('login')) {
-                    return redirect(RouteServiceProvider::HOME);
+                
+                // If it's web guard (regular user), redirect to user dashboard
+                if ($guard === 'web') {
+                    return redirect()->route('dashboard.index');
                 }
+                
+                // Default fallback
+                return redirect(RouteServiceProvider::HOME);
             }
         }
 
