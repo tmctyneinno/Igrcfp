@@ -3,79 +3,18 @@ import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Index({ auth, courses, filters, filterOptions }) {
-    const courses = [
-        {
-            title: "Advanced Diploma in Governance, Risk, Compliance & Financial Crime Prevention",
-            duration: "12 months",
-            level: "Advanced",
-            description: "Comprehensive programme covering integrated GRC frameworks and financial crime prevention",
-            outcomes: [
-                "Master integrated GRC implementation",
-                "Develop financial crime prevention strategies",
-                "Lead organisational compliance transformation"
-            ]
-        }, 
-        { 
-            title: "Enterprise Risk Management for Senior Leaders",
-            duration: "3 months",
-            level: "Executive",
-            description: "Strategic risk management for board members and C-suite executives",
-            outcomes: [
-                "Strategic risk decision-making",
-                "Board-level risk reporting",
-                "Risk culture development"
-            ]
-        },
-        {
-            title: "Board Governance, Accountability & Ethical Leadership",
-            duration: "2 months",
-            level: "Board Level",
-            description: "Governance frameworks and ethical leadership for board directors",
-            outcomes: [
-                "Board governance best practices",
-                "Ethical decision-making frameworks",
-                "Stakeholder accountability"
-            ]
-        },
-        {
-            title: "Compliance Management Systems (CMS) Design & Implementation",
-            duration: "4 months",
-            level: "Professional",
-            description: "Practical course on designing and implementing effective compliance systems",
-            outcomes: [
-                "CMS design and implementation",
-                "Compliance monitoring and testing",
-                "Regulatory reporting"
-            ]
-        },
-        {
-            title: "Regulatory Change & Horizon Scanning",
-            duration: "2 months",
-            level: "Professional",
-            description: "Proactive approach to regulatory changes and emerging risks",
-            outcomes: [
-                "Regulatory change management",
-                "Horizon scanning techniques",
-                "Impact assessment methodologies"
-            ]
-        },
-        {
-            title: "ESG, Sustainability & Conduct Risk",
-            duration: "3 months",
-            level: "Advanced",
-            description: "Integrating ESG factors and conduct risk into GRC frameworks",
-            outcomes: [
-                "ESG integration in risk management",
-                "Conduct risk frameworks",
-                "Sustainability reporting"
-            ]
-        }
-    ];
+    const { url } = usePage();
+
+    // Get category name from URL parameters
+    const categoryId = filters.category_id;
+    const categoryName = filterOptions.categories.find(c => c.id == categoryId)?.name;
+    
+    
 
     return (
         <>
         <GuestLayout auth={auth}>
-            <Head title="GRC Pathway | IGRCFP Programmes" />
+            <Head title={categoryName ? `${categoryName} Courses | IGRCFP` : 'All Courses | IGRCFP'} />
             
             {/* Hero Section */}
             <div className="relative bg-gradient-to-r from-blue-900 to-blue-800 py-20">
@@ -87,10 +26,10 @@ export default function Index({ auth, courses, filters, filterOptions }) {
                             </svg>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Governance, Risk & Compliance (GRC)
+                            {categoryName} Courses
                         </h1>
                         <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-                            Designed for professionals responsible for organisational oversight, risk management, and regulatory compliance
+                            Explore our comprehensive range of {categoryName.toLowerCase()} courses designed for professionals
                         </p>
                     </div>
                 </div>
