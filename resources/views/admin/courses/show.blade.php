@@ -81,6 +81,25 @@
                                 </div>
                             </div>
                         </div>
+                         <!-- Add Category Display Here -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Category:</span>
+                    @if($course->category)
+                        <div class="d-flex align-items-center gap-2">
+                            @if($course->category->icon)
+                                <iconify-icon icon="{{ $course->category->icon }}" class="text-primary"></iconify-icon>
+                            @endif
+                            <span class="fw-medium">
+                                {{ $course->category->name }}
+                            </span>
+                            @if(!$course->category->is_active)
+                                <span class="badge bg-warning">Inactive</span>
+                            @endif
+                        </div>
+                    @else
+                        <span class="badge bg-secondary">Uncategorized</span>
+                    @endif
+                </div>
 
                         <div class="col-12">
                             <h6 class="mb-2">Short Description</h6>
