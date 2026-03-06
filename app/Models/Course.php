@@ -13,6 +13,7 @@ class Course extends Model
     protected $fillable = [
         'title',
         'slug',
+        'category_id',
         'short_title',
         'short_description',
         'full_description',
