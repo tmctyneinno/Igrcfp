@@ -21,7 +21,7 @@ class CourseController extends Controller
         if ($request->has('category') && $request->category) {
             $query->where('category_id', $request->category);
         }
-
+        $courses = $query->paginate(15);
         // Fetch courses with instructor and reviews count
         $courses = Course::with('instructor','category')
             ->where('status', 'published') 
