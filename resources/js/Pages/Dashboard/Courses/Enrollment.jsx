@@ -381,7 +381,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         Copy ID
                                     </button>
                                     <Link
-                                        href={route('certificate.verify', { id: candidate.certificate_id })}
+                                        href={route('dashboard.certificate.verify', { id: candidate.certificate_id })}
                                         className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition"
                                     >
                                         <ShieldCheckIcon className="w-4 h-4" />
