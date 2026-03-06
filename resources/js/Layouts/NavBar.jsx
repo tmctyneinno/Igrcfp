@@ -257,7 +257,7 @@ export default function NavBar({ auth }) {
                         href="/contact" 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
-                        Contact
+                        Connect
                     </Link>
                 </div>
 
