@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
+    /** 
      * Display the registration view.
      */
     public function showRegister(): Response
