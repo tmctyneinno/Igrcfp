@@ -366,7 +366,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                             Dashboard
                         </Link>
                         <span className="mx-2 text-gray-400">/</span>
-                        <Link href={route('my-courses')} className="text-gray-500 hover:text-gray-700 transition">
+                        <Link href="" className="text-gray-500 hover:text-gray-700 transition">
                             My Courses
                         </Link>
                         <span className="mx-2 text-gray-400">/</span>
