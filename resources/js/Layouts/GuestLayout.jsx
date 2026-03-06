@@ -17,7 +17,7 @@ export default function GuestLayout({ children, auth }) {
             once: true,
             offset: 80,
         });
-    }, []);
+    }, []); 
    
     // Close mobile menu when clicking outside
     useEffect(() => {
