@@ -20,7 +20,8 @@ import {
     ClipboardDocumentCheckIcon,
     PhotoIcon,
     ExclamationTriangleIcon,
-    PlayCircleIcon
+    PlayCircleIcon,
+    ArrowPathIcon
 } from '@heroicons/react/24/outline';
 
 export default function EnrollmentIndex({ course, enrollment, modules: initialModules = [], candidate, examResults }) {
@@ -35,6 +36,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
     const [availableCameras, setAvailableCameras] = useState([]);
     const [selectedCamera, setSelectedCamera] = useState('');
     const [processingExam, setProcessingExam] = useState(null);
+    const [pendingExamId, setPendingExamId] = useState(null);
     
     // Refs for camera
     const videoRef = useRef(null);
@@ -108,9 +110,6 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         }
 
         try {
-            // First check if we have permission
-            await navigator.mediaDevices.getUserMedia({ video: true });
-            
             const constraints = {
                 video: {
                     facingMode: 'user',
@@ -183,12 +182,13 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
             
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            const imageData = canvas.toDataURL('image/jpeg', 0.7);
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
             setCapturedImage(imageData);
             
-            stopCamera();
-            
             toast.success('Photo captured successfully!');
+            
+            // Auto-verify after capture
+            setTimeout(() => handleIdentityVerification(), 500);
         } else {
             toast.error('Camera not active. Please start the camera first.');
         }
@@ -207,6 +207,8 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
             const reader = new FileReader();
             reader.onloadend = () => {
                 setCapturedImage(reader.result);
+                // Auto-verify after upload
+                setTimeout(() => handleIdentityVerification(), 500);
             };
             reader.readAsDataURL(file);
         }
@@ -237,8 +239,16 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                     setCapturedImage(null);
                     stopCamera();
                     
-                    // Refresh the page to show updated status
-                    router.reload({ only: ['enrollment'] });
+                    // If there's a pending exam, start it automatically
+                    if (pendingExamId) {
+                        setTimeout(() => {
+                            startExamAfterVerification(pendingExamId);
+                            setPendingExamId(null);
+                        }, 1000);
+                    } else {
+                        // Refresh the page to show updated status
+                        router.reload({ only: ['enrollment'] });
+                    }
                 },
                 onError: (errors) => {
                     toast.dismiss(loadingToast);
@@ -249,13 +259,13 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                     } else {
                         toast.error('Identity verification failed. Please try again.');
                     }
+                    setIsVerifying(false);
                 }
             });
         } catch (error) {
             toast.dismiss(loadingToast);
             console.error('Verification error:', error);
             toast.error('Verification failed. Please check your connection and try again.');
-        } finally {
             setIsVerifying(false);
         }
     };
@@ -265,6 +275,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         setShowIdentityVerification(false);
         setCapturedImage(null);
         setCameraError(null);
+        setPendingExamId(null);
         stopCamera();
     };
 
@@ -275,14 +286,8 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
     // ============== EXAM FUNCTIONS ==============
     
-    // Handle exam start
-    const handleStartExam = (examId) => {
-        // Check if identity is verified first
-        if (!enrollment?.identity_verified) {
-            toast.error('Please verify your identity first before starting the exam.');
-            return;
-        }
-
+    // Start exam after verification
+    const startExamAfterVerification = (examId) => {
         setProcessingExam(examId);
         
         router.post(route('exam.start', { 
@@ -291,9 +296,9 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
         }), {}, {
             preserveScroll: true,
             onStart: () => {
-                toast.loading('Preparing your exam...', { id: 'starting-exam' });
+                toast.loading('Starting your exam...', { id: 'starting-exam' });
             },
-            onSuccess: (page) => {
+            onSuccess: () => {
                 toast.dismiss('starting-exam');
                 setProcessingExam(null);
                 // Navigation handled by Inertia
@@ -305,6 +310,21 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                 toast.error(errors.message || 'Failed to start exam. Please try again.');
             }
         });
+    };
+
+    // Handle exam start click
+    const handleStartExamClick = (examId) => {
+        // Check if identity is verified
+        if (enrollment?.identity_verified) {
+            // Already verified, start exam directly
+            startExamAfterVerification(examId);
+        } else {
+            // Not verified, show camera and store pending exam
+            setPendingExamId(examId);
+            setShowIdentityVerification(true);
+            setTimeout(() => startCamera(), 100);
+            toast.success('Please verify your identity first to start the exam.');
+        }
     };
 
     // Handle exam submission
@@ -381,7 +401,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         Copy ID
                                     </button>
                                     <Link
-                                        href={route('dashboard.certificate.verify', { id: candidate.certificate_id })}
+                                        href={route('certificate.verify', { id: candidate.certificate_id })}
                                         className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition"
                                     >
                                         <ShieldCheckIcon className="w-4 h-4" />
@@ -619,6 +639,11 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                             <h3 className="text-xl font-bold text-gray-900 mb-4">Identity Verification</h3>
                                             <p className="text-gray-600 mb-6">
                                                 Please take a clear photo of your face for verification purposes.
+                                                {pendingExamId && (
+                                                    <span className="block mt-2 text-sm font-medium text-indigo-600">
+                                                        After verification, your exam will start automatically.
+                                                    </span>
+                                                )}
                                             </p>
                                             
                                             <canvas ref={canvasRef} className="hidden" />
@@ -750,7 +775,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                             disabled={isVerifying}
                                                             className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
                                                         >
-                                                            {isVerifying ? 'Verifying...' : 'Submit'}
+                                                            {isVerifying ? 'Verifying...' : 'Submit & Continue'}
                                                         </button>
                                                     </>
                                                 )}
@@ -804,16 +829,13 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
 
                                                 {exam.status === 'pending' && (
                                                     <button
-                                                        onClick={() => handleStartExam(exam.id)}
-                                                        disabled={!enrollment?.identity_verified || processingExam === exam.id}
-                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        onClick={() => handleStartExamClick(exam.id)}
+                                                        disabled={processingExam === exam.id}
+                                                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:opacity-50"
                                                     >
                                                         {processingExam === exam.id ? (
                                                             <>
-                                                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                                                </svg>
+                                                                <ArrowPathIcon className="w-4 h-4 animate-spin" />
                                                                 <span>Starting...</span>
                                                             </>
                                                         ) : (
@@ -879,14 +901,14 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                             
                                             <div className="flex gap-2">
                                                 <Link
-                                                    href={route('dashboard.certificate.download', enrollment.id)}
+                                                    href={route('certificate.download', enrollment.id)}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
                                                 >
                                                     <DocumentTextIcon className="w-4 h-4" />
                                                     Download PDF
                                                 </Link>
                                                 <Link
-                                                    href={route('dashboard.certificate.preview', enrollment.id)}
+                                                    href={route('certificate.preview', enrollment.id)}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition text-sm"
                                                 >
                                                     <GlobeAltIcon className="w-4 h-4" />
@@ -896,7 +918,7 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                         </div>
 
                                         <Link
-                                            href={route('dashboard.certificate.badge', enrollment.id)}
+                                            href={route('certificate.badge', enrollment.id)}
                                             className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg hover:from-amber-100 hover:to-yellow-100 transition"
                                         >
                                             <div className="flex items-center gap-3">
@@ -906,73 +928,4 @@ export default function EnrollmentIndex({ course, enrollment, modules: initialMo
                                                     <p className="text-xs text-amber-700">Claim your verifiable badge</p>
                                                 </div>
                                             </div>
-                                            <span className="text-amber-600">→</span>
-                                        </Link>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4">
-                                        <p className="text-gray-600 text-sm">
-                                            Complete all exams and requirements to earn your digital certificate.
-                                        </p>
-                                        
-                                        <div className="bg-gray-50 rounded-lg p-4">
-                                            <h4 className="font-medium text-gray-900 mb-2">Requirements:</h4>
-                                            <ul className="text-sm text-gray-600 space-y-1">
-                                                <li className="flex items-center gap-2">
-                                                    <span className={`w-4 h-4 rounded-full ${enrollment?.identity_verified ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
-                                                        {enrollment?.identity_verified ? '✓' : ''}
-                                                    </span>
-                                                    Identity verification
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <span className={`w-4 h-4 rounded-full ${examResults?.passed ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
-                                                        {examResults?.passed ? '✓' : ''}
-                                                    </span>
-                                                    Pass all exams
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <span className={`w-4 h-4 rounded-full ${progress === 100 ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center text-white text-xs`}>
-                                                        {progress === 100 ? '✓' : ''}
-                                                    </span>
-                                                    100% course completion
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                        {/* Certification Registry Link */}
-                                        <Link
-                                            href={route('dashboard.certificate.registry')}
-                                            className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
-                                        >
-                                            <GlobeAltIcon className="w-4 h-4" />
-                                            View Certification Registry
-                                        </Link>
-                                    </div>
-                                )}
-                            </motion.div>
-
-                            {/* Plagiarism & Security Notice */}
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="bg-gray-50 rounded-xl p-4"
-                            >
-                                <div className="flex items-start gap-3">
-                                    <ShieldCheckIcon className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-900 mb-1">Academic Integrity</p>
-                                        <p className="text-xs text-gray-600">
-                                            All submissions are monitored by our plagiarism detection software. 
-                                            Your unique candidate ID ensures your work is properly attributed.
-                                        </p>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </AuthenticatedLayout>
-    );
-}
+                                            <span className
