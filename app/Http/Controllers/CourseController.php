@@ -284,10 +284,10 @@ class CourseController extends Controller
         ]);
     }
 
-    public function byCategory($id)
+    public function byCategory($slug)
     {
-        // Find the category by ID
-        $category = CourseCategory::where('id', $id)
+        // Find the category by slug
+        $category = CourseCategory::where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
         
@@ -309,10 +309,11 @@ class CourseController extends Controller
             'category' => [
                 'id' => $category->id,
                 'name' => $category->name,
+                'slug' => $category->slug,
                 'description' => $category->description,
                 'icon' => $category->icon,
             ],
-            'filters' => ['category_id' => $category->id],
+            'filters' => ['category_slug' => $category->slug],
             'filterOptions' => [
                 'levels' => ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
                 'categories' => $categories,
@@ -332,4 +333,5 @@ class CourseController extends Controller
             ],
         ]);
     }
+
 }
