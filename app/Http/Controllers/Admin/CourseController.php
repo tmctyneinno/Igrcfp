@@ -107,7 +107,11 @@ class CourseController extends Controller
      */
     public function create()
     {
-        return view('admin.courses.create');
+        $categories = CourseCategory::where('is_active', true)
+                   ->orderBy('sort_order')
+                   ->orderBy('name')
+                   ->get();
+        return view('admin.courses.create', compact('categories'));
     }
 
     /**
@@ -170,6 +174,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'short_title' => 'required|string|max:100',
             'short_description' => 'required|string',
+            'category_id' => 'nullable|exists:course_categories,id',
             'full_description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -227,7 +232,11 @@ class CourseController extends Controller
     public function edit(Course $course)
     {
         $course->load(['modules', 'materials']);
-        return view('admin.courses.edit', compact('course'));
+        $categories = CourseCategory::where('is_active', true)
+                   ->orderBy('sort_order')
+                   ->orderBy('name')
+                   ->get();
+        return view('admin.courses.edit', compact('course', 'categories'));
     }
 
     /**
