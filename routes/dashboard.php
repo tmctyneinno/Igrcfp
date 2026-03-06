@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('lessons.complete');
     Route::delete('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markIncomplete'])
         ->name('lessons.incomplete');
+        
 });
 
 
