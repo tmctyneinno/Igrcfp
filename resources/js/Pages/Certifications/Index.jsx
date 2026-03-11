@@ -301,7 +301,7 @@ export default function Certifications({ auth, title, description, courses }) {
             </section>
 
          
-            <section className="py-20 bg-white">
+            {/* <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-3xl md:text-4xl font-semibold text-blue-900 mb-6">Industry-Relevant Programs to Set you Apart</h2>
                     <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
@@ -318,7 +318,7 @@ export default function Certifications({ auth, title, description, courses }) {
                         </Link>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
         </GuestLayout>
     );
