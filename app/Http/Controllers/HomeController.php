@@ -150,7 +150,14 @@ class HomeController extends Controller
             'title' => 'Certification Pathway',
             'description' => '',
         ]);
-    }
+    }cgfcsSpecialist
+
+    public function certificationsPathway(){
+        return Inertia::render('Certifications/Pathway', [
+            'title' => 'Certification Pathway',
+            'description' => '',
+        ]);
+    }cgfcsSpecialist
 
     public function eventsIndex(){
         $currentDate = now()->toDateString();
