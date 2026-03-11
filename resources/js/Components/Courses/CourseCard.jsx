@@ -129,10 +129,10 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
                             {hasDisc ? (
                                 <>
                                     <span className="text-lg font-bold text-gray-900">
-                                        ${discountPrice.toFixed(0)}
+                                        €{discountPrice.toFixed(0)}
                                     </span>
                                     <span className="text-sm text-gray-500 line-through ml-2">
-                                        ${price.toFixed(0)}
+                                        €{price.toFixed(0)}
                                     </span>
                                     <span className="text-xs font-semibold text-red-600 ml-2">
                                         -{discountPercentage}%
@@ -140,7 +140,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
                                 </>
                             ) : (
                                 <span className="text-lg font-bold text-gray-900">
-                                    ${price.toFixed(2)}
+                                    €{price.toFixed(2)}
                                 </span>
                             )}
                         </div>
