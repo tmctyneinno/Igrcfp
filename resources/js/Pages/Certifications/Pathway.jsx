@@ -29,25 +29,6 @@ export default function Pathway({ auth, title, description }) {
                         each stage builds operational, strategic, and leadership capability.
                     </p>
 
-                    {/* ===== PATHWAY IMAGE DISPLAY ===== */}
-                    <div className="mb-20 text-center">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6">Certification Pathway Visual</h3>
-                        <div className="max-w-4xl mx-auto bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-200">
-                            <img 
-                                src="/assets/images/certification-pathway.png" 
-                                alt="IGRCFP certification pathway - from certificates to fellowship" 
-                                className="w-full h-auto rounded-lg shadow-lg mx-auto"
-                                onError={(e) => {
-                                    e.target.onerror = null; 
-                                    e.target.src = 'https://via.placeholder.com/800x400?text=IGRCFP+Pathway+Image+Placeholder';
-                                }}
-                            />
-                            <p className="text-sm text-gray-500 mt-4">
-                                * Diagram showing the IGRCFP professional progression: Certificates → Diploma → Advanced Diploma → CGFCS → Fellowship
-                            </p>
-                        </div>
-                    </div>
-
                     {/* visual diagram (text-based ascii style, but with modern card layout) */}
                     <div className="relative flex flex-col items-center mb-16">
                         
@@ -126,6 +107,11 @@ export default function Pathway({ auth, title, description }) {
                             <div className="font-bold text-purple-900 text-lg">Fellowship</div>
                             <p className="text-gray-700 text-sm mt-1">senior recognition based on experience</p>
                         </div>
+                    </div>
+
+                    {/* optional pathway image (if you have a graphic, uncomment below) */}
+                    <div className="mt-20 text-center">
+                        <img src="/assets/images/certification-pathway.png" alt="IGRCFP certification pathway visual" className="max-w-full mx-auto rounded-lg shadow-lg" />
                     </div>
 
                     {/* back / navigation link similar to original CTA */}
