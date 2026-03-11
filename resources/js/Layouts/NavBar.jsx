@@ -171,7 +171,8 @@ export default function NavBar({ auth }) {
                             </svg>
                         </button>
                         
-                       className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
+                        {/* Invisible hover bridge */}
+                        <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
                         
                         {/* Dropdown Menu - Expanded with programme details */}
                         <div className="absolute left-0 mt-2 w-96 bg-white rounded-lg shadow-xl py-3 border border-gray-100 z-50 hidden group-hover:block">
@@ -186,7 +187,13 @@ export default function NavBar({ auth }) {
                                         </div>
                                     </Link>
                                 </div>
-                                
+                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('certifications.pathway')}>
+                                        <div className="flex items-center">
+                                            <h4 className="font-semibold text-gray-800">Certification Pathway</h4>
+                                        </div>
+                                    </Link>
+                                </div>
                                 
                             </div>
                             
