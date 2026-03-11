@@ -118,7 +118,7 @@ export default function Pathway({ auth, title, description }) {
                     {/* back / navigation link similar to original CTA */}
                     <div className="mt-20 text-center">
                         <Link
-                            href="{route('certifications')}"
+                            href={route('certifications')}
                             className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition"
                         >
                             ← Back to Certification overview
