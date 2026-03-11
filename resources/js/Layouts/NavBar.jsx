@@ -195,9 +195,9 @@ export default function NavBar({ auth }) {
                                     </Link>
                                 </div>
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('certifications.pathway')}>
+                                    <Link href={route('c.specialist')}>
                                         <div className="flex items-center">
-                                            <h4 className="font-semibold text-gray-800">Certified GRC & Financial Crime Spec</h4>
+                                            <h4 className="font-semibold text-gray-800">Certified GRC & Financial Crime Specialist (CGFCS)</h4>
                                         </div>
                                     </Link>
                                 </div>
