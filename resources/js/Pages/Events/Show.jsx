@@ -253,7 +253,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                         }`}>
                                             {event.registration_status === 'sold_out' ? 'Sold Out' : 
                                              event.registration_status === 'few_seats' ? 'Few Seats Left' : 
-                                             'Available Seats'}
+                                             'Few Seats Left'}
                                         </div>
                                         
                                         {event.capacity && event.available_seats !== undefined && (
