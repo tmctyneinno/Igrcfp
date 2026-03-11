@@ -181,9 +181,9 @@ export default function NavBar({ auth }) {
                             <div className="max-h-[480px] overflow-y-auto">
                                 {/* GRC Pathway */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
+                                    <Link href={route('courses.by-category')}>
                                         <div className="flex items-center">
-                                            <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
+                                            <h4 className="font-semibold text-gray-800">Certification Pathway</h4>
                                         </div>
                                     </Link>
                                 </div>
