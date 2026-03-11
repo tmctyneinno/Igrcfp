@@ -165,7 +165,7 @@ export default function NavBar({ auth }) {
                     </div>
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                           <Link href={route('courses.index')}>  Programmes & Courses </Link>
+                           <Link href={route('certifications')}>  Certifications</Link>
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
@@ -183,61 +183,21 @@ export default function NavBar({ auth }) {
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
                                     <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
                                         <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
                                             <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
                                         </div>
                                     </Link>
                                 </div>
                                 
-                                {/* Financial Crime Prevention */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'financial-crime' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* Crypto & Digital Assets */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'crypto-digital-assets' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* Cybersecurity & Digital Risk */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'cybersecurity-digital-risk' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* AI & Emerging Technology */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'ai-emerging-technology' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
-                                    </div>
-                                    </Link>
-                                </div>
                             </div>
                             
                         </div>
                     </div>
                     
-                    <Link 
+                    {/* <Link 
                         href={route('certifications')} 
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >Certifications
-                    </Link>
+                    </Link> */}
                     
                     <Link 
                         href="/events" 
