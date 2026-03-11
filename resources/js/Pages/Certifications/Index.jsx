@@ -113,46 +113,8 @@ export default function Certifications({ auth, title, description, courses }) {
                         </div>
                     </div>
 
-                    {/* Courses */}
-                    {hasCourses ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12">
-                            {courseData.map((course, index) => (
-                                <motion.div
-                                    key={course.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                                >
-                                    <CourseCard course={course} />
-                                </motion.div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-16 bg-white rounded-xl">
-                            <svg className="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                                No courses found
-                            </h3>
-                            <p className="text-gray-600 mb-6">
-                                Check back later for new certifications
-                            </p>
-                        </div>
-                    )}
-
+                  
                 </div>
-                {/* VIEW ALL BUTTON */}
-                {hasCourses > 0 && (
-                    <div className="text-center mt-12">
-                        <Link
-                            href="/courses"
-                            className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
-                        >
-                            View All Courses →
-                        </Link> 
-                    </div>
-                )}
             </section>
 
 
