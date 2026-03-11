@@ -18,6 +18,7 @@ Route::get('/why-igrcfp', [HomeController::class, 'whyIgrcfp'])->name('why-igrcf
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
 Route::get('/certifications/pathway', [HomeController::class, 'certificationsPathway'])->name('certifications.pathway');
+Route::get('/cgfcs/specialist', [HomeController::class, 'cgfcsSpecialist'])->name('cgfcs.specialist');
 
 Route::get('/events', [HomeController::class, 'eventsIndex'])->name('events.index');
 Route::get('/events/{slug}', [HomeController::class, 'eventShow'])->name('events.show');
