@@ -29,7 +29,7 @@ class CourseController extends Controller
         if ($request->has('category') && $request->category != '') {
             $query->where('category_id', $request->category);
         }
-    
+     
         $courses = $query->get();
         $totalCourses = Course::count();
         $query = Course::withCount('modules');
@@ -62,7 +62,7 @@ class CourseController extends Controller
         $perPage = $request->get('per_page', 10);
         $courses = $query->paginate($perPage);
         
-        return view('admin.courses.index', compact('courses', 'categories'));
+        return view('admin.courses.index', compact('course', 'categories'));
     }
 
     public function bulkAction(Request $request)
