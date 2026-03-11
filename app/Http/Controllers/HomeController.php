@@ -147,8 +147,8 @@ class HomeController extends Controller
 
     public function certificationsPathway(){
         return Inertia::render('Certifications/Pathway', [
-            'title' => 'Blog',
-            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+            'title' => 'Certification Pathway',
+            'description' => '',
         ]);
     }
 
