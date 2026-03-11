@@ -260,7 +260,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                             <div className="mb-4">
                                                 <div className="flex justify-between text-sm text-gray-600 mb-2">
                                                     <span>Available Seats</span>
-                                                    <span>{event.available_seats} / {event.capacity}</span>
+                                                    {/* <span>{event.available_seats} / {event.capacity}</span> */}
                                                 </div>
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                     <div 
