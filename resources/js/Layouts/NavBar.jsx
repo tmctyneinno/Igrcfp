@@ -187,10 +187,17 @@ export default function NavBar({ auth }) {
                                         </div>
                                     </Link>
                                 </div>
-                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
                                     <Link href={route('certifications.pathway')}>
                                         <div className="flex items-center">
                                             <h4 className="font-semibold text-gray-800">Certification Pathway</h4>
+                                        </div>
+                                    </Link>
+                                </div>
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('certifications.pathway')}>
+                                        <div className="flex items-center">
+                                            <h4 className="font-semibold text-gray-800">Certified GRC & Financial Crime Spec</h4>
                                         </div>
                                     </Link>
                                 </div>
