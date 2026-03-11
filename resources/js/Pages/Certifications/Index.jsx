@@ -9,7 +9,7 @@ export default function Certifications({ auth, title, description, courses }) {
     const courseData = courses.data || courses;
     const hasCourses = Array.isArray(courseData) ? courseData.length > 0 : false;
 
-    return (
+    return ( 
         <GuestLayout auth={auth}>
             <Head title={title} />
             

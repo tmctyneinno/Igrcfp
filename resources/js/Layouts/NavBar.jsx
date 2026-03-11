@@ -167,7 +167,7 @@ export default function NavBar({ auth }) {
                     {/* Certifications */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                            <Link href={route('courses.index')}> Certifications </Link>
+                            <Link href={route('certifications')}> Certifications </Link>
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
