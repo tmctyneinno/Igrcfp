@@ -300,7 +300,25 @@ export default function Certifications({ auth, title, description, courses }) {
                 </div>
             </section>
 
-           
+         
+            <section className="py-20 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-3xl md:text-4xl font-semibold text-blue-900 mb-6">Industry-Relevant Programs to Set you Apart</h2>
+                    <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+                        At IGRCFP, we provide practical training and globally recognized certifications
+                        in governance, risk, compliance, and financial crime prevention. Learn online,
+                        hybrid, or in-person — all with real-world case studies and expert trainers.
+                    </p>
+                    <div className="mt-8">
+                        <Link
+                            href="/training-calendar"
+                            className="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition"
+                        >
+                            View Training Calendar
+                        </Link>
+                    </div>
+                </div>
+            </section>
 
         </GuestLayout>
     );
