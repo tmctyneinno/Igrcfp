@@ -112,7 +112,7 @@ export default function Pathway({ auth, title, description }) {
                     {/* optional pathway image (if you have a graphic, uncomment below) */}
                     <div className="mt-20 text-center">
                         <img src="/assets/images/certification-pathway.jpg" alt="IGRCFP certification pathway visual" 
-                        className="max-w-3xl w-full h-auto rounded-lg shadow-lg mx-auto" />
+                        className="max-w-md w-full h-auto rounded-lg shadow-lg mx-auto" />
                     </div>
 
                     {/* back / navigation link similar to original CTA */}
