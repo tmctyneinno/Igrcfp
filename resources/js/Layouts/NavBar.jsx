@@ -172,67 +172,6 @@ export default function NavBar({ auth }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        
-                        {/* Invisible hover bridge */}
-                        <div className="absolute left-0 right-0 h-4 -bottom-4 group-hover:block hidden"></div>
-                        
-                        {/* Dropdown Menu - Expanded with programme details */}
-                        <div className="absolute left-0 mt-2 w-96 bg-white rounded-lg shadow-xl py-3 border border-gray-100 z-50 hidden group-hover:block">
-                            
-                            {/* Programme List */}
-                            <div className="max-h-[480px] overflow-y-auto">
-                                {/* GRC Pathway */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
-                                        <div className="flex items-center">
-                                            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                                            <h4 className="font-semibold text-gray-800"> Governance, Risk & Compliance</h4>
-                                        </div>
-                                    </Link>
-                                </div> 
-                                
-                                {/* Financial Crime Prevention */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'anti-money-laundering' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Anti Money Laundering</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* Crypto & Digital Assets */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'financial-crime' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Financial Crime</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* Cybersecurity & Digital Risk */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                     <Link href={route('courses.by-category', { slug: 'regtech' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">RegTech</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                                
-                                {/* AI & Emerging Technology */}
-                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                     <Link href={route('courses.by-category', { slug: 'esg-risk' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">ESG Risk</h4>
-                                    </div>
-                                    </Link>
-                                </div>
-                            </div>
-                            
-                        </div>
                     </div>
                     
                     <Link 
