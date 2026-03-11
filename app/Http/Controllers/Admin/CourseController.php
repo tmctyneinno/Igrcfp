@@ -62,7 +62,7 @@ class CourseController extends Controller
         $perPage = $request->get('per_page', 10);
         $courses = $query->paginate($perPage);
         
-        return view('admin.courses.index', compact('course', 'categories'));
+        return view('admin.courses.index', compact('courses', 'categories'));
     }
 
     public function bulkAction(Request $request)
