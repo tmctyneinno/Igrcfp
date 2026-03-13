@@ -140,6 +140,15 @@ class AssessmentController extends Controller
         return view('admin.courses.assessments.create-final', compact('courses', 'modules', 'type'));
     }
 
+    public function createDiploma()
+    {
+        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        $modules = CourseModule::orderBy('module_number')->get();
+        $type = 'diploma';
+        
+        return view('admin.courses.assessments.create-diploma', compact('courses', 'modules', 'type'));
+    }
+
     /**
      * Show assessments for a specific course
      */
