@@ -1,5 +1,3 @@
-// resources/js/Pages/Assessment/QuizReview.jsx
-
 import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
