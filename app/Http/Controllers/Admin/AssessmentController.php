@@ -139,7 +139,7 @@ class AssessmentController extends Controller
     {
         $assessment->load('course', 'submissions.user');
         
-        return view('admin.assessments.show', compact('assessment'));
+        return view('admin.courses.assessments.show', compact('assessment'));
     }
 
     /**
@@ -149,7 +149,7 @@ class AssessmentController extends Controller
     {
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         
-        return view('admin.assessments.edit', compact('assessment', 'courses'));
+        return view('admin.courses.assessments.edit', compact('assessment', 'courses'));
     }
 
     /**
@@ -215,7 +215,7 @@ class AssessmentController extends Controller
 
         $assessment->update($validated);
 
-        return redirect()->route('admin.assessments.index', $assessment->course_id)
+        return redirect()->route('admin.courses.assessments.index', $assessment->course_id)
             ->with('success', 'Assessment updated successfully!');
     }
 
