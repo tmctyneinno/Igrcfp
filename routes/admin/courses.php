@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:admin,super_admin'])->group(function () {
     // Courses Index
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-    
+     
     // Create Course
     Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
     
