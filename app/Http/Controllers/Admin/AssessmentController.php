@@ -147,9 +147,9 @@ class AssessmentController extends Controller
             }
 
             // Handle rubric for manual marking
-            if ($request->has('rubric')) {
-                $validated['rubric'] = json_decode($request->rubric, true);
-            }
+            // if ($request->has('rubric')) {
+            //     $validated['rubric'] = json_decode($request->rubric, true);
+            // }
 
             // Create assessment
             $assessment = Assessment::create($validated);
