@@ -179,30 +179,8 @@ class AssessmentController extends Controller
         return view('admin.courses.assessments.index', compact('assessments', 'course', 'courses', 'statistics'));
     }
 
-    /**
-     * Show create form
-     */
-    public function create(Request $request)
-    {
-        $type = $request->get('type', 'quiz');
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
-        $modules = CourseModule::orderBy('module_number')->get();
-        
-        return view('admin.courses.assessments.create', compact('courses', 'modules', 'type'));
-    }
-
-    /**
-     * Store assessment
-     */
     public function store(Request $request)
     {
-         // Debug: Log all incoming data
-        \Log::info('Assessment Store Request:', [
-            'all_data' => $request->all(),
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
-            'files' => $request->allFiles(),
-        ]);
         $rules = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
 
@@ -211,7 +189,7 @@ class AssessmentController extends Controller
         try {
             // Set type-specific defaults
             $validated = $this->setTypeDefaults($validated, $request);
-            \Log::info('Validation Rules:', $rules);
+
             // Handle file upload
             if ($request->hasFile('assessment_file')) {
                 $file = $request->file('assessment_file');
@@ -230,9 +208,9 @@ class AssessmentController extends Controller
             }
 
             // Handle rubric for manual marking
-            // if ($request->has('rubric')) {
-            //     $validated['rubric'] = json_decode($request->rubric, true);
-            // }
+            if ($request->has('rubric')) {
+                $validated['rubric'] = json_decode($request->rubric, true);
+            }
 
             // Create assessment
             $assessment = Assessment::create($validated);
@@ -253,11 +231,73 @@ class AssessmentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Assessment creation failed:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            \Log::error('Assessment creation failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Error creating assessment: ' . $e->getMessage());
+        }
+    }
+
+    private function getValidationRules($type)
+    {
+        $baseRules = [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'course_id' => 'required|exists:courses,id',
+            'module_id' => 'nullable|exists:course_modules,id',
+            'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
+            'type' => 'required|in:exam,assignment,quiz,project',
+            'status' => 'required|in:draft,active,archived',
+        ];
+
+        switch ($type) {
+            case 'quiz':
+                return array_merge($baseRules, [
+                    'total_marks' => 'nullable|integer|min:1|max:100',
+                    'passing_score' => 'nullable|integer|min:1|max:100',
+                    'questions' => 'nullable|array',
+                    'questions.*.text' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.points' => 'required_with:questions|integer|min:1',
+                ]);
+
+            case 'module_assessment':
+                return array_merge($baseRules, [
+                    'duration' => 'nullable|integer|min:15|max:120',
+                    'total_marks' => 'nullable|integer|min:20|max:100',
+                    'passing_score' => 'nullable|integer|min:50|max:100',
+                    'is_timed' => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'questions' => 'nullable|array',
+                    'questions.*.text' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.points' => 'required_with:questions|integer|min:1',
+                ]);
+
+            case 'final_exam':
+                return array_merge($baseRules, [
+                    'duration' => 'nullable|integer|min:60|max:180',
+                    'total_marks' => 'nullable|integer|min:50|max:200',
+                    'passing_score' => 'nullable|integer|min:60|max:100',
+                    'is_timed' => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'questions' => 'nullable|array',
+                    'questions.*.text' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.points' => 'required_with:questions|integer|min:1',
+                ]);
+
+            case 'diploma':
+                return array_merge($baseRules, [
+                    'project_brief' => 'required|string',
+                    'total_marks' => 'nullable|integer|min:50|max:200',
+                    'passing_score' => 'nullable|integer|min:60|max:100',
+                    'needs_manual_marking' => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'due_date' => 'nullable|date',
+                    'rubric' => 'nullable|json',
+                ]);
+
+            default:
+                return $baseRules;
         }
     }
 
@@ -270,7 +310,7 @@ class AssessmentController extends Controller
             $q->latest();
         }]);
 
-        return view('admin.assessments.show', compact('assessment'));
+        return view('admin.courses.assessments.show', compact('assessment'));
     }
 
     /**
@@ -281,7 +321,7 @@ class AssessmentController extends Controller
         $courses = Course::orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
         
-        return view('admin.assessments.edit', compact('assessment', 'courses', 'modules'));
+        return view('admin.courses.assessments.edit', compact('assessment', 'courses', 'modules'));
     }
 
     /**
