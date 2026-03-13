@@ -71,10 +71,13 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 });
    
 // Admin assessment routes
-Route::prefix('admin/assessments')->name('admin.assessments.')->group(function () {
-    Route::get('/course/{course}', [AssessmentController::class, 'index'])->name('index');
-    Route::get('/create', [AssessmentController::class, 'create'])->name('create');
-    Route::post('/upload/{course}', [AssessmentController::class, 'upload'])->name('upload');
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // This route requires a course parameter
+    Route::get('/assessments/course/{course}', [AssessmentController::class, 'index'])->name('assessments.index');
+    
+    // You need a separate route for the main index page
+    Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
     Route::put('/{assessment}', [AssessmentController::class, 'update'])->name('update');
     Route::delete('/{assessment}', [AssessmentController::class, 'destroy'])->name('destroy');
 });
