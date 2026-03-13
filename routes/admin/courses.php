@@ -71,7 +71,7 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 });
    
 // Admin assessment routes
-Route::middleware(['auth', 'admin'])->prefix('admin/assessments')->name('admin.assessments.')->group(function () {
+Route::prefix('admin/assessments')->name('admin.assessments.')->group(function () {
     Route::get('/course/{course}', [AssessmentController::class, 'index'])->name('index');
     Route::post('/upload/{course}', [AssessmentController::class, 'upload'])->name('upload');
     Route::put('/{assessment}', [AssessmentController::class, 'update'])->name('update');
