@@ -113,6 +113,13 @@ class AssessmentController extends Controller
      */
     public function store(Request $request)
     {
+         // Debug: Log all incoming data
+        \Log::info('Assessment Store Request:', [
+            'all_data' => $request->all(),
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
+            'files' => $request->allFiles(),
+        ]);
         $rules = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
 
@@ -121,7 +128,7 @@ class AssessmentController extends Controller
         try {
             // Set type-specific defaults
             $validated = $this->setTypeDefaults($validated, $request);
-
+            \Log::info('Validation Rules:', $rules);
             // Handle file upload
             if ($request->hasFile('assessment_file')) {
                 $file = $request->file('assessment_file');
@@ -162,6 +169,10 @@ class AssessmentController extends Controller
                 ->with('success', $message);
 
         } catch (\Exception $e) {
+            \Log::error('Validation failed:', [
+                'errors' => $e->errors(),
+                'input' => $request->all()
+            ]);
             DB::rollBack();
             return back()->withInput()->with('error', 'Error creating assessment: ' . $e->getMessage());
         }
