@@ -503,80 +503,11 @@ class AssessmentController extends Controller
             auth()->id()
         );
 
-        return redirect()->route('admin.courses.assessments.submissions', $submission->assessment_id)
+        return redirect()->route('admin.assessments.submissions', $submission->assessment_id)
             ->with('success', 'Submission graded successfully!');
     }
 
-    /**
-     * Get validation rules based on assessment type
-     */
-    private function getValidationRules($type)
-{
-    $baseRules = [
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'course_id' => 'required|exists:courses,id',
-        'module_id' => 'nullable|exists:course_modules,id',
-        'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
-        'type' => 'required|in:exam,assignment,quiz,project',
-        'status' => 'required|in:draft,active,archived',
-    ];
-
-    switch ($type) {
-        case 'quiz':
-            return array_merge($baseRules, [
-                'total_marks' => 'nullable|integer|min:1|max:100',
-                'passing_score' => 'nullable|integer|min:1|max:100',
-                'questions' => 'nullable|array',
-                'questions.*.text' => 'required_with:questions|string',
-                'questions.*.type' => 'required_with:questions|string',
-                'questions.*.points' => 'required_with:questions|integer|min:1',
-                'questions.*.options' => 'nullable|array',
-                'questions.*.correct_answer' => 'nullable|string', // Changed to nullable
-            ]);
-
-        case 'module_assessment':
-            return array_merge($baseRules, [
-                'duration' => 'nullable|integer|min:15|max:120',
-                'total_marks' => 'nullable|integer|min:20|max:100',
-                'passing_score' => 'nullable|integer|min:50|max:100',
-                'is_timed' => 'sometimes|boolean',
-                'requires_identity_verification' => 'sometimes|boolean',
-                'questions' => 'nullable|array',
-                'questions.*.text' => 'required_with:questions|string',
-                'questions.*.type' => 'required_with:questions|string',
-                'questions.*.points' => 'required_with:questions|integer|min:1',
-            ]);
-
-        case 'final_exam':
-            return array_merge($baseRules, [
-                'duration' => 'nullable|integer|min:60|max:180',
-                'total_marks' => 'nullable|integer|min:50|max:200',
-                'passing_score' => 'nullable|integer|min:60|max:100',
-                'is_timed' => 'sometimes|boolean',
-                'requires_identity_verification' => 'sometimes|boolean',
-                'questions' => 'nullable|array',
-                'questions.*.text' => 'required_with:questions|string',
-                'questions.*.type' => 'required_with:questions|string',
-                'questions.*.points' => 'required_with:questions|integer|min:1',
-            ]);
-
-        case 'diploma':
-            return array_merge($baseRules, [
-                'project_brief' => 'required|string',
-                'total_marks' => 'nullable|integer|min:50|max:200',
-                'passing_score' => 'nullable|integer|min:60|max:100',
-                'needs_manual_marking' => 'sometimes|boolean',
-                'requires_identity_verification' => 'sometimes|boolean',
-                'due_date' => 'nullable|date',
-                // 'rubric' => 'nullable|json',
-            ]);
-
-        default:
-            return $baseRules;
-    }
-}
-
+   
     /**
      * Set type-specific default values
      */
