@@ -63,7 +63,7 @@
                 <hr class="my-2 mx-3 opacity-25">
             </li>
             <li class="dropdown">
-                <a href="{{ route('admin.assessments.all') }}">
+                <a href="javascript:void(0)">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
                     <span>All Assessments</span> 
                 </a>
@@ -72,6 +72,12 @@
                     <!-- Add separator line -->
                     <li class="sidebar-separator">
                         <hr class="my-2 mx-3 opacity-25">
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.assessments.all') }}" >
+                            <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
+                            All Assessments
+                        </a>
                     </li>
                     <li>
                         <a href="{{ route('admin.assessments.create.quiz') }}" >
