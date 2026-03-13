@@ -19,7 +19,7 @@ class AssessmentController extends Controller
     /**
      * Display all assessments
      */
-     public function index(Request $request)
+    public function index(Request $request)
     {
         $query = Assessment::with(['course', 'module'])
             ->orderBy('created_at', 'desc');
@@ -65,6 +65,7 @@ class AssessmentController extends Controller
 
         return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
     }
+
     public function all(Request $request)
     {
         $query = Assessment::with(['course', 'module'])
@@ -110,6 +111,15 @@ class AssessmentController extends Controller
         ];
 
         return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
+    }
+
+    public function createQuiz()
+    {
+        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        $modules = CourseModule::orderBy('module_number')->get();
+        $type = 'quiz';
+        
+        return view('admin.assessments.create-quiz', compact('courses', 'modules', 'type'));
     }
 
     /**
