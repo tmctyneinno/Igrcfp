@@ -538,17 +538,17 @@ document.addEventListener('DOMContentLoaded', function() {
     @if(in_array($type, ['quiz', 'module_assessment', 'final_exam']))
         @if($type == 'quiz')
             // Add 5 questions for quiz
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 2; i++) {
                 addQuestion();
             }
         @elseif($type == 'module_assessment')
             // Add 20 questions for module assessment
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 2; i++) {
                 addQuestion();
             }
         @elseif($type == 'final_exam')
             // Add 50 questions for final exam
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 2; i++) {
                 addQuestion();
             }
         @endif
@@ -695,21 +695,21 @@ document.getElementById('assessmentForm').addEventListener('submit', function(e)
     
     @if(in_array($type, ['quiz', 'module_assessment', 'final_exam']))
         @if($type == 'quiz')
-            if (questions.length < 5) {
+            if (questions.length < 2) {
                 e.preventDefault();
-                alert('Please add at least 5 questions for your quiz.');
+                alert('Please add at least 2 questions for your quiz.');
                 return false;
             }
         @elseif($type == 'module_assessment')
-            if (questions.length < 20) {
+            if (questions.length < 2) {
                 e.preventDefault();
-                alert('Please add at least 20 questions for your module assessment.');
+                alert('Please add at least 2 questions for your module assessment.');
                 return false;
             }
         @elseif($type == 'final_exam')
-            if (questions.length < 50) {
+            if (questions.length < 2) {
                 e.preventDefault();
-                alert('Please add at least 50 questions for your final exam.');
+                alert('Please add at least 2 questions for your final exam.');
                 return false;
             }
         @endif
