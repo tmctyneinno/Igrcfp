@@ -76,7 +76,7 @@ class AssessmentAttemptController extends Controller
             return $data;
         })->shuffle(); // Shuffle questions
 
-        return Inertia::render('Assessment/Quiz', [
+        return Inertia::render('Dashboard/Assessment/Quiz', [
             'enrollment' => [
                 'id' => $enrollment->id,
                 'course' => [
