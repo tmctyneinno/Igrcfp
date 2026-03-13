@@ -71,29 +71,29 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 });
    
 // Admin assessment routes
+
+
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Main assessments page (NO parameter required)
+    // Main assessments page
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
+    Route::get('/assessments/course/{course}', [AssessmentController::class, 'course'])->name('assessments.course');
     
-    // Assessments filtered by course (WITH course parameter)
-    Route::get('/assessments/course/{course}', [AssessmentController::class, 'index'])->name('assessments.course');
+    // Separate create pages for each assessment type
+    Route::get('/assessments/create/quiz', [AssessmentController::class, 'createQuiz'])->name('assessments.create.quiz');
+    Route::get('/assessments/create/module-assessment', [AssessmentController::class, 'createModuleAssessment'])->name('assessments.create.module');
+    Route::get('/assessments/create/final-exam', [AssessmentController::class, 'createFinalExam'])->name('assessments.create.final');
+    Route::get('/assessments/create/diploma', [AssessmentController::class, 'createDiploma'])->name('assessments.create.diploma');
     
-    // Create assessment (NO parameter required)
-    Route::get('/assessments/create', [AssessmentController::class, 'create'])->name('assessments.create');
+    // Store route (same for all types)
     Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
     
-    // Individual assessment routes (WITH assessment parameter)
+    // Other routes
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
     Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
     Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
-    
-    // Upload assessment for a specific course (WITH course parameter)
     Route::post('/assessments/course/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
-    
-    // Submissions routes
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
     Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
     Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');
-    Route::put('/assessments/bulk-delete', [AssessmentController::class, 'bulkDelete'])->name('assessments.bulk-delete');
 });
