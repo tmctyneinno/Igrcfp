@@ -169,11 +169,11 @@ class AssessmentController extends Controller
                 ->with('success', $message);
 
         } catch (\Exception $e) {
-            \Log::error('Validation failed:', [
-                'errors' => $e->errors(),
-                'input' => $request->all()
-            ]);
             DB::rollBack();
+            \Log::error('Assessment creation failed:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->withInput()->with('error', 'Error creating assessment: ' . $e->getMessage());
         }
     }
