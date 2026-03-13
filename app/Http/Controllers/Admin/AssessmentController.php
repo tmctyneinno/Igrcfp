@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Course;
-use App\Models\CourseModule;
+use App\Models\CourseModule; 
 use App\Models\AssessmentQuestion;
 use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
