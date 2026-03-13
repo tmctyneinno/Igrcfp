@@ -402,7 +402,6 @@
                         <!-- Options will be added here -->
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
-                        <iconify-icon icon="ic:baseline-plus"></iconify-icon>
                         Add Option
                     </button>
                     <p class="text-sm text-muted mt-1">Add at least 2 options for multiple choice questions</p>
