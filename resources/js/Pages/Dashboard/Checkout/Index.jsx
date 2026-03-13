@@ -141,7 +141,7 @@ export default function Checkout({ cart, user }) {
                                     >
                                         {processing ? 'Processing...' : `Pay €${totalAmount.toFixed(2)}`}
                                     </button>
-                                </div>
+                                </div> 
                             </form>
                         </div>
                     </div>
