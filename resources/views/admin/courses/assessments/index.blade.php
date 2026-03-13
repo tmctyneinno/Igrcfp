@@ -5,7 +5,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">
             @if(isset($course))
-                Assessments for: {{ $course->title }}
+                Assessments: {{ $course->title }}
             @else
                 All Assessments
             @endif
@@ -21,7 +21,7 @@
             <li class="fw-medium">Assessments</li>
             @if(isset($course))
                 <li>-</li>
-                <li class="fw-medium">{{ $course->title }}</li>
+                <li class="fw-medium">{{ Str::limit($course->title, 30) }}</li>
             @endif
         </ul>
     </div>
@@ -42,61 +42,91 @@
 
     <!-- Statistics Cards -->
     <div class="row gy-4 mb-24">
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-2 col-sm-4">
             <div class="card h-100 p-0 radius-12">
-                <div class="card-body p-24">
+                <div class="card-body p-20">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div>
-                            <span class="fw-semibold text-secondary-light mb-1">Total Assessments</span>
-                            <h4 class="mb-0">{{ $statistics['total'] ?? 0 }}</h4>
+                            <span class="fw-semibold text-secondary-light mb-1">Total</span>
+                            <h4 class="mb-0">{{ $statistics['total'] }}</h4>
                         </div>
-                        <div class="w-40-px h-40-px bg-purple-600 rounded-circle d-flex justify-content-center align-items-center">
+                        <div class="w-45-px h-45-px bg-purple-600 rounded-circle d-flex justify-content-center align-items-center">
                             <iconify-icon icon="solar:document-text-outline" class="text-white text-xl"></iconify-icon>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-2 col-sm-4">
             <div class="card h-100 p-0 radius-12">
-                <div class="card-body p-24">
+                <div class="card-body p-20">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div>
-                            <span class="fw-semibold text-secondary-light mb-1">Active</span>
-                            <h4 class="mb-0">{{ $statistics['active'] ?? 0 }}</h4>
+                            <span class="fw-semibold text-secondary-light mb-1">Quizzes</span>
+                            <h4 class="mb-0">{{ $statistics['quizzes'] }}</h4>
                         </div>
-                        <div class="w-40-px h-40-px bg-green-600 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="solar:check-read-outline" class="text-white text-xl"></iconify-icon>
+                        <div class="w-45-px h-45-px bg-green-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:quiz-game" class="text-white text-xl"></iconify-icon>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-2 col-sm-4">
             <div class="card h-100 p-0 radius-12">
-                <div class="card-body p-24">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div>
+                            <span class="fw-semibold text-secondary-light mb-1">Module</span>
+                            <h4 class="mb-0">{{ $statistics['module_assessments'] }}</h4>
+                        </div>
+                        <div class="w-45-px h-45-px bg-blue-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:clipboard-list" class="text-white text-xl"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-sm-4">
+            <div class="card h-100 p-0 radius-12">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div>
+                            <span class="fw-semibold text-secondary-light mb-1">Final Exams</span>
+                            <h4 class="mb-0">{{ $statistics['final_exams'] }}</h4>
+                        </div>
+                        <div class="w-45-px h-45-px bg-red-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:document" class="text-white text-xl"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-sm-4">
+            <div class="card h-100 p-0 radius-12">
+                <div class="card-body p-20">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div>
+                            <span class="fw-semibold text-secondary-light mb-1">Diploma</span>
+                            <h4 class="mb-0">{{ $statistics['diploma'] }}</h4>
+                        </div>
+                        <div class="w-45-px h-45-px bg-purple-600 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:medal-ribbon" class="text-white text-xl"></iconify-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-sm-4">
+            <div class="card h-100 p-0 radius-12">
+                <div class="card-body p-20">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div>
                             <span class="fw-semibold text-secondary-light mb-1">Submissions</span>
-                            <h4 class="mb-0">{{ $statistics['submissions'] ?? 0 }}</h4>
+                            <h4 class="mb-0">{{ $statistics['submissions'] }}</h4>
                         </div>
-                        <div class="w-40-px h-40-px bg-blue-600 rounded-circle d-flex justify-content-center align-items-center">
+                        <div class="w-45-px h-45-px bg-info-600 rounded-circle d-flex justify-content-center align-items-center">
                             <iconify-icon icon="solar:upload-square-outline" class="text-white text-xl"></iconify-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <div class="card h-100 p-0 radius-12">
-                <div class="card-body p-24">
-                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
-                        <div>
-                            <span class="fw-semibold text-secondary-light mb-1">Pending Grading</span>
-                            <h4 class="mb-0">{{ $statistics['pending_grading'] ?? 0 }}</h4>
-                        </div>
-                        <div class="w-40-px h-40-px bg-yellow-600 rounded-circle d-flex justify-content-center align-items-center">
-                            <iconify-icon icon="solar:clock-circle-outline" class="text-white text-xl"></iconify-icon>
                         </div>
                     </div>
                 </div>
@@ -104,26 +134,50 @@
         </div>
     </div>
 
-    <!-- Course Filter Dropdown -->
+    <!-- Filters and Actions -->
     <div class="card h-100 p-0 radius-12 mb-24">
         <div class="card-body p-24">
             <div class="row align-items-end">
-                <div class="col-md-8">
-                    <label class="form-label fw-semibold">Filter by Course</label>
-                    <select class="form-select" id="courseSelect" onchange="window.location.href=this.value">
-                        <option value="{{ route('admin.assessments.all') }}">All Courses</option>
-                        @foreach($allCourses as $courseOption)
-                            <option value="{{ route('admin.assessments.index', $courseOption->id) }}" 
-                                {{ isset($course) && $course->id == $courseOption->id ? 'selected' : '' }}>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Course</label>
+                    <select class="form-select" id="courseFilter" onchange="filterByCourse(this.value)">
+                        <option value="">All Courses</option>
+                        @foreach($courses as $courseOption)
+                            <option value="{{ $courseOption->id }}" 
+                                {{ (isset($course) && $course->id == $courseOption->id) ? 'selected' : '' }}>
                                 {{ $courseOption->title }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4 text-end">
-                    <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2 float-end">
-                        <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                        Create New Assessment
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Type</label>
+                    <select class="form-select" id="levelFilter" onchange="filterByLevel(this.value)">
+                        <option value="">All Types</option>
+                        <option value="quiz">Quizzes</option>
+                        <option value="module_assessment">Module Assessments</option>
+                        <option value="final_exam">Final Exams</option>
+                        <option value="diploma">Diploma</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select class="form-select" id="statusFilter" onchange="filterByStatus(this.value)">
+                        <option value="">All</option>
+                        <option value="active">Active</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Search</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search assessments..." 
+                           value="{{ request('search') }}" onkeyup="debounceSearch(this.value, 500)">
+                </div>
+                <div class="col-md-2 text-end">
+                    <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary text-sm px-18 py-12 radius-8 d-flex align-items-center gap-2">
+                        <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
+                        New Assessment
                     </a>
                 </div>
             </div>
@@ -142,12 +196,13 @@
                     @endif
                 </h5>
                 <p class="text-secondary-light text-sm mb-0">
-                    {{ isset($course) ? 'Manage assessments for this course' : 'Manage all course assessments' }}
+                    {{ $assessments->total() }} assessments found
                 </p>
             </div>
             @if(isset($course))
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadAssessmentModal">
-                Upload Assessment
+                <iconify-icon icon="solar:upload-outline" class="icon"></iconify-icon>
+                Quick Upload
             </button>
             @endif
         </div>
@@ -158,13 +213,19 @@
                     <table class="table bordered-table mb-0">
                         <thead>
                             <tr>
-                                <th width="50">#</th>
+                                <th width="50">
+                                    <div class="form-check style-check d-flex align-items-center">
+                                        <input class="form-check-input radius-4 border border-neutral-400" type="checkbox" id="selectAll">
+                                    </div>
+                                </th>
+                                <th>#</th>
+                                <th>Title</th>
                                 <th>Course</th>
-                                <th>Assessment Title</th>
+                                <th>Module</th>
                                 <th>Type</th>
                                 <th>Duration</th>
                                 <th>Due Date</th>
-                                <th>Total Marks</th>
+                                <th>Questions</th>
                                 <th>Submissions</th>
                                 <th>Status</th>
                                 <th class="text-center">Actions</th>
@@ -173,120 +234,103 @@
                         <tbody>
                             @foreach($assessments as $index => $assessment)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
                                 <td>
-                                    <span class="badge bg-info-600 text-white px-12 py-6 radius-8">
-                                        {{ $assessment->course->title ?? 'N/A' }}
-                                    </span>
+                                    <div class="form-check style-check d-flex align-items-center">
+                                        <input class="form-check-input radius-4 border border-neutral-400 assessment-checkbox" 
+                                               type="checkbox" name="assessment_ids[]" value="{{ $assessment->id }}">
+                                    </div>
                                 </td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>
                                     <div>
                                         <span class="fw-semibold">{{ $assessment->title }}</span>
-                                        <p class="text-secondary-light text-sm mb-0">{{ Str::limit($assessment->description, 50) }}</p>
+                                        <p class="text-secondary-light text-sm mb-0">{{ Str::limit($assessment->description, 40) }}</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-{{ 
-                                        $assessment->type == 'exam' ? 'purple' : 
-                                        ($assessment->type == 'assignment' ? 'blue' : 'green')
-                                    }}-600 text-white px-12 py-6 radius-8">
-                                        {{ ucfirst($assessment->type) }}
+                                    <span class="badge bg-info-600 text-white px-12 py-6 radius-8">
+                                        {{ $assessment->course?->short_title ?? 'N/A' }}
                                     </span>
                                 </td>
-                                <td>{{ $assessment->duration }} mins</td>
-                                <td>{{ $assessment->due_date ? date('M d, Y', strtotime($assessment->due_date)) : 'N/A' }}</td>
-                                <td>{{ $assessment->total_marks }}</td>
+                                <td>
+                                    @if($assessment->module)
+                                        <span class="text-sm">Module {{ $assessment->module->module_number }}</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @php
+                                        $typeColors = [
+                                            'quiz' => 'bg-green-600',
+                                            'module_assessment' => 'bg-blue-600',
+                                            'final_exam' => 'bg-red-600',
+                                            'diploma' => 'bg-purple-600'
+                                        ];
+                                        $typeLabels = [
+                                            'quiz' => 'Quiz',
+                                            'module_assessment' => 'Module',
+                                            'final_exam' => 'Final Exam',
+                                            'diploma' => 'Diploma'
+                                        ];
+                                        $color = $typeColors[$assessment->assessment_level] ?? 'bg-gray-600';
+                                        $label = $typeLabels[$assessment->assessment_level] ?? ucfirst($assessment->assessment_level);
+                                    @endphp
+                                    <span class="badge {{ $color }} text-white px-12 py-6 radius-8">
+                                        {{ $label }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($assessment->is_timed)
+                                        <span class="d-flex align-items-center gap-1">
+                                            <iconify-icon icon="solar:clock-circle-outline" class="text-primary-600"></iconify-icon>
+                                            {{ $assessment->duration }} mins
+                                        </span>
+                                    @else
+                                        <span class="text-muted">Untimed</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($assessment->due_date)
+                                        <div>
+                                            <span class="text-sm">{{ $assessment->due_date->format('M d, Y') }}</span>
+                                            @if($assessment->due_date < now())
+                                                <span class="badge bg-danger-600 text-white px-8 py-4 radius-4 ms-1">Overdue</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">{{ $assessment->question_count ?: $assessment->questions_count ?? 0 }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <span>{{ $assessment->submissions_count ?? 0 }}/{{ $assessment->total_students ?? 0 }}</span>
-                                        @if(($assessment->submissions_count ?? 0) > 0)
-                                            <button class="btn btn-sm btn-outline-primary" onclick="viewSubmissions({{ $assessment->id }})">
-                                                View
-                                            </button>
+                                        <span>{{ $assessment->submissions_count }}</span>
+                                        @if($assessment->pending_grading_count > 0)
+                                            <span class="badge bg-warning-600 text-white px-8 py-4 radius-4">
+                                                {{ $assessment->pending_grading_count }} pending
+                                            </span>
                                         @endif
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-{{ $assessment->status == 'active' ? 'success' : 'warning' }}-600 text-white px-12 py-6 radius-8">
+                                    @php
+                                        $statusColors = [
+                                            'active' => 'bg-success-600',
+                                            'draft' => 'bg-warning-600',
+                                            'archived' => 'bg-secondary-600'
+                                        ];
+                                    @endphp
+                                    <span class="badge {{ $statusColors[$assessment->status] ?? 'bg-secondary-600' }} text-white px-12 py-6 radius-8">
                                         {{ ucfirst($assessment->status) }}
                                     </span>
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
                                         <a href="{{ route('admin.assessments.show', $assessment->id) }}" 
-                                           class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
+                                           class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                            title="View">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
                                         <a href="{{ route('admin.assessments.edit', $assessment->id) }}"
-                                           class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
-                                           title="Edit">
-                                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                        </a>
-                                        <form action="{{ route('admin.assessments.destroy', $assessment->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"
-                                                    onclick="return confirm('Are you sure you want to delete this assessment?')"
-                                                    title="Delete">
-                                                <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Pagination -->
-                @if(method_exists($assessments, 'links'))
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
-                    <div>
-                        <span class="text-muted">Showing {{ $assessments->firstItem() }} to {{ $assessments->lastItem() }} of {{ $assessments->total() }} entries</span>
-                    </div>
-                    <div>
-                        {{ $assessments->links('vendor.pagination.custom') }}
-                    </div>
-                </div>
-                @endif
-            @else
-                <div class="text-center py-5">
-                    <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
-                    <h6 class="text-muted mb-2">No assessments found</h6>
-                    <p class="text-muted mb-4">Create your first assessment to get started</p>
-                    <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary">
-                        Create Assessment
-                    </a>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-
-<!-- Upload Assessment Modal (only show if course is selected) -->
-@if(isset($course))
-<div class="modal fade" id="uploadAssessmentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form action="{{ route('admin.assessments.upload', $course->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Upload Assessment for {{ $course->title }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- ... modal content ... -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Upload Assessment</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@endif
-@endsection
+                                           class="bg-success-focus text-success-600 bg-hover-success
