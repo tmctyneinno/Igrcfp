@@ -71,6 +71,7 @@
     <form action="{{ route('admin.assessments.store') }}" method="POST" enctype="multipart/form-data" id="assessmentForm">
         @csrf
         <input type="hidden" name="assessment_level" value="{{ $type }}">
+        <input type="hidden" name="type" value="{{ $type == 'quiz' ? 'quiz' : ($type == 'diploma' ? 'project' : 'exam') }}">
 
         <div class="row gy-4">
             <!-- Left Column - Basic Info -->
@@ -132,24 +133,19 @@
                         <div>
                             <h6 class="card-title mb-0">Questions</h6>
                             <p class="text-sm text-secondary-light mt-1">
-                                @if($type == 'quiz')
-                                    Add 1-5 questions for your quiz
-                                @elseif($type == 'module_assessment')
-                                    Add 1-2 questions for your module assessment
-                                @elseif($type == 'final_exam')
-                                    Add at least 2 questions for your final exam
-                                @endif
+                                Add questions for your {{ str_replace('_', ' ', $type) }}
                             </p>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                             Add Question
+                            <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
+                            Add Question
                         </button>
                     </div>
                     <div class="card-body">
                         <div id="questions-container">
                             <!-- Questions will be added here dynamically -->
                         </div>
-                        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message">
+                        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message" style="display: block;">
                             <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
                             <h6 class="text-muted mb-2">No questions added yet</h6>
                             <p class="text-muted mb-3">Click the "Add Question" button to create your first question.</p>
@@ -172,7 +168,7 @@
                         <div class="mb-3">
                             <label class="form-label">Project Description <span class="text-danger">*</span></label>
                             <textarea name="project_brief" class="form-control @error('project_brief') is-invalid @enderror" 
-                                      rows="8" placeholder="Describe the project/case study requirements in detail">{{ old('project_brief') }}</textarea>
+                                      rows="8" placeholder="Describe the project/case study requirements in detail" required>{{ old('project_brief') }}</textarea>
                             @error('project_brief') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
@@ -210,12 +206,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Type</label>
+                            <label class="form-label">Assessment Type</label>
                             <input type="text" class="form-control" value="{{ ucfirst(str_replace('_', ' ', $type)) }}" readonly>
-                            <input type="hidden" name="type" value="{{ 
-                                $type == 'quiz' ? 'quiz' : 
-                                ($type == 'diploma' ? 'project' : 'exam') 
-                            }}">
                         </div>
                     </div>
                 </div>
@@ -229,7 +221,7 @@
                         <div class="mb-3">
                             <label class="form-label">Total Marks</label>
                             <input type="number" name="total_marks" class="form-control @error('total_marks') is-invalid @enderror" 
-                                   value="{{ old('total_marks') }}" min="1">
+                                   value="{{ old('total_marks', 100) }}" min="1">
                             @error('total_marks') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
@@ -242,7 +234,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Weight (% of final grade)</label>
-                            <input type="number" name="weight" class="form-control" value="{{ old('weight') }}" min="1" max="100">
+                            <input type="number" name="weight" class="form-control" value="{{ old('weight', 100) }}" min="1" max="100">
                         </div>
                     </div>
                 </div>
@@ -350,22 +342,6 @@
                 </div>
             </div>
         </div>
-        <!-- Add this temporarily for debugging -->
-        <script>
-        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
-            console.log('Form submitted');
-            
-            // Check if any validation is preventing submission
-            const questions = document.querySelectorAll('.question-item');
-            console.log('Questions count:', questions.length);
-            
-            // Log form data
-            const formData = new FormData(this);
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ': ' + pair[1]);
-            }
-        });
-        </script>
     </form>
 </div>
 
@@ -391,7 +367,6 @@
                     <select name="questions[{idx}][type]" class="form-select question-type" onchange="handleQuestionTypeChange(this)">
                         <option value="multiple_choice">Multiple Choice</option>
                         <option value="true_false">True/False</option>
-                        <option value="multiple_answer">Multiple Answer</option>
                         <option value="short_answer">Short Answer</option>
                         <option value="essay">Essay</option>
                     </select>
@@ -418,6 +393,7 @@
                         <!-- Options will be added here -->
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
+                        <iconify-icon icon="ic:baseline-plus"></iconify-icon>
                         Add Option
                     </button>
                     <p class="text-sm text-muted mt-1">Add at least 2 options for multiple choice questions</p>
@@ -436,18 +412,6 @@
                             <label class="form-check-label" for="false-{idx}">False</label>
                         </div>
                     </div>
-                </div>
-
-                <!-- Multiple Answer Container -->
-                <div class="col-12 mb-3 multiple-answer-container" style="display: none;">
-                    <label class="form-label fw-semibold">Answer Options (Select all that apply)</label>
-                    <div class="multiple-answer-options">
-                        <!-- Options will be added here -->
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addMultipleAnswerOption(this)">
-                        <iconify-icon icon="ic:baseline-plus"></iconify-icon>
-                        Add Option
-                    </button>
                 </div>
 
                 <!-- Short Answer/Essay Container -->
@@ -478,19 +442,6 @@
         </button>
     </div>
 </template>
-
-<!-- Multiple Answer Option Template -->
-<template id="multiple-answer-template">
-    <div class="multiple-answer-item d-flex align-items-center gap-2 mb-2">
-        <input type="text" class="form-control" name="questions[{idx}][options][]" placeholder="Enter option" required>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="questions[{idx}][correct_answers][]" value="{option-value}">
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOption(this)">
-            <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
-        </button>
-    </div>
-</template>
 @endsection
 
 @push('styles')
@@ -501,17 +452,16 @@
     .question-item:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .option-item, .multiple-answer-item {
+    .option-item {
         background: #f8f9fa;
         padding: 10px;
         border-radius: 6px;
         transition: all 0.2s ease;
     }
-    .option-item:hover, .multiple-answer-item:hover {
+    .option-item:hover {
         background: #e9ecef;
     }
-    .option-item .form-check-input:checked,
-    .multiple-answer-item .form-check-input:checked {
+    .option-item .form-check-input:checked {
         background-color: #0A1F44;
         border-color: #0A1F44;
     }
@@ -533,26 +483,10 @@
 <script>
 let questionCount = 0;
 
-// Initialize with questions based on assessment type
+// Initialize with empty questions container - no auto-add
 document.addEventListener('DOMContentLoaded', function() {
-    @if(in_array($type, ['quiz', 'module_assessment', 'final_exam']))
-        @if($type == 'quiz')
-            // Add 5 questions for quiz
-            for (let i = 0; i < 2; i++) {
-                addQuestion();
-            }
-        @elseif($type == 'module_assessment')
-            // Add 20 questions for module assessment
-            for (let i = 0; i < 2; i++) {
-                addQuestion();
-            }
-        @elseif($type == 'final_exam')
-            // Add 50 questions for final exam
-            for (let i = 0; i < 2; i++) {
-                addQuestion();
-            }
-        @endif
-    @endif
+    // Don't auto-add questions, let user add them manually
+    console.log('Assessment type: {{ $type }}');
 });
 
 function addQuestion() {
@@ -565,10 +499,13 @@ function addQuestion() {
     }
     
     // Clone the template content
-    const questionHtml = template.innerHTML.replace(/{idx}/g, questionCount);
+    let questionHtml = template.innerHTML.replace(/{idx}/g, questionCount);
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = questionHtml;
     const questionElement = tempDiv.firstElementChild;
+    
+    // Set data attribute
+    questionElement.dataset.questionIdx = questionCount;
     
     // Update question number
     questionElement.querySelector('.question-number').textContent = container.children.length + 1;
@@ -607,41 +544,31 @@ function handleQuestionTypeChange(select) {
     const questionItem = select.closest('.question-item');
     const optionsContainer = questionItem.querySelector('.options-container');
     const trueFalseContainer = questionItem.querySelector('.true-false-container');
-    const multipleAnswerContainer = questionItem.querySelector('.multiple-answer-container');
     const shortAnswerContainer = questionItem.querySelector('.short-answer-container');
-    const idx = questionItem.dataset.questionIdx;
     
     // Hide all containers
-    optionsContainer.style.display = 'none';
-    trueFalseContainer.style.display = 'none';
-    multipleAnswerContainer.style.display = 'none';
-    shortAnswerContainer.style.display = 'none';
+    if (optionsContainer) optionsContainer.style.display = 'none';
+    if (trueFalseContainer) trueFalseContainer.style.display = 'none';
+    if (shortAnswerContainer) shortAnswerContainer.style.display = 'none';
     
     // Show appropriate container based on selected type
     switch(select.value) {
         case 'multiple_choice':
-            optionsContainer.style.display = 'block';
-            // Add default options if empty
-            if (optionsContainer.querySelectorAll('.option-item').length === 0) {
-                addOption(optionsContainer.querySelector('.btn'));
-                addOption(optionsContainer.querySelector('.btn'));
+            if (optionsContainer) {
+                optionsContainer.style.display = 'block';
+                // Add default options if empty
+                if (optionsContainer.querySelectorAll('.option-item').length === 0) {
+                    addOption(optionsContainer.querySelector('.btn'));
+                    addOption(optionsContainer.querySelector('.btn'));
+                }
             }
             break;
         case 'true_false':
-            trueFalseContainer.style.display = 'block';
-            break;
-        case 'multiple_answer':
-            multipleAnswerContainer.style.display = 'block';
-            // Add default options if empty
-            if (multipleAnswerContainer.querySelectorAll('.multiple-answer-item').length === 0) {
-                addMultipleAnswerOption(multipleAnswerContainer.querySelector('.btn'));
-                addMultipleAnswerOption(multipleAnswerContainer.querySelector('.btn'));
-                addMultipleAnswerOption(multipleAnswerContainer.querySelector('.btn'));
-            }
+            if (trueFalseContainer) trueFalseContainer.style.display = 'block';
             break;
         case 'short_answer':
         case 'essay':
-            shortAnswerContainer.style.display = 'block';
+            if (shortAnswerContainer) shortAnswerContainer.style.display = 'block';
             break;
     }
 }
@@ -654,26 +581,7 @@ function addOption(button) {
     const idx = questionItem.dataset.questionIdx;
     const optionCount = optionsList.children.length + 1;
     
-    const optionHtml = template.innerHTML
-        .replace(/{idx}/g, idx)
-        .replace('{option-value}', 'option' + optionCount);
-    
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = optionHtml;
-    const optionElement = tempDiv.firstElementChild;
-    
-    optionsList.appendChild(optionElement);
-}
-
-function addMultipleAnswerOption(button) {
-    const container = button.closest('.multiple-answer-container');
-    const optionsList = container.querySelector('.multiple-answer-options');
-    const template = document.getElementById('multiple-answer-template');
-    const questionItem = button.closest('.question-item');
-    const idx = questionItem.dataset.questionIdx;
-    const optionCount = optionsList.children.length + 1;
-    
-    const optionHtml = template.innerHTML
+    let optionHtml = template.innerHTML
         .replace(/{idx}/g, idx)
         .replace('{option-value}', 'option' + optionCount);
     
@@ -685,67 +593,69 @@ function addMultipleAnswerOption(button) {
 }
 
 function removeOption(button) {
-    const optionItem = button.closest('.option-item, .multiple-answer-item');
+    const optionItem = button.closest('.option-item');
     optionItem.remove();
 }
 
-// Form validation before submit
+// Simple validation before submit
 document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+    const assessmentType = '{{ $type }}';
+    
+    // For diploma, always submit (no question validation needed)
+    if (assessmentType === 'diploma') {
+        return true;
+    }
+    
+    // For quiz, module_assessment, final_exam - check if there's at least one question
     const questions = document.querySelectorAll('.question-item');
     
-    @if(in_array($type, ['quiz', 'module_assessment', 'final_exam']))
-        @if($type == 'quiz')
-            if (questions.length < 2) {
-                e.preventDefault();
-                alert('Please add at least 2 questions for your quiz.');
-                return false;
-            }
-        @elseif($type == 'module_assessment')
-            if (questions.length < 2) {
-                e.preventDefault();
-                alert('Please add at least 2 questions for your module assessment.');
-                return false;
-            }
-        @elseif($type == 'final_exam')
-            if (questions.length < 2) {
-                e.preventDefault();
-                alert('Please add at least 2 questions for your final exam.');
-                return false;
-            }
-        @endif
+    if (questions.length === 0) {
+        e.preventDefault();
+        alert('Please add at least one question.');
+        return false;
+    }
+    
+    // Basic validation for each question
+    for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
+        const questionText = question.querySelector('.question-text').value;
+        const points = question.querySelector('.question-points').value;
         
-        // Validate each question has required fields
-        for (let i = 0; i < questions.length; i++) {
-            const question = questions[i];
-            const questionText = question.querySelector('.question-text').value;
-            const points = question.querySelector('.question-points').value;
+        if (!questionText.trim()) {
+            e.preventDefault();
+            alert(`Question ${i + 1} is missing the question text.`);
+            return false;
+        }
+        
+        if (!points || points <= 0) {
+            e.preventDefault();
+            alert(`Question ${i + 1} needs valid points.`);
+            return false;
+        }
+        
+        // For multiple choice, check options
+        const typeSelect = question.querySelector('.question-type');
+        if (typeSelect && typeSelect.value === 'multiple_choice') {
+            const options = question.querySelectorAll('.option-item input[type="text"]');
             
-            if (!questionText || !points) {
+            if (options.length < 2) {
                 e.preventDefault();
-                alert(`Question ${i + 1} is incomplete. Please fill in all required fields.`);
+                alert(`Question ${i + 1} needs at least 2 options.`);
                 return false;
             }
             
-            // Validate options for multiple choice
-            const typeSelect = question.querySelector('.question-type');
-            if (typeSelect.value === 'multiple_choice') {
-                const options = question.querySelectorAll('.option-item input[type="text"]');
-                const correctAnswer = question.querySelector('input[name^="questions"][name$="[correct_answer]"]:checked');
-                
-                if (options.length < 2) {
+            // Check if options have text
+            for (let j = 0; j < options.length; j++) {
+                if (!options[j].value.trim()) {
                     e.preventDefault();
-                    alert(`Question ${i + 1} needs at least 2 options.`);
-                    return false;
-                }
-                
-                if (!correctAnswer) {
-                    e.preventDefault();
-                    alert(`Please select the correct answer for Question ${i + 1}.`);
+                    alert(`Option ${j + 1} for Question ${i + 1} cannot be empty.`);
                     return false;
                 }
             }
         }
-    @endif
+    }
+    
+    return true;
 });
 </script>
 @endpush
