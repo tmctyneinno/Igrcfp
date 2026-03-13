@@ -122,6 +122,24 @@ class AssessmentController extends Controller
         return view('admin.courses.assessments.create-quiz', compact('courses', 'modules', 'type'));
     }
 
+    public function createModuleAssessment()
+    {
+        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        $modules = CourseModule::orderBy('module_number')->get();
+        $type = 'module_assessment';
+        
+        return view('admin.courses.assessments.create-module', compact('courses', 'modules', 'type'));
+    }
+
+    public function createFinalExam()
+    {
+        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        $modules = CourseModule::orderBy('module_number')->get();
+        $type = 'final_exam';
+        
+        return view('admin.courses.assessments.create-final', compact('courses', 'modules', 'type'));
+    }
+
     /**
      * Show assessments for a specific course
      */
