@@ -413,5 +413,39 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cart::class)->where('status', 'active');
     }
-    
+    /**
+ * Assessment relationships for User model
+ */
+public function assessmentSubmissions()
+{
+    return $this->hasMany(AssessmentSubmission::class);
+}
+
+public function assessmentAttempts()
+{
+    return $this->hasMany(AssessmentAttempt::class);
+}
+
+public function getPendingAssessmentsAttribute()
+{
+    return Assessment::whereHas('course.enrollments', function($q) {
+        $q->where('user_id', $this->id)
+          ->where('status', 'enrolled');
+    })
+    ->where('status', 'active')
+    ->where('release_date', '<=', now())
+    ->whereDoesntHave('submissions', function($q) {
+        $q->where('user_id', $this->id)
+          ->where('status', 'graded');
+    })
+    ->get();
+}
+
+public function getCompletedAssessmentsAttribute()
+{
+    return Assessment::whereHas('submissions', function($q) {
+        $q->where('user_id', $this->id)
+          ->where('status', 'graded');
+    })->get();
+}
 }
