@@ -262,61 +262,70 @@ class AssessmentAttemptController extends Controller
      * Review quiz results
      */
     public function reviewQuiz($enrollmentId, $assessmentId)
-    {
-        $enrollment = Enrollment::where('id', $enrollmentId)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
+{
+    $enrollment = Enrollment::where('id', $enrollmentId)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
 
-        $submission = AssessmentSubmission::where('assessment_id', $assessmentId)
-            ->where('user_id', auth()->id())
-            ->where('status', 'completed')
-            ->firstOrFail();
+    $submission = AssessmentSubmission::where('assessment_id', $assessmentId)
+        ->where('user_id', auth()->id())
+        ->where('status', 'completed')
+        ->firstOrFail();
 
-        $assessment = Assessment::with('questions')
-            ->where('id', $assessmentId)
-            ->firstOrFail();
+    $assessment = Assessment::with('questions')
+        ->where('id', $assessmentId)
+        ->firstOrFail();
 
-        // Prepare questions with results
-        $questions = $assessment->questions->map(function($question) use ($submission) {
-            $result = $submission->results[$question->id] ?? null;
-            
-            return [
-                'id' => $question->id,
-                'text' => $question->question_text,
-                'type' => $question->question_type,
-                'points' => $question->points,
-                'options' => $question->options,
-                'correct_answer' => $question->correct_answer,
-                'user_answer' => $result['user_answer'] ?? null,
-                'is_correct' => $result['correct'] ?? false,
-                'points_earned' => $result['points_earned'] ?? 0,
-            ];
-        });
+    // Prepare questions with results
+    $questions = $assessment->questions->map(function($question) use ($submission) {
+        $result = $submission->results[$question->id] ?? null;
+        
+        // Get user answer from submission
+        $userAnswer = $submission->answers[$question->id] ?? null;
+        
+        return [
+            'id' => $question->id,
+            'text' => $question->question_text,
+            'type' => $question->question_type,
+            'points' => $question->points,
+            'options' => $question->options,
+            'correct_answer' => $question->correct_answer,
+            'user_answer' => $userAnswer,
+            'is_correct' => $result['correct'] ?? false,
+            'points_earned' => $result['points_earned'] ?? 0,
+        ];
+    })->values()->toArray(); // Convert to array
 
-        return Inertia::render('Assessment/QuizReview', [
-            'enrollment' => [
-                'id' => $enrollment->id,
-                'course' => [
-                    'id' => $enrollment->course->id,
-                    'title' => $enrollment->course->title,
-                    'slug' => $enrollment->course->slug,
-                ]
-            ],
-            'assessment' => [
-                'id' => $assessment->id,
-                'title' => $assessment->title,
-                'total_marks' => $assessment->total_marks,
-                'passing_score' => $assessment->passing_score,
-            ],
-            'submission' => [
-                'score' => $submission->score,
-                'passed' => $submission->passed,
-                'submitted_at' => $submission->submitted_at,
-                'time_spent' => $submission->time_spent,
-            ],
-            'questions' => $questions,
-        ]);
-    }
+    // Debug log to check data
+    \Log::info('Quiz Review Data:', [
+        'questions_count' => count($questions),
+        'first_question' => $questions[0] ?? null,
+    ]);
+
+    return Inertia::render('Assessment/QuizReview', [
+        'enrollment' => [
+            'id' => $enrollment->id,
+            'course' => [
+                'id' => $enrollment->course->id,
+                'title' => $enrollment->course->title,
+                'slug' => $enrollment->course->slug,
+            ]
+        ],
+        'assessment' => [
+            'id' => $assessment->id,
+            'title' => $assessment->title,
+            'total_marks' => $assessment->total_marks,
+            'passing_score' => $assessment->passing_score,
+        ],
+        'submission' => [
+            'score' => $submission->score,
+            'passed' => $submission->passed,
+            'submitted_at' => $submission->submitted_at,
+            'time_spent' => $submission->time_spent,
+        ],
+        'questions' => $questions,
+    ]);
+}
 
     /**
      * Save quiz progress (AJAX endpoint for auto-save)
