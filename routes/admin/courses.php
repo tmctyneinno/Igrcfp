@@ -71,7 +71,7 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 });
    
 // Admin assessment routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->name('admin.')-group(function () {
     // Main assessments page (no parameter required)
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
     
