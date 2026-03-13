@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { motion } from 'framer-motion';
@@ -8,21 +8,32 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     DocumentTextIcon,
-    ExclamationTriangleIcon
+    ExclamationTriangleIcon,
+    EyeIcon
 } from '@heroicons/react/24/outline';
 
 export default function QuizReview({ enrollment, assessment, submission, questions = [] }) {
     const [currentQuestion, setCurrentQuestion] = useState(0);
-    // DEBUG: Log the received data
-    console.log('=== QUIZ REVIEW DEBUG ===');
-    console.log('Questions:', questions);
-    console.log('Questions length:', questions?.length);
-    console.log('Assessment:', assessment);
-    console.log('Submission:', submission);
-    console.log('Enrollment:', enrollment);
+    const [showDebug, setShowDebug] = useState(false);
     
+    // Debug logging
+    useEffect(() => {
+        console.log('=== QUIZ REVIEW MOUNTED ===');
+        console.log('Questions received:', questions);
+        console.log('Questions type:', typeof questions);
+        console.log('Is array:', Array.isArray(questions));
+        console.log('Questions length:', questions?.length);
+        
+        if (questions && questions.length > 0) {
+            console.log('First question sample:', questions[0]);
+        }
+        
+        console.log('Assessment:', assessment);
+        console.log('Submission:', submission);
+    }, []);
+
     // Safely check if questions exist
-    if (!questions || questions.length === 0) {
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
         return (
             <AuthenticatedLayout>
                 <Head title="Review Error" />
@@ -31,7 +42,27 @@ export default function QuizReview({ enrollment, assessment, submission, questio
                         <div className="bg-white rounded-xl shadow-sm p-8 text-center">
                             <ExclamationTriangleIcon className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
                             <h2 className="text-2xl font-bold text-gray-900 mb-2">No Questions Found</h2>
-                            <p className="text-gray-600 mb-6">Unable to load the review questions.</p>
+                            <p className="text-gray-600 mb-4">Unable to load the review questions.</p>
+                            
+                            {/* Debug Info */}
+                            <div className="mb-6 p-4 bg-gray-50 rounded-lg text-left">
+                                <button 
+                                    onClick={() => setShowDebug(!showDebug)}
+                                    className="flex items-center gap-2 text-indigo-600 mb-2"
+                                >
+                                    <EyeIcon className="w-4 h-4" />
+                                    {showDebug ? 'Hide' : 'Show'} Debug Info
+                                </button>
+                                
+                                {showDebug && (
+                                    <div className="text-xs font-mono">
+                                        <p><strong>Questions:</strong> {JSON.stringify(questions, null, 2)}</p>
+                                        <p><strong>Assessment:</strong> {JSON.stringify(assessment, null, 2)}</p>
+                                        <p><strong>Submission:</strong> {JSON.stringify(submission, null, 2)}</p>
+                                    </div>
+                                )}
+                            </div>
+                            
                             <Link
                                 href={`/courses/${enrollment?.course?.slug || '#'}`}
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
@@ -46,7 +77,7 @@ export default function QuizReview({ enrollment, assessment, submission, questio
         );
     }
 
-    const question = questions[currentQuestion] || questions[0];
+    const question = questions[currentQuestion];
     const formatTime = (seconds) => {
         if (!seconds) return 'N/A';
         const mins = Math.floor(seconds / 60);
@@ -56,7 +87,7 @@ export default function QuizReview({ enrollment, assessment, submission, questio
 
     // Format answer for display
     const formatAnswer = (answer) => {
-        if (!answer) return 'No answer provided';
+        if (answer === null || answer === undefined) return 'No answer provided';
         if (typeof answer === 'string') {
             return answer.charAt(0).toUpperCase() + answer.slice(1);
         }
@@ -133,6 +164,7 @@ export default function QuizReview({ enrollment, assessment, submission, questio
                     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                         <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                             <h2 className="text-lg font-semibold text-gray-900">Question Review</h2>
+                            <p className="text-sm text-gray-500">{questions.length} questions total</p>
                         </div>
 
                         <div className="p-6">
@@ -143,7 +175,7 @@ export default function QuizReview({ enrollment, assessment, submission, questio
                                         key={index}
                                         onClick={() => setCurrentQuestion(index)}
                                         className={`
-                                            w-10 h-10 rounded-lg text-sm font-medium transition
+                                            w-10 h-10 rounded-lg text-sm font-medium transition relative
                                             ${currentQuestion === index ? 'ring-2 ring-indigo-600 ring-offset-2' : ''}
                                             ${q?.is_correct 
                                                 ? 'bg-green-100 text-green-700 hover:bg-green-200' 
@@ -230,23 +262,6 @@ export default function QuizReview({ enrollment, assessment, submission, questio
                                                         <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Expected Answer:</p>
                                                         <div className="p-3 bg-green-50 rounded-lg">
                                                             {formatAnswer(question.correct_answer)}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {question.type === 'essay' && (
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700 mb-2">Your Essay:</p>
-                                                <div className="p-4 bg-gray-50 rounded-lg whitespace-pre-wrap">
-                                                    {question.user_answer || 'No answer provided'}
-                                                </div>
-                                                {question.feedback && (
-                                                    <>
-                                                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Instructor Feedback:</p>
-                                                        <div className="p-4 bg-blue-50 rounded-lg">
-                                                            {question.feedback}
                                                         </div>
                                                     </>
                                                 )}
