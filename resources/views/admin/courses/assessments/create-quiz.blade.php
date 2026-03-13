@@ -57,13 +57,13 @@
                             <div class="col-12">
                                 <label class="form-label">Quiz Title <span class="text-danger">*</span></label>
                                 <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
-                                       value="{{ old('title') }}" placeholder="e.g., Module 1 Review Quiz" required>
+                                       value="{{ old('title') }}" placeholder="e.g., Module 1 Review Quiz" >
                                 @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Course <span class="text-danger">*</span></label>
-                                <select name="course_id" class="form-select @error('course_id') is-invalid @enderror" required>
+                                <select name="course_id" class="form-select @error('course_id') is-invalid @enderror" >
                                     <option value="">Select Course</option>
                                     @foreach($courses as $course)
                                         <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
