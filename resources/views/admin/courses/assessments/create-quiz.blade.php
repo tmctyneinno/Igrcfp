@@ -32,6 +32,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <form action="{{ route('admin.assessments.store') }}" method="POST" enctype="multipart/form-data" id="quizForm">
         @csrf
         <input type="hidden" name="assessment_level" value="quiz">
@@ -98,7 +105,8 @@
                             <p class="text-sm text-secondary-light mt-1">Add 5-10 questions for your quiz</p>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                             Add Question
+                            <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
+                            Add Question
                         </button>
                     </div>
                     <div class="card-body">
@@ -110,6 +118,7 @@
                             <h6 class="text-muted mb-2">No questions added yet</h6>
                             <p class="text-muted mb-3">Click the button below to add your first question.</p>
                             <button type="button" class="btn btn-primary" onclick="addQuestion()">
+                                <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
                                 Add First Question
                             </button>
                         </div>
@@ -171,7 +180,7 @@
                     <div class="card-body">
                         <div class="d-flex gap-3 justify-content-end">
                             <a href="{{ route('admin.assessments.all') }}" class="btn btn-outline-secondary px-4">Cancel</a>
-                            <button type="submit" class="btn btn-primary px-5">Create Quiz</button>
+                            <button type="submit" class="btn btn-primary px-5" id="submitBtn">Create Quiz</button>
                         </div>
                     </div>
                 </div>
@@ -186,6 +195,7 @@
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h6 class="mb-0">Question <span class="question-number">1</span></h6>
             <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeQuestion(this)">
+                <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                 Remove
             </button>
         </div>
@@ -268,6 +278,12 @@
         </button>
     </div>
 </template>
+
+<!-- Debug Button (remove after fixing) -->
+<div class="text-end mb-3">
+    <button type="button" class="btn btn-info" onclick="debugFormData()">Debug Form Data</button>
+    <button type="button" class="btn btn-warning" onclick="testSubmit()">Test Submit (No Validation)</button>
+</div>
 @endsection
 
 @push('styles')
@@ -391,26 +407,127 @@ function removeOption(button) {
     optionItem.remove();
 }
 
-// Form validation
+// Debug function to see form data
+function debugFormData() {
+    const form = document.getElementById('quizForm');
+    const formData = new FormData(form);
+    
+    console.log('=== FORM DATA DEBUG ===');
+    console.log('Form action:', form.action);
+    console.log('Form method:', form.method);
+    
+    let questionData = {};
+    for (let pair of formData.entries()) {
+        if (pair[0].includes('questions')) {
+            console.log(pair[0] + ':', pair[1]);
+        } else {
+            console.log(pair[0] + ':', pair[1]);
+        }
+    }
+    console.log('=== END DEBUG ===');
+    
+    alert('Form data logged to console. Press F12 to view.');
+}
+
+// Test submit without validation
+function testSubmit() {
+    if (confirm('Submit without validation?')) {
+        document.getElementById('quizForm').submit();
+    }
+}
+
+// Form validation with proper feedback
 document.getElementById('quizForm').addEventListener('submit', function(e) {
+    console.log('Form submission started');
+    
     const questions = document.querySelectorAll('.question-item');
     
+    // Check if there are questions
     if (questions.length === 0) {
         e.preventDefault();
-        alert('Please add at least one question.');
+        alert('❌ Please add at least one question.');
         return false;
     }
     
+    // Validate each question
     for (let i = 0; i < questions.length; i++) {
-        const questionText = questions[i].querySelector('.question-text').value;
+        const question = questions[i];
+        const questionText = question.querySelector('.question-text').value;
+        
+        // Check question text
         if (!questionText.trim()) {
             e.preventDefault();
-            alert(`Question ${i + 1} text cannot be empty.`);
+            alert(`❌ Question ${i + 1} text cannot be empty.`);
             return false;
-        } 
+        }
+        
+        // Check points
+        const points = question.querySelector('.question-points').value;
+        if (!points || points <= 0) {
+            e.preventDefault();
+            alert(`❌ Question ${i + 1} must have valid points.`);
+            return false;
+        }
+        
+        // Validate based on question type
+        const typeSelect = question.querySelector('.question-type');
+        const questionType = typeSelect.value;
+        
+        if (questionType === 'multiple_choice') {
+            const options = question.querySelectorAll('.option-item input[type="text"]');
+            
+            // Check if there are at least 2 options
+            if (options.length < 2) {
+                e.preventDefault();
+                alert(`❌ Question ${i + 1} needs at least 2 options.`);
+                return false;
+            }
+            
+            // Check if options have text
+            for (let j = 0; j < options.length; j++) {
+                if (!options[j].value.trim()) {
+                    e.preventDefault();
+                    alert(`❌ Option ${j + 1} for Question ${i + 1} cannot be empty.`);
+                    return false;
+                }
+            }
+            
+            // Check if correct answer is selected (optional but recommended)
+            const correctAnswer = question.querySelector('input[name^="questions"][type="radio"]:checked');
+            // Uncomment if you want to require correct answer
+            // if (!correctAnswer) {
+            //     e.preventDefault();
+            //     alert(`❌ Please select the correct answer for Question ${i + 1}.`);
+            //     return false;
+            // }
+        }
+        
+        if (questionType === 'true_false') {
+            const correctAnswer = question.querySelector('input[name^="questions"][type="radio"]:checked');
+            // Uncomment if you want to require correct answer
+            // if (!correctAnswer) {
+            //     e.preventDefault();
+            //     alert(`❌ Please select True or False for Question ${i + 1}.`);
+            //     return false;
+            // }
+        }
     }
     
+    // Show loading state
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Quiz...';
+    
+    console.log('✅ Form validation passed, submitting...');
     return true;
+});
+
+// Add this to check if JavaScript is working
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Quiz form script loaded');
+    
+    // Add a test question automatically (remove this after testing)
+    // addQuestion();
 });
 </script>
 @endpush
