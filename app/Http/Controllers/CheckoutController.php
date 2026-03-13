@@ -167,7 +167,7 @@ class CheckoutController extends Controller
 
         $paymentIntent = PaymentIntent::create([
             'amount' => $amount,
-            'currency' => 'usd',
+            'currency' => 'eur',
             'metadata' => [
                 'cart_id' => (string) $cart->id,
                 'user_id' => (string) $request->user()->id,
