@@ -235,13 +235,7 @@ class AssessmentController extends Controller
                 $assessment->save();
             }
              \Log::info('=== ASSESSMENT STORE DEBUG ===');
-            \Log::info('All request data:', $request->all());
-            \Log::info('Request method: ' . $request->method());
-            \Log::info('Request URL: ' . $request->fullUrl());
-            \Log::info('Has title? ' . ($request->has('title') ? 'Yes' : 'No'));
-            \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
-            \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
-            \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
+            \Log::info('All request data:', $request->assessment_level);
 
        
 
