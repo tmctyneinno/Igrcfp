@@ -114,7 +114,7 @@ class CheckoutController extends Controller
             DB::commit();
 
             // Create Stripe Checkout Session
-            Stripe::setApiKey(env('STRIPE_SECRET'));
+            Stripe::setApiKey(env('STRIPE_SECRET')); 
 
             $lineItems = [];
             foreach ($cart->items as $item) {
