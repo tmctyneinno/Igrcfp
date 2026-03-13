@@ -144,7 +144,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                       <div className="space-y-2">
                         <div className="flex items-center">
                           <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
-                          <span className="text-lg line-through text-gray-500 ml-2">${price.toFixed(2)}</span>
+                          <span className="text-lg line-through text-gray-500 ml-2">€{price.toFixed(2)}</span>
                         </div>
                         <p className="text-sm text-green-600 font-medium">Limited time offer</p>
                       </div>
