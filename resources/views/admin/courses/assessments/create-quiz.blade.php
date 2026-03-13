@@ -39,7 +39,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.assessments.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.assessments.store') }}" method="POST" enctype="multipart/form-data" id="quizForm">
         @csrf
         <input type="hidden" name="assessment_level" value="quiz">
         <input type="hidden" name="type" value="quiz">
@@ -97,6 +97,7 @@
                     </div>
                 </div>
 
+               
             </div>
 
             <!-- Right Column - Settings -->
