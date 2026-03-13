@@ -446,7 +446,7 @@ class AssessmentController extends Controller
                 'needs_manual_marking' => 'sometimes|boolean',
                 'requires_identity_verification' => 'sometimes|boolean',
                 'due_date' => 'nullable|date',
-                'rubric' => 'nullable|json',
+                // 'rubric' => 'nullable|json',
             ]);
 
         default:
