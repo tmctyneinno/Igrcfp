@@ -143,7 +143,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                     {hasDiscount ? (
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <span className="text-3xl font-bold">${discountPrice.toFixed(2)}</span>
+                          <span className="text-3xl font-bold">€{discountPrice.toFixed(2)}</span>
                           <span className="text-lg line-through text-gray-500 ml-2">€{price.toFixed(2)}</span>
                         </div>
                         <p className="text-sm text-green-600 font-medium">Limited time offer</p>
@@ -584,7 +584,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   onClick={() => startEnrollment(course)}
                   className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
                 >
-                  Enroll Now - ${hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
+                  Enroll Now - €{hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
                 </button>
                 <button className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/10 transition duration-200">
                   Download Syllabus
