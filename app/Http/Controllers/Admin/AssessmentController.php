@@ -63,7 +63,7 @@ class AssessmentController extends Controller
             'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
         ];
 
-        return view('admin.assessments.index', compact('assessments', 'courses', 'statistics'));
+        return view('admin.courseassessments.index', compact('assessments', 'courses', 'statistics'));
     }
 
     /**
