@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->json('assessment_settings')->nullable()->after('settings')->comment('Default settings for course assessments');
+            $table->json('assessment_settings')->nullable()->after('sort_order')->comment('Default settings for course assessments');
             $table->boolean('has_final_exam')->default(false)->after('assessment_settings');
             $table->boolean('has_diploma_assessment')->default(false)->after('has_final_exam');
             $table->integer('quiz_count')->default(0)->after('has_diploma_assessment');
