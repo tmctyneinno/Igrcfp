@@ -85,7 +85,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/assessments/create/diploma', [AssessmentController::class, 'createDiploma'])->name('assessments.create.diploma');
     
     // Store route (same for all types)
-    Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
+    Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
     
     // Other routes
     Route::get('/create', [AssessmentController::class, 'create'])->name('assessments.create');
