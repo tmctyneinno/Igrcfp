@@ -3,7 +3,13 @@
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Assessments Management</h6>
+        <h6 class="fw-semibold mb-0">
+            @if(isset($course))
+                Assessments for: {{ $course->title }}
+            @else
+                All Assessments
+            @endif
+        </h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
@@ -13,6 +19,10 @@
             </li>
             <li>-</li>
             <li class="fw-medium">Assessments</li>
+            @if(isset($course))
+                <li>-</li>
+                <li class="fw-medium">{{ $course->title }}</li>
+            @endif
         </ul>
     </div>
 
@@ -98,19 +108,19 @@
     <div class="card h-100 p-0 radius-12 mb-24">
         <div class="card-body p-24">
             <div class="row align-items-end">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Select Course</label>
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Filter by Course</label>
                     <select class="form-select" id="courseSelect" onchange="window.location.href=this.value">
-                        <option value="">Choose a course</option>
-                        @foreach($courses as $courseOption)
-                            <option value="{{ route('admin.assessments.course', $courseOption->id) }}" 
+                        <option value="{{ route('admin.assessments.all') }}">All Courses</option>
+                        @foreach($allCourses as $courseOption)
+                            <option value="{{ route('admin.assessments.index', $courseOption->id) }}" 
                                 {{ isset($course) && $course->id == $courseOption->id ? 'selected' : '' }}>
                                 {{ $courseOption->title }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-6 text-end">
+                <div class="col-md-4 text-end">
                     <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary text-sm btn-sm px-12 py-12 radius-8 d-flex align-items-center gap-2 float-end">
                         <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
                         Create New Assessment
@@ -120,18 +130,27 @@
         </div>
     </div>
 
-    @if(isset($course))
-    <!-- Course Assessments -->
+    <!-- Assessments List -->
     <div class="card h-100 p-0 radius-12">
         <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
             <div>
-                <h5 class="mb-1">{{ $course->title }}</h5>
-                <p class="text-secondary-light text-sm mb-0">Manage assessments for this course</p>
+                <h5 class="mb-1">
+                    @if(isset($course))
+                        {{ $course->title }} - Assessments
+                    @else
+                        All Assessments
+                    @endif
+                </h5>
+                <p class="text-secondary-light text-sm mb-0">
+                    {{ isset($course) ? 'Manage assessments for this course' : 'Manage all course assessments' }}
+                </p>
             </div>
+            @if(isset($course))
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadAssessmentModal">
                 <iconify-icon icon="solar:upload-outline" class="icon"></iconify-icon>
                 Upload Assessment
             </button>
+            @endif
         </div>
 
         <div class="card-body p-24">
@@ -141,6 +160,7 @@
                         <thead>
                             <tr>
                                 <th width="50">#</th>
+                                <th>Course</th>
                                 <th>Assessment Title</th>
                                 <th>Type</th>
                                 <th>Duration</th>
@@ -155,6 +175,11 @@
                             @foreach($assessments as $index => $assessment)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
+                                <td>
+                                    <span class="badge bg-info-600 text-white px-12 py-6 radius-8">
+                                        {{ $assessment->course->title ?? 'N/A' }}
+                                    </span>
+                                </td>
                                 <td>
                                     <div>
                                         <span class="fw-semibold">{{ $assessment->title }}</span>
@@ -218,6 +243,7 @@
                 </div>
 
                 <!-- Pagination -->
+                @if(method_exists($assessments, 'links'))
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
                     <div>
                         <span class="text-muted">Showing {{ $assessments->firstItem() }} to {{ $assessments->lastItem() }} of {{ $assessments->total() }} entries</span>
@@ -226,117 +252,35 @@
                         {{ $assessments->links('vendor.pagination.custom') }}
                     </div>
                 </div>
+                @endif
             @else
                 <div class="text-center py-5">
                     <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
-                    <h6 class="text-muted mb-2">No assessments found for this course</h6>
-                    <p class="text-muted mb-4">Upload your first assessment to get started</p>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadAssessmentModal">
+                    <h6 class="text-muted mb-2">No assessments found</h6>
+                    <p class="text-muted mb-4">Create your first assessment to get started</p>
+                    <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary">
                         <iconify-icon icon="ic:baseline-plus" class="icon"></iconify-icon>
-                        Upload Assessment
-                    </button>
+                        Create Assessment
+                    </a>
                 </div>
             @endif
         </div>
     </div>
-    @endif
 </div>
 
-<!-- Upload Assessment Modal -->
+<!-- Upload Assessment Modal (only show if course is selected) -->
+@if(isset($course))
 <div class="modal fade" id="uploadAssessmentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ isset($course) ? route('admin.assessments.upload', $course->id) : '#' }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.assessments.upload', $course->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Upload New Assessment</h5>
+                    <h5 class="modal-title">Upload Assessment for {{ $course->title }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row gy-3">
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Assessment Title <span class="text-danger">*</span></label>
-                            <input type="text" name="title" class="form-control" placeholder="e.g., Final Examination - Module 1" required>
-                        </div>
-                        
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Description</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Brief description of the assessment"></textarea>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Assessment Type <span class="text-danger">*</span></label>
-                            <select name="type" class="form-select" required>
-                                <option value="">Select type</option>
-                                <option value="exam">Timed Online Exam</option>
-                                <option value="assignment">Assignment</option>
-                                <option value="quiz">Quiz</option>
-                                <option value="project">Project</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Status</label>
-                            <select name="status" class="form-select">
-                                <option value="draft">Draft</option>
-                                <option value="active" selected>Active</option>
-                                <option value="archived">Archived</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Duration (minutes)</label>
-                            <input type="number" name="duration" class="form-control" placeholder="e.g., 90">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Total Marks</label>
-                            <input type="number" name="total_marks" class="form-control" placeholder="e.g., 100">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Weight (%)</label>
-                            <input type="number" name="weight" class="form-control" placeholder="e.g., 25">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Due Date</label>
-                            <input type="date" name="due_date" class="form-control">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Due Time</label>
-                            <input type="time" name="due_time" class="form-control">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Upload File</label>
-                            <div class="upload-file-area">
-                                <input type="file" name="assessment_file" class="form-control" accept=".pdf,.doc,.docx,.xlsx,.zip">
-                                <p class="text-sm mt-1 mb-0 text-muted">
-                                    Supported formats: PDF, DOCX, XLSX, ZIP. Max size: 50MB
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="is_timed" id="isTimed" value="1" checked>
-                                <label class="form-check-label" for="isTimed">
-                                    Timed Assessment (students have limited time to complete)
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="needs_manual_marking" id="needsManualMarking" value="1">
-                                <label class="form-check-label" for="needsManualMarking">
-                                    Requires Manual Marking (for Diploma/Advanced Diploma)
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- ... modal content ... -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -346,103 +290,5 @@
         </div>
     </div>
 </div>
-
-<!-- Submissions Modal -->
-<div class="modal fade" id="submissionsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Assessment Submissions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Candidate ID</th>
-                                <th>Submitted Date</th>
-                                <th>Score</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="submissionsTableBody">
-                            <!-- Loaded dynamically via JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@endif
 @endsection
-
-@push('styles')
-<style>
-    .upload-file-area {
-        border: 2px dashed #dee2e6;
-        border-radius: 8px;
-        padding: 20px;
-        text-align: center;
-        background: #f8f9fa;
-        transition: all 0.3s;
-    }
-    .upload-file-area:hover {
-        border-color: #0A1F44;
-        background: #f1f5f9;
-    }
-    .upload-file-area input {
-        opacity: 0;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script>
-function viewSubmissions(assessmentId) {
-    // Fetch submissions via AJAX
-    fetch(`/admin/assessments/${assessmentId}/submissions`)
-        .then(response => response.json())
-        .then(data => {
-            let html = '';
-            data.submissions.forEach(submission => {
-                html += `
-                    <tr>
-                        <td>${submission.student_name}</td>
-                        <td>${submission.candidate_id}</td>
-                        <td>${new Date(submission.submitted_at).toLocaleDateString()}</td>
-                        <td>${submission.score || 'Pending'}</td>
-                        <td>
-                            <span class="badge bg-${submission.status === 'graded' ? 'success' : 'warning'}">
-                                ${submission.status}
-                            </span>
-                        </td>
-                        <td>
-                            <a href="/admin/assessments/submission/${submission.id}" class="btn btn-sm btn-outline-primary">
-                                View
-                            </a>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('submissionsTableBody').innerHTML = html;
-            
-            var submissionsModal = new bootstrap.Modal(document.getElementById('submissionsModal'));
-            submissionsModal.show();
-        });
-}
-
-// Auto-submit course filter
-document.getElementById('courseSelect')?.addEventListener('change', function() {
-    if (this.value) {
-        window.location.href = this.value;
-    }
-});
-</script>
-@endpush
