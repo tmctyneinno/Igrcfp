@@ -258,6 +258,8 @@ class AssessmentController extends Controller
                     'questions.*.text' => 'required_with:questions|string',
                     'questions.*.type' => 'required_with:questions|string',
                     'questions.*.points' => 'required_with:questions|integer|min:1',
+                    'questions.*.options' => 'nullable|array', // Changed to nullable
+                    'questions.*.correct_answer' => 'nullable|string', 
                 ]);
 
             case 'module_assessment':
