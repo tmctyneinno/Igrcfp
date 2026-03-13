@@ -240,7 +240,7 @@ class AssessmentController extends Controller
        
 
             // $message =  $request->assessment_level.'created successfully!';
-            return redirect()->route('admin.assessments.course', $assessment->course_id)
+            return redirect()->route('admin.assessments.all')
                 ->with('success','Created successfully');
 
         } catch (\Exception $e) {
