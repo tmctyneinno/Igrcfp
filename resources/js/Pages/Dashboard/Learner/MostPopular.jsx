@@ -217,7 +217,7 @@ export default function MostPopular({ initialCourses = [] }) {
                                                     </>
                                                 ) : (
                                                     <span className="text-lg font-bold text-gray-900">
-                                                        ${price.toFixed(2)}
+                                                        €{price.toFixed(2)}
                                                     </span>
                                                 )}
                                             </div>
