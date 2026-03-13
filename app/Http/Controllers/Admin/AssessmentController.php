@@ -63,7 +63,7 @@ class AssessmentController extends Controller
             'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
         ];
 
-        return view('admin.courseassessments.index', compact('assessments', 'courses', 'statistics'));
+        return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
     }
 
     /**
@@ -93,7 +93,7 @@ class AssessmentController extends Controller
             'submissions' => AssessmentSubmission::whereHas('assessment', fn($q) => $q->where('course_id', $course->id))->count(),
         ];
 
-        return view('admin.assessments.index', compact('assessments', 'course', 'courses', 'statistics'));
+        return view('admin.courses.assessments.index', compact('assessments', 'course', 'courses', 'statistics'));
     }
 
     /**
@@ -105,7 +105,7 @@ class AssessmentController extends Controller
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
         
-        return view('admin.assessments.create', compact('courses', 'modules', 'type'));
+        return view('admin.courses.assessments.create', compact('courses', 'modules', 'type'));
     }
 
     /**
@@ -158,7 +158,7 @@ class AssessmentController extends Controller
             DB::commit();
 
             $message = $this->getSuccessMessage($request->assessment_level);
-            return redirect()->route('admin.assessments.course', $assessment->course_id)
+            return redirect()->route('admin.courses.assessments.course', $assessment->course_id)
                 ->with('success', $message);
 
         } catch (\Exception $e) {
@@ -326,7 +326,7 @@ class AssessmentController extends Controller
 
         Assessment::create($validated);
 
-        return redirect()->route('admin.assessments.course', $course->id)
+        return redirect()->route('admin.courses.assessments.course', $course->id)
             ->with('success', 'Assessment uploaded successfully!');
     }
 
@@ -340,7 +340,7 @@ class AssessmentController extends Controller
             ->orderBy('submitted_at', 'desc')
             ->paginate(20);
 
-        return view('admin.assessments.submissions', compact('assessment', 'submissions'));
+        return view('admin.courses.assessments.submissions', compact('assessment', 'submissions'));
     }
 
     /**
@@ -350,7 +350,7 @@ class AssessmentController extends Controller
     {
         $submission->load(['user', 'assessment.course', 'assessment.questions', 'grader']);
         
-        return view('admin.assessments.submission', compact('submission'));
+        return view('admin.courses.assessments.submission', compact('submission'));
     }
 
     /**
@@ -369,7 +369,7 @@ class AssessmentController extends Controller
             auth()->id()
         );
 
-        return redirect()->route('admin.assessments.submissions', $submission->assessment_id)
+        return redirect()->route('admin.courses.assessments.submissions', $submission->assessment_id)
             ->with('success', 'Submission graded successfully!');
     }
 
