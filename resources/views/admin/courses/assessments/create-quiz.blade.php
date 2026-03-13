@@ -102,10 +102,9 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <div>
             <h6 class="card-title mb-0">Quiz Questions</h6>
-            <p class="text-sm text-secondary-light mt-1">Add 5-10 questions for your quiz</p>
+            <p class="text-sm text-secondary-light mt-1">Add 1-5 questions for your quiz</p>
         </div>
         <button type="button" class="btn btn-primary" onclick="addQuestion()">
-            <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
             Add Question
         </button>
     </div>
@@ -118,7 +117,6 @@
             <h6 class="text-muted mb-2">No questions added yet</h6>
             <p class="text-muted mb-3">Click the button below to add your first question.</p>
             <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
                 Add First Question
             </button>
         </div>
