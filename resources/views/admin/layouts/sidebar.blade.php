@@ -55,6 +55,22 @@
                             Add Category
                         </a>
                     </li>
+                    <!-- Add Assessments submenu -->
+                    <li class="sidebar-separator">
+                        <hr class="my-2 mx-3 opacity-25">
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.assessments.index') }}">
+                            <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i> 
+                            All Assessments
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.assessments.create') }}">
+                            <i class="ri-circle-fill circle-icon text-pink-600 w-auto"></i> 
+                            Create Assessment
+                        </a>
+                    </li>
                 </ul>
             </li>
 
