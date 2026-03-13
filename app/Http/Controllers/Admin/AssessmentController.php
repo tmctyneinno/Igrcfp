@@ -216,6 +216,11 @@ class AssessmentController extends Controller
                 $validated['file_extension'] = $file->getClientOriginalExtension();
             }
 
+            // Handle project brief for diploma
+            if ($request->has('project_brief')) {
+                $validated['project_brief'] = $request->project_brief;
+            }
+
              \Log::info('=== ASSESSMENT STORE DEBUG ===');
         \Log::info('All request data:', $request->all());
         \Log::info('Request method: ' . $request->method());
@@ -224,11 +229,6 @@ class AssessmentController extends Controller
         \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
         \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
         \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
-
-            // Handle project brief for diploma
-            if ($request->has('project_brief')) {
-                $validated['project_brief'] = $request->project_brief;
-            }
 
             // Handle rubric for manual marking
             if ($request->has('rubric')) {
