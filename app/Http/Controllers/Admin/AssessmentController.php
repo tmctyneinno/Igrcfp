@@ -230,6 +230,15 @@ class AssessmentController extends Controller
 
             // Create assessment
             $assessment = Assessment::create($validated);
+            
+
+            // Save questions for quiz/exam types
+            if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam']) 
+                && $request->has('questions')) {
+                $this->saveQuestions($assessment, $request->questions);
+                $assessment->question_count = count($request->questions);
+                $assessment->save();
+            }
              \Log::info('=== ASSESSMENT STORE DEBUG ===');
         \Log::info('All request data:', $request->all());
         \Log::info('Request method: ' . $request->method());
@@ -239,15 +248,7 @@ class AssessmentController extends Controller
         \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
         \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
 
-            // Save questions for quiz/exam types
-            if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam']) 
-                && $request->has('questions')) {
-                $this->saveQuestions($assessment, $request->questions);
-                $assessment->question_count = count($request->questions);
-                $assessment->save();
-            }
-
-            DB::commit();
+            // DB::commit();
 
             $message = $this->getSuccessMessage($request->assessment_level);
             return redirect()->route('admin.assessments.course', $assessment->course_id)
