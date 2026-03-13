@@ -19,6 +19,52 @@ class AssessmentController extends Controller
     /**
      * Display all assessments
      */
+     public function index(Request $request)
+    {
+        $query = Assessment::with(['course', 'module'])
+            ->orderBy('created_at', 'desc');
+
+        // Filter by assessment level
+        if ($request->has('level') && $request->level != '') {
+            $query->where('assessment_level', $request->level);
+        }
+
+        // Filter by course
+        if ($request->has('course_id') && $request->course_id != '') {
+            $query->where('course_id', $request->course_id);
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Search
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $assessments = $query->paginate(15);
+        $courses = Course::orderBy('title')->get();
+        
+        // Statistics
+        $statistics = [
+            'total' => Assessment::count(),
+            'quizzes' => Assessment::quizzes()->count(),
+            'module_assessments' => Assessment::moduleAssessments()->count(),
+            'final_exams' => Assessment::finalExams()->count(),
+            'diploma' => Assessment::diplomaAssessments()->count(),
+            'active' => Assessment::where('status', 'active')->count(),
+            'submissions' => AssessmentSubmission::count(),
+            'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
+        ];
+
+        return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
+    }
     public function all(Request $request)
     {
         $query = Assessment::with(['course', 'module'])
