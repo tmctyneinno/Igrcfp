@@ -133,9 +133,9 @@
                             <h6 class="card-title mb-0">Questions</h6>
                             <p class="text-sm text-secondary-light mt-1">
                                 @if($type == 'quiz')
-                                    Add 5-10 questions for your quiz
+                                    Add 1-5 questions for your quiz
                                 @elseif($type == 'module_assessment')
-                                    Add 20-30 questions for your module assessment
+                                    Add 1-2 questions for your module assessment
                                 @elseif($type == 'final_exam')
                                     Add at least 50 questions for your final exam
                                 @endif
