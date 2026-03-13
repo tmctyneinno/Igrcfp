@@ -119,7 +119,7 @@ class AssessmentController extends Controller
         $modules = CourseModule::orderBy('module_number')->get();
         $type = 'quiz';
         
-        return view('admin.assessments.create-quiz', compact('courses', 'modules', 'type'));
+        return view('admin.courses.assessments.create-quiz', compact('courses', 'modules', 'type'));
     }
 
     /**

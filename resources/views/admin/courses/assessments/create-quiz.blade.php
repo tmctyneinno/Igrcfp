@@ -98,8 +98,7 @@
                             <p class="text-sm text-secondary-light mt-1">Add 5-10 questions for your quiz</p>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                            <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
-                            Add Question
+                             Add Question
                         </button>
                     </div>
                     <div class="card-body">
@@ -111,7 +110,6 @@
                             <h6 class="text-muted mb-2">No questions added yet</h6>
                             <p class="text-muted mb-3">Click the button below to add your first question.</p>
                             <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                                <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
                                 Add First Question
                             </button>
                         </div>
@@ -410,7 +408,7 @@ document.getElementById('quizForm').addEventListener('submit', function(e) {
             e.preventDefault();
             alert(`Question ${i + 1} text cannot be empty.`);
             return false;
-        }
+        } 
     }
     
     return true;
