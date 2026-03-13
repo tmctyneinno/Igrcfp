@@ -221,14 +221,7 @@ class AssessmentController extends Controller
                 $validated['project_brief'] = $request->project_brief;
             }
 
-             \Log::info('=== ASSESSMENT STORE DEBUG ===');
-        \Log::info('All request data:', $request->all());
-        \Log::info('Request method: ' . $request->method());
-        \Log::info('Request URL: ' . $request->fullUrl());
-        \Log::info('Has title? ' . ($request->has('title') ? 'Yes' : 'No'));
-        \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
-        \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
-        \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
+            
 
             // Handle rubric for manual marking
             if ($request->has('rubric')) {
@@ -237,6 +230,14 @@ class AssessmentController extends Controller
 
             // Create assessment
             $assessment = Assessment::create($validated);
+             \Log::info('=== ASSESSMENT STORE DEBUG ===');
+        \Log::info('All request data:', $request->all());
+        \Log::info('Request method: ' . $request->method());
+        \Log::info('Request URL: ' . $request->fullUrl());
+        \Log::info('Has title? ' . ($request->has('title') ? 'Yes' : 'No'));
+        \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
+        \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
+        \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
 
             // Save questions for quiz/exam types
             if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam']) 
