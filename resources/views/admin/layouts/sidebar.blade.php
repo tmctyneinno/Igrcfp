@@ -60,7 +60,7 @@
                         <hr class="my-2 mx-3 opacity-25">
                     </li>
                     <li>
-                        <a href="{{ route('admin.assessments.index') }}">
+                        <a href="{{ route('admin.assessments.all') }}">
                             <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i> 
                             All Assessments
                         </a>
