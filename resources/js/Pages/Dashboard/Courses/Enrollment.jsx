@@ -131,70 +131,56 @@ export default function EnrollmentIndex({
         
         setProcessingExam(assessmentId);
         
-        const routeName = type === 'quiz' ? 'assessment.take.quiz' 
-            : type === 'module_assessment' ? 'assessment.take.module'
-            : type === 'final_exam' ? 'assessment.take.final'
-            : 'assessment.take.diploma';
+        // Use different routes based on assessment type - ALL NAVIGATE TO NEW PAGES
+        let url;
+        if (type === 'quiz') {
+            url = `/assessment/quiz/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'module_assessment') {
+            url = `/assessment/module/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'final_exam') {
+            url = `/assessment/final/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'diploma') {
+            url = `/assessment/diploma/${enrollment.id}/${assessmentId}`;
+        }
         
-        router.get(route(routeName, { 
-            enrollment: enrollment.id, 
-            assessment: assessmentId 
-        }), {}, {
-            preserveState: false,
-            onStart: () => {
-                toast.loading('Preparing your assessment...', { id: 'assessment-loading' });
-            },
-            onSuccess: () => {
-                toast.dismiss('assessment-loading');
-                setProcessingExam(null);
-            },
-            onError: (errors) => {
-                toast.dismiss('assessment-loading');
-                setProcessingExam(null);
-                console.error('Failed to start assessment:', errors);
-                toast.error(errors.message || 'Failed to start assessment. Please try again.');
-            }
-        });
+        // Navigate to new page
+        window.location.href = url;
     };
 
     const handleContinueAssessment = (assessmentId, type) => {
         setProcessingExam(assessmentId);
         
-        const routeName = type === 'quiz' ? 'assessment.continue.quiz' 
-            : type === 'module_assessment' ? 'assessment.continue.module'
-            : type === 'final_exam' ? 'assessment.continue.final'
-            : 'assessment.continue.diploma';
+        // Use different routes based on assessment type - ALL NAVIGATE TO NEW PAGES
+        let url;
+        if (type === 'quiz') {
+            url = `/assessment/quiz/continue/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'module_assessment') {
+            url = `/assessment/module/continue/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'final_exam') {
+            url = `/assessment/final/continue/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'diploma') {
+            url = `/assessment/diploma/continue/${enrollment.id}/${assessmentId}`;
+        }
         
-        router.get(route(routeName, { 
-            enrollment: enrollment.id, 
-            assessment: assessmentId 
-        }), {}, {
-            preserveState: false,
-            onStart: () => {
-                toast.loading('Continuing assessment...', { id: 'assessment-loading' });
-            },
-            onSuccess: () => {
-                toast.dismiss('assessment-loading');
-                setProcessingExam(null);
-            },
-            onError: (errors) => {
-                toast.dismiss('assessment-loading');
-                setProcessingExam(null);
-                toast.error('Failed to continue assessment.');
-            }
-        });
+        // Navigate to new page
+        window.location.href = url;
     };
 
     const handleReviewAssessment = (assessmentId, type) => {
-        const routeName = type === 'quiz' ? 'assessment.review.quiz' 
-            : type === 'module_assessment' ? 'assessment.review.module'
-            : type === 'final_exam' ? 'assessment.review.final'
-            : 'assessment.review.diploma';
+        // Use different routes based on assessment type - ALL NAVIGATE TO NEW PAGES
+        let url;
+        if (type === 'quiz') {
+            url = `/assessment/quiz/review/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'module_assessment') {
+            url = `/assessment/module/review/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'final_exam') {
+            url = `/assessment/final/review/${enrollment.id}/${assessmentId}`;
+        } else if (type === 'diploma') {
+            url = `/assessment/diploma/review/${enrollment.id}/${assessmentId}`;
+        }
         
-        router.get(route(routeName, { 
-            enrollment: enrollment.id, 
-            assessment: assessmentId 
-        }));
+        // Navigate to new page
+        window.location.href = url;
     };
 
     // ============== RENDER ASSESSMENT CARD ==============
@@ -388,7 +374,7 @@ export default function EnrollmentIndex({
                                         Copy ID
                                     </button>
                                     <Link
-                                        // href={route('certificate.verify', { id: candidate.certificate_id })}
+                                        href={`/certificate/verify/${candidate.certificate_id}`}
                                         className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition"
                                     >
                                         <ShieldCheckIcon className="w-4 h-4" />
@@ -599,13 +585,13 @@ export default function EnrollmentIndex({
                                             </p>
                                         </div>
                                         
-                                        {/* <Link
-                                            href={route('identity.verify', { enrollment: enrollment.id })}
+                                        <Link
+                                            href={`/identity/verify/${enrollment.id}`}
                                             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                                         >
                                             <CameraIcon className="w-5 h-5" />
                                             Verify Identity Now
-                                        </Link> */}
+                                        </Link>
                                     </div>
                                 )}
                             </motion.div>
@@ -707,14 +693,14 @@ export default function EnrollmentIndex({
                                             
                                             <div className="flex gap-2">
                                                 <Link
-                                                    href={route('certificate.download', enrollment.id)}
+                                                    href={`/certificate/download/${enrollment.id}`}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm"
                                                 >
                                                     <DocumentTextIcon className="w-4 h-4" />
                                                     Download PDF
                                                 </Link>
                                                 <Link
-                                                    href={route('certificate.preview', enrollment.id)}
+                                                    href={`/certificate/preview/${enrollment.id}`}
                                                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition text-sm"
                                                 >
                                                     <GlobeAltIcon className="w-4 h-4" />
@@ -724,7 +710,7 @@ export default function EnrollmentIndex({
                                         </div>
 
                                         <Link
-                                            href={route('certificate.badge', enrollment.id)}
+                                            href={`/certificate/badge/${enrollment.id}`}
                                             className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg hover:from-amber-100 hover:to-yellow-100 transition"
                                         >
                                             <div className="flex items-center gap-3">
@@ -762,7 +748,7 @@ export default function EnrollmentIndex({
                                         </div>
 
                                         <Link
-                                            href={route('dashboard.certificate.registry')}
+                                            href="/certificate/registry"
                                             className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 transition"
                                         >
                                             <GlobeAltIcon className="w-4 h-4" />
