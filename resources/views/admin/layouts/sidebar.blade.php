@@ -65,7 +65,7 @@
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
-                    <span>All Assessments</span> 
+                    <span> Assessments</span> 
                 </a>
                 <ul class="sidebar-submenu">
                     
@@ -97,12 +97,12 @@
                             Final Exam
                         </a>
                     </li>
-                    <li>
+                    {{-- <li>
                         <a href="{{ route('admin.assessments.create.diploma') }}" >
                             <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i>
                             Diploma Project
                         </a>
-                    </li>
+                    </li> --}}
                     
                     
                     
