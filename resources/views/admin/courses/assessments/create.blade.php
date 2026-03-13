@@ -13,7 +13,7 @@
             </li>
             <li>-</li>
             <li class="fw-medium">
-                <a href="{{ route('admin.assessments.index') }}" class="hover-text-primary">Assessments</a>
+                <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
             </li>
             <li>-</li>
             <li class="fw-medium">{{ isset($assessment) ? 'Edit' : 'Create' }}</li>
@@ -206,7 +206,7 @@
                     <div class="col-12 mt-5">
                         <hr>
                         <div class="d-flex gap-3 justify-content-end">
-                            <a href="{{ route('admin.assessments.index') }}" class="btn btn-outline-secondary px-4">
+                            <a href="{{ route('admin.assessments.all') }}" class="btn btn-outline-secondary px-4">
                                 Cancel
                             </a>
                             <button type="submit" class="btn btn-primary px-5">
