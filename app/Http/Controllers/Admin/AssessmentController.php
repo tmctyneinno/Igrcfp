@@ -165,7 +165,7 @@ class AssessmentController extends Controller
             DB::commit();
 
             $message = $this->getSuccessMessage($request->assessment_level);
-            return redirect()->route('admin.courses.assessments.course', $assessment->course_id)
+            return redirect()->route('admin.assessments.course', $assessment->course_id)
                 ->with('success', $message);
 
         } catch (\Exception $e) {
