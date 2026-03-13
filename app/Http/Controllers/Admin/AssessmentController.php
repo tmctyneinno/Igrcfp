@@ -234,7 +234,7 @@ class AssessmentController extends Controller
                 $assessment->question_count = count($request->questions);
                 $assessment->save();
             }
-             \Log::info('=== ASSESSMENT STORE DEBUG ===');
+            
             \Log::info('All request data:', $request->assessment_level);
 
        
