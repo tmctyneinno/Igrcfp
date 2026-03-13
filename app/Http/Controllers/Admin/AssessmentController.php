@@ -239,7 +239,7 @@ class AssessmentController extends Controller
 
        
 
-            $message = $this->getSuccessMessage($request->assessment_level);
+            // $message = $this->getSuccessMessage($request->assessment_level);
             return redirect()->route('admin.assessments.course', $assessment->course_id)
                 ->with('success', $message);
 
