@@ -6,6 +6,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonCompletionController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\AssessmentAttemptController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -68,4 +69,85 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+// In routes/web.php, add these routes:
 
+Route::prefix('assessment')->name('assessment.')->group(function () {
+    // Quiz routes
+    Route::get('/quiz/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'takeQuiz'])->name('quiz.take');
+    Route::get('/quiz/continue/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'continueQuiz'])->name('quiz.continue');
+    Route::post('/quiz/submit/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'submitQuiz'])->name('quiz.submit');
+    Route::get('/quiz/review/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'reviewQuiz'])->name('quiz.review');
+    Route::post('/quiz/save/{attempt}', [AssessmentAttemptController::class, 'saveQuizProgress'])->name('quiz.save');
+});
+
+
+// routes/web.php
+
+
+
+Route::prefix('assessment')->name('assessment.')->group(function () {
+    
+    // ============== QUIZ ROUTES ==============
+    Route::get('/quiz/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'takeQuiz'])
+        ->name('quiz.take');
+    
+    Route::get('/quiz/continue/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'continueQuiz'])
+        ->name('quiz.continue');
+    
+    Route::post('/quiz/submit/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'submitQuiz'])
+        ->name('quiz.submit');
+    
+    Route::get('/quiz/review/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'reviewQuiz'])
+        ->name('quiz.review');
+    
+    Route::post('/quiz/save/{attempt}', [AssessmentAttemptController::class, 'saveQuizProgress'])
+        ->name('quiz.save');
+
+    // ============== MODULE ASSESSMENT ROUTES ==============
+    Route::get('/module/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'takeModuleAssessment'])
+        ->name('module.take');
+    
+    Route::get('/module/continue/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'continueModuleAssessment'])
+        ->name('module.continue');
+    
+    Route::post('/module/submit/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'submitModuleAssessment'])
+        ->name('module.submit');
+    
+    Route::get('/module/review/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'reviewModuleAssessment'])
+        ->name('module.review');
+    
+    Route::post('/module/save/{attempt}', [AssessmentAttemptController::class, 'saveModuleProgress'])
+        ->name('module.save');
+
+    // ============== FINAL EXAM ROUTES ==============
+    Route::get('/final/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'takeFinalExam'])
+        ->name('final.take');
+    
+    Route::get('/final/continue/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'continueFinalExam'])
+        ->name('final.continue');
+    
+    Route::post('/final/submit/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'submitFinalExam'])
+        ->name('final.submit');
+    
+    Route::get('/final/review/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'reviewFinalExam'])
+        ->name('final.review');
+    
+    Route::post('/final/save/{attempt}', [AssessmentAttemptController::class, 'saveFinalProgress'])
+        ->name('final.save');
+
+    // ============== DIPLOMA ASSESSMENT ROUTES ==============
+    Route::get('/diploma/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'takeDiplomaAssessment'])
+        ->name('diploma.take');
+    
+    Route::get('/diploma/continue/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'continueDiplomaAssessment'])
+        ->name('diploma.continue');
+    
+    Route::post('/diploma/submit/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'submitDiplomaAssessment'])
+        ->name('diploma.submit');
+    
+    Route::get('/diploma/review/{enrollment}/{assessment}', [AssessmentAttemptController::class, 'reviewDiplomaAssessment'])
+        ->name('diploma.review');
+    
+    Route::post('/diploma/save/{attempt}', [AssessmentAttemptController::class, 'saveDiplomaProgress'])
+        ->name('diploma.save');
+});
