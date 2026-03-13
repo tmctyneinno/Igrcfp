@@ -89,7 +89,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // Other routes
     Route::get('/create', [AssessmentController::class, 'create'])->name('assessments.create');
-    Route::get('/all', [AssessmentController::class, 'all'])->name('assessments.all');
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
     Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
