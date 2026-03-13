@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\ModuleController;
+use App\Http\Controllers\Admin\AssessmentController;
 use Illuminate\Support\Facades\Route;
 
 // Course Management Routes (Protected - admin & super_admin)
@@ -69,3 +70,10 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
     Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
 });
    
+// Admin assessment routes
+Route::middleware(['auth', 'admin'])->prefix('admin/assessments')->name('admin.assessments.')->group(function () {
+    Route::get('/course/{course}', [AssessmentController::class, 'index'])->name('index');
+    Route::post('/upload/{course}', [AssessmentController::class, 'upload'])->name('upload');
+    Route::put('/{assessment}', [AssessmentController::class, 'update'])->name('update');
+    Route::delete('/{assessment}', [AssessmentController::class, 'destroy'])->name('destroy');
+});
