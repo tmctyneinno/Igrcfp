@@ -442,6 +442,11 @@
         </button>
     </div>
 </template>
+
+<!-- Debug Button -->
+<div class="mb-3 text-end">
+    <button type="button" class="btn btn-info" onclick="debugFormData()">Debug Form Data</button>
+</div>
 @endsection
 
 @push('styles')
@@ -483,9 +488,7 @@
 <script>
 let questionCount = 0;
 
-// Initialize with empty questions container - no auto-add
 document.addEventListener('DOMContentLoaded', function() {
-    // Don't auto-add questions, let user add them manually
     console.log('Assessment type: {{ $type }}');
 });
 
@@ -498,22 +501,16 @@ function addQuestion() {
         noQuestionsMsg.style.display = 'none';
     }
     
-    // Clone the template content
     let questionHtml = template.innerHTML.replace(/{idx}/g, questionCount);
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = questionHtml;
     const questionElement = tempDiv.firstElementChild;
     
-    // Set data attribute
     questionElement.dataset.questionIdx = questionCount;
-    
-    // Update question number
     questionElement.querySelector('.question-number').textContent = container.children.length + 1;
     
-    // Add to container
     container.appendChild(questionElement);
     
-    // Default to multiple choice
     const typeSelect = questionElement.querySelector('.question-type');
     handleQuestionTypeChange(typeSelect);
     
@@ -525,7 +522,6 @@ function removeQuestion(button) {
     const questionItem = button.closest('.question-item');
     questionItem.remove();
     
-    // Show no questions message if empty
     if (document.querySelectorAll('.question-item').length === 0) {
         document.getElementById('no-questions-message').style.display = 'block';
     }
@@ -546,17 +542,14 @@ function handleQuestionTypeChange(select) {
     const trueFalseContainer = questionItem.querySelector('.true-false-container');
     const shortAnswerContainer = questionItem.querySelector('.short-answer-container');
     
-    // Hide all containers
     if (optionsContainer) optionsContainer.style.display = 'none';
     if (trueFalseContainer) trueFalseContainer.style.display = 'none';
     if (shortAnswerContainer) shortAnswerContainer.style.display = 'none';
     
-    // Show appropriate container based on selected type
     switch(select.value) {
         case 'multiple_choice':
             if (optionsContainer) {
                 optionsContainer.style.display = 'block';
-                // Add default options if empty
                 if (optionsContainer.querySelectorAll('.option-item').length === 0) {
                     addOption(optionsContainer.querySelector('.btn'));
                     addOption(optionsContainer.querySelector('.btn'));
@@ -597,65 +590,59 @@ function removeOption(button) {
     optionItem.remove();
 }
 
-// Simple validation before submit
+// SIMPLE VALIDATION - This will work for all tabs
 document.getElementById('assessmentForm').addEventListener('submit', function(e) {
     const assessmentType = '{{ $type }}';
+    console.log('Submitting assessment type: ' + assessmentType);
     
-    // For diploma, always submit (no question validation needed)
-    if (assessmentType === 'diploma') {
-        return true;
-    }
-    
-    // For quiz, module_assessment, final_exam - check if there's at least one question
-    const questions = document.querySelectorAll('.question-item');
-    
-    if (questions.length === 0) {
-        e.preventDefault();
-        alert('Please add at least one question.');
-        return false;
-    }
-    
-    // Basic validation for each question
-    for (let i = 0; i < questions.length; i++) {
-        const question = questions[i];
-        const questionText = question.querySelector('.question-text').value;
-        const points = question.querySelector('.question-points').value;
+    // For non-diploma types, just check if there's at least one question
+    if (assessmentType !== 'diploma') {
+        const questions = document.querySelectorAll('.question-item');
         
-        if (!questionText.trim()) {
+        if (questions.length === 0) {
             e.preventDefault();
-            alert(`Question ${i + 1} is missing the question text.`);
+            alert('Please add at least one question.');
             return false;
         }
         
-        if (!points || points <= 0) {
-            e.preventDefault();
-            alert(`Question ${i + 1} needs valid points.`);
-            return false;
-        }
-        
-        // For multiple choice, check options
-        const typeSelect = question.querySelector('.question-type');
-        if (typeSelect && typeSelect.value === 'multiple_choice') {
-            const options = question.querySelectorAll('.option-item input[type="text"]');
-            
-            if (options.length < 2) {
+        // Quick check that question text isn't empty
+        for (let i = 0; i < questions.length; i++) {
+            const questionText = questions[i].querySelector('.question-text').value;
+            if (!questionText.trim()) {
                 e.preventDefault();
-                alert(`Question ${i + 1} needs at least 2 options.`);
+                alert(`Question ${i + 1} text cannot be empty.`);
                 return false;
             }
-            
-            // Check if options have text
-            for (let j = 0; j < options.length; j++) {
-                if (!options[j].value.trim()) {
-                    e.preventDefault();
-                    alert(`Option ${j + 1} for Question ${i + 1} cannot be empty.`);
-                    return false;
-                }
-            }
         }
     }
     
+    // Allow submission
+    console.log('Form validation passed');
     return true;
 });
+
+// Debug function to see form data
+function debugFormData() {
+    const form = document.getElementById('assessmentForm');
+    const formData = new FormData(form);
+    
+    console.log('=== FORM DATA DEBUG ===');
+    console.log('Assessment Type:', '{{ $type }}');
+    
+    let questionCount = 0;
+    for (let pair of formData.entries()) {
+        if (pair[0].includes('questions')) {
+            questionCount++;
+            console.log(pair[0] + ':', pair[1]);
+        } else {
+            console.log(pair[0] + ':', pair[1]);
+        }
+    }
+    
+    console.log('Total questions in form data:', questionCount);
+    console.log('=== END DEBUG ===');
+    
+    alert('Check console (F12) to see form data');
+}
 </script>
 @endpush
