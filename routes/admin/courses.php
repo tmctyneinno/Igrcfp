@@ -72,19 +72,27 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
    
 // Admin assessment routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Main assessments page (no parameter required)
+    // Main assessments page (NO parameter required)
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
     
-    // Assessments filtered by course (requires course parameter)
-    Route::get('/assessments/course/{course}', [AssessmentController::class, 'index'])->name('assessments.index');
+    // Assessments filtered by course (WITH course parameter)
+    Route::get('/assessments/course/{course}', [AssessmentController::class, 'index'])->name('assessments.course');
     
-    // Other assessment routes
+    // Create assessment (NO parameter required)
     Route::get('/assessments/create', [AssessmentController::class, 'create'])->name('assessments.create');
     Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
+    
+    // Individual assessment routes (WITH assessment parameter)
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
     Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
     Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
-    Route::post('/assessments/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
+    
+    // Upload assessment for a specific course (WITH course parameter)
+    Route::post('/assessments/course/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
+    
+    // Submissions routes
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
+    Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
+    Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');
 });
