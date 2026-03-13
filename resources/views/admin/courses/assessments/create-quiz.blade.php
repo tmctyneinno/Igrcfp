@@ -186,7 +186,6 @@
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h6 class="mb-0">Question <span class="question-number">1</span></h6>
             <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeQuestion(this)">
-                <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                 Remove
             </button>
         </div>
