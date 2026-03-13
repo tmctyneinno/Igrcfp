@@ -13,6 +13,13 @@ import {
 
 export default function QuizReview({ enrollment, assessment, submission, questions = [] }) {
     const [currentQuestion, setCurrentQuestion] = useState(0);
+    // DEBUG: Log the received data
+    console.log('=== QUIZ REVIEW DEBUG ===');
+    console.log('Questions:', questions);
+    console.log('Questions length:', questions?.length);
+    console.log('Assessment:', assessment);
+    console.log('Submission:', submission);
+    console.log('Enrollment:', enrollment);
     
     // Safely check if questions exist
     if (!questions || questions.length === 0) {
