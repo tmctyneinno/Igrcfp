@@ -4,14 +4,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
-// Initialize Stripe outside component to avoid recreating on each render
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || process.env.MIX_STRIPE_KEY);
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
+// Don't initialize here - we'll do it in the component with the passed key
 
-// Separate form component that uses Stripe
-function CheckoutForm({ cart, user, processing, setProcessing }) {
-    const stripe = useStripe();
-    const elements = useElements();
+// Separate form component
+function CheckoutForm({ cart, user, processing, setProcessing, stripe, elements }) {
     const { data, setData, post, errors } = useForm({
         name: user.name || '',
         email: user.email || '',
@@ -30,36 +26,49 @@ function CheckoutForm({ cart, user, processing, setProcessing }) {
         setProcessing(true);
 
         try {
-            // First, create payment intent on server
-            const response = await fetch('/checkout/create-payment-intent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            // First, submit the form data to create enrollments
+            post(route('checkout.process'), {
+                onSuccess: async () => {
+                    // If total is 0, we're done
+                    if (parseFloat(cart?.total_amount) === 0) {
+                        return;
+                    }
+
+                    // Otherwise, create payment intent and process payment
+                    const response = await fetch('/checkout/create-payment-intent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const { clientSecret } = await response.json();
+
+                    // Confirm the payment
+                    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: elements.getElement(CardElement),
+                            billing_details: {
+                                name: data.name,
+                                email: data.email,
+                            },
+                        },
+                    });
+
+                    if (stripeError) {
+                        console.error('Stripe error:', stripeError);
+                        // Handle error (show message to user)
+                    } else if (paymentIntent.status === 'succeeded') {
+                        // Redirect to success page
+                        window.location.href = route('checkout.success');
+                    }
                 },
-                body: JSON.stringify(data),
+                onError: (errors) => {
+                    console.error('Form errors:', errors);
+                }
             });
-
-            const { clientSecret } = await response.json();
-
-            // Confirm the payment
-            const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardElement),
-                    billing_details: {
-                        name: data.name,
-                        email: data.email,
-                    },
-                },
-            });
-
-            if (stripeError) {
-                console.error('Stripe error:', stripeError);
-                // Handle error
-            } else if (paymentIntent.status === 'succeeded') {
-                // Submit the form to complete checkout
-                post(route('checkout.process'));
-            }
         } catch (error) {
             console.error('Payment error:', error);
         } finally {
@@ -72,7 +81,7 @@ function CheckoutForm({ cart, user, processing, setProcessing }) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-                {/* Your existing form fields */}
+                {/* Form fields */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Full Name *
@@ -117,27 +126,29 @@ function CheckoutForm({ cart, user, processing, setProcessing }) {
                     />
                 </div>
 
-                {/* Card Element */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Card Details
-                    </label>
-                    <div className="p-3 border border-gray-300 rounded-lg">
-                        <CardElement 
-                            options={{
-                                style: {
-                                    base: {
-                                        fontSize: '16px',
-                                        color: '#424770',
-                                        '::placeholder': {
-                                            color: '#aab7c4',
+                {/* Show card element only if total > 0 */}
+                {parseFloat(cart?.total_amount) > 0 && (
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Card Details
+                        </label>
+                        <div className="p-3 border border-gray-300 rounded-lg">
+                            <CardElement 
+                                options={{
+                                    style: {
+                                        base: {
+                                            fontSize: '16px',
+                                            color: '#424770',
+                                            '::placeholder': {
+                                                color: '#aab7c4',
+                                            },
                                         },
                                     },
-                                },
-                            }}
-                        />
+                                }}
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <div className="pt-4">
                     <label className="flex items-center">
@@ -159,7 +170,7 @@ function CheckoutForm({ cart, user, processing, setProcessing }) {
 
                 <button
                     type="submit"
-                    disabled={processing || !stripe}
+                    disabled={processing || (parseFloat(cart?.total_amount) > 0 && !stripe)}
                     className="w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 disabled:opacity-50"
                 >
                     {processing ? 'Processing...' : `Pay €${totalAmount.toFixed(2)}`}
@@ -170,9 +181,34 @@ function CheckoutForm({ cart, user, processing, setProcessing }) {
 }
 
 // Main component
-export default function Checkout({ cart, user }) {
+export default function Checkout({ cart, user, stripeKey }) {
     const [processing, setProcessing] = useState(false);
+    const [stripePromise, setStripePromise] = useState(null);
+    
+    // Initialize Stripe when component mounts
+    React.useEffect(() => {
+        if (stripeKey) {
+            setStripePromise(loadStripe(stripeKey));
+        }
+    }, [stripeKey]);
+
     const totalAmount = parseFloat(cart?.total_amount) || 0;
+
+    // If cart is empty or no stripe key, don't render payment form
+    if (!cart?.items?.length) {
+        return (
+            <AuthenticatedLayout>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div className="bg-white rounded-xl shadow-md p-6 text-center">
+                        <h2 className="text-xl font-semibold text-gray-900">Your cart is empty</h2>
+                        <Link href="/courses" className="mt-4 inline-block text-blue-600 hover:text-blue-800">
+                            Browse Courses
+                        </Link>
+                    </div>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
 
     return (
         <AuthenticatedLayout>
@@ -187,18 +223,33 @@ export default function Checkout({ cart, user }) {
                         <div className="bg-white rounded-xl shadow-md p-6">
                             <h2 className="text-lg font-semibold text-gray-900 mb-6">Billing Information</h2>
                             
-                            <Elements stripe={stripePromise}>
+                            {totalAmount > 0 && stripePromise ? (
+                                <Elements stripe={stripePromise}>
+                                    <CheckoutForm 
+                                        cart={cart} 
+                                        user={user} 
+                                        processing={processing}
+                                        setProcessing={setProcessing}
+                                    />
+                                </Elements>
+                            ) : totalAmount === 0 ? (
                                 <CheckoutForm 
                                     cart={cart} 
                                     user={user} 
                                     processing={processing}
                                     setProcessing={setProcessing}
+                                    stripe={null}
+                                    elements={null}
                                 />
-                            </Elements>
+                            ) : (
+                                <div className="text-center py-4">
+                                    <p className="text-gray-600">Loading payment system...</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Order Summary - same as before */}
+                    {/* Order Summary */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
