@@ -139,7 +139,7 @@ export default function Checkout({ cart, user }) {
                                         disabled={processing}
                                         className="w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 disabled:opacity-50"
                                     >
-                                        {processing ? 'Processing...' : `Pay $${totalAmount.toFixed(2)}`}
+                                        {processing ? 'Processing...' : `Pay €${totalAmount.toFixed(2)}`}
                                     </button>
                                 </div>
                             </form>
@@ -164,7 +164,7 @@ export default function Checkout({ cart, user }) {
                                 
                                 <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
                                     <span>Total</span>
-                                    <span>${totalAmount.toFixed(2)}</span>
+                                    <span>€{totalAmount.toFixed(2)}</span>
                                 </div>
                             </div>
 
