@@ -281,5 +281,32 @@ class Course extends Model
         return $this->belongsTo(CourseCategory::class);
     } 
 
+    /**
+ * Assessment relationships for Course model
+ */
+public function assessments()
+{
+    return $this->hasMany(Assessment::class);
+}
+
+public function quizzes()
+{
+    return $this->hasMany(Assessment::class)->where('assessment_level', 'quiz');
+}
+
+public function moduleAssessments()
+{
+    return $this->hasMany(Assessment::class)->where('assessment_level', 'module_assessment');
+}
+
+public function finalExam()
+{
+    return $this->hasOne(Assessment::class)->where('assessment_level', 'final_exam');
+}
+
+public function diplomaAssessment()
+{
+    return $this->hasOne(Assessment::class)->where('assessment_level', 'diploma');
+}
    
 }
