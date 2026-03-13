@@ -235,7 +235,7 @@ class AssessmentController extends Controller
                 $assessment->save();
             }
 
-            // \Log::info('Assessment level:', ['level' => $request->assessment_level]);
+            \Log::info('Assessment level:', ['level' => $request->assessment_level]);
 
        
 
