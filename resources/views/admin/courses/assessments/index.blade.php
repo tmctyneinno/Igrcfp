@@ -147,7 +147,6 @@
             </div>
             @if(isset($course))
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadAssessmentModal">
-                <iconify-icon icon="solar:upload-outline" class="icon"></iconify-icon>
                 Upload Assessment
             </button>
             @endif
@@ -259,7 +258,6 @@
                     <h6 class="text-muted mb-2">No assessments found</h6>
                     <p class="text-muted mb-4">Create your first assessment to get started</p>
                     <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary">
-                        <iconify-icon icon="ic:baseline-plus" class="icon"></iconify-icon>
                         Create Assessment
                     </a>
                 </div>
