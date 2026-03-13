@@ -137,7 +137,7 @@
                                 @elseif($type == 'module_assessment')
                                     Add 1-2 questions for your module assessment
                                 @elseif($type == 'final_exam')
-                                    Add at least 50 questions for your final exam
+                                    Add at least 2 questions for your final exam
                                 @endif
                             </p>
                         </div>
