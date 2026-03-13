@@ -181,7 +181,7 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
-         \Log::error('Assessment request: ' . $request);
+        \Log::error('Assessment request:', $request->all());
         $rules = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
 
