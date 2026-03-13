@@ -142,8 +142,7 @@
                             </p>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                            <iconify-icon icon="ic:baseline-plus" class="icon me-1"></iconify-icon>
-                            Add Question
+                             Add Question
                         </button>
                     </div>
                     <div class="card-body">
