@@ -406,26 +406,56 @@ function handleQuestionTypeChange(select) {
     const trueFalseContainer = questionItem.querySelector('.true-false-container');
     const shortAnswerContainer = questionItem.querySelector('.short-answer-container');
     
-    // Hide all containers
-    if (optionsContainer) optionsContainer.style.display = 'none';
-    if (trueFalseContainer) trueFalseContainer.style.display = 'none';
-    if (shortAnswerContainer) shortAnswerContainer.style.display = 'none';
+    // Remove required attributes from all inputs in hidden containers
+    if (optionsContainer) {
+        const optionInputs = optionsContainer.querySelectorAll('input[required]');
+        optionInputs.forEach(input => input.removeAttribute('required'));
+        optionsContainer.style.display = 'none';
+    }
     
-    // Show appropriate container based on selected type
+    if (trueFalseContainer) {
+        const trueFalseInputs = trueFalseContainer.querySelectorAll('input[required]');
+        trueFalseInputs.forEach(input => input.removeAttribute('required'));
+        trueFalseContainer.style.display = 'none';
+    }
+    
+    if (shortAnswerContainer) {
+        const shortAnswerInputs = shortAnswerContainer.querySelectorAll('input[required]');
+        shortAnswerInputs.forEach(input => input.removeAttribute('required'));
+        shortAnswerContainer.style.display = 'none';
+    }
+    
+    // Show appropriate container based on selected type and add required attributes
     switch(select.value) {
         case 'multiple_choice':
             if (optionsContainer) {
                 optionsContainer.style.display = 'block';
+                // Add required back to option inputs
+                const optionInputs = optionsContainer.querySelectorAll('input[type="text"]');
+                optionInputs.forEach(input => input.setAttribute('required', 'required'));
             }
             break;
+            
         case 'true_false':
             if (trueFalseContainer) {
                 trueFalseContainer.style.display = 'block';
+                // Make radio buttons required
+                const radioInputs = trueFalseContainer.querySelectorAll('input[type="radio"]');
+                // Only make the first one required (HTML5 will handle the group)
+                if (radioInputs.length > 0) {
+                    radioInputs[0].setAttribute('required', 'required');
+                }
             }
             break;
+            
         case 'short_answer':
             if (shortAnswerContainer) {
                 shortAnswerContainer.style.display = 'block';
+                // Make the correct answer input required
+                const answerInput = shortAnswerContainer.querySelector('input[type="text"]');
+                if (answerInput) {
+                    answerInput.setAttribute('required', 'required');
+                }
             }
             break;
     }
@@ -453,6 +483,11 @@ function addOption(button) {
     const optionElement = tempDiv.firstElementChild;
     
     if (optionElement) {
+        // Make sure the new option has required attribute
+        const textInput = optionElement.querySelector('input[type="text"]');
+        if (textInput) {
+            textInput.setAttribute('required', 'required');
+        }
         optionsList.appendChild(optionElement);
     }
 }
@@ -475,16 +510,14 @@ function debugFormData() {
     console.log('Form action:', form.action);
     console.log('Form method:', form.method);
     
-    let questionCount = 0;
+    let questionFields = {};
     for (let pair of formData.entries()) {
         if (pair[0].includes('questions')) {
-            questionCount++;
             console.log(pair[0] + ':', pair[1]);
         } else {
             console.log(pair[0] + ':', pair[1]);
         }
     }
-    console.log('Total question fields:', questionCount);
     console.log('=== END DEBUG ===');
     
     alert('Form data logged to console. Press F12 to view.');
@@ -499,7 +532,7 @@ function testSubmit() {
 
 // Form validation
 document.getElementById('quizForm')?.addEventListener('submit', function(e) {
-    console.log('Form submission started');
+    console.log('Form submission validation started');
     
     const questions = document.querySelectorAll('.question-item');
     
@@ -509,8 +542,67 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
         return false;
     }
     
-    // Log the questions for debugging
-    console.log('Number of questions:', questions.length);
+    // Validate each question based on its type
+    for (let i = 0; i < questions.length; i++) {
+        const question = questions[i];
+        const questionText = question.querySelector('.question-text')?.value;
+        const points = question.querySelector('.question-points')?.value;
+        const typeSelect = question.querySelector('.question-type');
+        
+        if (!questionText || !questionText.trim()) {
+            e.preventDefault();
+            alert(`❌ Question ${i + 1}: Question text is required.`);
+            return false;
+        }
+        
+        if (!points || points <= 0) {
+            e.preventDefault();
+            alert(`❌ Question ${i + 1}: Valid points are required.`);
+            return false;
+        }
+        
+        if (!typeSelect) continue;
+        
+        const questionType = typeSelect.value;
+        
+        switch(questionType) {
+            case 'multiple_choice':
+                const options = question.querySelectorAll('.option-item input[type="text"]');
+                if (options.length < 2) {
+                    e.preventDefault();
+                    alert(`❌ Question ${i + 1}: Multiple choice questions need at least 2 options.`);
+                    return false;
+                }
+                
+                let hasEmptyOption = false;
+                options.forEach((opt, idx) => {
+                    if (!opt.value.trim()) {
+                        hasEmptyOption = true;
+                        console.log(`Option ${idx + 1} is empty`);
+                    }
+                });
+                
+                if (hasEmptyOption) {
+                    e.preventDefault();
+                    alert(`❌ Question ${i + 1}: All options must have text.`);
+                    return false;
+                }
+                break;
+                
+            case 'true_false':
+                // No additional validation needed for true/false
+                break;
+                
+            case 'short_answer':
+                const shortAnswer = question.querySelector('.short-answer-container input[type="text"]')?.value;
+                if (!shortAnswer || !shortAnswer.trim()) {
+                    e.preventDefault();
+                    alert(`❌ Question ${i + 1}: Correct answer is required for short answer questions.`);
+                    return false;
+                }
+                break;
+        }
+    }
     
     // Show loading state
     const submitBtn = document.getElementById('submitBtn');
@@ -526,10 +618,6 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Quiz form script loaded');
-    
-    // Optional: Add one test question automatically for debugging
-    // Uncomment the next line if you want to test with a pre-filled question
-    // setTimeout(addQuestion, 500);
 });
 </script>
 @endpush
