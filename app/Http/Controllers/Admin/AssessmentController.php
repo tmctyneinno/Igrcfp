@@ -216,6 +216,15 @@ class AssessmentController extends Controller
                 $validated['file_extension'] = $file->getClientOriginalExtension();
             }
 
+             \Log::info('=== ASSESSMENT STORE DEBUG ===');
+        \Log::info('All request data:', $request->all());
+        \Log::info('Request method: ' . $request->method());
+        \Log::info('Request URL: ' . $request->fullUrl());
+        \Log::info('Has title? ' . ($request->has('title') ? 'Yes' : 'No'));
+        \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
+        \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
+        \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
+
             // Handle project brief for diploma
             if ($request->has('project_brief')) {
                 $validated['project_brief'] = $request->project_brief;
