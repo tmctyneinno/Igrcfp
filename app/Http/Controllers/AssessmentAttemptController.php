@@ -13,10 +13,8 @@ use Inertia\Inertia;
 
 class AssessmentAttemptController extends Controller
 {
-    /**
-     * Take a quiz assessment
-     */
-    public function takeQuiz($enrollmentId, $assessmentId)
+    
+    public function takeQuiz22($enrollmentId, $assessmentId)
     {
         $enrollment = Enrollment::with('course')
             ->where('id', $enrollmentId)
@@ -99,6 +97,139 @@ class AssessmentAttemptController extends Controller
                 'id' => $attempt->id,
                 'started_at' => $attempt->started_at,
                 'time_remaining' => $assessment->duration ? now()->diffInSeconds($attempt->started_at->copy()->addMinutes($assessment->duration), false) : null,
+            ]
+        ]);
+    }
+
+    // Add this method to your AssessmentAttemptController
+    public function takeQuiz($enrollmentId, $moduleId)
+    {
+        $enrollment = Enrollment::with('course')
+            ->where('id', $enrollmentId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+        
+        // Get all quizzes for this module
+        $quizzes = Assessment::with('questions')
+            ->where('course_id', $enrollment->course_id)
+            ->where('assessment_level', 'quiz')
+            // ->where('module_id', $moduleId)
+            ->get();
+        
+
+        if ($quizzes->isEmpty()) {
+            return redirect()->route('dashboard.courses.show', $enrollment->course->slug)
+                ->with('error', 'No quizzes found for this module.');
+        }
+
+        // Get the module
+        $module = $quizzes->first()->module;
+
+        // Check if all quizzes are already completed
+        $allCompleted = true;
+        $existingAttempt = null;
+        $allQuestions = collect();
+
+        foreach ($quizzes as $quiz) {
+            $existingSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
+                ->where('user_id', auth()->id())
+                ->where('status', 'completed')
+                ->first();
+
+            if (!$existingSubmission) {
+                $allCompleted = false;
+            }
+
+            // Check for existing attempt
+            $attempt = AssessmentAttempt::where('assessment_id', $quiz->id)
+                ->where('user_id', auth()->id())
+                ->where('status', 'in_progress')
+                ->first();
+
+            if ($attempt) {
+                $existingAttempt = $attempt;
+            }
+
+            // Collect all questions from all quizzes
+            $quizQuestions = $quiz->questions->map(function($question) use ($quiz) {
+                $data = [
+                    'id' => $question->id,
+                    'quiz_id' => $quiz->id,
+                    'quiz_title' => $quiz->title,
+                    'text' => $question->question_text,
+                    'type' => $question->question_type,
+                    'points' => $question->points,
+                ];
+                
+                if ($question->question_type === 'multiple_choice' && $question->options) {
+                    $options = $question->options;
+                    shuffle($options);
+                    $data['options'] = $options;
+                }
+                
+                return $data;
+            });
+
+            $allQuestions = $allQuestions->concat($quizQuestions);
+        }
+
+        if ($allCompleted) {
+            return redirect()->route('dashboard.courses.show', $enrollment->course->slug)
+                ->with('error', 'You have already completed all quizzes for this module.');
+        }
+
+        // If no existing attempt, create one for the first quiz (we'll track module progress separately)
+        if (!$existingAttempt) {
+            // You might want to create a ModuleAttempt model to track progress across multiple quizzes
+            // For now, we'll just use the first quiz's attempt
+            $existingAttempt = AssessmentAttempt::create([
+                'assessment_id' => $quizzes->first()->id,
+                'user_id' => auth()->id(),
+                'enrollment_id' => $enrollmentId,
+                'started_at' => now(),
+                'status' => 'in_progress',
+                'attempt_number' => 1,
+            ]);
+        }
+
+        // Shuffle all questions
+        $allQuestions = $allQuestions->shuffle();
+
+        // Calculate total duration (sum of all quiz durations)
+        $totalDuration = $quizzes->sum('duration');
+        $totalMarks = $quizzes->sum('total_marks');
+        $avgPassingScore = $quizzes->avg('passing_score');
+
+        return Inertia::render('Dashboard/Assessment/ModuleQuiz', [
+            'enrollment' => [
+                'id' => $enrollment->id,
+                'course' => [
+                    'id' => $enrollment->course->id,
+                    'title' => $enrollment->course->title,
+                    'slug' => $enrollment->course->slug,
+                ]
+            ],
+            'module' => [
+                'id' => $module->id,
+                'title' => $module->title,
+                'number' => $module->module_number,
+            ],
+            'assessment' => [
+                'id' => 'module-' . $moduleId,
+                'title' => "Module {$module->module_number} Quiz",
+                'description' => "Complete all quizzes for Module {$module->module_number}",
+                'duration' => $totalDuration,
+                'total_marks' => $totalMarks,
+                'passing_score' => round($avgPassingScore),
+                'questions' => $allQuestions,
+                'question_count' => $allQuestions->count(),
+                'quiz_count' => $quizzes->count(),
+                'quiz_ids' => $quizzes->pluck('id'),
+            ],
+            'attempt' => [
+                'id' => $existingAttempt->id,
+                'started_at' => $existingAttempt->started_at,
+                'time_remaining' => $totalDuration ? now()->diffInSeconds($existingAttempt->started_at->copy()->addMinutes($totalDuration), false) : null,
             ]
         ]);
     }
