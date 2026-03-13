@@ -18,7 +18,7 @@ import {
     LockClosedIcon,
     ClipboardDocumentCheckIcon,
     PlayCircleIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
 
 export default function EnrollmentIndex({ course, enrollment, modules: initialModules = [], candidate, examResults }) {
     // State management
