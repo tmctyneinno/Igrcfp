@@ -157,7 +157,7 @@ export default function Checkout({ cart, user }) {
                                     return (
                                         <div key={item.id} className="flex justify-between text-sm">
                                             <span className="text-gray-600">{item.title}</span>
-                                            <span className="text-gray-900 font-medium">${itemPrice.toFixed(2)}</span>
+                                            <span className="text-gray-900 font-medium">€{itemPrice.toFixed(2)}</span>
                                         </div>
                                     );
                                 })}
