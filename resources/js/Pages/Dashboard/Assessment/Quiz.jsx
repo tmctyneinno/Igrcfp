@@ -202,25 +202,88 @@ export default function QuizReview({ enrollment, assessment, submission }) {
                                             </div>
                                         )}
 
-                                        {question.type === 'true_false' && (
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
-                                                <div className={`p-3 rounded-lg ${
-                                                    question.is_correct ? 'bg-green-50' : 'bg-red-50'
-                                                }`}>
-                                                    {formatAnswer(question.user_answer)}
-                                                </div>
-                                                
-                                                {!question.is_correct && question.correct_answer && (
-                                                    <>
-                                                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
-                                                        <div className="p-3 bg-green-50 rounded-lg">
-                                                            {formatAnswer(question.correct_answer)}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
+                                        {/* Determine question type display */}
+{(() => {
+    const type = question.type?.toLowerCase() || '';
+    
+    // Multiple Choice
+    if (type.includes('multiple') || type === 'mcq' || type === 'choice') {
+        return (
+            <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
+                <div className={`p-3 rounded-lg ${question.is_correct ? 'bg-green-50' : 'bg-red-50'}`}>
+                    {formatAnswer(question.user_answer)}
+                </div>
+                {!question.is_correct && question.correct_answer && (
+                    <>
+                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
+                        <div className="p-3 bg-green-50 rounded-lg">
+                            {formatAnswer(question.correct_answer)}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    }
+    
+    // True/False
+    if (type.includes('true') || type.includes('false') || type === 'boolean' || type === 'tf') {
+        return (
+            <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
+                <div className={`p-3 rounded-lg ${question.is_correct ? 'bg-green-50' : 'bg-red-50'}`}>
+                    {formatAnswer(question.user_answer)}
+                </div>
+                {!question.is_correct && question.correct_answer && (
+                    <>
+                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
+                        <div className="p-3 bg-green-50 rounded-lg">
+                            {formatAnswer(question.correct_answer)}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    }
+    
+    // Short Answer
+    if (type.includes('short') || type.includes('text') || type === 'fill') {
+        return (
+            <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
+                <div className={`p-3 rounded-lg ${question.is_correct ? 'bg-green-50' : 'bg-red-50'}`}>
+                    {formatAnswer(question.user_answer)}
+                </div>
+                {!question.is_correct && question.correct_answer && (
+                    <>
+                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Expected Answer:</p>
+                        <div className="p-3 bg-green-50 rounded-lg">
+                            {formatAnswer(question.correct_answer)}
+                        </div>
+                    </>
+                )}
+            </div>
+        );
+    }
+    
+    // Default fallback
+    return (
+        <div>
+            <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
+            <div className={`p-3 rounded-lg ${question.is_correct ? 'bg-green-50' : 'bg-red-50'}`}>
+                {formatAnswer(question.user_answer)}
+            </div>
+            {!question.is_correct && question.correct_answer && (
+                <>
+                    <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
+                    <div className="p-3 bg-green-50 rounded-lg">
+                        {formatAnswer(question.correct_answer)}
+                    </div>
+                </>
+            )}
+        </div>
+    );
+})()}
 
                                         {question.type === 'short_answer' && (
                                             <div>
