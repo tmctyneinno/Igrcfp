@@ -6,7 +6,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Course;
-use App\Models\AssessmentSubmission;
+use App\Models\CourseModule;
+use App\Models\AssessmentQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -14,337 +15,220 @@ use Illuminate\Support\Str;
 class AssessmentController extends Controller
 {
     /**
-     * Show all assessments (no course filter)
+     * Show assessments filtered by type
      */
-    public function all()
+    public function index(Request $request, Course $course = null)
     {
-        $assessments = Assessment::with('course')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-            
-        $allCourses = Course::all();
+        $type = $request->get('type', 'all');
+        $query = Assessment::with('course', 'module');
         
-        $statistics = [
-            'total' => Assessment::count(),
-            'active' => Assessment::where('status', 'active')->count(),
-            'submissions' => AssessmentSubmission::count(),
-            'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
-        ];
+        if ($course) {
+            $query->where('course_id', $course->id);
+        }
         
-        return view('admin.courses.assessments.index', compact('assessments', 'allCourses', 'statistics'));
-    }
-    
-    /**
-     * Show assessments for a specific course
-     */
-    public function index(Course $course)
-    {
-        $assessments = Assessment::where('course_id', $course->id)
-            ->with('course')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-            
-        $allCourses = Course::all();
+        switch ($type) {
+            case 'quizzes':
+                $query->quizzes();
+                $title = 'Quizzes';
+                break;
+            case 'module':
+                $query->moduleAssessments();
+                $title = 'Module Assessments';
+                break;
+            case 'final':
+                $query->finalExams();
+                $title = 'Final Exams';
+                break;
+            case 'diploma':
+                $query->diplomaAssessments();
+                $title = 'Diploma Assessments';
+                break;
+            default:
+                $title = 'All Assessments';
+        }
         
-        $statistics = [
-            'total' => Assessment::where('course_id', $course->id)->count(),
-            'active' => Assessment::where('course_id', $course->id)->where('status', 'active')->count(),
-            'submissions' => AssessmentSubmission::whereHas('assessment', function($q) use ($course) {
-                $q->where('course_id', $course->id);
-            })->count(),
-            'pending_grading' => AssessmentSubmission::whereHas('assessment', function($q) use ($course) {
-                $q->where('course_id', $course->id);
-            })->where('status', 'submitted')->count(),
-        ];
+        $assessments = $query->orderBy('created_at', 'desc')->paginate(15);
+        $courses = Course::all();
+        $modules = CourseModule::all();
         
-        return view('admin.courses.assessments.index', compact('assessments', 'course', 'allCourses', 'statistics'));
+        return view('admin.assessments.index', compact('assessments', 'courses', 'modules', 'title', 'course'));
     }
 
     /**
-     * Show the form for creating a new assessment.
+     * Show create form based on assessment type
      */
-    public function create()
+    public function create(Request $request)
     {
+        $type = $request->get('type', 'quiz');
         $courses = Course::where('status', 'published')->orderBy('title')->get();
+        $modules = CourseModule::orderBy('module_number')->get();
         
-        return view('admin.courses.assessments.create', compact('courses'));
+        return view('admin.assessments.create', compact('courses', 'modules', 'type'));
     }
 
     /**
-     * Store a newly created assessment in storage.
+     * Store assessment based on type
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = $this->getValidationRules($request->assessment_level);
+        $validated = $request->validate($rules);
+
+        // Set type-specific defaults
+        $validated = $this->setTypeDefaults($validated, $request);
+
+        // Handle file uploads
+        if ($request->hasFile('assessment_file')) {
+            $validated = $this->handleFileUpload($request, $validated);
+        }
+
+        // Create assessment
+        $assessment = Assessment::create($validated);
+
+        // If it's a quiz or module assessment with questions, process them
+        if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam']) 
+            && $request->has('questions')) {
+            $this->saveQuestions($assessment, $request->questions);
+        }
+
+        $redirectRoute = $this->getRedirectRoute($assessment);
+        
+        return redirect()->route($redirectRoute, $assessment->course_id)
+            ->with('success', ucfirst($request->assessment_level) . ' created successfully!');
+    }
+
+    /**
+     * Get validation rules based on assessment type
+     */
+    private function getValidationRules($type)
+    {
+        $baseRules = [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'course_id' => 'required|exists:courses,id',
-            'type' => 'required|in:exam,assignment,quiz,project',
+            'module_id' => 'nullable|exists:course_modules,id',
+            'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
             'status' => 'required|in:draft,active,archived',
-            'duration' => 'nullable|integer|min:1',
-            'total_marks' => 'nullable|integer|min:1',
-            'due_date' => 'nullable|date',
-            'due_time' => 'nullable',
-            'release_date' => 'nullable|date',
-            'release_time' => 'nullable',
-            'is_timed' => 'boolean',
-            'needs_manual_marking' => 'boolean',
-            'allow_late_submissions' => 'boolean',
-            'assessment_file' => 'nullable|file|mimes:pdf,doc,docx,xlsx,zip|max:51200', // 50MB max
-        ]);
+        ];
 
-        // Handle file upload
-        if ($request->hasFile('assessment_file')) {
-            $file = $request->file('assessment_file');
-            $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
-            $validated['file_path'] = $path;
-            $validated['file_name'] = $file->getClientOriginalName();
-            $validated['file_size'] = $file->getSize();
+        switch ($type) {
+            case 'quiz':
+                return array_merge($baseRules, [
+                    'total_marks' => 'required|integer|min:1|max:100',
+                    'passing_score' => 'required|integer|min:1|max:100',
+                    'questions' => 'required|array|min:5|max:10',
+                    'questions.*.text' => 'required|string',
+                    'questions.*.type' => 'required|in:multiple_choice,true_false',
+                    'questions.*.options' => 'required_if:questions.*.type,multiple_choice|array',
+                    'questions.*.correct_answer' => 'required|string',
+                    'questions.*.points' => 'required|integer|min:1',
+                ]);
+
+            case 'module_assessment':
+                return array_merge($baseRules, [
+                    'duration' => 'required|integer|min:15|max:120',
+                    'total_marks' => 'required|integer|min:20|max:100',
+                    'passing_score' => 'required|integer|min:50|max:100',
+                    'is_timed' => 'boolean',
+                    'requires_identity_verification' => 'boolean',
+                    'questions' => 'required|array|min:20|max:30',
+                ]);
+
+            case 'final_exam':
+                return array_merge($baseRules, [
+                    'duration' => 'required|integer|min:60|max:180',
+                    'total_marks' => 'required|integer|min:50|max:200',
+                    'passing_score' => 'required|integer|min:60|max:100',
+                    'is_timed' => 'boolean',
+                    'requires_identity_verification' => 'accepted', // Must be true
+                    'questions' => 'required|array|min:50',
+                ]);
+
+            case 'diploma':
+                return array_merge($baseRules, [
+                    'project_brief' => 'required|string',
+                    'total_marks' => 'required|integer|min:50|max:200',
+                    'passing_score' => 'required|integer|min:60|max:100',
+                    'needs_manual_marking' => 'accepted', // Must be true
+                    'requires_identity_verification' => 'accepted', // Must be true
+                    'due_date' => 'required|date',
+                    'assessment_file' => 'required|file|mimes:pdf,doc,docx|max:10240',
+                ]);
+
+            default:
+                return $baseRules;
         }
-
-        // Combine date and time for due_date
-        if ($request->filled('due_date')) {
-            $dueDateTime = $request->due_date;
-            if ($request->filled('due_time')) {
-                $dueDateTime .= ' ' . $request->due_time;
-            }
-            $validated['due_date'] = date('Y-m-d H:i:s', strtotime($dueDateTime));
-        }
-
-        // Combine date and time for release_date
-        if ($request->filled('release_date')) {
-            $releaseDateTime = $request->release_date;
-            if ($request->filled('release_time')) {
-                $releaseDateTime .= ' ' . $request->release_time;
-            }
-            $validated['release_date'] = date('Y-m-d H:i:s', strtotime($releaseDateTime));
-        }
-
-        // Set boolean values
-        $validated['is_timed'] = $request->has('is_timed');
-        $validated['needs_manual_marking'] = $request->has('needs_manual_marking');
-        $validated['allow_late_submissions'] = $request->has('allow_late_submissions');
-
-        Assessment::create($validated);
-
-        return redirect()->route('admin.courses.assessments.index', $validated['course_id'])
-            ->with('success', 'Assessment created successfully!');
     }
 
     /**
-     * Display the specified assessment.
+     * Set type-specific default values
      */
-    public function show(Assessment $assessment)
+    private function setTypeDefaults($validated, $request)
     {
-        $assessment->load('course', 'submissions.user');
-        
-        return view('admin.courses.assessments.show', compact('assessment'));
-    }
+        switch ($request->assessment_level) {
+            case 'quiz':
+                $validated['is_timed'] = false;
+                $validated['requires_identity_verification'] = false;
+                $validated['needs_manual_marking'] = false;
+                $validated['duration'] = null;
+                break;
 
-    /**
-     * Show the form for editing the specified assessment.
-     */
-    public function edit(Assessment $assessment)
-    {
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
-        
-        return view('admin.courses.assessments.edit', compact('assessment', 'courses'));
-    }
+            case 'module_assessment':
+                $validated['is_timed'] = $request->has('is_timed');
+                $validated['requires_identity_verification'] = $request->has('requires_identity_verification');
+                $validated['needs_manual_marking'] = false;
+                break;
 
-    /**
-     * Update the specified assessment in storage.
-     */
-    public function update(Request $request, Assessment $assessment)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'course_id' => 'required|exists:courses,id',
-            'type' => 'required|in:exam,assignment,quiz,project',
-            'status' => 'required|in:draft,active,archived',
-            'duration' => 'nullable|integer|min:1',
-            'total_marks' => 'nullable|integer|min:1',
-            'due_date' => 'nullable|date',
-            'due_time' => 'nullable',
-            'release_date' => 'nullable|date',
-            'release_time' => 'nullable',
-            'is_timed' => 'boolean',
-            'needs_manual_marking' => 'boolean',
-            'allow_late_submissions' => 'boolean',
-            'assessment_file' => 'nullable|file|mimes:pdf,doc,docx,xlsx,zip|max:51200',
-        ]);
+            case 'final_exam':
+                $validated['is_timed'] = true;
+                $validated['requires_identity_verification'] = true;
+                $validated['needs_manual_marking'] = false;
+                break;
 
-        // Handle file upload
-        if ($request->hasFile('assessment_file')) {
-            // Delete old file if exists
-            if ($assessment->file_path) {
-                Storage::disk('public')->delete($assessment->file_path);
-            }
-            
-            $file = $request->file('assessment_file');
-            $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
-            $validated['file_path'] = $path;
-            $validated['file_name'] = $file->getClientOriginalName();
-            $validated['file_size'] = $file->getSize();
+            case 'diploma':
+                $validated['is_timed'] = false; // Projects aren't timed
+                $validated['requires_identity_verification'] = true;
+                $validated['needs_manual_marking'] = true;
+                break;
         }
 
-        // Combine date and time for due_date
-        if ($request->filled('due_date')) {
-            $dueDateTime = $request->due_date;
-            if ($request->filled('due_time')) {
-                $dueDateTime .= ' ' . $request->due_time;
-            }
-            $validated['due_date'] = date('Y-m-d H:i:s', strtotime($dueDateTime));
+        return $validated;
+    }
+
+    /**
+     * Save questions for quiz/exam type assessments
+     */
+    private function saveQuestions($assessment, $questions)
+    {
+        foreach ($questions as $index => $question) {
+            AssessmentQuestion::create([
+                'assessment_id' => $assessment->id,
+                'question_text' => $question['text'],
+                'question_type' => $question['type'],
+                'options' => $question['options'] ?? null,
+                'correct_answer' => $question['correct_answer'],
+                'points' => $question['points'],
+                'order' => $index + 1,
+            ]);
         }
+    }
 
-        // Combine date and time for release_date
-        if ($request->filled('release_date')) {
-            $releaseDateTime = $request->release_date;
-            if ($request->filled('release_time')) {
-                $releaseDateTime .= ' ' . $request->release_time;
-            }
-            $validated['release_date'] = date('Y-m-d H:i:s', strtotime($releaseDateTime));
+    /**
+     * Get redirect route based on assessment type
+     */
+    private function getRedirectRoute($assessment)
+    {
+        switch ($assessment->assessment_level) {
+            case 'quiz':
+                return 'admin.assessments.quizzes';
+            case 'module_assessment':
+                return 'admin.assessments.module';
+            case 'final_exam':
+                return 'admin.assessments.final';
+            case 'diploma':
+                return 'admin.assessments.diploma';
+            default:
+                return 'admin.assessments.course';
         }
-
-        // Set boolean values
-        $validated['is_timed'] = $request->has('is_timed');
-        $validated['needs_manual_marking'] = $request->has('needs_manual_marking');
-        $validated['allow_late_submissions'] = $request->has('allow_late_submissions');
-
-        $assessment->update($validated);
-
-        return redirect()->route('admin.courses.assessments.index', $assessment->course_id)
-            ->with('success', 'Assessment updated successfully!');
-    }
-
-    /**
-     * Remove the specified assessment from storage.
-     */
-    public function destroy(Assessment $assessment)
-    {
-        // Delete file if exists
-        if ($assessment->file_path) {
-            Storage::disk('public')->delete($assessment->file_path);
-        }
-        
-        // Delete associated submissions
-        $assessment->submissions()->delete();
-        
-        $courseId = $assessment->course_id;
-        $assessment->delete();
-
-        return redirect()->route('admin.assessments.index', $courseId)
-            ->with('success', 'Assessment deleted successfully!');
-    }
-
-    /**
-     * Upload assessment for a specific course (from modal)
-     */
-    public function upload(Request $request, Course $course)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'type' => 'required|in:exam,assignment,quiz,project',
-            'status' => 'required|in:draft,active,archived',
-            'duration' => 'nullable|integer|min:1',
-            'total_marks' => 'nullable|integer|min:1',
-            'weight' => 'nullable|integer|min:1|max:100',
-            'due_date' => 'nullable|date',
-            'due_time' => 'nullable',
-            'is_timed' => 'boolean',
-            'needs_manual_marking' => 'boolean',
-            'assessment_file' => 'required|file|mimes:pdf,doc,docx,xlsx,zip|max:51200',
-        ]);
-
-        // Handle file upload
-        $file = $request->file('assessment_file');
-        $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-        $path = $file->storeAs('assessments/' . $course->id, $filename, 'public');
-
-        // Combine date and time for due_date
-        if ($request->filled('due_date')) {
-            $dueDateTime = $request->due_date;
-            if ($request->filled('due_time')) {
-                $dueDateTime .= ' ' . $request->due_time;
-            }
-            $dueDate = date('Y-m-d H:i:s', strtotime($dueDateTime));
-        }
-
-        Assessment::create([
-            'course_id' => $course->id,
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'type' => $validated['type'],
-            'status' => $validated['status'],
-            'duration' => $validated['duration'] ?? null,
-            'total_marks' => $validated['total_marks'] ?? null,
-            'weight' => $validated['weight'] ?? null,
-            'due_date' => $dueDate ?? null,
-            'is_timed' => $request->has('is_timed'),
-            'needs_manual_marking' => $request->has('needs_manual_marking'),
-            'file_path' => $path,
-            'file_name' => $file->getClientOriginalName(),
-            'file_size' => $file->getSize(),
-        ]);
-
-        return redirect()->route('admin.assessments.index', $course->id)
-            ->with('success', 'Assessment uploaded successfully!');
-    }
-
-    /**
-     * Get submissions for an assessment (AJAX)
-     */
-    public function submissions(Assessment $assessment)
-    {
-        $submissions = $assessment->submissions()
-            ->with('user')
-            ->orderBy('submitted_at', 'desc')
-            ->get()
-            ->map(function ($submission) {
-                return [
-                    'id' => $submission->id,
-                    'student_name' => $submission->user->name ?? 'N/A',
-                    'candidate_id' => $submission->user->candidate_id ?? 'N/A',
-                    'submitted_at' => $submission->submitted_at,
-                    'score' => $submission->score,
-                    'status' => $submission->status,
-                ];
-            });
-
-        return response()->json(['submissions' => $submissions]);
-    }
-
-    /**
-     * View a specific submission
-     */
-    public function viewSubmission(AssessmentSubmission $submission)
-    {
-        $submission->load('user', 'assessment.course');
-        
-        return view('admin.assessments.submission', compact('submission'));
-    }
-
-    /**
-     * Grade a submission
-     */
-    public function gradeSubmission(Request $request, AssessmentSubmission $submission)
-    {
-        $validated = $request->validate([
-            'score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
-            'feedback' => 'nullable|string',
-        ]);
-
-        $submission->update([
-            'score' => $validated['score'],
-            'feedback' => $validated['feedback'],
-            'graded_at' => now(),
-            'graded_by' => auth()->id(),
-            'status' => 'graded',
-        ]);
-
-        return redirect()->back()->with('success', 'Submission graded successfully!');
     }
 }
