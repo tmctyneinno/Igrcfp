@@ -73,6 +73,7 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 // Admin assessment routes
 Route::prefix('admin/assessments')->name('admin.assessments.')->group(function () {
     Route::get('/course/{course}', [AssessmentController::class, 'index'])->name('index');
+    Route::get('/create', [AssessmentController::class, 'create'])->name('create');
     Route::post('/upload/{course}', [AssessmentController::class, 'upload'])->name('upload');
     Route::put('/{assessment}', [AssessmentController::class, 'update'])->name('update');
     Route::delete('/{assessment}', [AssessmentController::class, 'destroy'])->name('destroy');
