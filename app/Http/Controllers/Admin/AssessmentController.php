@@ -31,7 +31,7 @@ class AssessmentController extends Controller
             'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
         ];
         
-        return view('admin.assessments.index', compact('assessments', 'allCourses', 'statistics'));
+        return view('admin.courses.assessments.index', compact('assessments', 'allCourses', 'statistics'));
     }
     
     /**
@@ -57,7 +57,7 @@ class AssessmentController extends Controller
             })->where('status', 'submitted')->count(),
         ];
         
-        return view('admin.assessments.index', compact('assessments', 'course', 'allCourses', 'statistics'));
+        return view('admin.courses.assessments.index', compact('assessments', 'course', 'allCourses', 'statistics'));
     }
 
     /**
@@ -67,7 +67,7 @@ class AssessmentController extends Controller
     {
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         
-        return view('admin.assessments.create', compact('courses'));
+        return view('admin.courses.assessments.create', compact('courses'));
     }
 
     /**
@@ -128,7 +128,7 @@ class AssessmentController extends Controller
 
         Assessment::create($validated);
 
-        return redirect()->route('admin.assessments.index', $validated['course_id'])
+        return redirect()->route('admin.courses.assessments.index', $validated['course_id'])
             ->with('success', 'Assessment created successfully!');
     }
 
