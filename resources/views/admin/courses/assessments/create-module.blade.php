@@ -231,22 +231,31 @@
 <!-- Question Template (same as quiz template) -->
 <template id="question-template">
     <div class="question-item card mb-4" data-question-idx="{idx}">
-        <div class="card-header bg-light d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">Question <span class="question-number">1</span></h6>
-            <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeQuestion(this)">
-                <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
-                Remove
-            </button>
+        <div class="card-header bg-light py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-semibold">
+                    <span class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; font-size: 12px;">
+                        <span class="question-number">1</span>
+                    </span>
+                    Question Details
+                </h6>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeQuestion(this)">
+                    <iconify-icon icon="fluent:delete-24-regular" class="me-1"></iconify-icon>
+                    Remove
+                </button>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label class="form-label fw-semibold">Question Text</label>
-                    <textarea name="questions[{idx}][text]" class="form-control question-text" rows="2" required></textarea>
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- Question Text - Full Width -->
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Question Text <span class="text-danger">*</span></label>
+                    <textarea name="questions[{idx}][text]" class="form-control question-text" rows="2" placeholder="Enter your question here..." required></textarea>
                 </div>
                 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label fw-semibold">Type</label>
+                <!-- Question Type, Points, Difficulty - 3 columns -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Question Type <span class="text-danger">*</span></label>
                     <select name="questions[{idx}][type]" class="form-select question-type" onchange="handleQuestionTypeChange(this)">
                         <option value="multiple_choice">Multiple Choice</option>
                         <option value="true_false">True/False</option>
@@ -254,13 +263,13 @@
                     </select>
                 </div>
                 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label fw-semibold">Points</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Points <span class="text-danger">*</span></label>
                     <input type="number" name="questions[{idx}][points]" class="form-control question-points" value="2" min="1" required>
                 </div>
                 
-                <div class="col-md-4 mb-3">
-                    <label class="form-label fw-semibold">Difficulty</label>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Difficulty Level</label>
                     <select name="questions[{idx}][difficulty]" class="form-select">
                         <option value="easy">Easy</option>
                         <option value="medium" selected>Medium</option>
@@ -269,36 +278,50 @@
                 </div>
 
                 <!-- Options Container (for multiple choice) -->
-                <div class="col-12 mb-3 options-container" style="display: block;">
-                    <label class="form-label fw-semibold">Answer Options</label>
-                    <div class="options-list">
-                        <!-- Options will be added here -->
+                <div class="col-12 options-container" style="display: block;">
+                    <div class="border rounded-3 p-3 bg-light">
+                        <label class="form-label fw-semibold mb-3">Answer Options <span class="text-danger">*</span></label>
+                        <div class="options-list">
+                            <!-- Options will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
+                            <iconify-icon icon="ic:baseline-plus" class="me-1"></iconify-icon>
+                            Add Option
+                        </button>
+                        <p class="text-muted small mt-2 mb-0">
+                            <iconify-icon icon="solar:info-circle-outline" class="me-1"></iconify-icon>
+                            Select the correct answer by clicking the radio button next to the option
+                        </p>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
-                        <iconify-icon icon="ic:baseline-plus"></iconify-icon>
-                        Add Option
-                    </button>
                 </div>
 
                 <!-- True/False Container -->
-                <div class="col-12 mb-3 true-false-container" style="display: none;">
-                    <label class="form-label fw-semibold">Select Correct Answer</label>
-                    <div class="d-flex gap-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="true" id="true-{idx}">
-                            <label class="form-check-label" for="true-{idx}">True</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="false" id="false-{idx}">
-                            <label class="form-check-label" for="false-{idx}">False</label>
+                <div class="col-12 true-false-container" style="display: none;">
+                    <div class="border rounded-3 p-3 bg-light">
+                        <label class="form-label fw-semibold mb-3">Select Correct Answer <span class="text-danger">*</span></label>
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="true" id="true-{idx}">
+                                <label class="form-check-label" for="true-{idx}">True</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="false" id="false-{idx}">
+                                <label class="form-check-label" for="false-{idx}">False</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Essay Container -->
-                <div class="col-12 mb-3 essay-container" style="display: none;">
-                    <label class="form-label fw-semibold">Rubric/Guidelines</label>
-                    <textarea name="questions[{idx}][correct_answer]" class="form-control" rows="3" placeholder="Describe what should be included in a good answer"></textarea>
+                <div class="col-12 essay-container" style="display: none;">
+                    <div class="border rounded-3 p-3 bg-light">
+                        <label class="form-label fw-semibold mb-2">Rubric/Guidelines <span class="text-danger">*</span></label>
+                        <textarea name="questions[{idx}][correct_answer]" class="form-control" rows="4" placeholder="Describe what should be included in a good answer, grading criteria, and expected key points..."></textarea>
+                        <p class="text-muted small mt-2 mb-0">
+                            <iconify-icon icon="solar:info-circle-outline" class="me-1"></iconify-icon>
+                            Provide clear guidelines for manual marking
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -307,10 +330,13 @@
 
 <!-- Option Item Template (same as quiz template) -->
 <template id="option-template">
-    <div class="option-item d-flex align-items-center gap-2 mb-2">
-        <input type="text" class="form-control" name="questions[{idx}][options][]" placeholder="Enter option" required>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="{option-value}">
+    <div class="option-item d-flex align-items-center gap-3 mb-2 p-2 bg-white rounded-2 border">
+        <div class="flex-grow-1">
+            <input type="text" class="form-control form-control-sm" name="questions[{idx}][options][]" placeholder="Enter option text" required>
+        </div>
+        <div class="form-check d-flex align-items-center gap-1">
+            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="{option-value}" id="opt-{idx}-{option-value}">
+            <label class="form-check-label small" for="opt-{idx}-{option-value}">Correct</label>
         </div>
         <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOption(this)">
             <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
@@ -318,22 +344,68 @@
     </div>
 </template>
 
+<!-- Debug Button -->
+<div class="text-end mb-3">
+    <button type="button" class="btn btn-info btn-sm" onclick="debugFormData()">Debug Form Data</button>
+    <button type="button" class="btn btn-warning btn-sm" onclick="testSubmit()">Test Submit</button>
+</div>
+@endsection
+
 @push('styles')
 <style>
     .question-item {
         transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        overflow: hidden;
     }
     .question-item:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        border-color: #0A1F44;
+    }
+    .question-item .card-header {
+        background: linear-gradient(45deg, #f8f9fa, #ffffff);
+        border-bottom: 1px solid #e0e0e0;
     }
     .option-item {
         background: #f8f9fa;
-        padding: 10px;
-        border-radius: 6px;
         transition: all 0.2s ease;
     }
     .option-item:hover {
-        background: #e9ecef;
+        background: #ffffff;
+        border-color: #0A1F44 !important;
+        box-shadow: 0 2px 8px rgba(10,31,68,0.1);
+    }
+    .option-item .form-check-input:checked {
+        background-color: #0A1F44;
+        border-color: #0A1F44;
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    .form-label.fw-semibold {
+        color: #2c3e50;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    .border {
+        border-color: #e0e0e0 !important;
+    }
+    .btn-outline-primary {
+        border-color: #0A1F44;
+        color: #0A1F44;
+    }
+    .btn-outline-primary:hover {
+        background-color: #0A1F44;
+        color: white;
+    }
+    .btn-primary {
+        background-color: #0A1F44;
+        border-color: #0A1F44;
+    }
+    .btn-primary:hover {
+        background-color: #0c2b5c;
+        border-color: #0c2b5c;
     }
 </style>
 @endpush
@@ -357,17 +429,18 @@ function addQuestion() {
     const questionElement = tempDiv.firstElementChild;
     
     questionElement.dataset.questionIdx = questionCount;
-    questionElement.querySelector('.question-number').textContent = container.children.length + 1;
     
     container.appendChild(questionElement);
     
     // Add default options for multiple choice
     const optionsContainer = questionElement.querySelector('.options-container');
     if (optionsContainer) {
-        addOption(optionsContainer.querySelector('.btn'));
-        addOption(optionsContainer.querySelector('.btn'));
-        addOption(optionsContainer.querySelector('.btn'));
-        addOption(optionsContainer.querySelector('.btn'));
+        const addBtn = optionsContainer.querySelector('.btn');
+        if (addBtn) {
+            for (let i = 0; i < 4; i++) {
+                addOption(addBtn);
+            }
+        }
     }
     
     questionCount++;
@@ -388,7 +461,10 @@ function removeQuestion(button) {
 function updateQuestionNumbers() {
     const questions = document.querySelectorAll('.question-item');
     questions.forEach((question, index) => {
-        question.querySelector('.question-number').textContent = index + 1;
+        const numberSpan = question.querySelector('.question-number');
+        if (numberSpan) {
+            numberSpan.textContent = index + 1;
+        }
     });
 }
 
@@ -398,10 +474,12 @@ function handleQuestionTypeChange(select) {
     const trueFalseContainer = questionItem.querySelector('.true-false-container');
     const essayContainer = questionItem.querySelector('.essay-container');
     
+    // Hide all containers
     optionsContainer.style.display = 'none';
     trueFalseContainer.style.display = 'none';
     essayContainer.style.display = 'none';
     
+    // Show selected container
     switch(select.value) {
         case 'multiple_choice':
             optionsContainer.style.display = 'block';
@@ -425,7 +503,7 @@ function addOption(button) {
     
     let optionHtml = template.innerHTML
         .replace(/{idx}/g, idx)
-        .replace('{option-value}', 'option' + optionCount);
+        .replace(/{option-value}/g, 'option' + optionCount);
     
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = optionHtml;
@@ -439,6 +517,24 @@ function removeOption(button) {
     optionItem.remove();
 }
 
+function debugFormData() {
+    const form = document.getElementById('moduleForm');
+    const formData = new FormData(form);
+    
+    console.log('=== FORM DATA DEBUG ===');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ':', pair[1]);
+    }
+    console.log('=== END DEBUG ===');
+    alert('Form data logged to console. Press F12 to view.');
+}
+
+function testSubmit() {
+    if (confirm('Test submit without validation?')) {
+        document.getElementById('moduleForm').submit();
+    }
+}
+
 // Form validation
 document.getElementById('moduleForm').addEventListener('submit', function(e) {
     const questions = document.querySelectorAll('.question-item');
@@ -448,6 +544,11 @@ document.getElementById('moduleForm').addEventListener('submit', function(e) {
         alert('Please add at least one question.');
         return false;
     }
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
     
     return true;
 });
