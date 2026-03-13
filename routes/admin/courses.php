@@ -94,5 +94,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Submissions routes
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
     Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
-    Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');
+    Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');admin.
+    Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.bulk-delete');admin.assessments.bulk-delete
 });
