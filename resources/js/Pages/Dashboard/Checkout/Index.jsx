@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
@@ -10,6 +10,21 @@ export default function Checkout({ cart, user }) {
         payment_method: 'card',
         terms_accepted: false,
     }); 
+
+    useEffect(() => {
+        // Load Stripe.js script
+        const stripeScript = document.createElement('script');
+        stripeScript.src = 'https://js.stripe.com/v3/';
+        stripeScript.async = true;
+        document.body.appendChild(stripeScript);
+
+        return () => {
+            // Cleanup
+            if (document.body.contains(stripeScript)) {
+                document.body.removeChild(stripeScript);
+            }
+        };
+    }, []);
 
     const handleSubmit = (e) => { 
         e.preventDefault();
