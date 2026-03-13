@@ -256,10 +256,10 @@ class AssessmentController extends Controller
                     'passing_score' => 'nullable|integer|min:1|max:100',
                     'questions' => 'nullable|array',
                     'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
                     'questions.*.points' => 'required_with:questions|integer|min:1',
                     'questions.*.options' => 'nullable|array', // Changed to nullable
-                    'questions.*.correct_answer' => 'nullable|string', 
+                    'questions.*.correct_answer' => 'nullable|string', // Changed to nullable
                 ]);
 
             case 'module_assessment':
@@ -271,21 +271,25 @@ class AssessmentController extends Controller
                     'requires_identity_verification' => 'sometimes|boolean',
                     'questions' => 'nullable|array',
                     'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,essay',
                     'questions.*.points' => 'required_with:questions|integer|min:1',
+                    'questions.*.options' => 'nullable|array',
+                    'questions.*.correct_answer' => 'nullable|string',
                 ]);
 
             case 'final_exam':
                 return array_merge($baseRules, [
-                    'duration' => 'nullable|integer|min:60|max:180',
+                    'duration' => 'required|integer|min:60|max:180',
                     'total_marks' => 'nullable|integer|min:50|max:200',
                     'passing_score' => 'nullable|integer|min:60|max:100',
                     'is_timed' => 'sometimes|boolean',
                     'requires_identity_verification' => 'sometimes|boolean',
                     'questions' => 'nullable|array',
                     'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string',
+                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,essay,case_study',
                     'questions.*.points' => 'required_with:questions|integer|min:1',
+                    'questions.*.options' => 'nullable|array',
+                    'questions.*.correct_answer' => 'nullable|string',
                 ]);
 
             case 'diploma':
@@ -550,21 +554,23 @@ class AssessmentController extends Controller
      * Save questions for assessment
      */
     private function saveQuestions($assessment, $questions)
-    {
-        foreach ($questions as $index => $question) {
-            AssessmentQuestion::create([
-                'assessment_id' => $assessment->id,
-                'question_text' => $question['text'],
-                'question_type' => $question['type'],
-                'options' => $question['options'] ?? null,
-                'correct_answer' => $question['correct_answer'] ?? null,
-                'points' => $question['points'] ?? 1,
-                'order' => $index + 1,
-                'difficulty_level' => $question['difficulty'] ?? 'medium',
-                'explanation' => $question['explanation'] ?? null,
-            ]);
-        }
+{
+    foreach ($questions as $index => $question) {
+        // Filter out null options
+        $options = isset($question['options']) ? array_filter($question['options']) : null;
+        
+        AssessmentQuestion::create([
+            'assessment_id' => $assessment->id,
+            'question_text' => $question['text'],
+            'question_type' => $question['type'] ?? 'multiple_choice',
+            'options' => $options,
+            'correct_answer' => $question['correct_answer'] ?? null,
+            'points' => $question['points'] ?? 1,
+            'order' => $index + 1,
+            'difficulty_level' => $question['difficulty'] ?? 'medium',
+        ]);
     }
+}
 
     /**
      * Get success message based on assessment type
