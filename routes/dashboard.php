@@ -12,7 +12,8 @@ use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {        
     
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
