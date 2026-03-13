@@ -181,7 +181,27 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
-        \Log::error('Assessment request:', $request->all());
+        // Debug: Log everything
+        \Log::info('=== ASSESSMENT STORE DEBUG ===');
+        \Log::info('All request data:', $request->all());
+        \Log::info('Request method: ' . $request->method());
+        \Log::info('Request URL: ' . $request->fullUrl());
+        \Log::info('Has title? ' . ($request->has('title') ? 'Yes' : 'No'));
+        \Log::info('Title value: ' . $request->input('title', 'NOT FOUND'));
+        \Log::info('Has course_id? ' . ($request->has('course_id') ? 'Yes' : 'No'));
+        \Log::info('course_id value: ' . $request->input('course_id', 'NOT FOUND'));
+        // Check if the request is hitting this method at all
+        if (!$request->isMethod('post')) {
+            \Log::error('Not a POST request!');
+            return back()->with('error', 'Invalid request method');
+        }
+
+        // Check CSRF token
+        if (!$request->has('_token')) {
+            \Log::error('No CSRF token found!');
+            return back()->with('error', 'CSRF token missing');
+        }
+
         $rules = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
 
