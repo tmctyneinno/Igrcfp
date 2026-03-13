@@ -351,21 +351,21 @@
             </div>
         </div>
         <!-- Add this temporarily for debugging -->
-<script>
-document.getElementById('assessmentForm').addEventListener('submit', function(e) {
-    console.log('Form submitted');
-    
-    // Check if any validation is preventing submission
-    const questions = document.querySelectorAll('.question-item');
-    console.log('Questions count:', questions.length);
-    
-    // Log form data
-    const formData = new FormData(this);
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-});
-</script>
+        <script>
+        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            
+            // Check if any validation is preventing submission
+            const questions = document.querySelectorAll('.question-item');
+            console.log('Questions count:', questions.length);
+            
+            // Log form data
+            const formData = new FormData(this);
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+        });
+        </script>
     </form>
 </div>
 
