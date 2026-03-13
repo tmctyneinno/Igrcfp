@@ -5,7 +5,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { loadStripe } from '@stripe/stripe-js';
 
 // Initialize Stripe outside component to avoid recreating on each render
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || process.env.MIX_STRIPE_KEY);
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || process.env.MIX_STRIPE_KEY);
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 
 // Separate form component that uses Stripe
