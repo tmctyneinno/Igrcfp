@@ -185,144 +185,201 @@ export default function EnrollmentIndex({
 
     // ============== RENDER ASSESSMENT CARD ==============
     
-    const renderAssessmentCard = (assessment, type) => {
-        const isProcessing = processingExam === assessment.id;
-        const status = assessment.status || 'not_started';
-        const timeRemaining = assessment.due_date ? formatTimeRemaining(assessment.due_date) : null;
-        
-        return (
-            <motion.div
-                key={assessment.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`border rounded-xl overflow-hidden transition-all hover:shadow-md ${getAssessmentTypeColor(type)}`}
-            >
-                <div className="p-5">
-                    {/* Header with Type and Status */}
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                            <span className="p-1.5 bg-white rounded-lg shadow-sm">
-                                {getAssessmentTypeIcon(type)}
-                            </span>
-                            <span className="font-medium text-sm capitalize">
-                                {type.replace('_', ' ')}
-                            </span>
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getAssessmentStatusBadge(status)}`}>
-                            {status.replace('_', ' ')}
+   const renderAssessmentCard = (assessment, type) => {
+    const isProcessing = processingExam === assessment.id;
+    const status = assessment.status || 'not_started';
+    const timeRemaining = assessment.due_date ? formatTimeRemaining(assessment.due_date) : null;
+    const [showSubItems, setShowSubItems] = useState(false);
+    
+    // Check if this is a grouped assessment (has quiz_ids array)
+    const isGrouped = assessment.quiz_ids && assessment.quiz_ids.length > 1;
+    
+    return (
+        <motion.div
+            key={assessment.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`border rounded-xl overflow-hidden transition-all hover:shadow-md ${getAssessmentTypeColor(type)}`}
+        >
+            <div className="p-5">
+                {/* Header with Type and Status */}
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                        <span className="p-1.5 bg-white rounded-lg shadow-sm">
+                            {getAssessmentTypeIcon(type)}
+                        </span>
+                        <span className="font-medium text-sm capitalize">
+                            {type.replace('_', ' ')}
+                            {assessment.module_number && ` - Module ${assessment.module_number}`}
                         </span>
                     </div>
-                    
-                    {/* Title and Description */}
-                    <h4 className="font-semibold text-gray-900 mb-2">{assessment.title}</h4>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {assessment.description || 'No description provided'}
-                    </p>
-                    
-                    {/* Metadata */}
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
-                        {assessment.duration && (
-                            <span className="flex items-center gap-1">
-                                <ClockIcon className="w-4 h-4" />
-                                {assessment.duration} mins
-                            </span>
-                        )}
-                        {assessment.questions_count > 0 && (
-                            <span className="flex items-center gap-1">
-                                <DocumentTextIcon className="w-4 h-4" />
-                                {assessment.questions_count} questions
-                            </span>
-                        )}
-                        {assessment.total_marks > 0 && (
-                            <span>{assessment.total_marks} marks</span>
-                        )}
-                        {assessment.passing_score > 0 && (
-                            <span>Pass: {assessment.passing_score}%</span>
-                        )}
-                    </div>
-                    
-                    {/* Time Remaining Warning */}
-                    {timeRemaining && status === 'in_progress' && (
-                        <div className="mb-4 p-2 bg-yellow-50 rounded-lg flex items-center gap-2 text-xs text-yellow-700">
-                            <ExclamationTriangleIcon className="w-4 h-4 flex-shrink-0" />
-                            <span>{timeRemaining}</span>
-                        </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getAssessmentStatusBadge(status)}`}>
+                        {status.replace('_', ' ')}
+                    </span>
+                </div>
+                
+                {/* Title and Description */}
+                <h4 className="font-semibold text-gray-900 mb-2">{assessment.title}</h4>
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {assessment.description || 'No description provided'}
+                </p>
+                
+                {/* Metadata */}
+                <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
+                    {assessment.duration && (
+                        <span className="flex items-center gap-1">
+                            <ClockIcon className="w-4 h-4" />
+                            {assessment.duration} mins total
+                        </span>
+                    )}
+                    {assessment.questions_count > 0 && (
+                        <span className="flex items-center gap-1">
+                            <DocumentTextIcon className="w-4 h-4" />
+                            {assessment.questions_count} questions
+                        </span>
+                    )}
+                    {assessment.total_marks > 0 && (
+                        <span>{assessment.total_marks} marks</span>
+                    )}
+                    {assessment.passing_score > 0 && (
+                        <span>Pass: {assessment.passing_score}%</span>
                     )}
                     
-                    {/* Score Display (for completed) */}
-                    {assessment.score !== undefined && (
-                        <div className="mb-4 p-3 bg-green-50 rounded-lg text-center">
-                            <div className="text-2xl font-bold text-green-700">{assessment.score}%</div>
-                            <div className="text-xs text-green-600">
-                                {assessment.passed ? 'Passed' : 'Failed'} • 
-                                Passing score: {assessment.passing_score}%
-                            </div>
-                        </div>
-                    )}
-                    
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                        {status === 'not_started' && (
-                            <button
-                                onClick={() => handleStartAssessment(assessment.id, type)}
-                                disabled={isProcessing || (type === 'final_exam' && !isIdentityVerified)}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isProcessing ? (
-                                    <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <PlayCircleIcon className="w-4 h-4" />
-                                )}
-                                {isProcessing ? 'Starting...' : 'Start Assessment'}
-                            </button>
-                        )}
-                        
-                        {status === 'in_progress' && (
-                            <button
-                                onClick={() => handleContinueAssessment(assessment.id, type)}
-                                disabled={isProcessing}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-                            >
-                                {isProcessing ? (
-                                    <ArrowPathIcon className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <PlayCircleIcon className="w-4 h-4" />
-                                )}
-                                {isProcessing ? 'Continuing...' : 'Continue'}
-                            </button>
-                        )}
-                        
-                        {status === 'completed' && (
-                            <button
-                                onClick={() => handleReviewAssessment(assessment.id, type)}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition"
-                            >
-                                <DocumentTextIcon className="w-4 h-4" />
-                                Review
-                            </button>
-                        )}
-                        
-                        {status === 'graded' && (
-                            <button
-                                onClick={() => handleReviewAssessment(assessment.id, type)}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
-                            >
-                                <DocumentTextIcon className="w-4 h-4" />
-                                View Results
-                            </button>
-                        )}
-                    </div>
-                    
-                    {/* Manual Marking Notice for Diploma */}
-                    {type === 'diploma' && status === 'completed' && (
-                        <div className="mt-3 text-xs text-center text-amber-600 bg-amber-50 p-2 rounded-lg">
-                            ⏳ Awaiting manual review by instructors
-                        </div>
+                    {/* Show number of quizzes if grouped */}
+                    {isGrouped && (
+                        <span className="flex items-center gap-1 text-blue-600">
+                            <DocumentTextIcon className="w-4 h-4" />
+                            {assessment.quiz_ids.length} quizzes
+                        </span>
                     )}
                 </div>
-            </motion.div>
-        );
-    };
+                
+                {/* Time Remaining Warning */}
+                {timeRemaining && status === 'in_progress' && (
+                    <div className="mb-4 p-2 bg-yellow-50 rounded-lg flex items-center gap-2 text-xs text-yellow-700">
+                        <ExclamationTriangleIcon className="w-4 h-4 flex-shrink-0" />
+                        <span>{timeRemaining}</span>
+                    </div>
+                )}
+                
+                {/* Score Display (for completed) */}
+                {assessment.score !== undefined && (
+                    <div className="mb-4 p-3 bg-green-50 rounded-lg text-center">
+                        <div className="text-2xl font-bold text-green-700">{assessment.score}%</div>
+                        <div className="text-xs text-green-600">
+                            {assessment.passed ? 'Passed' : 'Failed'} • 
+                            Passing score: {assessment.passing_score}%
+                        </div>
+                    </div>
+                )}
+                
+                {/* Expandable section for individual quizzes (if grouped) */}
+                {isGrouped && (
+                    <div className="mb-3">
+                        <button
+                            onClick={() => setShowSubItems(!showSubItems)}
+                            className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 transition"
+                        >
+                            {showSubItems ? 'Hide' : 'Show'} individual quizzes
+                            <svg className={`w-4 h-4 transition-transform ${showSubItems ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        
+                        {showSubItems && (
+                            <div className="mt-2 pl-3 border-l-2 border-indigo-200 space-y-2">
+                                {/* This would need the actual individual quiz data */}
+                                <p className="text-xs text-gray-500">Individual quizzes would be listed here</p>
+                            </div>
+                        )}
+                    </div>
+                )}
+                
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                    {status === 'not_started' && (
+                        <button
+                            onClick={() => {
+                                if (isGrouped) {
+                                    // For grouped quizzes, maybe start the first one
+                                    handleStartAssessment(assessment.quiz_ids[0], type);
+                                } else {
+                                    handleStartAssessment(assessment.id, type);
+                                }
+                            }}
+                            disabled={isProcessing || (type === 'final_exam' && !isIdentityVerified)}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isProcessing ? (
+                                <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <PlayCircleIcon className="w-4 h-4" />
+                            )}
+                            {isProcessing ? 'Starting...' : isGrouped ? 'Start Module Quiz' : 'Start Assessment'}
+                        </button>
+                    )}
+                    
+                    {status === 'in_progress' && (
+                        <button
+                            onClick={() => {
+                                if (isGrouped) {
+                                    // Find the in-progress quiz
+                                    // This would need logic to find which quiz is in progress
+                                    handleContinueAssessment(assessment.quiz_ids[0], type);
+                                } else {
+                                    handleContinueAssessment(assessment.id, type);
+                                }
+                            }}
+                            disabled={isProcessing}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                        >
+                            {isProcessing ? (
+                                <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <PlayCircleIcon className="w-4 h-4" />
+                            )}
+                            {isProcessing ? 'Continuing...' : 'Continue'}
+                        </button>
+                    )}
+                    
+                    {status === 'completed' && (
+                        <button
+                            onClick={() => {
+                                if (isGrouped) {
+                                    // Review the last completed quiz or show summary
+                                    handleReviewAssessment(assessment.quiz_ids[assessment.quiz_ids.length - 1], type);
+                                } else {
+                                    handleReviewAssessment(assessment.id, type);
+                                }
+                            }}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition"
+                        >
+                            <DocumentTextIcon className="w-4 h-4" />
+                            Review
+                        </button>
+                    )}
+                    
+                    {status === 'graded' && (
+                        <button
+                            onClick={() => handleReviewAssessment(assessment.id, type)}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
+                        >
+                            <DocumentTextIcon className="w-4 h-4" />
+                            View Results
+                        </button>
+                    )}
+                </div>
+                
+                {/* Manual Marking Notice for Diploma */}
+                {type === 'diploma' && status === 'completed' && (
+                    <div className="mt-3 text-xs text-center text-amber-600 bg-amber-50 p-2 rounded-lg">
+                        ⏳ Awaiting manual review by instructors
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    );
+};
 
     return (
         <AuthenticatedLayout>
