@@ -235,16 +235,16 @@ class AssessmentController extends Controller
                 $assessment->save();
             }
 
-            \Log::info('Assessment level:', ['level' => $request->assessment_level]);
+            // \Log::info('Assessment level:', ['level' => $request->assessment_level]);
 
        
 
-            // $message = $this->getSuccessMessage('quiz');
+            // $message =  $request->assessment_level.'created successfully!';
             return redirect()->route('admin.assessments.course', $assessment->course_id)
-                ->with('success', $message);
+                ->with('success','Created successfully');
 
         } catch (\Exception $e) {
-            DB::rollBack();
+           
             \Log::error('Assessment creation failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Error creating assessment: ' . $e->getMessage());
         }
