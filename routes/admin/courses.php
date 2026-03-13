@@ -71,13 +71,20 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 });
    
 // Admin assessment routes
-
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // This route requires a course parameter
+    // Main assessments page (no parameter required)
+    Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
+    
+    // Assessments filtered by course (requires course parameter)
     Route::get('/assessments/course/{course}', [AssessmentController::class, 'index'])->name('assessments.index');
     
-    // You need a separate route for the main index page
-    Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
-    Route::put('/{assessment}', [AssessmentController::class, 'update'])->name('update');
-    Route::delete('/{assessment}', [AssessmentController::class, 'destroy'])->name('destroy');
+    // Other assessment routes
+    Route::get('/assessments/create', [AssessmentController::class, 'create'])->name('assessments.create');
+    Route::post('/assessments', [AssessmentController::class, 'store'])->name('assessments.store');
+    Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
+    Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
+    Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
+    Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
+    Route::post('/assessments/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
+    Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
 });
