@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Checkout routes
     Route::get('dashboard/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-    Route::post('dashboard/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('dashboard/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process'); 
     Route::get('dashboard/checkout/success/{enrollment}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('dashboard/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
