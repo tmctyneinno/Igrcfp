@@ -80,53 +80,30 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.course-categories.create') }}">
-                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
-                            Add Category
-                        </a>
-                        <a href="{{ route('admin.assessments.create.module') }}" class="dropdown-item">
-                            <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
-                            Add Category
-                        </a>
-                    </li>
-                    
-                    
-                </ul>
-            </li>
-           
-            <li class="dropdown-submenu">
-                <a href="javascript:void(0)">
-                    <i class="ri-circle-fill circle-icon text-pink-600 w-auto"></i>
-                    <span>Create New</span>
-                    <iconify-icon icon="solar:alt-arrow-right-outline" class="ms-auto"></iconify-icon>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="{{ route('admin.assessments.create.quiz') }}" class="dropdown-item">
-                            <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
-                            Quiz
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.assessments.create.module') }}" class="dropdown-item">
+                        <a href="{{ route('admin.assessments.create.module') }}" >
                             <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
                             Module Assessment
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.assessments.create.final') }}" class="dropdown-item">
+                        <a href="{{ route('admin.assessments.create.final') }}" >
                             <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
                             Final Exam
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.assessments.create.diploma') }}" class="dropdown-item">
+                        <a href="{{ route('admin.assessments.create.diploma') }}" >
                             <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i>
                             Diploma Project
                         </a>
                     </li>
+                    
+                    
+                    
                 </ul>
             </li>
+           
+            
 
             <!-- NEW: Enrollments Management -->
             <li class="dropdown">
