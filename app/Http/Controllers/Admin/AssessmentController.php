@@ -234,8 +234,8 @@ class AssessmentController extends Controller
                 $assessment->question_count = count($request->questions);
                 $assessment->save();
             }
-            
-            \Log::info('All request data:', $request->assessment_level);
+
+            \Log::info('Assessment level:', ['level' => $request->assessment_level]);
 
        
 
