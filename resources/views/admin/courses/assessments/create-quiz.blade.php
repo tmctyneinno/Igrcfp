@@ -277,11 +277,6 @@
     </div>
 </template>
 
-<!-- Debug Button (remove after fixing) -->
-<div class="text-end mb-3">
-    <button type="button" class="btn btn-info" onclick="debugFormData()">Debug Form Data</button>
-    <button type="button" class="btn btn-warning" onclick="testSubmit()">Test Submit (No Validation)</button>
-</div>
 @endsection
 
 @push('styles')
@@ -494,37 +489,6 @@ function removeOption(button) {
     const optionItem = button.closest('.option-item');
     if (optionItem) {
         optionItem.remove();
-    }
-}
-
-// Debug function
-function debugFormData() {
-    const form = document.getElementById('quizForm');
-    if (!form) return;
-    
-    const formData = new FormData(form);
-    
-    console.log('=== FORM DATA DEBUG ===');
-    console.log('Form action:', form.action);
-    console.log('Form method:', form.method);
-    
-    let questionFields = {};
-    for (let pair of formData.entries()) {
-        if (pair[0].includes('questions')) {
-            console.log(pair[0] + ':', pair[1]);
-        } else {
-            console.log(pair[0] + ':', pair[1]);
-        }
-    }
-    console.log('=== END DEBUG ===');
-    
-    alert('Form data logged to console. Press F12 to view.');
-}
-
-// Test submit
-function testSubmit() {
-    if (confirm('Submit without validation?')) {
-        document.getElementById('quizForm').submit();
     }
 }
 
