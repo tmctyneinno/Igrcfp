@@ -1,280 +1,435 @@
-import React, { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
+// resources/js/Pages/Dashboard/Assessment/Quiz.jsx
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Head, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
-    CheckCircleIcon,
-    XCircleIcon,
+    ClockIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    DocumentTextIcon,
-    ExclamationTriangleIcon
+    CheckCircleIcon,
+    FlagIcon,
+    ArrowPathIcon
 } from '@heroicons/react/24/outline';
 
-export default function QuizReview({ enrollment, assessment, submission }) {
+export default function Quiz({ enrollment, assessment, attempt }) {
     const [currentQuestion, setCurrentQuestion] = useState(0);
-    
-    // Get questions from assessment object
+    const [answers, setAnswers] = useState({});
+    const [flaggedQuestions, setFlaggedQuestions] = useState([]);
+    const [timeLeft, setTimeLeft] = useState(attempt.time_remaining);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const autoSaveTimer = useRef(null);
+
     const questions = assessment?.questions || [];
-    
-    // Debug logging
+    const question = questions[currentQuestion];
+    const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+    // Timer effect
     useEffect(() => {
-        console.log('=== QUIZ REVIEW DATA ===');
-        console.log('Assessment:', assessment);
-        console.log('Questions from assessment:', questions);
-        console.log('Questions length:', questions.length);
+        if (!timeLeft || timeLeft <= 0) {
+            if (timeLeft === 0) handleAutoSubmit();
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    handleAutoSubmit();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
     }, []);
 
-    // Safely check if questions exist
-    if (!questions || questions.length === 0) {
+    // Auto-save effect
+    useEffect(() => {
+        if (autoSaveTimer.current) {
+            clearTimeout(autoSaveTimer.current);
+        }
+
+        autoSaveTimer.current = setTimeout(() => {
+            saveProgress();
+        }, 3000);
+
+        return () => clearTimeout(autoSaveTimer.current);
+    }, [answers, currentQuestion]);
+
+    const saveProgress = () => {
+        router.post(`/assessment/quiz/save/${attempt.id}`, {
+            answers: answers,
+            last_question: currentQuestion
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log('Progress saved');
+            }
+        });
+    };
+
+    const handleAnswer = (questionId, answer) => {
+        setAnswers(prev => ({
+            ...prev,
+            [questionId]: answer
+        }));
+    };
+
+    const toggleFlag = () => {
+        setFlaggedQuestions(prev => {
+            if (prev.includes(currentQuestion)) {
+                return prev.filter(q => q !== currentQuestion);
+            } else {
+                return [...prev, currentQuestion];
+            }
+        });
+    };
+
+    const goToNext = () => {
+        if (currentQuestion < questions.length - 1) {
+            setCurrentQuestion(prev => prev + 1);
+        }
+    };
+
+    const goToPrevious = () => {
+        if (currentQuestion > 0) {
+            setCurrentQuestion(prev => prev - 1);
+        }
+    };
+
+    const goToQuestion = (index) => {
+        setCurrentQuestion(index);
+    };
+
+    const handleAutoSubmit = () => {
+        toast.error('Time expired! Submitting your quiz...');
+        handleSubmit(true);
+    };
+
+    const handleSubmit = (autoSubmit = false) => {
+        if (!autoSubmit) {
+            const unanswered = questions.filter(q => !answers[q.id]).length;
+            if (unanswered > 0) {
+                if (!confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) {
+                    return;
+                }
+            }
+        }
+
+        setIsSubmitting(true);
+        
+        router.post(`/assessment/quiz/submit/${enrollment.id}/${assessment.id}`, {
+            answers: answers
+        }, {
+            onSuccess: () => {
+                toast.success('Quiz submitted successfully!');
+            },
+            onError: (errors) => {
+                setIsSubmitting(false);
+                toast.error('Failed to submit quiz. Please try again.');
+                console.error(errors);
+            }
+        });
+    };
+
+    const formatTime = (seconds) => {
+        if (!seconds && seconds !== 0) return '--:--';
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    if (!questions.length) {
         return (
             <AuthenticatedLayout>
-                <Head title="Review Error" />
                 <div className="min-h-screen bg-gray-50 py-12">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-                            <ExclamationTriangleIcon className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2">No Questions Found</h2>
-                            <p className="text-gray-600 mb-6">Unable to load the review questions.</p>
-                            <Link
-                                href={`/courses/${enrollment?.course?.slug || '#'}`}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                            >
-                                <ChevronLeftIcon className="w-5 h-5" />
-                                Back to Course
-                            </Link>
-                        </div>
+                    <div className="max-w-4xl mx-auto px-4 text-center">
+                        <p>No questions found.</p>
                     </div>
                 </div>
             </AuthenticatedLayout>
         );
     }
 
-    const question = questions[currentQuestion];
-    
-    const formatTime = (seconds) => {
-        if (!seconds) return 'N/A';
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins} min ${secs} sec`;
-    };
-
-    // Format answer for display
-    const formatAnswer = (answer) => {
-        if (answer === null || answer === undefined) return 'No answer provided';
-        if (typeof answer === 'string') {
-            return answer.charAt(0).toUpperCase() + answer.slice(1);
-        }
-        return String(answer);
-    };
-
     return (
         <AuthenticatedLayout>
-            <Head title={`${assessment?.title || 'Quiz'} | Review`} />
+            <Head title={`${assessment.title} | Quiz`} />
 
-            <div className="min-h-screen bg-gray-50 py-12">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="mb-6">
-                        <Link
-                            href={`/courses/${enrollment?.course?.slug || '#'}`}
-                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition mb-4"
-                        >
-                            <ChevronLeftIcon className="w-5 h-5" />
-                            Back to Course
-                        </Link>
-                        
-                        <div className="bg-white rounded-xl shadow-sm p-6">
-                            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                                {assessment?.title || 'Quiz'} - Results
-                            </h1>
-                            <p className="text-gray-600 mb-6">{enrollment?.course?.title || 'Course'}</p>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className={`rounded-lg p-4 text-center ${
-                                    submission?.score >= assessment?.passing_score 
-                                        ? 'bg-green-50' 
-                                        : 'bg-red-50'
-                                }`}>
-                                    <div className={`text-3xl font-bold ${
-                                        submission?.score >= assessment?.passing_score 
-                                            ? 'text-green-700' 
-                                            : 'text-red-700'
-                                    }`}>
-                                        {submission?.score || 0}%
-                                    </div>
-                                    <div className="text-sm text-gray-600">Your Score</div>
-                                </div>
-                                
-                                <div className="bg-indigo-50 rounded-lg p-4 text-center">
-                                    <div className="text-3xl font-bold text-indigo-700">
-                                        {assessment?.passing_score || 0}%
-                                    </div>
-                                    <div className="text-sm text-indigo-600">Passing Score</div>
-                                </div>
-                                
-                                <div className={`rounded-lg p-4 text-center ${
-                                    submission?.passed ? 'bg-green-50' : 'bg-red-50'
-                                }`}>
-                                    <div className={`text-3xl font-bold ${
-                                        submission?.passed ? 'text-green-700' : 'text-red-700'
-                                    }`}>
-                                        {submission?.passed ? 'Passed' : 'Failed'}
-                                    </div>
-                                    <div className="text-sm text-gray-600">Status</div>
+            <div className="min-h-screen bg-gray-50">
+                {/* Header */}
+                <div className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-30">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => {
+                                        if (confirm('Are you sure you want to leave? Your progress will be saved.')) {
+                                            window.location.href = `/courses/${enrollment.course.slug}`;
+                                        }
+                                    }}
+                                    className="p-2 hover:bg-gray-100 rounded-lg transition"
+                                >
+                                    <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+                                </button>
+                                <div>
+                                    <h1 className="text-lg font-semibold text-gray-900">{assessment.title}</h1>
+                                    <p className="text-sm text-gray-500">{enrollment.course.title}</p>
                                 </div>
                             </div>
                             
-                            {submission?.submitted_at && (
-                                <div className="mt-4 text-sm text-gray-500">
-                                    Submitted: {new Date(submission.submitted_at).toLocaleString()} • 
-                                    Time spent: {formatTime(submission.time_spent)}
+                            <div className="flex items-center gap-6">
+                                {/* Timer */}
+                                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                                    timeLeft && timeLeft < 300 ? 'bg-red-100 text-red-700 animate-pulse' : 'bg-gray-100'
+                                }`}>
+                                    <ClockIcon className="w-5 h-5" />
+                                    <span className="font-mono text-xl font-bold">{formatTime(timeLeft)}</span>
                                 </div>
-                            )}
+
+                                {/* Question Navigator */}
+                                <div className="hidden md:flex items-center gap-2">
+                                    <button
+                                        onClick={goToPrevious}
+                                        disabled={currentQuestion === 0}
+                                        className="p-2 hover:bg-gray-100 rounded-lg transition disabled:opacity-30"
+                                    >
+                                        <ChevronLeftIcon className="w-5 h-5" />
+                                    </button>
+                                    <span className="text-sm font-medium">
+                                        {currentQuestion + 1}/{questions.length}
+                                    </span>
+                                    <button
+                                        onClick={goToNext}
+                                        disabled={currentQuestion === questions.length - 1}
+                                        className="p-2 hover:bg-gray-100 rounded-lg transition disabled:opacity-30"
+                                    >
+                                        <ChevronRightIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mt-4 h-2 bg-gray-200 rounded-full">
+                            <div 
+                                className="h-2 bg-indigo-600 rounded-full transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                            ></div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Question Review */}
-                    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                            <h2 className="text-lg font-semibold text-gray-900">Question Review</h2>
-                            <p className="text-sm text-gray-500">{questions.length} question{questions.length !== 1 ? 's' : ''}</p>
+                {/* Main Content */}
+                <div className="pt-28 pb-12 px-4 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        {/* Question Navigation Sidebar */}
+                        <div className="hidden lg:block col-span-1">
+                            <div className="bg-white rounded-xl shadow-sm p-4 sticky top-28">
+                                <h3 className="font-medium text-gray-900 mb-3">Questions</h3>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {questions.map((_, index) => {
+                                        const isAnswered = answers[questions[index].id];
+                                        const isFlagged = flaggedQuestions.includes(index);
+                                        const isCurrent = currentQuestion === index;
+                                        
+                                        return (
+                                            <button
+                                                key={index}
+                                                onClick={() => goToQuestion(index)}
+                                                className={`
+                                                    w-10 h-10 rounded-lg font-medium text-sm transition relative
+                                                    ${isCurrent ? 'ring-2 ring-indigo-600 ring-offset-2' : ''}
+                                                    ${isAnswered 
+                                                        ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                    }
+                                                    ${isFlagged ? 'border-2 border-amber-400' : ''}
+                                                `}
+                                            >
+                                                {index + 1}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                
+                                <div className="mt-4 pt-4 border-t border-gray-200">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <div className="w-4 h-4 bg-green-100 rounded"></div>
+                                        <span className="text-gray-600">Answered</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm mt-2">
+                                        <div className="w-4 h-4 bg-gray-100 rounded"></div>
+                                        <span className="text-gray-600">Unanswered</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm mt-2">
+                                        <FlagIcon className="w-4 h-4 text-amber-500" />
+                                        <span className="text-gray-600">Flagged</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="p-6">
-                            {/* Question Navigation */}
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {questions.map((q, index) => (
+                        {/* Question Card */}
+                        <div className="lg:col-span-3">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={currentQuestion}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    className="bg-white rounded-xl shadow-sm overflow-hidden"
+                                >
+                                    {/* Question Header */}
+                                    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <span className="px-3 py-1 bg-white/20 text-white text-sm rounded-full">
+                                                    Question {currentQuestion + 1}
+                                                </span>
+                                                <span className="text-white/80 text-sm">
+                                                    {question.points} {question.points === 1 ? 'point' : 'points'}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={toggleFlag}
+                                                className={`p-2 rounded-lg transition ${
+                                                    flaggedQuestions.includes(currentQuestion)
+                                                        ? 'bg-amber-500 text-white'
+                                                        : 'bg-white/20 text-white hover:bg-white/30'
+                                                }`}
+                                            >
+                                                <FlagIcon className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Question Content */}
+                                    <div className="p-6">
+                                        <p className="text-lg text-gray-900 mb-6">{question.text}</p>
+
+                                        {/* Multiple Choice Options */}
+                                        {question.type === 'multiple_choice' && question.options && (
+                                            <div className="space-y-3">
+                                                {question.options.map((option, index) => (
+                                                    <label
+                                                        key={index}
+                                                        className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition ${
+                                                            answers[question.id] === option
+                                                                ? 'border-indigo-600 bg-indigo-50'
+                                                                : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name={`q-${question.id}`}
+                                                            value={option}
+                                                            checked={answers[question.id] === option}
+                                                            onChange={() => handleAnswer(question.id, option)}
+                                                            className="w-4 h-4 text-indigo-600"
+                                                        />
+                                                        <span className="ml-3 text-gray-700">{option}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* True/False Options */}
+                                        {question.type === 'true_false' && (
+                                            <div className="flex gap-4">
+                                                {['True', 'False'].map((option) => (
+                                                    <label
+                                                        key={option}
+                                                        className={`flex-1 flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition ${
+                                                            answers[question.id] === option.toLowerCase()
+                                                                ? 'border-indigo-600 bg-indigo-50'
+                                                                : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                                                        }`}
+                                                    >
+                                                        <input
+                                                            type="radio"
+                                                            name={`q-${question.id}`}
+                                                            value={option.toLowerCase()}
+                                                            checked={answers[question.id] === option.toLowerCase()}
+                                                            onChange={() => handleAnswer(question.id, option.toLowerCase())}
+                                                            className="hidden"
+                                                        />
+                                                        <span className="text-gray-700 font-medium">{option}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Short Answer */}
+                                        {question.type === 'short_answer' && (
+                                            <div>
+                                                <textarea
+                                                    value={answers[question.id] || ''}
+                                                    onChange={(e) => handleAnswer(question.id, e.target.value)}
+                                                    placeholder="Type your answer here..."
+                                                    rows={4}
+                                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Navigation Footer */}
+                                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
+                                        <button
+                                            onClick={goToPrevious}
+                                            disabled={currentQuestion === 0}
+                                            className="flex items-center gap-2 px-4 py-2 text-gray-600 disabled:opacity-30 hover:text-gray-900 transition"
+                                        >
+                                            <ChevronLeftIcon className="w-5 h-5" />
+                                            Previous
+                                        </button>
+                                        
+                                        {currentQuestion === questions.length - 1 ? (
+                                            <button
+                                                onClick={() => handleSubmit()}
+                                                disabled={isSubmitting}
+                                                className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                                            >
+                                                {isSubmitting ? (
+                                                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                                                ) : (
+                                                    <CheckCircleIcon className="w-5 h-5" />
+                                                )}
+                                                {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={goToNext}
+                                                className="flex items-center gap-2 px-4 py-2 text-indigo-600 hover:text-indigo-800 transition"
+                                            >
+                                                Next
+                                                <ChevronRightIcon className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+
+                            {/* Mobile Navigation */}
+                            <div className="lg:hidden mt-4 flex justify-center gap-2">
+                                {questions.map((_, index) => (
                                     <button
                                         key={index}
-                                        onClick={() => setCurrentQuestion(index)}
+                                        onClick={() => goToQuestion(index)}
                                         className={`
-                                            w-10 h-10 rounded-lg text-sm font-medium transition
-                                            ${currentQuestion === index ? 'ring-2 ring-indigo-600 ring-offset-2' : ''}
-                                            ${q?.is_correct 
-                                                ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                                                : 'bg-red-100 text-red-700 hover:bg-red-200'
-                                            }
+                                            w-8 h-8 rounded-lg text-xs font-medium transition
+                                            ${currentQuestion === index ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}
+                                            ${answers[questions[index].id] ? 'ring-2 ring-green-500' : ''}
                                         `}
                                     >
                                         {index + 1}
                                     </button>
                                 ))}
                             </div>
-
-                            {/* Current Question */}
-                            {question && (
-                                <motion.div
-                                    key={currentQuestion}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                >
-                                    <div className="mb-4 flex items-center gap-3">
-                                        <span className="text-sm font-medium text-gray-500">
-                                            Question {currentQuestion + 1} of {questions.length}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                            {question.points || 0} points
-                                        </span>
-                                    </div>
-
-                                    <p className="text-lg text-gray-900 mb-6">{question.text || ''}</p>
-
-                                    {/* Answer Display */}
-                                    <div className="space-y-4">
-                                        {question.type === 'multiple_choice' && (
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
-                                                <div className={`p-3 rounded-lg ${
-                                                    question.is_correct ? 'bg-green-50' : 'bg-red-50'
-                                                }`}>
-                                                    {formatAnswer(question.user_answer)}
-                                                </div>
-                                                
-                                                {!question.is_correct && question.correct_answer && (
-                                                    <>
-                                                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
-                                                        <div className="p-3 bg-green-50 rounded-lg">
-                                                            {formatAnswer(question.correct_answer)}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {question.type === 'true_false' && (
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
-                                                <div className={`p-3 rounded-lg ${
-                                                    question.is_correct ? 'bg-green-50' : 'bg-red-50'
-                                                }`}>
-                                                    {formatAnswer(question.user_answer)}
-                                                </div>
-                                                
-                                                {!question.is_correct && question.correct_answer && (
-                                                    <>
-                                                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Correct Answer:</p>
-                                                        <div className="p-3 bg-green-50 rounded-lg">
-                                                            {formatAnswer(question.correct_answer)}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {question.type === 'short_answer' && (
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
-                                                <div className={`p-3 rounded-lg ${
-                                                    question.is_correct ? 'bg-green-50' : 'bg-red-50'
-                                                }`}>
-                                                    {formatAnswer(question.user_answer)}
-                                                </div>
-                                                
-                                                {!question.is_correct && question.correct_answer && (
-                                                    <>
-                                                        <p className="text-sm font-medium text-gray-700 mt-4 mb-2">Expected Answer:</p>
-                                                        <div className="p-3 bg-green-50 rounded-lg">
-                                                            {formatAnswer(question.correct_answer)}
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
-                                            <div className="flex items-center gap-2">
-                                                {question.is_correct ? (
-                                                    <CheckCircleIcon className="w-5 h-5 text-green-600" />
-                                                ) : (
-                                                    <XCircleIcon className="w-5 h-5 text-red-600" />
-                                                )}
-                                                <span className="text-sm font-medium">
-                                                    {question.is_correct ? 'Correct' : 'Incorrect'} • 
-                                                    {question.is_correct ? question.points || 0 : 0}/{question.points || 0} points
-                                                </span>
-                                            </div>
-                                            
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
-                                                    disabled={currentQuestion === 0}
-                                                    className="p-2 text-gray-600 disabled:opacity-30 hover:text-gray-900 transition"
-                                                >
-                                                    <ChevronLeftIcon className="w-5 h-5" />
-                                                </button>
-                                                <button
-                                                    onClick={() => setCurrentQuestion(prev => Math.min(questions.length - 1, prev + 1))}
-                                                    disabled={currentQuestion === questions.length - 1}
-                                                    className="p-2 text-gray-600 disabled:opacity-30 hover:text-gray-900 transition"
-                                                >
-                                                    <ChevronRightIcon className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
                         </div>
                     </div>
                 </div>
