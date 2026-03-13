@@ -186,7 +186,7 @@ export default function NavBar({ auth }) {
                                             <h4 className="font-semibold text-gray-800">Certification Pathway</h4>
                                         </div>
                                     </Link>
-                                </div>
+                                </div> 
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
                                     <Link href={route('cgfcs.specialist')}>
                                         <div className="flex items-center">
