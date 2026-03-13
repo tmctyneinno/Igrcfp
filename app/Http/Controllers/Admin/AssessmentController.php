@@ -181,6 +181,7 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
+         \Log::error('Assessment request: ' . $request);
         $rules = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
 
@@ -460,7 +461,7 @@ class AssessmentController extends Controller
 
         Assessment::create($validated);
 
-        return redirect()->route('admin.courses.assessments.course', $course->id)
+        return redirect()->route('admin.assessments.course', $course->id)
             ->with('success', 'Assessment uploaded successfully!');
     }
 
