@@ -9,12 +9,12 @@ export default function Checkout({ cart, user }) {
         phone: '',
         payment_method: 'card',
         terms_accepted: false,
-    });
+    }); 
 
     const handleSubmit = (e) => { 
         e.preventDefault();
         post(route('checkout.process'));
-    };
+    };  
 
     // Parse total_amount as a number
     const totalAmount = parseFloat(cart?.total_amount) || 0;
