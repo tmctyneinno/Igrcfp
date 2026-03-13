@@ -228,7 +228,7 @@
     </form>
 </div>
 
-<!-- Question Template (same as quiz template) -->
+<!-- Question Template -->
 <template id="question-template">
     <div class="question-item card mb-4" data-question-idx="{idx}">
         <div class="card-header bg-light py-3 px-4">
@@ -278,7 +278,7 @@
                 </div>
 
                 <!-- Options Container (for multiple choice) -->
-                <div class="col-12 options-container" style="display: block;">
+                <div class="col-12 options-container">
                     <div class="border rounded-3 p-3 bg-light">
                         <label class="form-label fw-semibold mb-3">Answer Options <span class="text-danger">*</span></label>
                         <div class="options-list">
@@ -328,7 +328,7 @@
     </div>
 </template>
 
-<!-- Option Item Template (same as quiz template) -->
+<!-- Option Item Template -->
 <template id="option-template">
     <div class="option-item d-flex align-items-center gap-3 mb-2 p-2 bg-white rounded-2 border">
         <div class="flex-grow-1">
@@ -432,15 +432,23 @@ function addQuestion() {
     
     container.appendChild(questionElement);
     
-    // Add default options for multiple choice
+    // Set initial type to multiple choice and add options
+    const typeSelect = questionElement.querySelector('.question-type');
+    typeSelect.value = 'multiple_choice';
+    
     const optionsContainer = questionElement.querySelector('.options-container');
-    if (optionsContainer) {
-        const addBtn = optionsContainer.querySelector('.btn');
-        if (addBtn) {
-            for (let i = 0; i < 4; i++) {
-                addOption(addBtn);
-            }
-        }
+    const trueFalseContainer = questionElement.querySelector('.true-false-container');
+    const essayContainer = questionElement.querySelector('.essay-container');
+    
+    // Show only multiple choice by default
+    optionsContainer.style.display = 'block';
+    trueFalseContainer.style.display = 'none';
+    essayContainer.style.display = 'none';
+    
+    // Add default options
+    const addBtn = optionsContainer.querySelector('.btn');
+    for (let i = 0; i < 4; i++) {
+        addOption(addBtn);
     }
     
     questionCount++;
@@ -474,22 +482,62 @@ function handleQuestionTypeChange(select) {
     const trueFalseContainer = questionItem.querySelector('.true-false-container');
     const essayContainer = questionItem.querySelector('.essay-container');
     
+    // Remove required attributes from all inputs in all containers
+    removeRequiredAttributes(questionItem);
+    
     // Hide all containers
     optionsContainer.style.display = 'none';
     trueFalseContainer.style.display = 'none';
     essayContainer.style.display = 'none';
     
-    // Show selected container
+    // Show selected container and add required attributes
     switch(select.value) {
         case 'multiple_choice':
             optionsContainer.style.display = 'block';
+            addRequiredToMultipleChoice(questionItem);
             break;
         case 'true_false':
             trueFalseContainer.style.display = 'block';
+            addRequiredToTrueFalse(questionItem);
             break;
         case 'essay':
             essayContainer.style.display = 'block';
+            addRequiredToEssay(questionItem);
             break;
+    }
+}
+
+function removeRequiredAttributes(questionItem) {
+    // Remove required from all option inputs
+    const optionInputs = questionItem.querySelectorAll('.option-item input[type="text"]');
+    optionInputs.forEach(input => input.removeAttribute('required'));
+    
+    // Remove required from radio buttons
+    const radioInputs = questionItem.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(input => input.removeAttribute('required'));
+    
+    // Remove required from essay textarea
+    const essayTextarea = questionItem.querySelector('.essay-container textarea');
+    if (essayTextarea) essayTextarea.removeAttribute('required');
+}
+
+function addRequiredToMultipleChoice(questionItem) {
+    const optionInputs = questionItem.querySelectorAll('.option-item input[type="text"]');
+    optionInputs.forEach(input => input.setAttribute('required', 'required'));
+}
+
+function addRequiredToTrueFalse(questionItem) {
+    const radioInputs = questionItem.querySelectorAll('.true-false-container input[type="radio"]');
+    // Only make the first radio required (HTML5 will handle the group)
+    if (radioInputs.length > 0) {
+        radioInputs[0].setAttribute('required', 'required');
+    }
+}
+
+function addRequiredToEssay(questionItem) {
+    const essayTextarea = questionItem.querySelector('.essay-container textarea');
+    if (essayTextarea) {
+        essayTextarea.setAttribute('required', 'required');
     }
 }
 
