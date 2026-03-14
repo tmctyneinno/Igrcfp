@@ -21,7 +21,7 @@ class CheckoutController extends Controller
             ->where('status', 'active')
             ->latest()
             ->first();
-
+  
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
         }
