@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 export default function Login({ status, canResetPassword }) {
     const { auth } = usePage().props; 
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
+        email: '', 
         password: '',
         remember: false,
     }); 
@@ -111,7 +111,7 @@ export default function Login({ status, canResetPassword }) {
                                         name="email"
                                         value={data.email}
                                         className="pl-10 w-full"
-                                        placeholder="you@example.com"
+                                        placeholder="email@example.com"
                                         autoComplete="email"
                                         isFocused={true}
                                         onChange={(e) => setData('email', e.target.value)}
