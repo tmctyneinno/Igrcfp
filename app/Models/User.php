@@ -115,7 +115,6 @@ class User extends Authenticatable
     public function verifyOTP($code)
     {
         if ($this->otp_code == $code && $this->otp_expires_at > now()) {
-            $this->is_verified = true;
             $this->otp_code = null;
             $this->otp_expires_at = null;
             $this->save();
