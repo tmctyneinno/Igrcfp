@@ -41,18 +41,8 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
-        $credentials = $this->only('email', 'password');
-        
-        // Check if user exists and is verified
-        $user = \App\Models\User::where('email', $this->email)->first();
-        
 
-        if ($user && !$user->hasVerifiedEmail()) {
-            throw ValidationException::withMessages([
-                'email' => __('Please verify your email address before logging in.'),
-            ]);
-        }
-
+        // Attempt to authenticate first
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
@@ -61,6 +51,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Get the authenticated user
+        $user = Auth::user();
+        
+        // Check if user needs OTP verification
+        // Instead of throwing an exception, we'll just check here
+        // The actual redirect will happen in the controller
+        if ($user && !$user->is_verified) {
+            // Don't throw an exception - just let the user login
+            // The controller will handle the redirect to OTP page
+            return;
+        }
+
+        // Clear rate limiter on successful authentication
         RateLimiter::clear($this->throttleKey());
     }
 
