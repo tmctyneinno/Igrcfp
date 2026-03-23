@@ -93,9 +93,7 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         event(new Registered($user));
-        $otp = $user->generateOTP();
-        // Send OTP via email (and SMS if phone exists)
-        Mail::to($user->email)->send(new OTPMail($otp));
+        
 
         Auth::login($user);
  
