@@ -85,9 +85,6 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $otp = $user->generateOTP();
-        // Send OTP via email (and SMS if phone exists)
-        Mail::to($user->email)->send(new OTPMail($otp));
     
         $user = User::create([
             'name' => $request->name,
@@ -96,6 +93,9 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         event(new Registered($user));
+        $otp = $user->generateOTP();
+        // Send OTP via email (and SMS if phone exists)
+        Mail::to($user->email)->send(new OTPMail($otp));
 
         Auth::login($user);
  
