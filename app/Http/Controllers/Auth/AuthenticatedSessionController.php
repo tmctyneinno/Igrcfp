@@ -45,27 +45,33 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         
-        // Log for debugging
-        \Log::info('User logged in successfully', [
-            'user_id' => Auth::id(),
-            'redirect' => $request->input('redirect'),
-            'intended' => session('url.intended')
-        ]);
         $user = Auth::user();
-        // Check for redirect parameter (for enrollment or specific pages)
+        
+        // Check if user needs OTP verification
+        if (!$user->is_verified) {
+            // Generate and send OTP
+            $otp = $user->generateOTP();
+            
+            // Send OTP via email (and SMS if phone exists)
+            // This should be handled by an event or job
+            
+            // Redirect to OTP verification page
+            return redirect()->route('verify-otp');
+        }
+        
+        // Check for redirect parameter
         $redirect = $request->input('redirect');
         
         if ($redirect) {
             return redirect($redirect);
         }
         
-        // Check if there's an intended URL (from auth middleware)
+        // Check if there's an intended URL
         if (session()->has('url.intended')) {
             return redirect()->intended();
         }
 
-        // Default redirect to dashboard - use the correct route name
-        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
+        return redirect()->route('dashboard.index');
     }
 
     /**
