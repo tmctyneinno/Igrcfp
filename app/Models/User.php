@@ -62,6 +62,7 @@ class User extends Authenticatable
         'email_verified_at',
         'profile_completed_at',
         'tutor_agreement_accepted_at',
+        'phone_number', 'is_verified',
         'deleted_at',
     ]; 
 
@@ -73,6 +74,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code'
     ];
 
     /**
@@ -92,7 +94,20 @@ class User extends Authenticatable
         'newsletter_subscription' => 'boolean',
         'marketing_emails' => 'boolean',
         'deleted_at' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
+        'is_verified' => 'boolean',
     ];
+
+    public function generateOTP()
+    {
+        $this->otp_code = rand(100000, 999999);
+        $this->otp_expires_at = now()->addMinutes(10);
+        $this->save();
+        
+        return $this->otp_code;
+    }
 
     /**
      * Interact with the user's linkedin_url.
