@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
- 
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-    /**
+    /** 
      * Display the registration view.
      */
     public function showRegister(): Response
@@ -42,24 +42,30 @@ class AuthenticatedSessionController extends Controller
     public function login(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
- 
+
         $request->session()->regenerate();
-        // Log the redirect parameter for debugging
-        \Log::info('Login Redirect Parameter:', [
+        
+        // Log for debugging
+        \Log::info('User logged in successfully', [
+            'user_id' => Auth::id(),
             'redirect' => $request->input('redirect'),
-            'all_input' => $request->all(),
-            'query_params' => $request->query()
+            'intended' => session('url.intended')
         ]);
         
-        // Check for redirect parameter
-        \Log::info('Redirect:', [ $request->input('redirect')]);
+        // Check for redirect parameter (for enrollment or specific pages)
         $redirect = $request->input('redirect');
         
         if ($redirect) {
             return redirect($redirect);
         }
- 
-        return redirect()->intended(route('dashboard.index', absolute: false));
+        
+        // Check if there's an intended URL (from auth middleware)
+        if (session()->has('url.intended')) {
+            return redirect()->intended();
+        }
+
+        // Default redirect to dashboard - use the correct route name
+        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
     }
 
     /**
@@ -82,8 +88,9 @@ class AuthenticatedSessionController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-
-        return redirect(route('dashboard.index', absolute: false));
+ 
+        // Redirect to dashboard after registration
+        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
     }
 
     /**
