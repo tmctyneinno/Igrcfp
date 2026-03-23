@@ -51,7 +51,7 @@ class AuthenticatedSessionController extends Controller
             'redirect' => $request->input('redirect'),
             'intended' => session('url.intended')
         ]);
-        
+        $user = Auth::user();
         // Check for redirect parameter (for enrollment or specific pages)
         $redirect = $request->input('redirect');
         
