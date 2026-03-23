@@ -4,22 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Mail\OTPMail;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
-{ 
+{
     /**
      * Display the login view.
      */
@@ -42,138 +39,58 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    /**
- * Handle an incoming authentication request.
- */
-public function login(LoginRequest $request): RedirectResponse
-{
-    // Authenticate the user
-    $request->authenticate();
+    public function login(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
 
-    // Regenerate session to prevent session fixation
-    $request->session()->regenerate();
-    
-    // Get the authenticated user
-    $user = Auth::user();
-    
-    // IMPORTANT: Check if user exists
-    if (!$user) {
-        return redirect()->route('login')->withErrors(['email' => 'Authentication failed.']);
-    }
-    
-    // Debug: Log user verification status
-    Log::info('User login attempt', [
-        'user_id' => $user->id,
-        'email' => $user->email,
-        'is_verified' => $user->is_verified,
-        'email_verified_at' => $user->email_verified_at,
-    ]);
-    
-    // CRITICAL: Check if user is already verified
-    if ($user->is_verified) {
-        // User is already verified, redirect to dashboard
-        Log::info('User already verified, skipping OTP', ['user_id' => $user->id]);
+        $request->session()->regenerate();
         
-        // Check for redirect parameter
+        // Log for debugging
+        \Log::info('User logged in successfully', [
+            'user_id' => Auth::id(),
+            'redirect' => $request->input('redirect'),
+            'intended' => session('url.intended')
+        ]);
+        
+        // Check for redirect parameter (for enrollment or specific pages)
         $redirect = $request->input('redirect');
+        
         if ($redirect) {
             return redirect($redirect);
         }
         
-        // Check if there's an intended URL
+        // Check if there's an intended URL (from auth middleware)
         if (session()->has('url.intended')) {
-            $intended = session('url.intended');
-            session()->forget('url.intended');
-            return redirect($intended);
+            return redirect()->intended();
         }
-        
-        return redirect()->route('dashboard.index');
+
+        // Default redirect to dashboard - use the correct route name
+        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
     }
-    
-    // User is not verified, send OTP
-    Log::info('User not verified, sending OTP', ['user_id' => $user->id]);
-    
-    // Generate and send OTP
-    $otp = $user->generateOTP();
-    
-    // Send OTP via email
-    try {
-        Mail::to($user->email)->send(new OTPMail($otp));
-        Log::info('OTP sent to email: ' . $user->email);
-    } catch (\Exception $e) {
-        Log::error('Failed to send OTP email: ' . $e->getMessage());
-    }
-    
-    // Send OTP via SMS if phone exists
-    if ($user->phone_number) {
-        try {
-            $this->sendSMS($user->phone_number, $otp);
-            Log::info('OTP sent to phone: ' . $user->phone_number);
-        } catch (\Exception $e) {
-            Log::error('Failed to send OTP SMS: ' . $e->getMessage());
-        }
-    }
-    
-    // Store the intended URL before redirecting to OTP verification
-    if ($request->has('redirect')) {
-        session(['redirect_after_verification' => $request->input('redirect')]);
-    }
-    
-    // Redirect to OTP verification page
-    return redirect()->route('verify-otp');
-}
 
     /**
      * Handle an incoming registration request.
      */
     public function register(Request $request): RedirectResponse
     {
-        // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
-            'phone' => 'nullable|string|max:20|unique:' . User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Create the user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'phone_number' => $request->phone,
             'password' => Hash::make($request->password),
-            'is_verified' => false, // User is not verified until OTP is confirmed
         ]);
 
-        // Fire the registered event
         event(new Registered($user));
 
-        // Generate OTP
-        $otp = $user->generateOTP();
-        
-        // Send OTP via Email
-        try {
-            Mail::to($user->email)->send(new OTPMail($otp));
-            Log::info('OTP sent to email: ' . $user->email);
-        } catch (\Exception $e) {
-            Log::error('Failed to send OTP email to ' . $user->email . ': ' . $e->getMessage());
-        }
-        
-        // Send OTP via SMS if phone number exists
-        if ($user->phone_number) {
-            try {
-                $this->sendSMS($user->phone_number, $otp);
-                Log::info('OTP sent to phone: ' . $user->phone_number);
-            } catch (\Exception $e) {
-                Log::error('Failed to send OTP SMS to ' . $user->phone_number . ': ' . $e->getMessage());
-            }
-        }
-        
-        // Log the user in
         Auth::login($user);
-        
-        // Redirect to OTP verification page
-        return redirect()->route('verify-otp');
+ 
+        // Redirect to dashboard after registration
+        return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name
     }
 
     /**
@@ -188,14 +105,5 @@ public function login(LoginRequest $request): RedirectResponse
         $request->session()->regenerateToken();
 
         return redirect('/');
-    }
-
-    /**
-     * Send OTP via SMS
-     */
-    private function sendSMS($phoneNumber, $otp)
-    {
-        // Implement your SMS service here
-        Log::info("SMS to {$phoneNumber}: Your verification code is {$otp}");
     }
 }
