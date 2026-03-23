@@ -109,6 +109,42 @@ class User extends Authenticatable
         return $this->otp_code;
     }
 
+    public function verifyOTP($code)
+    {
+        if ($this->otp_code == $code && $this->otp_expires_at > now()) {
+            $this->is_verified = true;
+            $this->otp_code = null;
+            $this->otp_expires_at = null;
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function hasVerifiedEmail()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function hasVerifiedPhone()
+    {
+        return !is_null($this->phone_verified_at);
+    }
+
+    public function markEmailAsVerified()
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
+    public function markPhoneAsVerified()
+    {
+        return $this->forceFill([
+            'phone_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
     /**
      * Interact with the user's linkedin_url.
      */
