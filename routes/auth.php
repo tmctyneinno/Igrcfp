@@ -24,11 +24,10 @@ Route::middleware('guest')->group(function () {
         ->name('login'); 
 
     Route::post('login', [AuthenticatedSessionController::class, 'login']);  
-    Route::get('/verify-otp', [OTPVerificationController::class, 'showVerificationForm'])->name('verify-otp');
-    Route::post('/verify-otp/send', [OTPVerificationController::class, 'sendOTP']);
     Route::post('/verify-otp/verify', [OTPVerificationController::class, 'verifyOTP']);
     Route::post('/verify-otp/resend', [OTPVerificationController::class, 'resendOTP']);
-
+    Route::get('/verify-otp', [OTPVerificationController::class, 'showVerificationForm'])->name('verify-otp');
+    
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
