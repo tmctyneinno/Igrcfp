@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OTPMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use App\Mail\OTPMail;
-use App\Models\User;
 use Inertia\Inertia;
 
 class OTPVerificationController extends Controller
@@ -21,8 +20,9 @@ class OTPVerificationController extends Controller
             return redirect()->route('login');
         }
         
-        // Check if user is already verified
+        // If user is already verified, redirect to dashboard
         if ($user->is_verified) {
+            Log::info('User already verified, redirecting to dashboard', ['user_id' => $user->id]);
             return redirect()->intended(route('dashboard.index'));
         }
         
@@ -40,6 +40,11 @@ class OTPVerificationController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
         
+        // Check if user is already verified
+        if ($user->is_verified) {
+            return response()->json(['error' => 'User already verified'], 400);
+        }
+        
         // Generate OTP
         $otp = $user->generateOTP();
         
@@ -49,9 +54,10 @@ class OTPVerificationController extends Controller
             Log::info('OTP sent to email: ' . $user->email);
         } catch (\Exception $e) {
             Log::error('Failed to send OTP email: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to send verification code'], 500);
         }
         
-        // Send OTP via SMS (using a service like Twilio, Vonage, etc.)
+        // Send OTP via SMS if phone exists
         if ($user->phone_number) {
             try {
                 $this->sendSMS($user->phone_number, $otp);
@@ -62,13 +68,20 @@ class OTPVerificationController extends Controller
         }
         
         return response()->json([
-            'message' => 'OTP sent successfully',
-            'expires_in' => 10 // minutes
+            'message' => 'Verification code sent successfully',
+            'expires_in' => 10
         ]);
     }
     
     public function verifyOTP(Request $request)
     {
+        \Log::info('Verifying OTP', [
+        'user_id' => $this->id,
+        'provided_code' => $code,
+        'stored_code' => $this->otp_code,
+        'expires_at' => $this->otp_expires_at,
+        'current_time' => now()
+    ]);
         $request->validate([
             'otp_code' => 'required|string|size:6',
         ]);
@@ -79,28 +92,51 @@ class OTPVerificationController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
         
+        // Check if already verified
+        if ($user->is_verified) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User already verified',
+                'redirect' => session('redirect_after_verification', route('dashboard.index'))
+            ]);
+        }
+        
+        // Verify OTP
         if ($user->verifyOTP($request->otp_code)) {
-            // Mark email and phone as verified
+            // CRITICAL: Make sure is_verified is set to true
+            $user->is_verified = true;
+            $user->save();
+            
+            // Mark email as verified if not already
             if (!$user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
             }
             
-            if (!$user->hasVerifiedPhone() && $user->phone_number) {
+            // Mark phone as verified if phone exists
+            if ($user->phone_number && !$user->hasVerifiedPhone()) {
                 $user->markPhoneAsVerified();
             }
             
-            // Clear any existing intended URLs
-            session()->forget('url.intended');
+            // Log successful verification
+            Log::info('User successfully verified OTP', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'is_verified' => $user->is_verified
+            ]);
+            
+            // Check if there's a redirect URL stored
+            $redirect = session('redirect_after_verification', route('dashboard.index'));
+            session()->forget('redirect_after_verification');
             
             return response()->json([
                 'success' => true,
                 'message' => 'OTP verified successfully',
-                'redirect' => route('dashboard.index')
+                'redirect' => $redirect
             ]);
         }
         
         return response()->json([
-            'error' => 'Invalid or expired OTP code'
+            'error' => 'Invalid or expired verification code'
         ], 422);
     }
     
@@ -111,22 +147,6 @@ class OTPVerificationController extends Controller
     
     private function sendSMS($phoneNumber, $otp)
     {
-        // Implement your SMS service here (Twilio, Vonage, etc.)
-        // Example with Twilio:
-        /*
-        use Twilio\Rest\Client;
-        
-        $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
-        $twilio->messages->create(
-            $phoneNumber,
-            [
-                'from' => env('TWILIO_PHONE_NUMBER'),
-                'body' => "Your verification code is: {$otp}. This code expires in 10 minutes."
-            ]
-        );
-        */
-        
-        // For testing purposes, you can log it
-        Log::info("SMS to {$phoneNumber}: Your OTP is {$otp}");
+        Log::info("SMS to {$phoneNumber}: Your verification code is {$otp}");
     }
 }

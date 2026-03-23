@@ -62,7 +62,7 @@ class User extends Authenticatable
         'email_verified_at',
         'profile_completed_at',
         'tutor_agreement_accepted_at',
-        'phone_number', 'is_verified',
+        'is_verified',
         'deleted_at',
     ]; 
 
@@ -74,7 +74,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'phone_number',
+        'phone',
         'is_verified',
         'otp_code', // Add this if you want to allow mass assignment
         'otp_expires_at', // Add this if you want to allow mass assignment
