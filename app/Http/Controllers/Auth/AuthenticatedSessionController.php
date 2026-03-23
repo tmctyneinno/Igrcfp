@@ -52,11 +52,15 @@ class AuthenticatedSessionController extends Controller
             \Log::error('Failed to send OTP: ' . $e->getMessage());
         }
         
-        // Store user ID in session for OTP verification
-        session(['otp_user_id' => $user->id]);
-        
-        // Logout the user temporarily until OTP is verified
+        // IMPORTANT: Logout the user immediately after generating OTP
         Auth::logout();
+        
+        // Store user ID and email in session for OTP verification
+        session([
+            'otp_user_id' => $user->id,
+            'otp_user_email' => $user->email,
+            'otp_created_at' => now()
+        ]);
         
         // Redirect to OTP verification page
         return redirect()->route('verify-otp');
@@ -90,10 +94,13 @@ class AuthenticatedSessionController extends Controller
             \Log::error('Failed to send OTP: ' . $e->getMessage());
         }
         
-        // Store user ID in session
-        session(['otp_user_id' => $user->id]);
+        // Store user info in session
+        session([
+            'otp_user_id' => $user->id,
+            'otp_user_email' => $user->email
+        ]);
         
-        // Redirect to OTP verification
+        // Redirect to OTP verification page
         return redirect()->route('verify-otp');
     }
 
