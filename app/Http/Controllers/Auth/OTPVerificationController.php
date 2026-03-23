@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OTPMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class OTPVerificationController extends Controller
 {
@@ -84,7 +87,7 @@ class OTPVerificationController extends Controller
         
         // Send OTP via email
         try {
-            \Mail::to($user->email)->send(new \App\Mail\OTPMail($otp));
+            Mail::to($user->email)->send(new OTPMail($otp));
         } catch (\Exception $e) {
             \Log::error('Failed to resend OTP: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to send OTP'], 500);

@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
         // Authenticate the user
         $request->authenticate();
 
-        // Regenerate session to prevent session fixation
+        // Regenerate session
         $request->session()->regenerate();
         
         $user = Auth::user();
@@ -52,17 +52,11 @@ class AuthenticatedSessionController extends Controller
             \Log::error('Failed to send OTP: ' . $e->getMessage());
         }
         
-        // Send OTP via SMS if phone exists
-        if ($user->phone_number) {
-            try {
-                $this->sendSMS($user->phone_number, $otp);
-            } catch (\Exception $e) {
-                \Log::error('Failed to send SMS: ' . $e->getMessage());
-            }
-        }
-        
         // Store user ID in session for OTP verification
         session(['otp_user_id' => $user->id]);
+        
+        // Logout the user temporarily until OTP is verified
+        Auth::logout();
         
         // Redirect to OTP verification page
         return redirect()->route('verify-otp');
@@ -96,17 +90,10 @@ class AuthenticatedSessionController extends Controller
             \Log::error('Failed to send OTP: ' . $e->getMessage());
         }
         
-        // Send OTP via SMS if phone exists
-        if ($user->phone_number) {
-            try {
-                $this->sendSMS($user->phone_number, $otp);
-            } catch (\Exception $e) {
-                \Log::error('Failed to send SMS: ' . $e->getMessage());
-            }
-        }
+        // Store user ID in session
+        session(['otp_user_id' => $user->id]);
         
-        Auth::login($user);
-        
+        // Redirect to OTP verification
         return redirect()->route('verify-otp');
     }
 
@@ -116,11 +103,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
-    }
-    
-    private function sendSMS($phoneNumber, $otp)
-    {
-        // Implement your SMS service here
-        \Log::info("SMS to {$phoneNumber}: Your OTP is {$otp}");
     }
 }
