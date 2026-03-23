@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function login(LoginRequest $request): RedirectResponse
     {
-        // Authenticate the user
+        // Authenticate the user (this will not throw OTP errors now)
         $request->authenticate();
 
         // Regenerate session to prevent session fixation
@@ -57,6 +57,14 @@ class AuthenticatedSessionController extends Controller
         if (!$user) {
             return redirect()->route('login')->withErrors(['email' => 'Authentication failed.']);
         }
+        
+        // Debug: Log user verification status
+        Log::info('User logged in - Verification status', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'is_verified' => $user->is_verified,
+            'email_verified_at' => $user->email_verified_at,
+        ]);
         
         // Check if user needs OTP verification
         if (!$user->is_verified) {
@@ -83,7 +91,6 @@ class AuthenticatedSessionController extends Controller
             }
             
             // Store the intended URL before redirecting to OTP verification
-            // This helps redirect back after verification if needed
             if ($request->has('redirect')) {
                 session(['redirect_after_verification' => $request->input('redirect')]);
             }
@@ -92,7 +99,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('verify-otp');
         }
         
-        // Check for redirect parameter (for enrollment or specific pages)
+        // If user is verified, proceed to dashboard
+        // Check for redirect parameter
         $redirect = $request->input('redirect');
         
         if ($redirect) {
@@ -144,7 +152,6 @@ class AuthenticatedSessionController extends Controller
             Log::info('OTP sent to email: ' . $user->email);
         } catch (\Exception $e) {
             Log::error('Failed to send OTP email to ' . $user->email . ': ' . $e->getMessage());
-            // Continue with registration even if email fails
         }
         
         // Send OTP via SMS if phone number exists
@@ -154,7 +161,6 @@ class AuthenticatedSessionController extends Controller
                 Log::info('OTP sent to phone: ' . $user->phone_number);
             } catch (\Exception $e) {
                 Log::error('Failed to send OTP SMS to ' . $user->phone_number . ': ' . $e->getMessage());
-                // Continue with registration even if SMS fails
             }
         }
         
@@ -181,55 +187,10 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Send OTP via SMS
-     * 
-     * @param string $phoneNumber
-     * @param string $otp
-     * @return void
      */
     private function sendSMS($phoneNumber, $otp)
     {
         // Implement your SMS service here
-        // For testing, we'll just log it
         Log::info("SMS to {$phoneNumber}: Your verification code is {$otp}");
-        
-        // Example with Twilio (uncomment and configure to use):
-        /*
-        use Twilio\Rest\Client;
-        
-        $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
-        $twilio->messages->create(
-            $phoneNumber,
-            [
-                'from' => env('TWILIO_PHONE_NUMBER'),
-                'body' => "Your verification code is: {$otp}. This code expires in 10 minutes."
-            ]
-        );
-        */
-        
-        // Example with Vonage (Nexmo):
-        /*
-        use Vonage\Client;
-        use Vonage\Client\Credentials\Basic;
-        use Vonage\SMS\Message\SMS;
-        
-        $basic = new Basic(env('VONAGE_KEY'), env('VONAGE_SECRET'));
-        $client = new Client($basic);
-        
-        $response = $client->sms()->send(
-            new SMS($phoneNumber, env('VONAGE_BRAND'), "Your verification code is: {$otp}")
-        );
-        */
-        
-        // Example with Africa's Talking:
-        /*
-        $username = env('AFRICASTALKING_USERNAME');
-        $apiKey = env('AFRICASTALKING_API_KEY');
-        
-        $at = new \AfricaStalking\AfricaStalking($username, $apiKey);
-        $at->sendMessage([
-            'to' => $phoneNumber,
-            'message' => "Your verification code is: {$otp}"
-        ]);
-        */
     }
 }

@@ -74,7 +74,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'otp_code'
+        'phone_number',
+        'is_verified',
+        'otp_code', // Add this if you want to allow mass assignment
+        'otp_expires_at', // Add this if you want to allow mass assignment
     ];
 
     /**
