@@ -50,16 +50,21 @@
                             </div>
                         </div>
 
-                        {{-- reCAPTCHA v2 with explicit rendering --}}
+                        {{-- reCAPTCHA v2 --}}
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-4">
-                                <div id="recaptcha-container"></div>
-                                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                                 @error('g-recaptcha-response')
                                     <span class="text-danger" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                {{-- Debug: Show if site key is loaded --}}
+                                @if(!config('services.recaptcha.site_key'))
+                                    <div class="text-danger small mt-1">
+                                        <strong>Error:</strong> reCAPTCHA site key is not configured. Please check your .env file.
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -85,30 +90,15 @@
 @endsection
 
 @push('scripts')
-<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
-    let recaptchaWidget;
-    
-    window.onRecaptchaLoad = function() {
-        recaptchaWidget = grecaptcha.render('recaptcha-container', {
-            'sitekey': '{{ config('services.recaptcha.site_key') }}',
-            'callback': function(response) {
-                document.getElementById('g-recaptcha-response').value = response;
-            },
-            'expired-callback': function() {
-                document.getElementById('g-recaptcha-response').value = '';
-            }
-        });
-        console.log('reCAPTCHA widget rendered');
-    };
-    
-    // Form submission handler to ensure reCAPTCHA is completed
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        const recaptchaResponse = document.getElementById('g-recaptcha-response').value;
-        if (!recaptchaResponse) {
-            e.preventDefault();
-            alert('Please complete the reCAPTCHA verification.');
-            return false;
+    // Check if reCAPTCHA is configured
+    document.addEventListener('DOMContentLoaded', function() {
+        const siteKey = '{{ config('services.recaptcha.site_key') }}';
+        if (!siteKey || siteKey === '') {
+            console.error('reCAPTCHA site key is missing!');
+        } else {
+            console.log('reCAPTCHA site key is configured');
         }
     });
 </script>
