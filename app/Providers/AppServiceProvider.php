@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
+use App\Rules\Captcha;
 
 class AppServiceProvider extends ServiceProvider
-{
+{ 
     /**
      * Register any application services.
      */
@@ -23,6 +25,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Validator::extend('captcha', function ($attribute, $value, $parameters, $validator) {
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => env('RECAPTCHA_SECRET_KEY'),
+                'response' => $value,
+                'remoteip' => request()->ip(),
+            ]);
+
+            return $response->json('success');
+        });
         Vite::prefetch(concurrency: 3);
         Inertia::share([
             'flash' => fn () => [
