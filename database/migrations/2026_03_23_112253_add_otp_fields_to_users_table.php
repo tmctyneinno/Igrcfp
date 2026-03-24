@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone')->nullable()->after('email');
             $table->string('phone_verified_at')->nullable()->after('phone');
             $table->string('email_verified_at')->nullable()->change(); // Make it nullable if not already
             $table->string('otp_code')->nullable();
