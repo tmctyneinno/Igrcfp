@@ -169,7 +169,7 @@ export default function Login({ status, canResetPassword }) {
                                 </div>
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
-
+ 
                             {/* Remember Me */}
                             <div className="flex items-center">
                                 <Checkbox

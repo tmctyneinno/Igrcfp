@@ -109,3 +109,6 @@ php artisan clear-compiled
 
 # Also clear the compiled views cache
 rm -f storage/framework/views/*
+
+Creat a page for Niroanbil and african event 
+Niroanbil and woman summit 13th november
