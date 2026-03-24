@@ -1,3 +1,5 @@
+// resources/js/Pages/Auth/Login.jsx
+import { useEffect } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
@@ -8,20 +10,61 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 
 export default function Login({ status, canResetPassword }) {
-    const { auth } = usePage().props; 
+    const { auth } = usePage().props;
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '', 
+        email: '',
         password: '',
         remember: false,
-    }); 
+        recaptcha_token: '', // Add recaptcha token field
+    });
   
     const [showPassword, setShowPassword] = useState(false);
+    const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-    const submit = (e) => {
+    // Load reCAPTCHA script
+    useEffect(() => {
+        const loadRecaptcha = () => {
+            if (window.grecaptcha) {
+                setRecaptchaLoaded(true);
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = `https://www.google.com/recaptcha/api.js?render=${import.meta.env.VITE_RECAPTCHA_SITE_KEY}`;
+            script.async = true;
+            script.defer = true;
+            script.onload = () => setRecaptchaLoaded(true);
+            document.head.appendChild(script);
+        };
+        
+        loadRecaptcha();
+    }, []);
+
+    const submit = async (e) => {
         e.preventDefault();
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
+        
+        // Execute reCAPTCHA and get token
+        if (window.grecaptcha) {
+            try {
+                const token = await window.grecaptcha.execute(
+                    import.meta.env.VITE_RECAPTCHA_SITE_KEY,
+                    { action: 'login' }
+                );
+                setData('recaptcha_token', token);
+                
+                // Submit form with token
+                post(route('login'), {
+                    onFinish: () => reset('password'),
+                });
+            } catch (error) {
+                console.error('reCAPTCHA error:', error);
+            }
+        } else {
+            // Fallback if reCAPTCHA not loaded
+            post(route('login'), {
+                onFinish: () => reset('password'),
+            });
+        }
     };
 
     const togglePasswordVisibility = () => {
@@ -30,7 +73,10 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout auth={auth}>
-            <Head title="Log in" /> 
+            <Head title="Log in" />
+            
+            {/* Add reCAPTCHA badge */}
+            <div className="g-recaptcha-badge" data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} style={{ display: 'none' }}></div>
             
             <div className="min-h-screen flex">
                 {/* Left Side - Image */} 
@@ -90,6 +136,13 @@ export default function Login({ status, canResetPassword }) {
                                         <p className="text-sm font-medium text-green-800">{status}</p>
                                     </div>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* reCAPTCHA Error Message */}
+                        {errors.recaptcha && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p className="text-sm text-red-600">{errors.recaptcha}</p>
                             </div>
                         )}
 
@@ -217,8 +270,6 @@ export default function Login({ status, canResetPassword }) {
                                 </p>
                             </div>
                         )}
-
-                        
                     </div>
                 </div>
             </div>
