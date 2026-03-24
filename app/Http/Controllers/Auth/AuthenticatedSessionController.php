@@ -34,6 +34,10 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
+        // Validate reCAPTCHA
+        $request->validate([
+            'g-recaptcha-response' => 'required|captcha'
+        ]);
         // Authenticate the user
         $request->authenticate();
 
@@ -110,5 +114,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
-    }
+    } 
 }
