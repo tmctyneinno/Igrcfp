@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}" id="login-form">
+                    <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
@@ -53,18 +53,12 @@
                         {{-- reCAPTCHA v2 --}}
                         <div class="row mb-3">
                             <div class="col-md-6 offset-md-4">
-                                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+                                {!! NoCaptcha::display() !!}
                                 @error('g-recaptcha-response')
                                     <span class="text-danger" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                                {{-- Debug: Show if site key is loaded --}}
-                                @if(!config('services.recaptcha.site_key'))
-                                    <div class="text-danger small mt-1">
-                                        <strong>Error:</strong> reCAPTCHA site key is not configured. Please check your .env file.
-                                    </div>
-                                @endif
                             </div>
                         </div>
 
@@ -90,16 +84,5 @@
 @endsection
 
 @push('scripts')
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script>
-    // Check if reCAPTCHA is configured
-    document.addEventListener('DOMContentLoaded', function() {
-        const siteKey = '{{ config('services.recaptcha.site_key') }}';
-        if (!siteKey || siteKey === '') {
-            console.error('reCAPTCHA site key is missing!');
-        } else {
-            console.log('reCAPTCHA site key is configured');
-        }
-    });
-</script>
+{!! NoCaptcha::renderJs() !!}
 @endpush
