@@ -21,7 +21,7 @@ export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false);
     const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-    // Load reCAPTCHA script
+    // Load reCAPTCHA script. 
     useEffect(() => {
         const loadRecaptcha = () => {
             if (window.grecaptcha) {
