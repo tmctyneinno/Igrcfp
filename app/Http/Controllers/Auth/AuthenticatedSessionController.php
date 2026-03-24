@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Mail\OTPMail;
 use App\Models\User;
+use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,10 +35,18 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        // Validate reCAPTCHA
-        $request->validate([
-            'g-recaptcha-response' => 'required|captcha'
+        \Log::info('reCAPTCHA Response:', [
+            'has_response' => $request->has('g-recaptcha-response'),
+            'response_value' => $request->input('g-recaptcha-response')
         ]);
+        try {
+            $request->validate([
+                'g-recaptcha-response' => 'required|captcha'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('reCAPTCHA Validation Failed:', $e->errors());
+            throw $e;
+        }
         // Authenticate the user
         $request->authenticate();
 
