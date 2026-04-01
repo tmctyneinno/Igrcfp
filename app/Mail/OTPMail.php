@@ -11,7 +11,7 @@ class OTPMail extends Mailable
     use Queueable, SerializesModels;
 
     public $otp;
-
+ 
     public function __construct($otp)
     {
         $this->otp = $otp;

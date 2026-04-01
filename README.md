@@ -112,3 +112,7 @@ rm -f storage/framework/views/*
 
 Creat a page for Niroanbil and african event 
 Niroanbil and woman summit 13th november
+
+https://account.kudisms.net/bulksms/
+recovery twilio code
+46TY8C5NR9FPU6X2GV7M8SPC

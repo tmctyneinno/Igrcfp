@@ -334,7 +334,7 @@ class CourseController extends Controller
         $query->orderBy($sortField, $sortDirection);
         
         // Get paginated results
-        $courses = $query->paginate(12)->withQueryString();
+        $courses = $query->paginate(20)->withQueryString();
         
         // Get all categories for filter options
         $categories = CourseCategory::where('is_active', true)

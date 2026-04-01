@@ -91,7 +91,8 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
 
             {/* CONTENT */}
             <div className="p-2 flex-1 flex flex-col">
-                <Link href={ route('dashboard.courses.show', course?.slug)}>
+                {/* <Link href={ route('dashboard.courses.show', course?.slug)}> */}
+                <Link href={`/courses/${course?.slug || '#'}`}>
                     <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2">
                         {course?.title || 'Untitled Course'}
                     </h4>

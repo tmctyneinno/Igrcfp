@@ -281,7 +281,7 @@ class DashboardController extends Controller
         $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
 
         // Paginate results
-        $courses = $query->paginate(12)->withQueryString();
+        $courses = $query->paginate(20)->withQueryString();
 
         // Transform courses for the frontend
         $courses->getCollection()->transform(function ($course) {

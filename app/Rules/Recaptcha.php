@@ -5,21 +5,23 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Http;
 
-class Captcha implements Rule
+class Recaptcha implements Rule
 {
     public function passes($attribute, $value)
     {
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'secret' => config('services.recaptcha.secret_key'),
             'response' => $value,
             'remoteip' => request()->ip(),
         ]);
-
-        return $response->json('success');
+        
+        $body = $response->json();
+        
+        return $body['success'] ?? false;
     }
-
+    
     public function message()
     {
-        return 'Please verify that you are not a robot.';
+        return 'The reCAPTCHA verification failed. Please try again.';
     }
 }
