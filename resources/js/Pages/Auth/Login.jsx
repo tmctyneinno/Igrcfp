@@ -1,5 +1,5 @@
 // resources/js/Pages/Auth/Login.jsx
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
@@ -15,82 +15,90 @@ export default function Login({ status, canResetPassword }) {
         email: '',
         password: '',
         remember: false,
-        recaptcha_token: '', // Add recaptcha token field
+        'g-recaptcha-response': '',   // ← v2 field name the backend expects
     });
-  
-    const [showPassword, setShowPassword] = useState(false);
-    const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-    // Load reCAPTCHA script. 
+    const [showPassword, setShowPassword] = useState(false);
+    const recaptchaRef = useRef(null);
+    const widgetIdRef = useRef(null);
+
+    // Load reCAPTCHA v2 script and render the widget
     useEffect(() => {
-        const loadRecaptcha = () => {
-            if (window.grecaptcha) {
-                setRecaptchaLoaded(true);
-                return;
+        const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
+        const renderWidget = () => {
+            if (recaptchaRef.current && widgetIdRef.current === null && window.grecaptcha) {
+                widgetIdRef.current = window.grecaptcha.render(recaptchaRef.current, {
+                    sitekey: SITE_KEY,
+                    callback: (token) => {
+                        setData('g-recaptcha-response', token);
+                    },
+                    'expired-callback': () => {
+                        setData('g-recaptcha-response', '');
+                    },
+                    'error-callback': () => {
+                        setData('g-recaptcha-response', '');
+                    },
+                });
             }
-            
+        };
+
+        if (window.grecaptcha && window.grecaptcha.render) {
+            renderWidget();
+            return;
+        }
+
+        // Expose a global callback so the script can call it when ready
+        window.onRecaptchaLoad = renderWidget;
+
+        const existing = document.querySelector('script[data-recaptcha]');
+        if (!existing) {
             const script = document.createElement('script');
-            script.src = `https://www.google.com/recaptcha/api.js?render=${import.meta.env.VITE_RECAPTCHA_SITE_KEY}`;
+            script.src = `https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit`;
             script.async = true;
             script.defer = true;
-            script.onload = () => setRecaptchaLoaded(true);
+            script.setAttribute('data-recaptcha', 'true');
             document.head.appendChild(script);
+        }
+
+        return () => {
+            // Cleanup global callback on unmount
+            delete window.onRecaptchaLoad;
         };
-        
-        loadRecaptcha();
     }, []);
 
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        
-        // Execute reCAPTCHA and get token
-        if (window.grecaptcha) {
-            try {
-                const token = await window.grecaptcha.execute(
-                    import.meta.env.VITE_RECAPTCHA_SITE_KEY,
-                    { action: 'login' }
-                );
-                setData('recaptcha_token', token);
-                
-                // Submit form with token
-                post(route('login'), {
-                    onFinish: () => reset('password'),
-                });
-            } catch (error) {
-                console.error('reCAPTCHA error:', error);
-            }
-        } else {
-            // Fallback if reCAPTCHA not loaded
-            post(route('login'), {
-                onFinish: () => reset('password'),
-            });
-        }
-    };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+        post(route('login'), {
+            onFinish: () => {
+                reset('password');
+                // Reset the reCAPTCHA widget after each attempt
+                if (window.grecaptcha && widgetIdRef.current !== null) {
+                    window.grecaptcha.reset(widgetIdRef.current);
+                    setData('g-recaptcha-response', '');
+                }
+            },
+        });
     };
 
     return (
         <GuestLayout auth={auth}>
             <Head title="Log in" />
-            
-            {/* Add reCAPTCHA badge */}
-            <div className="g-recaptcha-badge" data-sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY} style={{ display: 'none' }}></div>
-            
+
             <div className="min-h-screen flex">
-                {/* Left Side - Image */} 
+                {/* Left Side - Image */}
                 <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
                     <div className="flex items-center justify-center w-full p-12">
                         <div className="text-center">
                             <div className="mb-8">
                                 <Link href="/">
-                                    <img 
-                                        src="/assets/admin/images/auth/auth-img.png" 
-                                        alt="Authentication" 
+                                    <img
+                                        src="/assets/admin/images/auth/auth-img.png"
+                                        alt="Authentication"
                                         className="mx-auto max-w-full h-auto"
                                         style={{ maxHeight: '600px' }}
-                                    /> 
+                                    />
                                 </Link>
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -109,9 +117,9 @@ export default function Login({ status, canResetPassword }) {
                         {/* Logo */}
                         <div className="text-center mb-8">
                             <Link href="/" className="inline-block">
-                                <img 
-                                    src="/assets/images/home-three/logo/logo-main.png" 
-                                    alt="Brand Logo" 
+                                <img
+                                    src="/assets/images/home-three/logo/logo-main.png"
+                                    alt="Brand Logo"
                                     className="h-12 w-auto mx-auto"
                                 />
                             </Link>
@@ -139,10 +147,10 @@ export default function Login({ status, canResetPassword }) {
                             </div>
                         )}
 
-                        {/* reCAPTCHA Error Message */}
-                        {errors.recaptcha && (
+                        {/* reCAPTCHA Error */}
+                        {errors['g-recaptcha-response'] && (
                             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                <p className="text-sm text-red-600">{errors.recaptcha}</p>
+                                <p className="text-sm text-red-600">{errors['g-recaptcha-response']}</p>
                             </div>
                         )}
 
@@ -194,7 +202,7 @@ export default function Login({ status, canResetPassword }) {
                                     </div>
                                     <TextInput
                                         id="password"
-                                        type={showPassword ? "text" : "password"}
+                                        type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         value={data.password}
                                         className="pl-10 pr-10 w-full"
@@ -205,7 +213,7 @@ export default function Login({ status, canResetPassword }) {
                                     <button
                                         type="button"
                                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                                        onClick={togglePasswordVisibility}
+                                        onClick={() => setShowPassword(!showPassword)}
                                     >
                                         {showPassword ? (
                                             <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -222,9 +230,9 @@ export default function Login({ status, canResetPassword }) {
                                 </div>
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
- 
+
                             {/* Remember Me */}
-                            <div className="flex items-center">
+                            {/* <div className="flex items-center">
                                 <Checkbox
                                     name="remember"
                                     checked={data.remember}
@@ -233,19 +241,30 @@ export default function Login({ status, canResetPassword }) {
                                 <label className="ml-2 block text-sm text-gray-900">
                                     Remember me
                                 </label>
+                            </div> */}
+
+                            {/* ✅ reCAPTCHA v2 Checkbox Widget */}
+                            <div>
+                                <div ref={recaptchaRef} />
+                                {/* Fallback error shown below the widget */}
+                                {errors['g-recaptcha-response'] && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        Please complete the reCAPTCHA check.
+                                    </p>
+                                )}
                             </div>
 
                             {/* Submit Button */}
                             <div>
-                                <PrimaryButton 
+                                <PrimaryButton
                                     className="w-full justify-center py-3 px-4 text-sm font-medium"
                                     disabled={processing}
                                 >
                                     {processing ? (
                                         <>
                                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                             </svg>
                                             Signing in...
                                         </>
@@ -279,7 +298,6 @@ export default function Login({ status, canResetPassword }) {
                     .min-h-screen {
                         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     }
-                    
                     .w-full.lg\\:w-1\\/2 {
                         background: white;
                         border-radius: 1rem;
@@ -287,11 +305,8 @@ export default function Login({ status, canResetPassword }) {
                         box-shadow: 0 20px 60px rgba(0,0,0,0.1);
                     }
                 }
-                
                 @media (min-width: 1024px) {
-                    .min-h-screen {
-                        background: white;
-                    }
+                    .min-h-screen { background: white; }
                 }
             `}</style>
         </GuestLayout>

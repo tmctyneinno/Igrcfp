@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Mail\OTPMail;
 use App\Models\User;
-use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+use App\Services\TwilioSmsService;  
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +20,8 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(protected TwilioSmsService $sms) {}
+
     public function create(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -35,52 +37,133 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        \Log::info('reCAPTCHA Response:', [
-            'has_response' => $request->has('g-recaptcha-response'),
-            'response_value' => $request->input('g-recaptcha-response')
-        ]);
         try {
-            $request->validate([
+            // 1. Validate reCAPTCHA first with custom messages
+            $validated = $request->validate([
                 'g-recaptcha-response' => 'required|captcha'
+            ], [
+                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
+                'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
             ]);
+            
+            // 2. Log successful validation (optional)
+            \Log::info('reCAPTCHA validation passed', [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+            
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('reCAPTCHA Validation Failed:', $e->errors());
-            throw $e;
+            // Log validation failures with context
+            \Log::warning('Login attempt failed reCAPTCHA validation', [
+                'ip' => $request->ip(),
+                'errors' => $e->errors()
+            ]);
+            
+            // Redirect back with input except the reCAPTCHA field
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput($request->except('g-recaptcha-response'));
         }
-        // Authenticate the user
-        $request->authenticate();
-
-        // Regenerate session
-        $request->session()->regenerate();
         
+        // 3. Attempt authentication
+        try {
+            $request->authenticate();
+        } catch (\Exception $e) {
+            \Log::error('Authentication failed after reCAPTCHA', [
+                'email' => $request->email,
+                'ip' => $request->ip()
+            ]);
+            
+            return redirect()->back()
+                ->withErrors(['email' => 'Invalid credentials.'])
+                ->withInput($request->except('password', 'g-recaptcha-response'));
+        }
+        
+        // 4. Generate and send OTP
         $user = Auth::user();
-        
-        // Generate OTP
         $otp = $user->generateOTP();
         
-        // Send OTP via email
-        try {
-            Mail::to($user->email)->send(new OTPMail($otp));
-        } catch (\Exception $e) {
-            \Log::error('Failed to send OTP: ' . $e->getMessage());
-        }
+        // try {
+        //     Mail::to($user->email)->send(new OTPMail($otp));
+        //     \Log::info('OTP sent successfully for email', ['user_id' => $user->id]);
+        // } catch (\Exception $e) {
+        //     \Log::error('Failed to send OTP: ' . $e->getMessage(), [
+        //         'user_id' => $user->id,
+        //         'email' => $user->email
+        //     ]);
+            
+        //     // Optional: Still allow login but inform user about OTP delay
+        //     session()->flash('warning', 'OTP email may be delayed. Please check your inbox.');
+        // }
+
+         // ── Send via SMS if phone number exists ─────────────
+        // if ($user->phone) {
+        //     try {
+        //         $this->sms->sendOtp($user->phone, $otp);
+        //         \Log::info('OTP sent successfully OTP', ['user_id' => $user->id]);
+        //     } catch (\Exception $e) {
+        //         \Log::error('OTP SMS failed: ' . $e->getMessage());
+        //     }
+        // }
         
-        // IMPORTANT: Logout the user immediately after generating OTP
+        // 5. Logout and store OTP session
         Auth::logout();
         
-        // Store user ID and email in session for OTP verification
         session([
             'otp_user_id' => $user->id,
             'otp_user_email' => $user->email,
-            'otp_created_at' => now()
+            'otp_created_at' => now(),
+            'login_ip' => $request->ip()  // Additional security context
         ]);
         
-        // Redirect to OTP verification page
-        return redirect()->route('verify-otp');
+        return redirect()->route('verify-otp')
+            ->with('success', 'Verification code sent to ' . $user->email);
     }
 
     public function register(Request $request): RedirectResponse
     {
+        // ✅ Validate reCAPTCHA first
+        try {
+            // 1. Validate reCAPTCHA first with custom messages
+            $validated = $request->validate([
+                'g-recaptcha-response' => 'required|captcha'
+            ], [
+                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
+                'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
+            ]);
+            
+            // 2. Log successful validation (optional)
+            \Log::info('reCAPTCHA validation passed', [
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Log validation failures with context
+            \Log::warning('Login attempt failed reCAPTCHA validation', [
+                'ip' => $request->ip(),
+                'errors' => $e->errors()
+            ]);
+            
+            // Redirect back with input except the reCAPTCHA field
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput($request->except('g-recaptcha-response'));
+        }
+        
+        // 3. Attempt authentication
+        try {
+            $request->authenticate();
+        } catch (\Exception $e) {
+            \Log::error('Authentication failed after reCAPTCHA', [
+                'email' => $request->email,
+                'ip' => $request->ip()
+            ]);
+            
+            return redirect()->back()
+                ->withErrors(['email' => 'Invalid credentials.'])
+                ->withInput($request->except('password', 'g-recaptcha-response'));
+        }
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
@@ -97,21 +180,7 @@ class AuthenticatedSessionController extends Controller
 
         event(new Registered($user));
         
-        // Generate OTP
-        $otp = $user->generateOTP();
-        
-        // Send OTP via email
-        try {
-            Mail::to($user->email)->send(new OTPMail($otp));
-        } catch (\Exception $e) {
-            \Log::error('Failed to send OTP: ' . $e->getMessage());
-        }
-        
-        // Store user info in session
-        session([
-            'otp_user_id' => $user->id,
-            'otp_user_email' => $user->email
-        ]);
+        Auth::logout();
         
         // Redirect to OTP verification page
         return redirect()->route('verify-otp');
