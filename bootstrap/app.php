@@ -13,8 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Middleware aliases
-        $middleware->alias([
-            'admin.role' => App\Http\Middleware\CheckAdminRole::class,
+        $middleware->alias([ 
+            'admin.role' => \App\Http\Middleware\AdminRoleMiddleware::class,
             'auth.admin' => App\Http\Middleware\AuthenticateAdmin::class,
             'guest:admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,

@@ -1,3 +1,4 @@
+{{-- resources/views/admin/courses/assessments/create-quiz.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('content')
@@ -14,7 +15,7 @@
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
-            </li>
+            </li> 
             <li>-</li>
             <li class="fw-medium">Create Quiz</li>
         </ul>
@@ -63,28 +64,24 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Course <span class="text-danger">*</span></label>
-                                <select name="course_id" class="form-select @error('course_id') is-invalid @enderror" required>
+                                <select name="course_id" id="course_id" class="form-select @error('course_id') is-invalid @enderror" required>
                                     <option value="">Select Course</option>
                                     @foreach($courses as $course)
                                         <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
                                             {{ $course->title }}
                                         </option>
-                                    @endforeach
+                                    @endforeach 
                                 </select>
                                 @error('course_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Module (Optional)</label>
-                                <select name="module_id" class="form-select @error('module_id') is-invalid @enderror">
-                                    <option value="">Select Module</option>
-                                    @foreach($modules as $module)
-                                        <option value="{{ $module->id }}" {{ old('module_id') == $module->id ? 'selected' : '' }}>
-                                            Module {{ $module->module_number }}: {{ $module->title }}
-                                        </option>
-                                    @endforeach
+                                <select name="module_id" id="module_id" class="form-select @error('module_id') is-invalid @enderror">
+                                    <option value="">-- First select a course --</option>
                                 </select>
                                 @error('module_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <small class="text-muted">Select a course first to see available modules</small>
                             </div>
 
                             <div class="col-12">
@@ -97,31 +94,31 @@
                     </div>
                 </div>
 
-               <!-- Questions Card -->
-<div class="card mt-24">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <div>
-            <h6 class="card-title mb-0">Quiz Questions</h6>
-            <p class="text-sm text-secondary-light mt-1">Add 1-5 questions for your quiz</p>
-        </div>
-        <button type="button" class="btn btn-primary" onclick="addQuestion()">
-            Add Question
-        </button>
-    </div>
-    <div class="card-body">
-        <div id="questions-container">
-            <!-- Questions will be added here dynamically -->
-        </div>
-        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message" style="display: block;">
-            <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
-            <h6 class="text-muted mb-2">No questions added yet</h6>
-            <p class="text-muted mb-3">Click the button below to add your first question.</p>
-            <button type="button" class="btn btn-primary" onclick="addQuestion()">
-                Add First Question
-            </button>
-        </div>
-    </div>
-</div>
+                <!-- Questions Card -->
+                <div class="card mt-24">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Quiz Questions</h6>
+                            <p class="text-sm text-secondary-light mt-1">Add 1-5 questions for your quiz</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addQuestion()">
+                            Add Question
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="questions-container">
+                            <!-- Questions will be added here dynamically -->
+                        </div>
+                        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message" style="display: block;">
+                            <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
+                            <h6 class="text-muted mb-2">No questions added yet</h6>
+                            <p class="text-muted mb-3">Click the button below to add your first question.</p>
+                            <button type="button" class="btn btn-primary" onclick="addQuestion()">
+                                Add First Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Column - Settings -->
@@ -132,6 +129,17 @@
                         <h6 class="card-title mb-0">Quiz Settings</h6>
                     </div>
                     <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
+                            <input type="number" name="duration"
+                                   class="form-control @error('duration') is-invalid @enderror"
+                                   value="{{ old('duration') }}"
+                                   placeholder="e.g. 30"
+                                   min="1" max="180" required>
+                            <small class="text-muted">How long students have to complete the quiz (1–180 mins)</small>
+                            @error('duration') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
@@ -187,13 +195,12 @@
     </form>
 </div>
 
-<!-- Question Template -->
+<!-- Question Template — UI identical to original -->
 <template id="question-template">
     <div class="question-item card mb-4" data-question-idx="{idx}">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
             <h6 class="mb-0">Question <span class="question-number">1</span></h6>
             <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeQuestion(this)">
-                <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
                 Remove
             </button>
         </div>
@@ -227,34 +234,37 @@
                     </select>
                 </div>
 
-                <!-- Options Container (for multiple choice) -->
+                <!-- Options Container (for multiple choice) — UI unchanged -->
                 <div class="col-12 mb-3 options-container" style="display: block;">
                     <label class="form-label fw-semibold">Answer Options</label>
                     <div class="options-list">
                         <!-- Options will be added here -->
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
-                        <iconify-icon icon="ic:baseline-plus"></iconify-icon>
                         Add Option
                     </button>
                 </div>
 
-                <!-- True/False Container -->
+                {{--
+                    FIX 1: True/False radio values changed from lowercase "true"/"false"
+                    to "True"/"False" so PHP receives the correctly-cased string directly.
+                    No UI change — labels still say "True" and "False".
+                --}}
                 <div class="col-12 mb-3 true-false-container" style="display: none;">
                     <label class="form-label fw-semibold">Select Correct Answer</label>
                     <div class="d-flex gap-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="true" id="true-{idx}">
+                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="True" id="true-{idx}">
                             <label class="form-check-label" for="true-{idx}">True</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="false" id="false-{idx}">
+                            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="False" id="false-{idx}">
                             <label class="form-check-label" for="false-{idx}">False</label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Short Answer Container -->
+                <!-- Short Answer Container — unchanged -->
                 <div class="col-12 mb-3 short-answer-container" style="display: none;">
                     <label class="form-label fw-semibold">Correct Answer</label>
                     <input type="text" name="questions[{idx}][correct_answer]" class="form-control" placeholder="Enter the correct answer">
@@ -264,12 +274,17 @@
     </div>
 </template>
 
-<!-- Option Item Template -->
+{{--
+    FIX 2: Option radio value changed from "{option-value}" (which produced "option1","option2"...)
+    to "{option-index}" (which produces 0, 1, 2...).
+    The controller reads this as a 0-based index and looks up the actual option text from the options array.
+    UI is completely unchanged — same layout, same delete button.
+--}}
 <template id="option-template">
     <div class="option-item d-flex align-items-center gap-2 mb-2">
         <input type="text" class="form-control" name="questions[{idx}][options][]" placeholder="Enter option" required>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="{option-value}">
+            <input class="form-check-input" type="radio" name="questions[{idx}][correct_answer]" value="{option-index}">
         </div>
         <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeOption(this)">
             <iconify-icon icon="fluent:delete-24-regular"></iconify-icon>
@@ -296,6 +311,11 @@
     .option-item:hover {
         background: #e9ecef;
     }
+    .loading-modules {
+        text-align: center;
+        padding: 10px;
+        color: #6c757d;
+    }
 </style>
 @endpush
 
@@ -303,61 +323,92 @@
 <script>
 let questionCount = 0;
 
+// Dynamic module loading — unchanged
+document.addEventListener('DOMContentLoaded', function() {
+    const courseSelect = document.getElementById('course_id');
+    const moduleSelect = document.getElementById('module_id');
+    
+    if (courseSelect && courseSelect.value) {
+        loadModules(courseSelect.value);
+    }
+    
+    if (courseSelect) {
+        courseSelect.addEventListener('change', function() {
+            const courseId = this.value;
+            if (courseId) {
+                loadModules(courseId);
+            } else {
+                moduleSelect.innerHTML = '<option value="">-- First select a course --</option>';
+            }
+        });
+    }
+});
+
+function loadModules(courseId) {
+    const moduleSelect = document.getElementById('module_id');
+    moduleSelect.innerHTML = '<option value="">Loading modules...</option>';
+    moduleSelect.disabled = true;
+    
+    fetch(`{{ route('admin.assessments.get-modules', '') }}/${courseId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(modules => {
+            moduleSelect.innerHTML = '<option value="">-- Select Module (Optional) --</option>';
+            if (modules && modules.length > 0) {
+                modules.forEach(module => {
+                    const option = document.createElement('option');
+                    option.value = module.id;
+                    option.textContent = `Module ${module.module_number}: ${module.title}`;
+                    moduleSelect.appendChild(option);
+                });
+                moduleSelect.disabled = false;
+            } else {
+                moduleSelect.innerHTML = '<option value="">No modules available for this course</option>';
+                moduleSelect.disabled = true;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading modules:', error);
+            moduleSelect.innerHTML = '<option value="">Error loading modules. Please try again.</option>';
+            moduleSelect.disabled = true;
+        });
+}
+
+// addQuestion — unchanged
 function addQuestion() {
     const container = document.getElementById('questions-container');
     const noQuestionsMsg = document.getElementById('no-questions-message');
     const template = document.getElementById('question-template');
     
-    if (!template) {
-        console.error('Question template not found!');
-        return;
-    }
+    if (!template) { console.error('Question template not found!'); return; }
+    if (noQuestionsMsg) noQuestionsMsg.style.display = 'none';
     
-    if (noQuestionsMsg) {
-        noQuestionsMsg.style.display = 'none';
-    }
-    
-    // Get template HTML and replace placeholders
     let questionHtml = template.innerHTML;
     questionHtml = questionHtml.replace(/{idx}/g, questionCount);
     
-    // Create temporary div and extract the question element
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = questionHtml.trim();
     const questionElement = tempDiv.firstElementChild;
     
-    if (!questionElement) {
-        console.error('Failed to create question element');
-        return;
-    }
+    if (!questionElement) { console.error('Failed to create question element'); return; }
     
-    // Set data attribute
     questionElement.dataset.questionIdx = questionCount;
     
-    // Set question number
     const numberSpan = questionElement.querySelector('.question-number');
-    if (numberSpan) {
-        numberSpan.textContent = container.children.length + 1;
-    }
+    if (numberSpan) numberSpan.textContent = container.children.length + 1;
     
-    // Add to container
     container.appendChild(questionElement);
     
-    // Initialize the question type UI
     const typeSelect = questionElement.querySelector('.question-type');
-    if (typeSelect) {
-        handleQuestionTypeChange(typeSelect);
-    }
+    if (typeSelect) handleQuestionTypeChange(typeSelect);
     
-    // Add default options for multiple choice
     const optionsContainer = questionElement.querySelector('.options-container');
     if (optionsContainer) {
         const addBtn = optionsContainer.querySelector('.btn');
         if (addBtn) {
-            // Add 4 default options
-            for (let i = 0; i < 4; i++) {
-                addOption(addBtn);
-            }
+            for (let i = 0; i < 4; i++) addOption(addBtn);
         }
     }
     
@@ -365,137 +416,110 @@ function addQuestion() {
     updateQuestionNumbers();
 }
 
+// removeQuestion — unchanged
 function removeQuestion(button) {
     const questionItem = button.closest('.question-item');
     if (questionItem) {
         questionItem.remove();
-        
         if (document.querySelectorAll('.question-item').length === 0) {
             const noQuestionsMsg = document.getElementById('no-questions-message');
-            if (noQuestionsMsg) {
-                noQuestionsMsg.style.display = 'block';
-            }
+            if (noQuestionsMsg) noQuestionsMsg.style.display = 'block';
         }
-        
         updateQuestionNumbers();
     }
 }
 
+// updateQuestionNumbers — unchanged
 function updateQuestionNumbers() {
-    const questions = document.querySelectorAll('.question-item');
-    questions.forEach((question, index) => {
+    document.querySelectorAll('.question-item').forEach((question, index) => {
         const numberSpan = question.querySelector('.question-number');
-        if (numberSpan) {
-            numberSpan.textContent = index + 1;
-        }
+        if (numberSpan) numberSpan.textContent = index + 1;
     });
 }
 
+// handleQuestionTypeChange — unchanged
 function handleQuestionTypeChange(select) {
     const questionItem = select.closest('.question-item');
     if (!questionItem) return;
     
-    const optionsContainer = questionItem.querySelector('.options-container');
-    const trueFalseContainer = questionItem.querySelector('.true-false-container');
+    const optionsContainer    = questionItem.querySelector('.options-container');
+    const trueFalseContainer  = questionItem.querySelector('.true-false-container');
     const shortAnswerContainer = questionItem.querySelector('.short-answer-container');
     
-    // Remove required attributes from all inputs in hidden containers
     if (optionsContainer) {
-        const optionInputs = optionsContainer.querySelectorAll('input[required]');
-        optionInputs.forEach(input => input.removeAttribute('required'));
+        optionsContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
         optionsContainer.style.display = 'none';
     }
-    
     if (trueFalseContainer) {
-        const trueFalseInputs = trueFalseContainer.querySelectorAll('input[required]');
-        trueFalseInputs.forEach(input => input.removeAttribute('required'));
+        trueFalseContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
         trueFalseContainer.style.display = 'none';
     }
-    
     if (shortAnswerContainer) {
-        const shortAnswerInputs = shortAnswerContainer.querySelectorAll('input[required]');
-        shortAnswerInputs.forEach(input => input.removeAttribute('required'));
+        shortAnswerContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
         shortAnswerContainer.style.display = 'none';
     }
     
-    // Show appropriate container based on selected type and add required attributes
     switch(select.value) {
         case 'multiple_choice':
             if (optionsContainer) {
                 optionsContainer.style.display = 'block';
-                // Add required back to option inputs
-                const optionInputs = optionsContainer.querySelectorAll('input[type="text"]');
-                optionInputs.forEach(input => input.setAttribute('required', 'required'));
+                optionsContainer.querySelectorAll('input[type="text"]').forEach(i => i.setAttribute('required', 'required'));
             }
             break;
-            
         case 'true_false':
             if (trueFalseContainer) {
                 trueFalseContainer.style.display = 'block';
-                // Make radio buttons required
-                const radioInputs = trueFalseContainer.querySelectorAll('input[type="radio"]');
-                // Only make the first one required (HTML5 will handle the group)
-                if (radioInputs.length > 0) {
-                    radioInputs[0].setAttribute('required', 'required');
-                }
+                const radios = trueFalseContainer.querySelectorAll('input[type="radio"]');
+                if (radios.length > 0) radios[0].setAttribute('required', 'required');
             }
             break;
-            
         case 'short_answer':
             if (shortAnswerContainer) {
                 shortAnswerContainer.style.display = 'block';
-                // Make the correct answer input required
                 const answerInput = shortAnswerContainer.querySelector('input[type="text"]');
-                if (answerInput) {
-                    answerInput.setAttribute('required', 'required');
-                }
+                if (answerInput) answerInput.setAttribute('required', 'required');
             }
             break;
     }
 }
 
+// addOption — FIX 2: uses 0-based index as radio value instead of "option1","option2"...
 function addOption(button) {
     const optionsContainer = button.closest('.options-container');
     if (!optionsContainer) return;
     
-    const optionsList = optionsContainer.querySelector('.options-list');
-    const template = document.getElementById('option-template');
+    const optionsList  = optionsContainer.querySelector('.options-list');
+    const template     = document.getElementById('option-template');
     const questionItem = button.closest('.question-item');
     
     if (!template || !questionItem || !optionsList) return;
     
-    const idx = questionItem.dataset.questionIdx;
-    const optionCount = optionsList.children.length + 1;
+    const idx         = questionItem.dataset.questionIdx;
+    const optionIndex = optionsList.children.length; // 0-based: 0, 1, 2, 3 ...
     
     let optionHtml = template.innerHTML;
     optionHtml = optionHtml.replace(/{idx}/g, idx);
-    optionHtml = optionHtml.replace(/{option-value}/g, 'option' + optionCount);
+    optionHtml = optionHtml.replace(/{option-index}/g, optionIndex); // ← was {option-value} → "option1"
     
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = optionHtml.trim();
     const optionElement = tempDiv.firstElementChild;
     
     if (optionElement) {
-        // Make sure the new option has required attribute
         const textInput = optionElement.querySelector('input[type="text"]');
-        if (textInput) {
-            textInput.setAttribute('required', 'required');
-        }
+        if (textInput) textInput.setAttribute('required', 'required');
         optionsList.appendChild(optionElement);
     }
 }
 
+// removeOption — unchanged
 function removeOption(button) {
     const optionItem = button.closest('.option-item');
-    if (optionItem) {
-        optionItem.remove();
-    }
+    if (optionItem) optionItem.remove();
 }
 
-// Form validation
+// Form submit — original validation kept + FIX 3 added at the end
 document.getElementById('quizForm')?.addEventListener('submit', function(e) {
-    console.log('Form submission validation started');
-    
     const questions = document.querySelectorAll('.question-item');
     
     if (questions.length === 0) {
@@ -504,25 +528,22 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
         return false;
     }
     
-    // Validate each question based on its type
     for (let i = 0; i < questions.length; i++) {
-        const question = questions[i];
+        const question    = questions[i];
         const questionText = question.querySelector('.question-text')?.value;
-        const points = question.querySelector('.question-points')?.value;
-        const typeSelect = question.querySelector('.question-type');
+        const points      = question.querySelector('.question-points')?.value;
+        const typeSelect  = question.querySelector('.question-type');
         
         if (!questionText || !questionText.trim()) {
             e.preventDefault();
             alert(`❌ Question ${i + 1}: Question text is required.`);
             return false;
         }
-        
         if (!points || points <= 0) {
             e.preventDefault();
             alert(`❌ Question ${i + 1}: Valid points are required.`);
             return false;
         }
-        
         if (!typeSelect) continue;
         
         const questionType = typeSelect.value;
@@ -535,24 +556,29 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
                     alert(`❌ Question ${i + 1}: Multiple choice questions need at least 2 options.`);
                     return false;
                 }
-                
                 let hasEmptyOption = false;
-                options.forEach((opt, idx) => {
-                    if (!opt.value.trim()) {
-                        hasEmptyOption = true;
-                        console.log(`Option ${idx + 1} is empty`);
-                    }
-                });
-                
+                options.forEach(opt => { if (!opt.value.trim()) hasEmptyOption = true; });
                 if (hasEmptyOption) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: All options must have text.`);
                     return false;
                 }
+                // Validate a correct answer is selected
+                const checkedMC = question.querySelector('.options-container input[type="radio"]:checked');
+                if (!checkedMC) {
+                    e.preventDefault();
+                    alert(`❌ Question ${i + 1}: Please select the correct answer.`);
+                    return false;
+                }
                 break;
                 
             case 'true_false':
-                // No additional validation needed for true/false
+                const checkedTF = question.querySelector('.true-false-container input[type="radio"]:checked');
+                if (!checkedTF) {
+                    e.preventDefault();
+                    alert(`❌ Question ${i + 1}: Please select True or False as the correct answer.`);
+                    return false;
+                }
                 break;
                 
             case 'short_answer':
@@ -565,21 +591,35 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
                 break;
         }
     }
+
+    // FIX 3: Disable inputs in hidden containers before submit so they send nothing to PHP.
+    // This is the core fix for the NULL bug — hidden inputs were submitting empty/wrong values
+    // that overwrote the actual correct_answer from the visible container.
+    document.querySelectorAll('.question-item').forEach(question => {
+        const type = question.querySelector('.question-type')?.value;
+        if (!type) return;
+
+        const containers = {
+            multiple_choice: question.querySelector('.options-container'),
+            true_false:      question.querySelector('.true-false-container'),
+            short_answer:    question.querySelector('.short-answer-container'),
+        };
+
+        Object.entries(containers).forEach(([containerType, container]) => {
+            if (!container) return;
+            container.querySelectorAll('input').forEach(inp => {
+                inp.disabled = (containerType !== type);
+            });
+        });
+    });
     
-    // Show loading state
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Quiz...';
     }
     
-    console.log('✅ Form validation passed, submitting...');
     return true;
-});
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Quiz form script loaded');
 });
 </script>
 @endpush

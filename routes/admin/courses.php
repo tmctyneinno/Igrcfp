@@ -88,7 +88,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
     
     // Other routes
-    Route::get('/create', [AssessmentController::class, 'create'])->name('assessments.create');
+    Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
     Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
@@ -98,4 +98,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
     Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');
     Route::post('/assessments/bulk-delete', [AssessmentController::class, 'bulkDelete'])->name('assessments.bulk-delete');
+    // AJAX endpoint for getting modules by course
+    Route::get('/get-modules/{courseId}', [AssessmentController::class, 'getModulesByCourse'])->name('assessments.get-modules');
 });

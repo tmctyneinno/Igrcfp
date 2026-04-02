@@ -32,7 +32,7 @@ class AssessmentController extends Controller
         // Filter by course
         if ($request->has('course_id') && $request->course_id != '') {
             $query->where('course_id', $request->course_id);
-        }
+        } 
 
         // Filter by status
         if ($request->has('status') && $request->status != '') {
@@ -115,11 +115,23 @@ class AssessmentController extends Controller
 
     public function createQuiz()
     {
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
-        $modules = CourseModule::orderBy('module_number')->get();
+        $courses = Course::orderBy('title')->get();
+        $modules = collect();
         $type = 'quiz';
         
         return view('admin.courses.assessments.create-quiz', compact('courses', 'modules', 'type'));
+    }
+
+    /**
+     * Get modules for a specific course (AJAX endpoint)
+     */
+    public function getModulesByCourse($courseId)
+    {
+        $modules = CourseModule::where('course_id', $courseId)
+            ->orderBy('module_number')
+            ->get(['id', 'module_number', 'title']);
+        
+        return response()->json($modules);
     }
 
     public function createModuleAssessment()
@@ -181,6 +193,10 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
+         \Log::info('Quiz request data: ', $request->all());
+         \Log::info('Quiz request details:', [
+            'duration' => $request->duration,
+        ]);
         // Check if the request is hitting this method at all
         if (!$request->isMethod('post')) {
             \Log::error('Not a POST request!');
@@ -260,11 +276,13 @@ class AssessmentController extends Controller
             'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
             'type' => 'required|in:exam,assignment,quiz,project',
             'status' => 'required|in:draft,active,archived',
+           
         ];
 
         switch ($type) {
             case 'quiz':
                 return array_merge($baseRules, [
+                    'duration'      => 'required|integer|min:1|max:180',
                     'total_marks' => 'nullable|integer|min:1|max:100',
                     'passing_score' => 'nullable|integer|min:1|max:100',
                     'questions' => 'nullable|array',
@@ -538,7 +556,7 @@ class AssessmentController extends Controller
                 $validated['is_timed'] = false;
                 $validated['requires_identity_verification'] = false;
                 $validated['needs_manual_marking'] = false;
-                $validated['duration'] = null;
+                // $validated['duration'] = null;
                 break;
 
             case 'module_assessment':
@@ -566,22 +584,96 @@ class AssessmentController extends Controller
     /**
      * Save questions for assessment
      */
-    private function saveQuestions($assessment, $questions)
+    
+
+private function saveQuestions(Assessment $assessment, array $questions): void
 {
-    foreach ($questions as $index => $question) {
-        // Filter out null options
-        $options = isset($question['options']) ? array_filter($question['options']) : null;
-        
-        AssessmentQuestion::create([
-            'assessment_id' => $assessment->id,
-            'question_text' => $question['text'],
-            'question_type' => $question['type'] ?? 'multiple_choice',
-            'options' => $options,
-            'correct_answer' => $question['correct_answer'] ?? null,
-            'points' => $question['points'] ?? 1,
-            'order' => $index + 1,
-            'difficulty_level' => $question['difficulty'] ?? 'medium',
-        ]);
+    foreach ($questions as $order => $questionData) {
+ 
+        // Both answer columns default to null
+        $row = [
+            'assessment_id'    => $assessment->id,
+            'question_text'    => $questionData['text'],
+            'question_type'    => $questionData['type'],
+            'points'           => $questionData['points'],
+            'difficulty_level' => $questionData['difficulty'] ?? 'medium',
+            'order'            => $order,
+            'is_required'      => true,
+            'correct_answer'   => null,
+            'correct_answers'  => null,
+        ];
+ 
+        switch ($questionData['type']) {
+ 
+            case 'multiple_choice':
+                // Clean options — remove blank entries, re-index
+                $options = array_values(
+                    array_filter(
+                        $questionData['options'] ?? [],
+                        fn($o) => trim((string) $o) !== ''
+                    )
+                );
+ 
+                $row['options'] = $options;
+ 
+                // correct_answer from the frontend is a 0-based index (e.g. "0", "1", "2")
+                // Resolve it to the actual option text
+                $indexRaw = $questionData['correct_answer'] ?? null;
+ 
+                if ($indexRaw !== null && $indexRaw !== '') {
+                    $index = (int) $indexRaw;
+ 
+                    if (isset($options[$index])) {
+                        $row['correct_answer'] = $options[$index]; // store the TEXT
+                    } else {
+                        // Fallback — shouldn't happen if the form is valid
+                        $row['correct_answer'] = $indexRaw;
+                    }
+                }
+ 
+                // correct_answers stays NULL for multiple_choice
+                break;
+ 
+            case 'true_false':
+                $row['options'] = ['True', 'False'];
+ 
+                // The radio sends "True" or "False" directly — just normalise casing
+                $raw = $questionData['correct_answer'] ?? null;
+                $row['correct_answer'] = $raw !== null
+                    ? ucfirst(strtolower(trim($raw)))   // "true" → "True"
+                    : null;
+ 
+                // correct_answers stays NULL for true_false
+                break;
+ 
+            case 'short_answer':
+                // Plain text input, store as-is
+                $row['correct_answer'] = isset($questionData['correct_answer'])
+                    ? trim($questionData['correct_answer'])
+                    : null;
+ 
+                // correct_answers stays NULL for short_answer
+                break;
+ 
+            case 'multiple_answer':
+                $raw = $questionData['correct_answers'] ?? [];
+                $row['correct_answers'] = is_array($raw) ? $raw : json_decode($raw, true);
+                $row['options'] = array_values(
+                    array_filter(
+                        $questionData['options'] ?? [],
+                        fn($o) => trim((string) $o) !== ''
+                    )
+                );
+                // correct_answer stays NULL
+                break;
+ 
+            case 'essay':
+            case 'case_study':
+                // Both columns stay NULL — manual marking
+                break;
+        }
+ 
+        AssessmentQuestion::create($row);
     }
 }
 

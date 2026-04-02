@@ -176,8 +176,7 @@
                 </div>
                 <div class="col-md-2 text-end">
                     <a href="{{ route('admin.assessments.create') }}" class="btn btn-primary text-sm px-18 py-12 radius-8 d-flex align-items-center gap-2">
-                        <iconify-icon icon="ic:baseline-plus" class="icon text-xl"></iconify-icon>
-                        New Assessment
+                         New Assessment
                     </a>
                 </div>
             </div>
@@ -281,7 +280,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    @if($assessment->is_timed)
+                                    @if($assessment->duration)
                                         <span class="d-flex align-items-center gap-1">
                                             <iconify-icon icon="solar:clock-circle-outline" class="text-primary-600"></iconify-icon>
                                             {{ $assessment->duration }} mins

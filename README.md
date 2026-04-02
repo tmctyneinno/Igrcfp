@@ -71,10 +71,12 @@ chmod -R 775 storage/
 chmod -R 775 bootstrap/cache/
 
 Admin
+moderator@igrcfp.org
+12345678
 superadmin@igrcfp.org
-password123
+12345678
  
- php artisan make:migration create_event_registrations_table
+php artisan make:migration create_event_registrations_table
 
  composer require laravel/ui
  

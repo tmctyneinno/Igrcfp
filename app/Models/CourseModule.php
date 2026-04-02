@@ -17,7 +17,7 @@ class CourseModule extends Model
         'key_concepts',
         'topics_covered', 
         'case_study',
-        'exercise',
+        'exercise', 
         'additional_notes',
         'estimated_hours', 
         'sort_order',

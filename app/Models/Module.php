@@ -13,7 +13,7 @@ class Module extends Model
     protected $fillable = [
         'course_id', 
         'title',
-        'slug',
+        'slug', 
         'description',
         'order',
         'is_published',
