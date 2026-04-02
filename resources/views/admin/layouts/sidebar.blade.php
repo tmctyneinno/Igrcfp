@@ -1,12 +1,13 @@
+{{-- Update your sidebar to conditionally show menu items based on role --}}
 <aside class="sidebar">
     <button type="button" class="sidebar-close-btn">
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
         <a href="index.html" class="sidebar-logo">
-        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="light-logo">
-        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="dark-logo">
-        <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="logo-icon">
+            <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="light-logo">
+            <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="dark-logo">
+            <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="logo-icon">
         </a>
     </div> 
     <div class="sidebar-menu-area">
@@ -16,9 +17,20 @@
                     <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
                     <span>Dashboard</span>
                 </a>
-            </li> 
+            </li>
+
+            {{-- Admin Management - Only for Super Admin and Origin Admin --}}
+            @if(auth()->guard('admin')->user()->isAdmin())
+                <li>
+                    <a href="{{ route('admin.admins.index') }}">
+                        <iconify-icon icon="ic:baseline-admin-panel-settings" class="menu-icon"></iconify-icon>
+                        <span>Admin Users</span>
+                        <span>{{auth()->guard('admin')->user()->isAdmin()}}</span>
+                    </a>
+                </li>
+            @endif
             
-            <!-- Users Management -->
+            <!-- Users Management - All admins -->
             <li>
                 <a href="{{ route('admin.users.index') }}">
                     <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
@@ -36,10 +48,11 @@
                     <li>
                         <a href="{{ route('admin.courses.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.courses.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
-                    </li>
-                    <!-- Add separator line -->
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.courses.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
+                        </li>
+                    @endif
                     <li class="sidebar-separator">
                         <hr class="my-2 mx-3 opacity-25">
                     </li>
@@ -49,69 +62,57 @@
                             Categories
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.course-categories.create') }}">
-                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
-                            Add Category
-                        </a>
-                    </li>
-                    
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.course-categories.create') }}">
+                                <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                                Add Category
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </li>
-            <!-- In your sidebar, update the Assessments submenu -->
+
+            <!-- Assessments - All admins can view, only admins can create -->
             <li class="sidebar-separator">
                 <hr class="my-2 mx-3 opacity-25">
             </li>
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
-                    <span> Assessments</span> 
+                    <span>Assessments</span> 
                 </a>
                 <ul class="sidebar-submenu">
-                    
-                    <!-- Add separator line -->
-                    <li class="sidebar-separator">
-                        <hr class="my-2 mx-3 opacity-25">
-                    </li>
                     <li>
-                        <a href="{{ route('admin.assessments.all') }}" >
+                        <a href="{{ route('admin.assessments.all') }}">
                             <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
                             All Assessments
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.assessments.create.quiz') }}" >
-                            <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
-                            Quiz
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.assessments.create.module') }}" >
-                            <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
-                            Module Assessment
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.assessments.create.final') }}" >
-                            <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
-                            Final Exam
-                        </a>
-                    </li>
-                    {{-- <li>
-                        <a href="{{ route('admin.assessments.create.diploma') }}" >
-                            <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i>
-                            Diploma Project
-                        </a>
-                    </li> --}}
-                    
-                    
-                    
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.assessments.create.quiz') }}">
+                                <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
+                                Quiz
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.assessments.create.module') }}">
+                                <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
+                                Module Assessment
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.assessments.create.final') }}">
+                                <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
+                                Final Exam
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </li>
            
-            
-
-            <!-- NEW: Enrollments Management -->
+            <!-- Enrollments Management -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="mingcute:user-star-line" class="menu-icon"></iconify-icon>
@@ -133,37 +134,38 @@
                 </ul>
             </li>
 
-            <!-- NEW: Transactions Management -->
-            <li class="dropdown">
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="hugeicons:transaction" class="menu-icon"></iconify-icon>
-                    <span>Transactions</span> 
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('admin.transactions.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Transactions</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.transactions.pending') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Pending</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.transactions.completed') }}"><i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Completed</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.transactions.failed') }}"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Failed</a>
-                    </li>
-                </ul>
-            </li>
+            <!-- Transactions & Reports - Only for admins -->
+            @if(auth()->guard('admin')->user()->isAdmin())
+                <li class="dropdown">
+                    <a href="javascript:void(0)">
+                        <iconify-icon icon="hugeicons:transaction" class="menu-icon"></iconify-icon>
+                        <span>Transactions</span> 
+                    </a>
+                    <ul class="sidebar-submenu">
+                        <li>
+                            <a href="{{ route('admin.transactions.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> All Transactions</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.transactions.pending') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Pending</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.transactions.completed') }}"><i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Completed</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.transactions.failed') }}"><i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> Failed</a>
+                        </li>
+                    </ul>
+                </li>
 
-            <!-- NEW: Revenue Reports -->
-            <li>
-                <a href="{{ route('admin.reports.revenue') }}">
-                    <iconify-icon icon="solar:chart-2-outline" class="menu-icon"></iconify-icon>
-                    <span>Revenue Reports</span>
-                </a>
-            </li>
+                <li>
+                    <a href="{{ route('admin.reports.revenue') }}">
+                        <iconify-icon icon="solar:chart-2-outline" class="menu-icon"></iconify-icon>
+                        <span>Revenue Reports</span>
+                    </a>
+                </li>
+            @endif
 
-            <!-- Blogs Management -->
+            <!-- Blogs Management - All admins -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
@@ -173,13 +175,15 @@
                     <li>
                         <a href="{{ route('admin.blogs.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.blogs.create') }}"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Add new</a>
-                    </li>
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.blogs.create') }}"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Add new</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 
-            <!-- Events Management -->
+            <!-- Events Management - All admins -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
@@ -189,13 +193,15 @@
                     <li>
                         <a href="{{ route('admin.events.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.events.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
-                    </li>
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.events.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 
-            <!-- News/Articles Management -->
+            <!-- News Management - All admins -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
@@ -205,9 +211,11 @@
                     <li>
                         <a href="{{ route('admin.articles.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.articles.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
-                    </li>
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.articles.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
         </ul>

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckAdminRole
-{
+{ 
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $admin = Auth::guard('admin')->user();

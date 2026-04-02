@@ -1,6 +1,4 @@
 <?php
-// app/Models/AssessmentQuestion.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -17,8 +15,8 @@ class AssessmentQuestion extends Model
         'question_text',
         'question_type',
         'options',
-        'correct_answer',
-        'correct_answers',
+        'correct_answer',   // singular  — used by: multiple_choice, true_false, short_answer
+        'correct_answers',  // plural    — used by: multiple_answer ONLY
         'points',
         'is_required',
         'image_url',
@@ -30,81 +28,91 @@ class AssessmentQuestion extends Model
     ];
 
     protected $casts = [
-        'options' => 'array',
-        'correct_answers' => 'array',
-        'is_required' => 'boolean',
-        'tags' => 'array',
-        'points' => 'decimal:2',
+        'options'          => 'array',
+        'correct_answers'  => 'array',
+        'is_required'      => 'boolean',
+        'tags'             => 'array',
+        'points'           => 'decimal:2',
     ];
 
-    /**
-     * Relationships
-     */
-    public function assessment()
+    // ── Accessor: always return options as array ──────────────────────────────
+
+    public function getOptionsAttribute($value): array
     {
-        return $this->belongsTo(Assessment::class);
+        if (is_null($value)) return [];
+        if (is_array($value)) return $value;
+
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
     }
 
-    /**
-     * Check if answer is correct
-     */
-    public function isAnswerCorrect($answer)
+    // ── Mutator: always store options as JSON ─────────────────────────────────
+
+    public function setOptionsAttribute($value): void
+    {
+        $this->attributes['options'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    // ── Answer checking ───────────────────────────────────────────────────────
+
+    public function isAnswerCorrect($answer): ?bool
     {
         switch ($this->question_type) {
+
             case 'multiple_choice':
             case 'true_false':
-                return $answer == $this->correct_answer;
-                
+            case 'short_answer':
+                // All three use correct_answer (singular), case-insensitive
+                return strtolower(trim((string) $answer))
+                    === strtolower(trim((string) $this->correct_answer));
+
             case 'multiple_answer':
-                $correct = is_array($this->correct_answers) ? $this->correct_answers : json_decode($this->correct_answers, true);
-                $submitted = is_array($answer) ? $answer : json_decode($answer, true);
-                
+                // Uses correct_answers (plural JSON array)
+                $correct   = is_array($this->correct_answers)
+                    ? $this->correct_answers
+                    : json_decode($this->correct_answers, true);
+                $submitted = is_array($answer)
+                    ? $answer
+                    : json_decode($answer, true);
+
                 if (!is_array($correct) || !is_array($submitted)) return false;
-                
+
                 sort($correct);
                 sort($submitted);
-                return $correct == $submitted;
-                
-            case 'short_answer':
-                // Case-insensitive comparison, trim whitespace
-                return strtolower(trim($answer)) == strtolower(trim($this->correct_answer));
-                
+                return $correct === $submitted;
+
             case 'essay':
             case 'case_study':
-                // Essays need manual marking
-                return null;
-                
+                return null; // manual marking
+
             default:
                 return false;
         }
     }
 
-    /**
-     * Calculate points earned for this answer
-     */
-    public function calculatePoints($answer)
+    // ── Points calculation ────────────────────────────────────────────────────
+
+    public function calculatePoints($answer): ?float
     {
         $isCorrect = $this->isAnswerCorrect($answer);
-        
-        if ($isCorrect === null) {
-            // Manual marking needed
-            return null;
-        }
-        
-        return $isCorrect ? $this->points : 0;
+
+        return $isCorrect === null ? null : ($isCorrect ? (float) $this->points : 0.0);
     }
 
-    /**
-     * Get shuffled options (for multiple choice)
-     */
-    public function getShuffledOptionsAttribute()
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    public function getShuffledOptionsAttribute(): array
     {
-        if (!is_array($this->options)) {
-            return [];
-        }
-        
         $options = $this->options;
-        shuffle($options);
-        return $options;
+        if (!is_array($options) || empty($options)) return [];
+
+        $shuffled = $options;
+        shuffle($shuffled);
+        return $shuffled;
+    }
+
+    public function getCorrectAnswerTextAttribute(): string
+    {
+        return $this->correct_answer ?? '';
     }
 }
