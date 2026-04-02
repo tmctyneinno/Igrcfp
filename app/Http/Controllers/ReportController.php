@@ -12,13 +12,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
-{
+{ 
     public function revenue(Request $request)
     {
         $period = $request->get('period', 'monthly');
         $startDate = $request->get('start_date', Carbon::now()->subMonths(6));
         $endDate = $request->get('end_date', Carbon::now());
-
+    
         if ($period != 'custom') {
             switch ($period) {
                 case 'daily':
