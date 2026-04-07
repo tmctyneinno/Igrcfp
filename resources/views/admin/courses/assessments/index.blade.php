@@ -278,7 +278,7 @@
                                     <span class="badge {{ $color }} text-white px-12 py-6 radius-8">
                                         {{ $label }}
                                     </span>
-                                </td>
+                                </td> 
                                 <td>
                                     @if($assessment->duration)
                                         <span class="d-flex align-items-center gap-1">
