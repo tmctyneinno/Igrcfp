@@ -7,10 +7,10 @@ export default function CGFCSSpecialist({ auth }) {
             <Head title="Certification programmes | IGRCFP" />
 
             {/* Header */}
-            <section className="w-full bg-gradient-to-r from-blue-900 to-blue-800 text-white py-20">
+             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">Professional certifications & diplomas</h1>
-                    <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                         IGRCFP credentials: from specialist certificates to advanced diplomas and the flagship CGFCS designation
                     </p>
                 </div>

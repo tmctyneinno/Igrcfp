@@ -78,21 +78,17 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             <Head title="Professional Certifications | IGRCFP" />
             
             {/* Hero Section */}
-            <section className="w-full bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white py-24">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-4xl">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                            IGRCFP Certifications
-                        </h1>
-                        <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                            Professional Certifications in Governance, Risk, Compliance & Financial Crime Prevention
-                        </p>
-                        <p className="text-lg text-blue-50 max-w-3xl">
-                            The Institute of GRC & Financial Crime Prevention (IGRCFP) offers a portfolio of 
-                            professional certifications designed to develop advanced capability in governance, 
-                            risk management, regulatory compliance, and financial crime prevention.
-                        </p>
-                    </div>
+             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4"> IGRCFP Certifications</h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        IGRCFP credentials: from specialist certificates to advanced diplomas and the flagship CGFCS designation
+                    </p>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        The Institute of GRC & Financial Crime Prevention (IGRCFP) offers a portfolio of 
+                        professional certifications designed to develop advanced capability in governance, 
+                        risk management, regulatory compliance, and financial crime prevention.
+                    </p>
                 </div>
             </section>
 
