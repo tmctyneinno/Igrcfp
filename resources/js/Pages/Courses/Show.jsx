@@ -68,7 +68,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
   // Get image URLs - added these lines
   const imageUrl = course.image_url || course.image;
-  const bannerImageUrl = course.banner_image_url || course.banner_image;
+  // const bannerImageUrl = course.banner_image_url || course.banner_image;
 
   // Tab content
   const tabs = [
@@ -94,12 +94,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
         {/* Hero Banner */}
         <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
           {/* Background Banner Image - Added */}
-          {bannerImageUrl && (
-            <div 
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${bannerImageUrl})` }}
-            />
-          )}
+         
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="flex flex-col lg:flex-row items-start gap-8">
