@@ -5,7 +5,7 @@ import { Head, Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext'; 
 import toast from 'react-hot-toast';
-import CourseCard from '@/components/Courses/CourseCard';
+import DashboardCourseCard from '@/components/Courses/DashboardCourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -408,8 +408,8 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                             {courses.data && courses.data.length > 0 ? (
                                 <div className={`grid gap-6 ${
                                     showFilters 
-                                        ? 'grid-cols-1 md:grid-cols-3 xl:grid-cols-4' 
-                                        : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4'
+                                        ? 'grid-cols-1 md:grid-cols-3 xl:grid-cols-3' 
+                                        : 'grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3'
                                 }`}>
                                     {courses.data.map((course, index) => (
                                         <motion.div
@@ -418,7 +418,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
                                         >
-                                            <CourseCard   
+                                            <DashboardCourseCard   
                                                 course={course}  
                                                 onAddToCart={handleAddToCart}
                                                 isInCart={isInCart(course.id)}

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-
+ 
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -56,11 +56,23 @@ class AuthenticatedSessionController extends Controller
         $redirect = $request->input('redirect');
         
         if ($redirect) {
+            // Check if this is an enrollment redirect
+            if (str_contains($redirect, '/enroll')) {
+                // Store in session that we came from enrollment
+                session(['from_enrollment' => true]);
+            }
             return redirect($redirect);
         }
         
         // Check if there's an intended URL (from auth middleware)
         if (session()->has('url.intended')) {
+            $intendedUrl = session('url.intended');
+            
+            // If intended URL is an enrollment page, redirect there
+            if (str_contains($intendedUrl, '/enroll')) {
+                session(['from_enrollment' => true]);
+            }
+            
             return redirect()->intended();
         }
 
@@ -88,6 +100,17 @@ class AuthenticatedSessionController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+
+         // Check for redirect parameter in the request
+        $redirect = $request->input('redirect');
+
+        if ($redirect) {
+            // Check if this is an enrollment redirect
+            if (str_contains($redirect, '/enroll')) {
+                session(['from_enrollment' => true]);
+            }
+            return redirect($redirect);
+        }
  
         // Redirect to dashboard after registration
         return redirect()->route('dashboard.index'); // or 'dashboard.index' depending on your route name

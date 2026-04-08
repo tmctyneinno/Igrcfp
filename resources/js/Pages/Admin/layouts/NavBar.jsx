@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { Icon } from '@iconify/react'; // Changed import
-
+ 
 const NavBar = ({ adminName }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);

@@ -5,14 +5,14 @@ import NavBar from "@/Pages/Admin/layouts/NavBar";
 import SideBar from "@/Pages/Admin/layouts/SideBar";
 
 export default function AdminLayout({ children, title = 'Admin Dashboard', adminName }) {
-    return (
+    return ( 
         <>
             <Header title="Admin Dashboard" />
             <SideBar />
             <main className="dashboard-main">
                 <NavBar adminName={adminName} /> 
                 {children}
-                <Footer />
+                <Footer /> 
             </main>
         </>
     );

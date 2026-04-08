@@ -15,21 +15,23 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware aliases
         $middleware->alias([ 
             'admin.role' => \App\Http\Middleware\AdminRoleMiddleware::class,
-            'auth.admin' => App\Http\Middleware\AuthenticateAdmin::class,
-            'guest:admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'auth.admin' => \App\Http\Middleware\AuthenticateAdmin::class,
+            'guest.admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'enrollment.redirect' => \App\Http\Middleware\HandleEnrollmentRedirect::class,
         ]);
         
-        // Admin middleware group (more streamlined)
+        // Admin middleware group
         $middleware->group('admin', [
-            'auth:admin',
+            'auth.admin',
             'web', // This includes all web middleware
         ]);
         
-        // Web middleware with Inertia (as you have)
+        // Web middleware with Inertia
         $middleware->web(append: [
-            App\Http\Middleware\HandleInertiaRequests::class,
-            Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
+            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\HandleEnrollmentRedirect::class, // Add enrollment redirect to web middleware
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

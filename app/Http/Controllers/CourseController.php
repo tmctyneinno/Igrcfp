@@ -177,11 +177,24 @@ class CourseController extends Controller
             // Store the intended course in session for redirect after login
             session(['intended_enrollment' => $course->slug]);
             
-            // Redirect to login with a message
-            return redirect()->route('login')->with('success', 'Please login to enroll in this course.');
+            // Redirect to login with a message and the enrollment redirect
+            return redirect()->route('login', [
+                'redirect' => route('courses.enroll', ['course' => $course->slug])
+            ])->with('success', 'Please login to enroll in this course.');
         }
 
-        // User is logged in - Add to cart
+        // Check if user is already enrolled
+        $existingEnrollment = Enrollment::where('user_id', $request->user()->id)
+            ->where('course_id', $course->id)
+            ->first();
+            
+        if ($existingEnrollment) {
+            // User is already enrolled, redirect to their course
+            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
+                ->with('info', 'You are already enrolled in this course.');
+        }
+
+        // User is logged in and not enrolled - Add to cart
         $user = $request->user();
         
         // Get or create active cart for user
@@ -200,7 +213,7 @@ class CourseController extends Controller
         $existingItem = $cart->items()->where('course_id', $course->id)->first();
         
         if ($existingItem) {
-            return redirect()->route('cart.index')->with('info', 'Course is already in your cart.');
+            return redirect()->route('dashboard.cart.index')->with('info', 'Course is already in your cart.');
         }
         
         // Add course to cart
@@ -218,7 +231,7 @@ class CourseController extends Controller
         ]);
 
         // Redirect to cart page with success message
-        return redirect()->route('cart.index')->with('success', 'Course added to cart successfully!');
+        return redirect()->route('dashboard.cart.index')->with('success', 'Course added to cart successfully!');
     }
 
     

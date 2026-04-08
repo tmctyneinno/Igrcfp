@@ -211,11 +211,15 @@
                                             <div class="row mb-3">
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
-                                                        <strong>Description:</strong>
-                                                        <p class="mb-2">{!! $module->short_description !!}</p>
+                                                        <strong>Course outline:</strong>
+                                                        <p class="mb-2">{!! $module->course_outline !!}</p>
                                                     </div>
                                                     
-                                                    @if($module->learning_objectives)
+                                                   
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                     @if($module->learning_objectives)
                                                         <div class="mb-3">
                                                             <strong>Learning Objectives:</strong>
                                                             <div class="ms-3">
@@ -224,60 +228,8 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                                
-                                                <div class="col-md-6">
-                                                    @if($module->topics_covered)
-                                                        <div class="mb-3">
-                                                            <strong>Topics Covered:</strong>
-                                                            <div class="ms-3">
-                                                                {!! ($module->topics_covered) !!}
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                    
-                                                    @if($module->key_concepts)
-                                                        <div class="mb-3">
-                                                            <strong>Key Concepts:</strong>
-                                                            <div class="ms-3">
-                                                                {!! ($module->key_concepts) !!}
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                </div>
                                             </div>
                                             
-                                            <div class="row">
-                                                @if($module->case_study)
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <strong>Case Study:</strong>
-                                                            <div class="ms-3 bg-light p-3 rounded-8">
-                                                                {!! ($module->case_study) !!}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                                
-                                                @if($module->exercise)
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <strong>Exercise:</strong>
-                                                            <div class="ms-3 bg-light p-3 rounded-8">
-                                                                {!! ($module->exercise) !!}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            
-                                            @if($module->additional_notes)
-                                                <div class="mb-3">
-                                                    <strong>Additional Notes:</strong>
-                                                    <div class="ms-3 bg-light p-3 rounded-8">
-                                                        {!! ($module->additional_notes) !!}
-                                                    </div>
-                                                </div>
-                                            @endif
                                             
                                             @if($module->full_content)
                                                 <div class="mb-3">

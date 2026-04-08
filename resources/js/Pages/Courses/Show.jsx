@@ -23,7 +23,7 @@ import {
 export default function CourseShow({ auth, course, isEnrolled }) {
   const [activeTab, setActiveTab] = useState('overview');
   const { startEnrollment, user } = useEnrollment();
-
+ 
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -66,6 +66,10 @@ export default function CourseShow({ auth, course, isEnrolled }) {
   const modules = Array.isArray(course.modules) ? course.modules : [];
   const materials = Array.isArray(course.materials) ? course.materials : [];
 
+  // Get image URLs - added these lines
+  const imageUrl = course.image_url || course.image;
+  const bannerImageUrl = course.banner_image_url || course.banner_image;
+
   // Tab content
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BookOpenIcon },
@@ -89,11 +93,29 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
         {/* Hero Banner */}
         <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
+          {/* Background Banner Image - Added */}
+          {bannerImageUrl && (
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${bannerImageUrl})` }}
+            />
+          )}
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="flex flex-col lg:flex-row items-start gap-8">
               {/* Course Title & Basic Info */}
               <div className="lg:w-2/3">
+                {/* Course Image - Added for mobile/tablet view */}
+                {imageUrl && (
+                  <div className="lg:hidden mb-6">
+                    <img 
+                      src={imageUrl} 
+                      alt={course.title}
+                      className="w-full h-48 object-cover rounded-lg shadow-lg"
+                    />
+                  </div>
+                )}
+                
                 <div className="flex items-center gap-2 mb-4">
                   <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
                     {course.level || 'All Levels'}
@@ -129,6 +151,17 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
               {/* Pricing Card */}
               <div className="lg:w-1/3 w-full">
+                {/* Course Image - Added inside pricing card for desktop view */}
+                {imageUrl && (
+                  <div className="hidden lg:block mb-4">
+                    <img 
+                      src={imageUrl} 
+                      alt={course.title}
+                      className="w-full h-48 object-cover rounded-lg shadow-lg"
+                    />
+                  </div>
+                )}
+                
                 <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold">Enroll Now</h3>
@@ -181,7 +214,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
           </div>
         </div>
 
-        {/* Main Content with Tabs */}
+        {/* Main Content with Tabs - Rest of the code remains unchanged */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Tabs Navigation */}
           <div className="border-b border-gray-200 mb-8">
@@ -212,9 +245,9 @@ export default function CourseShow({ auth, course, isEnrolled }) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content Area */}
             <div className="lg:col-span-2">
-              {/* Overview Tab */}
+              {/* Overview Tab */} 
               {activeTab === 'overview' && (
-                <motion.div
+                <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}

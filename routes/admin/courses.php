@@ -60,7 +60,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
 
 // Module Management Routes
 Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')->group(function () {
-    Route::get('create', [ModuleController::class, 'create'])->name('create');
+    Route::get('create', [ModuleController::class, 'create'])->name('create'); 
     Route::post('/', [ModuleController::class, 'store'])->name('store');
     Route::get('{module}/edit', [ModuleController::class, 'edit'])->name('edit');
     Route::put('{module}', [ModuleController::class, 'update'])->name('update');

@@ -84,18 +84,37 @@
                                 @enderror
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea id="editor8" name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description of the module (max 500 characters)" 
-                                          required maxlength="500">{{ old('short_description') }}</textarea>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">Maximum 500 characters</small>
-                                    <small class="character-count" data-target="short_description">0/500</small>
+                           <!-- Learning Objectives -->
+                            <div class=" mt-24">
+                                <div class="">
+                                    <h6 class="card-title mb-0">Learning Outcome</h6>
                                 </div>
-                                @error('short_description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <div class="">
+                                    <div class="mb-3">
+                                        <label class="form-label">What will students learn in this module?</label>
+                                        <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
+                                        rows="5" placeholder="List the learning objectives (one per line or bullet points)"></textarea>
+                                        @error('learning_objectives')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Learning Objectives -->
+                            <div class=" mt-24">
+                                <div class="mb-3">
+                                    <h6 class="card-title mb-0">Course Outline</h6>
+                                </div>
+                                <div class="">
+                                    <div class="mb-3">
+                                         <textarea id="editor1" name="course_outline" class="form-control @error('course_outline') is-invalid @enderror" 
+                                        rows="5" placeholder="Course Outline"></textarea>
+                                        @error('course_outline')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-12">
@@ -129,22 +148,7 @@
                     </div>
                 </div>
 
-                <!-- Learning Objectives -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Learning Objectives</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">What will students learn in this module?</label>
-                            <textarea id="editor1" name="learning_objectives" class="form-control @error('learning_objectives') is-invalid @enderror" 
-                            rows="5" placeholder="List the learning objectives (one per line or bullet points)"></textarea>
-                            @error('learning_objectives')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
+                
 
                 <!-- Topics Covered -->
                 <div class="card mt-24">
@@ -459,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Set up character counter
-    setupCharacterCount('textarea[name="short_description"]', '.character-count[data-target="short_description"]');
+    setupCharacterCount('textarea[name="course_outline"]', '.character-count[data-target="course_outline"]');
 
     // Update preview in real-time
     const moduleNumberInput = document.querySelector('input[name="module_number"]');
@@ -508,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate required fields - SIMPLE CHECK LIKE COURSE FORM
             const title = this.querySelector('input[name="title"]');
-            const shortDesc = this.querySelector('textarea[name="short_description"]');
+            // const shortDesc = this.querySelector('textarea[name="short_description"]');
             const fullContent = this.querySelector('textarea[name="full_content"]');
             
             if (!title || !title.value.trim()) {
@@ -518,12 +522,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            if (!shortDesc || !shortDesc.value.trim()) {
-                e.preventDefault();
-                alert('Short description is required');
-                shortDesc.focus();
-                return;
-            }
+            
             
             if (!fullContent || !fullContent.value.trim()) {
                 e.preventDefault();
