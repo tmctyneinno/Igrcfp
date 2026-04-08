@@ -145,6 +145,14 @@ class HomeController extends Controller
         ]);
     }
 
+    public function certificationsOverview(){
+    
+        return Inertia::render('Certifications/CertificationsOverview', [
+            'title' => 'certifications Overview',
+            'description' => 'Certified GRC & Financial Crime Specialist',
+        ]);
+    }
+
     public function certificationsPathway(){
         return Inertia::render('Certifications/Pathway', [
             'title' => 'Certification Pathway',
@@ -160,6 +168,7 @@ class HomeController extends Controller
             'description' => 'Certified GRC & Financial Crime Specialist',
         ]);
     }
+
 
     public function eventsIndex(){
         $currentDate = now()->toDateString();
