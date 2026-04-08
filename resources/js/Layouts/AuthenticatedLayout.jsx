@@ -93,7 +93,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard.index')}
                                     active={route().current('dashboard.index')}
                                 >
-                                    Dashboard
+                                   Dashboard
                                 </NavLink>
                                 <NavLink
                                     href={route('dashboard.courses.index')}
@@ -106,7 +106,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('dashboard.my-courses')}
                                 >
                                     My Learning
-                                </NavLink>
+                                </NavLink> 
+                                <NavLink
+                                    href={route('dashboard.memebership')}
+                                    active={route().current('dashboard.memebership')}
+                                >
+                                    Memebership
+                                </NavLink> 
                             </div>
                         </div>
 

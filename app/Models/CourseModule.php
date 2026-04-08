@@ -11,7 +11,7 @@ class CourseModule extends Model
         'title',
         'code',
         'module_number',
-        'short_description',
+        'course_outline',
         'full_content',
         'learning_objectives',
         'key_concepts',

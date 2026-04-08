@@ -75,10 +75,16 @@ createInertiaApp({
         console.log('🚀 Inertia setup complete');
         console.log('📦 Props received:', Object.keys(props));
         
+        // Get auth user from props
+        const auth = props.initialPage.props.auth || null;
+        
+        // Get enrollmentRedirect from props if it exists
+        const enrollmentRedirect = props.initialPage.props.enrollmentRedirect || null;
+        
         const root = createRoot(el);
         root.render(
-            <EnrollmentProvider user={props.auth?.user}>
-                 <CartProvider> 
+            <EnrollmentProvider user={auth?.user} enrollmentRedirect={enrollmentRedirect}>
+                <CartProvider> 
                     <App {...props} />
                 </CartProvider>
             </EnrollmentProvider>

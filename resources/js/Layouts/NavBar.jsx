@@ -15,7 +15,7 @@ export default function NavBar({ auth }) {
             ) {
                 setIsMobileMenuOpen(false);
             }
-        }; 
+        };  
 
         if (isMobileMenuOpen) {
             document.addEventListener("mousedown", handleClickOutside);

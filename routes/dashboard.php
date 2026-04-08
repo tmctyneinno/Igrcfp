@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
+    Route::get('/memebership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
 

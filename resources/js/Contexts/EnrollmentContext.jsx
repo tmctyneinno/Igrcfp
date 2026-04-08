@@ -1,19 +1,34 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 
 // Create context
 const EnrollmentContext = createContext();
 
 // Provider component
-export const EnrollmentProvider = ({ children, user }) => {
+export const EnrollmentProvider = ({ children, user, enrollmentRedirect }) => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [redirectAfterAuth, setRedirectAfterAuth] = useState(null);
+
+  // Handle enrollment redirect after login
+  useEffect(() => {
+    if (user && enrollmentRedirect) {
+      // User is now logged in and we have a pending enrollment redirect
+      router.visit(enrollmentRedirect);
+    }
+  }, [user, enrollmentRedirect]);
 
   const startEnrollment = (course) => {
     setSelectedCourse(course);
     
     if (!user) {
-      // Pass redirect as query parameter, not in data object
+      // Store the intended enrollment in session storage
+      sessionStorage.setItem('pendingEnrollment', JSON.stringify({
+        courseId: course.id,
+        courseSlug: course.slug,
+        timestamp: Date.now()
+      }));
+      
+      // Pass redirect as query parameter
       const redirectUrl = `/courses/${course.slug}/enroll`;
       router.visit(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
       return;

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class Course extends Model
 {
     use SoftDeletes;
-
+ 
     protected $fillable = [
         'title',
         'slug',

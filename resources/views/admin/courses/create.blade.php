@@ -10,7 +10,7 @@
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
                 </a>
-            </li>
+            </li> 
             <li>-</li> 
             <li class="fw-medium">
                 <a href="{{ route('admin.courses.index') }}" class="hover-text-primary">Courses</a>
@@ -19,7 +19,7 @@
             <li class="fw-medium">Create Course</li>
         </ul>
     </div>
-
+ 
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Please fix the following errors:</strong>
@@ -283,34 +283,63 @@
                 </div>
 
                 <!-- Pricing Information -->
-                <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Pricing Information</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Regular Price ($)</label>
-                                <input type="number" name="price" id="priceInput" class="form-control @error('price') is-invalid @enderror" 
-                                       placeholder="0.00" value="{{ old('price') }}" step="0.01" min="0">
-                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for free courses</p>
-                                @error('price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label">Discount Price ($)</label>
-                                <input type="number" name="discount_price" id="discountPrice" class="form-control @error('discount_price') is-invalid @enderror" 
-                                       placeholder="0.00" value="{{ old('discount_price') }}" step="0.01" min="0">
-                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for no discount</p>
-                                @error('discount_price')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                <!-- Pricing Information -->
+<div class="card mt-24">
+    <div class="card-header">
+        <h6 class="card-title mb-0">Pricing Information</h6>
+    </div>
+    <div class="card-body">
+        <div class="row gy-3">
+            <div class="col-12">
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
+                    <div>
+                        <strong>Course Type:</strong> 
+                        <span id="courseTypeIndicator" class="badge bg-success ms-2">FREE COURSE</span>
                     </div>
                 </div>
+            </div>
+            
+            <div class="col-md-6">
+                <label class="form-label">Regular Price ($)</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" name="price" id="priceInput" class="form-control @error('price') is-invalid @enderror" 
+                           placeholder="0.00" value="{{ old('price', $course->price ?? '') }}" step="0.01" min="0">
+                </div>
+                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for free courses</p>
+                @error('price')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Discount Price ($)</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" name="discount_price" id="discountPrice" class="form-control @error('discount_price') is-invalid @enderror" 
+                           placeholder="0.00" value="{{ old('discount_price', $course->discount_price ?? '') }}" step="0.01" min="0">
+                </div>
+                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for no discount</p>
+                @error('discount_price')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            
+            <div class="col-12">
+                <div id="pricingPreview" class="mt-3 p-3 bg-light rounded-8">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-medium">Final Price:</span>
+                        <span id="finalPriceDisplay" class="h4 mb-0 text-primary">$0.00</span>
+                    </div>
+                    <div id="discountInfo" class="mt-2" style="display: none;">
+                        <span class="badge bg-danger" id="discountBadge">Save 0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Detailed Course Information -->
                 <div class="card mt-24">
