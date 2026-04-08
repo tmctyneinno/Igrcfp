@@ -21,7 +21,8 @@ import {
   ChartBarIcon,
   ShieldCheckIcon,
   GlobeAltIcon,
-  TrophyIcon
+  TrophyIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline';
 import { 
   CheckCircleIcon as CheckCircleSolid 
@@ -57,6 +58,10 @@ export default function Show({ course, enrollment, modules = [], auth }) {
   
   const isEnrolled = !!enrollment;
   const progress = enrollment?.progress || 0;
+
+  // Get image URLs
+  const courseImageUrl = course.image_url || course.image;
+  const bannerImageUrl = course.banner_image_url || course.banner_image;
 
   // Price calculations
   const price = parseFloat(course.price) || 0;
@@ -148,14 +153,15 @@ const startEnrollment = (course) => {
 
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        {course.banner_image && (
+        {/* Banner Image Background */}
+        {bannerImageUrl && (
           <img 
-            src={course.image_url} 
-            alt="" 
+            src={bannerImageUrl} 
+            alt={`${course.title} banner`}
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
         )}
+        <div className="absolute inset-0 bg-black opacity-50"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid lg:grid-cols-3 gap-12">
@@ -170,6 +176,12 @@ const startEnrollment = (course) => {
                 {course.format && (
                   <span className="px-4 py-1.5 bg-white/10 backdrop-blur rounded-full text-sm font-medium border border-white/20">
                     {course.format}
+                  </span>
+                )}
+                {course.is_featured && (
+                  <span className="px-4 py-1.5 bg-yellow-500/20 backdrop-blur rounded-full text-sm font-medium border border-yellow-400/30 flex items-center gap-1">
+                    <StarIcon className="w-4 h-4 text-yellow-400" />
+                    Featured
                   </span>
                 )}
               </div>
@@ -218,6 +230,17 @@ const startEnrollment = (course) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl shadow-2xl overflow-hidden"
               >
+                {/* Course Image in Enrollment Card */}
+                {courseImageUrl && (
+                  <div className="relative h-48 bg-gray-100">
+                    <img 
+                      src={courseImageUrl} 
+                      alt={course.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                
                 {hasDiscount && (
                   <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-center py-2 font-bold">
                     {discountPercentage}% OFF - Limited Time Offer
@@ -235,7 +258,7 @@ const startEnrollment = (course) => {
                           <span className="text-xl line-through text-gray-400">
                             {formatPrice(price)}
                           </span>
-                        </div>
+                        </div> 
                         <p className="text-green-600 font-medium flex items-center gap-1">
                           <CheckCircleSolid className="w-4 h-4" />
                           Save {formatPrice(price - discountPrice)}
@@ -366,6 +389,17 @@ const startEnrollment = (course) => {
               {/* Overview Tab */}
               {activeTab === 'overview' && (
                 <div className="bg-white rounded-xl border border-gray-200 p-8">
+                  {/* Course Image in Overview (for mobile/tablet) */}
+                  {courseImageUrl && (
+                    <div className="lg:hidden mb-6">
+                      <img 
+                        src={courseImageUrl} 
+                        alt={course.title}
+                        className="w-full h-48 object-cover rounded-lg shadow-md"
+                      />
+                    </div>
+                  )}
+                  
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">About This Course</h2>
                   <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
@@ -540,6 +574,17 @@ const startEnrollment = (course) => {
 
             {/* Sidebar */}
             <div className="space-y-6">
+              {/* Course Image in Sidebar (for desktop) */}
+              {courseImageUrl && (
+                <div className="hidden lg:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <img 
+                    src={courseImageUrl} 
+                    alt={course.title}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+              )}
+              
               {/* Course Details Card */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="font-bold text-gray-900 mb-4">Course Details</h3>
@@ -602,7 +647,7 @@ const startEnrollment = (course) => {
               onClick={() => startEnrollment(course)}
               className="bg-white text-blue-900 font-bold py-4 px-12 rounded-xl hover:bg-gray-100 transition transform hover:-translate-y-0.5 text-lg"
             >
-              Enroll Now - €{hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
+              Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
             </button>
           </div>
         </section>

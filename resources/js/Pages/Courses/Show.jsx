@@ -18,7 +18,7 @@ import {
   CalendarIcon,
   UserGroupIcon, 
   ChartBarIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
 
 export default function CourseShow({ auth, course, isEnrolled }) {
   const [activeTab, setActiveTab] = useState('overview');

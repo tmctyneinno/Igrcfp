@@ -19,7 +19,7 @@
             <li class="fw-medium">Create Course</li>
         </ul>
     </div>
- 
+
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Please fix the following errors:</strong>
@@ -41,7 +41,6 @@
 
     <form action="{{ route('admin.courses.store') }}" 
       method="POST" enctype="multipart/form-data" id="courseForm" novalidate>
-    {{-- <form action="{{ route('admin.courses.modules.store') }}" method="POST" enctype="multipart/form-data" id="courseForm"> --}}
         @csrf
         <div class="row gy-4">
             <div class="col-lg-8">
@@ -54,13 +53,12 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Course Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control rich-editor @error('title') is-invalid @enderror" 
+                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
                                        placeholder="Enter course title" value="{{ old('title') }}" required>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
 
                             <div class="col-md-12">
                                 <label class="form-label">Short Title <span class="text-danger">*</span></label>
@@ -88,9 +86,9 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description of the course (max 500 characters)" required >{{ old('short_description') }}</textarea>
-                              
+                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                          rows="3" placeholder="Brief description of the course (max 500 characters)" required>{{ old('short_description') }}</textarea>
+                                <div class="character-count" data-target="short_description">0/500</div>
                                 @error('short_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -98,7 +96,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea id="full_description" name="full_description" class="form-control rich-editor @error('full_description') is-invalid @enderror" 
+                                <textarea id="full_description" name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
                                           rows="8" placeholder="Detailed description of the course...">{{ old('full_description') }}</textarea>
                                 @error('full_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -135,71 +133,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Video Upload Section -->
-                <!-- <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Course Video</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
-                            <strong>Upload Limits:</strong>
-                            <ul class="mb-0 mt-2">
-                                <li>Maximum video size: 20MB</li>
-                                <li>Allowed formats: MP4, MOV, AVI, WMV, MKV</li>
-                                <li>Server limit: {{ ini_get('upload_max_filesize') }}</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="row gy-3">
-                            <div class="col-12">
-                                <label class="form-label">Video Type</label>
-                                <select name="video_type" class="form-select @error('video_type') is-invalid @enderror" id="videoTypeSelect">
-                                    <option value="none" {{ old('video_type') == 'none' ? 'selected' : '' }}>No Video</option>
-                                    <option value="upload" {{ old('video_type') == 'upload' ? 'selected' : '' }}>Upload Video</option>
-                                    <option value="youtube" {{ old('video_type') == 'youtube' ? 'selected' : '' }}>YouTube Video</option>
-                                    <option value="vimeo" {{ old('video_type') == 'vimeo' ? 'selected' : '' }}>Vimeo Video</option>
-                                </select>
-                                @error('video_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12 video-upload-field" style="display: {{ old('video_type') == 'upload' ? 'block' : 'none' }};">
-                                <label class="form-label">Upload Video File</label>
-                                <input class="form-control @error('video') is-invalid @enderror" 
-                                    type="file" name="video" id="videoFileInput" accept="video/mp4,video/mov,video/avi,video/wmv,video/mkv">
-                                <p class="text-sm mt-1 mb-0 text-muted">
-                                    Supported formats: MP4, MOV, AVI, WMV, MKV. Max size: 20MB
-                                </p>
-                                @error('video')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12 video-url-field" style="display: {{ in_array(old('video_type'), ['youtube', 'vimeo']) ? 'block' : 'none' }};">
-                                <label class="form-label">Video URL</label>
-                                <input type="url" name="video_url" id="videoUrlInput" class="form-control @error('video_url') is-invalid @enderror" 
-                                    placeholder="https://www.youtube.com/watch?v=..." value="{{ old('video_url') }}">
-                                <p class="text-sm mt-1 mb-0 text-muted" id="videoUrlHelp">
-                                    Enter the full YouTube or Vimeo video URL
-                                </p>
-                                @error('video_url')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
-                                <div id="videoPreview" class="mt-3" style="display: none;">
-                                    <div class="video-preview-container">
-                                        <div id="videoPlayer"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
 
                 <!-- Course Details -->
                 <div class="card mt-24">
@@ -271,9 +204,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Certifying Body <span class="text-danger">*</span></label>
-                                <textarea id="certifying_body" name="certifying_body" class="form-control rich-editor @error('certifying_body') is-invalid @enderror" rows="6" 
-                                          placeholder="Certifying Body...">{{ old('certifying_body', '') }}</textarea>
-
+                                <input type="text" name="certifying_body" class="form-control @error('certifying_body') is-invalid @enderror" 
+                                       placeholder="e.g., Institute of GRC and Financial Crime Prevention (IGRCFP)" value="{{ old('certifying_body') }}" required>
                                 @error('certifying_body')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -283,63 +215,62 @@
                 </div>
 
                 <!-- Pricing Information -->
-                <!-- Pricing Information -->
-<div class="card mt-24">
-    <div class="card-header">
-        <h6 class="card-title mb-0">Pricing Information</h6>
-    </div>
-    <div class="card-body">
-        <div class="row gy-3">
-            <div class="col-12">
-                <div class="alert alert-info d-flex align-items-center" role="alert">
-                    <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
-                    <div>
-                        <strong>Course Type:</strong> 
-                        <span id="courseTypeIndicator" class="badge bg-success ms-2">FREE COURSE</span>
+                <div class="card mt-24">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Pricing Information</h6>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <label class="form-label">Regular Price ($)</label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input type="number" name="price" id="priceInput" class="form-control @error('price') is-invalid @enderror" 
-                           placeholder="0.00" value="{{ old('price', $course->price ?? '') }}" step="0.01" min="0">
-                </div>
-                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for free courses</p>
-                @error('price')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+                    <div class="card-body">
+                        <div class="row gy-3">
+                            <div class="col-12">
+                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                    <iconify-icon icon="mdi:information" class="icon me-2"></iconify-icon>
+                                    <div>
+                                        <strong>Course Type:</strong> 
+                                        <span id="courseTypeIndicator" class="badge bg-success ms-2">FREE COURSE</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Regular Price ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="price" id="priceInput" class="form-control @error('price') is-invalid @enderror" 
+                                           placeholder="0.00" value="{{ old('price', '0') }}" step="0.01" min="0">
+                                </div>
+                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for free courses</p>
+                                @error('price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
-            <div class="col-md-6">
-                <label class="form-label">Discount Price ($)</label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input type="number" name="discount_price" id="discountPrice" class="form-control @error('discount_price') is-invalid @enderror" 
-                           placeholder="0.00" value="{{ old('discount_price', $course->discount_price ?? '') }}" step="0.01" min="0">
-                </div>
-                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for no discount</p>
-                @error('discount_price')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div class="col-12">
-                <div id="pricingPreview" class="mt-3 p-3 bg-light rounded-8">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-medium">Final Price:</span>
-                        <span id="finalPriceDisplay" class="h4 mb-0 text-primary">$0.00</span>
+                            <div class="col-md-6">
+                                <label class="form-label">Discount Price ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="discount_price" id="discountPrice" class="form-control @error('discount_price') is-invalid @enderror" 
+                                           placeholder="0.00" value="{{ old('discount_price', '0') }}" step="0.01" min="0">
+                                </div>
+                                <p class="text-sm mt-1 mb-0 text-muted">Leave as 0 for no discount</p>
+                                @error('discount_price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="col-12">
+                                <div id="pricingPreview" class="mt-3 p-3 bg-light rounded-8">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-medium">Final Price:</span>
+                                        <span id="finalPriceDisplay" class="h4 mb-0 text-success">FREE</span>
+                                    </div>
+                                    <div id="discountInfo" class="mt-2" style="display: none;">
+                                        <span class="badge bg-danger" id="discountBadge">Save 0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="discountInfo" class="mt-2" style="display: none;">
-                        <span class="badge bg-danger" id="discountBadge">Save 0%</span>
-                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
                 <!-- Detailed Course Information -->
                 <div class="card mt-24">
@@ -350,7 +281,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
-                                <textarea id="programme_overview" name="programme_overview" class="form-control rich-editor @error('programme_overview') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_overview" name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
                                           placeholder="Detailed programme overview...">{{ old('programme_overview', '') }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -359,14 +290,8 @@
                             
                            <div class="col-12">
                                 <label class="form-label">Programme Architecture</label>
-                                <textarea 
-                                    id="editor1"
-                                    name="programme_architecture"
-                                    class="form-control rich-editor @error('programme_architecture') is-invalid @enderror"
-                                    rows="6"
-                                    placeholder="Describe the programme tiers and structure..."
-                                ></textarea>
-
+                                <textarea id="programme_architecture" name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6"
+                                    placeholder="Describe the programme tiers and structure...">{{ old('programme_architecture') }}</textarea>
                                 @error('programme_architecture')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -374,8 +299,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
-                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control rich-editor @error('learning_outcomes') is-invalid @enderror" rows="8" 
-                                          placeholder="" required></textarea>
+                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
+                                          placeholder="Enter learning outcomes, one per line" required>{{ old('learning_outcomes') }}</textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -383,8 +308,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="target_audience" class="form-control rich-editor @error('target_audience') is-invalid @enderror" rows="5" 
-                                          placeholder="" required></textarea>
+                                <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
+                                          placeholder="Enter target audience, one per line" required>{{ old('target_audience') }}</textarea>
                                 @error('target_audience')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -392,7 +317,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Prerequisites</label>
-                                <textarea name="prerequisites" class="form-control rich-editor @error('prerequisites') is-invalid @enderror" 
+                                <textarea name="prerequisites" class="form-control @error('prerequisites') is-invalid @enderror" 
                                           rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites') }}</textarea>
                                 @error('prerequisites')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -401,8 +326,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea name="career_pathways" class="form-control rich-editor @error('career_pathways') is-invalid @enderror" rows="4" 
-                                          ></textarea>
+                                <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
+                                          placeholder="Enter career pathways, one per line">{{ old('career_pathways') }}</textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -410,8 +335,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea name="assessment_structure" class="form-control rich-editor @error('assessment_structure') is-invalid @enderror" rows="4" 
-                                          ></textarea>
+                                <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
+                                          placeholder="Enter assessment structure, one per line">{{ old('assessment_structure') }}</textarea>
                                 @error('assessment_structure')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -419,8 +344,8 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control rich-editor @error('code_of_conduct') is-invalid @enderror" rows="4" 
-                                          ></textarea>
+                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
+                                          placeholder="Enter code of conduct, one per line">{{ old('code_of_conduct') }}</textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -448,59 +373,14 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea id='editor2' name="bulk_modules" class="form-control rich-editor @error('bulk_modules') is-invalid @enderror" rows="20"> 
-                            </textarea>
+                            <textarea name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20" 
+                                      placeholder="Module 1: Introduction to GRC&#10;This module provides an overview of Governance, Risk, and Compliance...&#10;&#10;Module 2: Risk Management Framework&#10;Learn about risk assessment methodologies and frameworks...">{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        <!-- <div class="mb-3"> 
-                             <label class="form-label">Or Upload Document</label>
-                            <input type="file" name="document" class="form-control" accept=".txt,.doc,.docx,.pdf">
-                            <small class="text-muted">Supported formats: TXT, DOC, DOCX, PDF (Max: 10MB)</small>
-                        </div> -->
-                        
-                        
                     </div>
                 </div>
-
-                <!-- Course Materials Upload -->
-                <!-- <div class="card mt-24">
-                    <div class="card-header">
-                        <h6 class="card-title mb-0">Course Materials</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Upload Materials</label>
-                            <input type="file" name="materials[]" class="form-control" multiple 
-                                   accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar">
-                            <small class="text-muted">Supported formats: PDF, DOC, DOCX, PPT, XLS, TXT, ZIP, RAR (Max: 10MB each)</small>
-                        </div>
-                        
-                        <div class="row gy-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Material Type</label>
-                                <select name="material_type" class="form-select">
-                                    <option value="manual">Course Manual</option>
-                                    <option value="presentation">Presentation</option>
-                                    <option value="worksheet">Worksheet</option>
-                                    <option value="template">Template</option>
-                                    <option value="reference">Reference Material</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="form-check mt-4 pt-2">
-                                    <input class="form-check-input" type="checkbox" name="is_downloadable" id="is_downloadable" value="1" checked>
-                                    <label class="form-check-label" for="is_downloadable">
-                                        Allow students to download
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
 
                 <!-- SEO Settings -->
                 <div class="card mt-24">
@@ -511,9 +391,9 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Meta Description</label>
-                                <textarea name="meta_description" id="metaDescription" class="form-control rich-editor @error('meta_description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description for search engines (max 160 characters)" >{{ old('meta_description') }}</textarea>
-                               
+                                <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
+                                          rows="3" placeholder="Brief description for search engines (max 160 characters)">{{ old('meta_description') }}</textarea>
+                                <div class="character-count" data-target="meta_description">0/160</div>
                                 @error('meta_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -521,9 +401,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                 <textarea name="meta_keywords" id="meta_keywords" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
-                                          rows="3" placeholder="" maxlength="200">{{ old('meta_keywords') }}</textarea>
-                                
+                                <textarea name="meta_keywords" id="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
+                                          rows="3" placeholder="keyword1, keyword2, keyword3" maxlength="200">{{ old('meta_keywords') }}</textarea>
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -556,7 +435,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Sort Order</label>
-                                <input type="number" name="sort_order" class="form-control rich-editor @error('sort_order') is-invalid @enderror" 
+                                <input type="number" name="sort_order" class="form-control @error('sort_order') is-invalid @enderror" 
                                        placeholder="0" value="{{ old('sort_order', 0) }}">
                                 <p class="text-sm mt-1 mb-0 text-muted">Lower numbers appear first</p>
                                 @error('sort_order')
@@ -642,7 +521,7 @@
                             <div class="mb-3">
                                 <iconify-icon icon="mdi:book-education" class="icon-3x text-primary"></iconify-icon>
                             </div>
-                            <h6 id="moduleCountPreview">Total Modules: 10</h6>
+                            <h6 id="moduleCountPreview">Total Modules: 0</h6>
                             <p class="text-sm text-muted mb-0">Modules will be created from the bulk upload</p>
                         </div>
                     </div>
@@ -657,23 +536,23 @@
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Pre-filled with CGFCS content - modify as needed</small>
+                                <small class="text-muted">Use clear and descriptive course titles</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">All 10 modules are pre-loaded in the correct format</small>
+                                <small class="text-muted">Keep short description under 500 characters</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Upload course manual PDF in the materials section</small>
-                            </div>
-                            <div class="d-flex align-items-start gap-2">
-                                <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
-                                <small class="text-muted">Review module content before creating the course</small>
+                                <small class="text-muted">Use the bulk module format exactly as shown</small>
                             </div>
                             <div class="d-flex align-items-start gap-2">
                                 <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
                                 <small class="text-muted">Set to "Draft" first, then publish when ready</small>
+                            </div>
+                            <div class="d-flex align-items-start gap-2">
+                                <iconify-icon icon="mdi:lightbulb-on-outline" class="icon text-warning mt-1"></iconify-icon>
+                                <small class="text-muted">SEO meta description should be 150-160 characters</small>
                             </div>
                         </div>
                     </div>
@@ -688,23 +567,23 @@
                         <div class="d-flex flex-column gap-2">
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Modules:</span>
-                                <span class="fw-medium" id="statsModules">10</span>
+                                <span class="fw-medium" id="statsModules">0</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Total Hours:</span>
-                                <span class="fw-medium" id="statsHours">40</span>
+                                <span class="fw-medium" id="statsHours">0</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Level:</span>
-                                <span class="fw-medium" id="statsLevel">Expert</span>
+                                <span class="fw-medium" id="statsLevel">Beginner</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Format:</span>
                                 <span class="fw-medium" id="statsFormat">Self-Paced</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="text-muted">Certification:</span>
-                                <span class="fw-medium">CGFCS</span>
+                                <span class="text-muted">Course Type:</span>
+                                <span class="fw-medium" id="statsCourseType">Free</span>
                             </div>
                         </div>
                     </div>
@@ -723,37 +602,11 @@
     .character-count {
         font-size: 0.75rem;
         color: #6c757d;
+        margin-top: 0.25rem;
     }
     #imagePreview, #bannerImagePreview {
         transition: all 0.3s ease;
     }
-    .video-preview-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-        height: 0;
-        overflow: hidden;
-        border-radius: 8px;
-        background: #f8f9fa;
-    }
-
-    .video-preview-container iframe,
-    .video-preview-container video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-
-    .current-video video {
-        max-height: 200px;
-        width: 100%;
-        object-fit: contain;
-        background: #000;
-    }
-
     .invalid-feedback {
         display: block;
         width: 100%;
@@ -761,7 +614,6 @@
         font-size: 0.875em;
         color: #dc3545;
     }
-
     .form-control.is-invalid, .form-select.is-invalid {
         border-color: #dc3545;
         padding-right: calc(1.5em + 0.75rem);
@@ -770,191 +622,27 @@
         background-position: right calc(0.375em + 0.1875rem) center;
         background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
     }
-    
     textarea.form-control {
         font-family: 'Courier New', monospace;
         font-size: 0.9rem;
         line-height: 1.5;
     }
-    
-    #bulkModulesPreview {
-        max-height: 400px;
-        overflow-y: auto;
+    .icon-2x {
+        font-size: 2rem;
+    }
+    .icon-3x {
+        font-size: 3rem;
+    }
+    .rounded-8 {
+        border-radius: 8px;
     }
 </style>
 @endpush
 
 @push('scripts')
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
-    
-  // Initialize CKEditor with delay to ensure DOM is ready
-    setTimeout(() => {
-        initializeCKEditors();
-    }, 300);
-    
-    function initializeCKEditors() {
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
-        
-        if (editors.length === 0) return;
-        
-        // Load CKEditor dynamically if not loaded
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded');
-            return;
-        }
-        
-        editors.forEach(textarea => {
-            // Skip if already initialized
-            if (textarea.hasAttribute('data-ck-initialized')) {
-                return;
-            }
-            
-            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' 
-            // || textarea.name === 'full_description' 
-            // || textarea.name === 'programme_overview'
-            //  || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' 
-            //  || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' 
-            //  || textarea.name === 'meta_keywords' || textarea.name === 'target_audience'
-            ) {
-                console.log('Skipping CKEditor for full_description - using plain textarea');
-                textarea.setAttribute('data-ck-initialized', 'true');
-                return;
-            }
-            
-            // // Ensure textarea has an ID for debugging
-            // if (!textarea.id) {
-            //     textarea.id = `editor-${index}-${Date.now()}`;
-            // }
-            
-            try {
-                ClassicEditor
-                    .create(textarea)
-                    .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
-                        
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            form.addEventListener('submit', function() {
-                                textarea.value = editor.getData();
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('CKEditor error:', error);
-                        // Don't break the form
-                        textarea.style.display = 'block';
-                    });
-            } catch (error) {
-                console.error('CKEditor initialization error:', error);
-            }
-        });
-    }
-
-    function initializeCKEditorsdd() {
-        // Check if ClassicEditor is available
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded - retrying in 500ms');
-            setTimeout(initializeCKEditors, 500);
-            return;
-        }
-        
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
-        
-        if (editors.length === 0) {
-            console.log('No editors found to initialize');
-            return;
-        }
-        
-        console.log(`Found ${editors.length} editors to initialize`);
-        
-        editors.forEach((textarea, index) => {
-            // Skip if already initialized
-            if (textarea.hasAttribute('data-ck-initialized')) {
-                return;
-            }
-            
-            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' || textarea.name === 'full_description' || textarea.name === 'programme_overview' || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' || textarea.name === 'meta_keywords' || textarea.name === 'target_audience') {
-                console.log('Skipping CKEditor for full_description - using plain textarea');
-                textarea.setAttribute('data-ck-initialized', 'true');
-                return;
-            }
-            
-            // Ensure textarea has an ID for debugging
-            if (!textarea.id) {
-                textarea.id = `editor-${index}-${Date.now()}`;
-            }
-            
-            try {
-                console.log(`Initializing CKEditor for: ${textarea.id || textarea.name}`);
-               
-                ClassicEditor
-                    .create(textarea, {
-                        toolbar: {
-                            items: [
-                                'heading',
-                                '|',
-                                'bold',
-                                'italic',
-                                'link',
-                                'bulletedList',
-                                'numberedList',
-                                '|',
-                                'outdent',
-                                'indent',
-                                '|',
-                                'blockQuote',
-                                'insertTable',
-                                'undo',
-                                'redo'
-                            ]
-                        },
-                        heading: {
-                            options: [
-                                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                            ]
-                        },
-                        table: {
-                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                        },
-                        removePlugins: ['ImageUpload', 'MediaEmbed']
-                    })
-                    .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
-                        console.log(`CKEditor initialized successfully for: ${textarea.id}`);
-                        
-                        // Store editor instance
-                        textarea.ckeditorInstance = editor;
-                        
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            const submitHandler = function() {
-                                textarea.value = editor.getData();
-                                console.log(`Editor content updated for: ${textarea.id}`);
-                            };
-                            
-                            form.removeEventListener('submit', submitHandler);
-                            form.addEventListener('submit', submitHandler);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`CKEditor error for ${textarea.id}:`, error);
-                        textarea.style.display = 'block';
-                        textarea.classList.add('form-control');
-                    });
-            } catch (error) {
-                console.error(`CKEditor initialization error for ${textarea.id}:`, error);
-                textarea.style.display = 'block';
-            }
-        });
-    }
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
@@ -966,10 +654,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const noImagePlaceholder = document.getElementById('noImagePlaceholder');
     const noBannerImagePlaceholder = document.getElementById('noBannerImagePlaceholder');
 
+    // Pricing elements
+    const priceInput = document.getElementById('priceInput');
+    const discountInput = document.getElementById('discountPrice');
+    const courseTypeIndicator = document.getElementById('courseTypeIndicator');
+    const finalPriceDisplay = document.getElementById('finalPriceDisplay');
+    const discountInfo = document.getElementById('discountInfo');
+    const discountBadge = document.getElementById('discountBadge');
+    const statsCourseType = document.getElementById('statsCourseType');
+
+    // Stats elements
+    const totalModulesInput = document.getElementById('totalModules');
+    const totalHoursInput = document.getElementById('totalHours');
+    const levelSelect = document.querySelector('select[name="level"]');
+    const formatSelect = document.querySelector('select[name="format"]');
+    const moduleCountPreview = document.getElementById('moduleCountPreview');
+    const statsModules = document.getElementById('statsModules');
+    const statsHours = document.getElementById('statsHours');
+    const statsLevel = document.getElementById('statsLevel');
+    const statsFormat = document.getElementById('statsFormat');
+
     // Handle course image preview
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
-            console.log('Course image input changed');
             handleImagePreview(this, previewImage, imagePreview, noImagePlaceholder, 2);
         });
     }
@@ -977,7 +684,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle banner image preview
     if (bannerImageInput) {
         bannerImageInput.addEventListener('change', function(e) {
-            console.log('Banner image input changed');
             handleImagePreview(this, previewBannerImage, bannerImagePreview, noBannerImagePlaceholder, 5);
         });
     }
@@ -986,14 +692,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleImagePreview(input, previewElement, previewContainer, placeholder, maxSizeMB) {
         const file = input.files[0];
         if (file) {
-            // Validate file size
             if (file.size > maxSizeMB * 1024 * 1024) {
                 alert(`Image size should be less than ${maxSizeMB}MB`);
                 input.value = '';
                 return;
             }
             
-            // Validate file type
             const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
             if (!validTypes.includes(file.type)) {
                 alert('Please select a valid image file (JPG, PNG, GIF, WEBP)');
@@ -1005,28 +709,97 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = function(e) {
                 previewElement.src = e.target.result;
                 previewContainer.style.display = 'block';
-                placeholder.style.display = 'none';
+                if (placeholder) placeholder.style.display = 'none';
             }
             reader.onerror = function() {
                 alert('Error reading the image file');
                 previewContainer.style.display = 'none';
-                placeholder.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'block';
             }
             reader.readAsDataURL(file);
         } else {
             previewContainer.style.display = 'none';
-            placeholder.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'block';
         }
     }
 
+    // Pricing display update function
+    function updatePricingDisplay() {
+        const price = parseFloat(priceInput?.value) || 0;
+        const discountPrice = parseFloat(discountInput?.value) || 0;
+        
+        // Update course type indicator
+        if (courseTypeIndicator) {
+            if (price === 0) {
+                courseTypeIndicator.textContent = 'FREE COURSE';
+                courseTypeIndicator.className = 'badge bg-success ms-2';
+                if (statsCourseType) statsCourseType.textContent = 'Free';
+            } else if (discountPrice > 0 && discountPrice < price) {
+                courseTypeIndicator.textContent = 'DISCOUNTED COURSE';
+                courseTypeIndicator.className = 'badge bg-warning ms-2';
+                if (statsCourseType) statsCourseType.textContent = 'Discounted';
+            } else {
+                courseTypeIndicator.textContent = 'PAID COURSE';
+                courseTypeIndicator.className = 'badge bg-primary ms-2';
+                if (statsCourseType) statsCourseType.textContent = 'Paid';
+            }
+        }
+        
+        // Update final price display
+        if (finalPriceDisplay) {
+            let finalPrice = price;
+            let displayText = '';
+            
+            if (price === 0) {
+                displayText = 'FREE';
+                finalPriceDisplay.className = 'h4 mb-0 text-success';
+                if (discountInfo) discountInfo.style.display = 'none';
+            } else if (discountPrice > 0 && discountPrice < price) {
+                finalPrice = discountPrice;
+                displayText = `$${finalPrice.toFixed(2)}`;
+                finalPriceDisplay.className = 'h4 mb-0 text-danger';
+                
+                if (discountInfo && discountBadge) {
+                    discountInfo.style.display = 'block';
+                    const savings = price - discountPrice;
+                    const percentage = Math.round((savings / price) * 100);
+                    discountBadge.textContent = `Save ${percentage}% ($${savings.toFixed(2)})`;
+                }
+            } else {
+                displayText = `$${price.toFixed(2)}`;
+                finalPriceDisplay.className = 'h4 mb-0 text-primary';
+                if (discountInfo) discountInfo.style.display = 'none';
+            }
+            
+            finalPriceDisplay.textContent = displayText;
+        }
+    }
+
+    // Add pricing event listeners
+    if (priceInput) {
+        priceInput.addEventListener('input', updatePricingDisplay);
+    }
+    if (discountInput) {
+        discountInput.addEventListener('input', function() {
+            const price = parseFloat(priceInput?.value) || 0;
+            const discount = parseFloat(this.value) || 0;
+            
+            if (discount > price) {
+                this.setCustomValidity('Discount price cannot be higher than regular price');
+            } else {
+                this.setCustomValidity('');
+            }
+            
+            updatePricingDisplay();
+        });
+    }
+
     // Character count functionality
-    function setupCharacterCount(textareaSelector, counterSelector) {
+    function setupCharacterCount(textareaSelector, counterSelector, maxLength) {
         const textarea = document.querySelector(textareaSelector);
         const counter = document.querySelector(counterSelector);
         
         if (textarea && counter) {
-            const maxLength = textarea.getAttribute('maxlength') || 160;
-            
             function updateCount() {
                 const length = textarea.value.length;
                 counter.textContent = `${length}/${maxLength}`;
@@ -1041,30 +814,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             textarea.addEventListener('input', updateCount);
-            updateCount(); // Initial count
+            updateCount();
         }
     }
 
-    // Set up character counters
-    setupCharacterCount('textarea[name="short_description"]', '.character-count[data-target="short_description"]');
-    setupCharacterCount('#metaDescription', '.character-count[data-target="meta_description"]');
+    setupCharacterCount('textarea[name="short_description"]', '.character-count[data-target="short_description"]', 500);
+    setupCharacterCount('#metaDescription', '.character-count[data-target="meta_description"]', 160);
 
     // Update stats in real-time
-    const totalModulesInput = document.getElementById('totalModules');
-    const totalHoursInput = document.getElementById('totalHours');
-    const levelSelect = document.querySelector('select[name="level"]');
-    const formatSelect = document.querySelector('select[name="format"]');
-    const moduleCountPreview = document.getElementById('moduleCountPreview');
-    const statsModules = document.getElementById('statsModules');
-    const statsHours = document.getElementById('statsHours');
-    const statsLevel = document.getElementById('statsLevel');
-    const statsFormat = document.getElementById('statsFormat');
-
     function updateStats() {
-        const modules = parseInt(totalModulesInput.value) || 10;
-        const hours = parseInt(totalHoursInput.value) || 40;
-        const level = levelSelect ? levelSelect.options[levelSelect.selectedIndex].text : 'Expert';
-        const format = formatSelect ? formatSelect.options[formatSelect.selectedIndex].text : 'Self-Paced';
+        const modules = parseInt(totalModulesInput?.value) || 0;
+        const hours = parseInt(totalHoursInput?.value) || 0;
+        const level = levelSelect ? levelSelect.options[levelSelect.selectedIndex]?.text : 'Beginner';
+        const format = formatSelect ? formatSelect.options[formatSelect.selectedIndex]?.text : 'Self-Paced';
         
         if (moduleCountPreview) {
             moduleCountPreview.textContent = `Total Modules: ${modules}`;
@@ -1087,275 +849,36 @@ document.addEventListener('DOMContentLoaded', function() {
     if (totalHoursInput) totalHoursInput.addEventListener('input', updateStats);
     if (levelSelect) levelSelect.addEventListener('change', updateStats);
     if (formatSelect) formatSelect.addEventListener('change', updateStats);
-    updateStats(); // Initial update
 
-    // Price validation
-    const priceInput = document.getElementById('priceInput');
-    const discountInput = document.getElementById('discountPrice');
-
-    if (priceInput && discountInput) {
-        discountInput.addEventListener('input', function() {
-            const price = parseFloat(priceInput.value) || 0;
-            const discount = parseFloat(this.value) || 0;
-            
-            if (discount > price) {
-                this.setCustomValidity('Discount price cannot be higher than regular price');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    }
-
-    // VIDEO FUNCTIONALITY
-    const videoTypeSelect = document.getElementById('videoTypeSelect');
-    const videoUploadField = document.querySelector('.video-upload-field');
-    const videoUrlField = document.querySelector('.video-url-field');
-    const videoUrlHelp = document.getElementById('videoUrlHelp');
-    const videoPreview = document.getElementById('videoPreview');
-    const videoPlayer = document.getElementById('videoPlayer');
-    const videoFileInput = document.getElementById('videoFileInput');
-    const videoUrlInput = document.getElementById('videoUrlInput');
-
-    console.log('Video elements:', {
-        videoTypeSelect: !!videoTypeSelect,
-        videoUploadField: !!videoUploadField,
-        videoUrlField: !!videoUrlField,
-        videoPreview: !!videoPreview,
-        videoPlayer: !!videoPlayer,
-        videoFileInput: !!videoFileInput,
-        videoUrlInput: !!videoUrlInput
-    });
-
-    // Function to show/hide video fields based on selection
-    function updateVideoFields() {
-        if (!videoTypeSelect) return;
-        
-        const selectedType = videoTypeSelect.value;
-        console.log('Video type selected:', selectedType);
-        
-        // Always hide both fields first
-        if (videoUploadField) videoUploadField.style.display = 'none';
-        if (videoUrlField) videoUrlField.style.display = 'none';
-        if (videoPreview) videoPreview.style.display = 'none';
-        if (videoPlayer) videoPlayer.innerHTML = '';
-        
-        // Show appropriate field based on selection
-        if (selectedType === 'upload') {
-            if (videoUploadField) {
-                videoUploadField.style.display = 'block';
-                console.log('Showing upload field');
-            }
-        } else if (selectedType === 'youtube' || selectedType === 'vimeo') {
-            if (videoUrlField) {
-                videoUrlField.style.display = 'block';
-                console.log('Showing URL field');
-            }
-            
-            // Update help text
-            if (videoUrlHelp) {
-                if (selectedType === 'youtube') {
-                    videoUrlHelp.textContent = 'Enter the full YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)';
-                } else {
-                    videoUrlHelp.textContent = 'Enter the full Vimeo video URL (e.g., https://vimeo.com/VIDEO_ID)';
+    // Module count from bulk content
+    function updateModuleCount() {
+        const bulkModulesTextarea = document.querySelector('textarea[name="bulk_modules"]');
+        if (bulkModulesTextarea) {
+            bulkModulesTextarea.addEventListener('input', function() {
+                const content = this.value;
+                const moduleCount = (content.match(/Module\s+\d+:/gi) || []).length;
+                if (moduleCount > 0) {
+                    if (moduleCountPreview) moduleCountPreview.textContent = `Total Modules: ${moduleCount}`;
+                    if (statsModules) statsModules.textContent = moduleCount;
+                    if (totalModulesInput) totalModulesInput.value = moduleCount;
                 }
-            }
+            });
         }
     }
-
-    // Initialize video fields on page load
-    updateVideoFields();
-
-    // Handle video type change
-    if (videoTypeSelect) {
-        videoTypeSelect.addEventListener('change', function() {
-            console.log('Video type changed to:', this.value);
-            updateVideoFields();
-            
-            // Clear any existing preview
-            if (videoPlayer) {
-                videoPlayer.innerHTML = '';
-            }
-        });
-    }
-
-    // Handle video URL input for YouTube/Vimeo
-    if (videoUrlInput) {
-        videoUrlInput.addEventListener('input', function() {
-            const url = this.value.trim();
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            
-            if (!url || videoType === 'none' || videoType === 'upload') {
-                if (videoPlayer) videoPlayer.innerHTML = '';
-                if (videoPreview) videoPreview.style.display = 'none';
-                return;
-            }
-            
-            // Wait a bit before processing to avoid too many updates
-            setTimeout(() => {
-                updateVideoPreview(url, videoType);
-            }, 500);
-        });
-        
-        // Also handle blur event for immediate update
-        videoUrlInput.addEventListener('blur', function() {
-            const url = this.value.trim();
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            
-            if (url && (videoType === 'youtube' || videoType === 'vimeo')) {
-                updateVideoPreview(url, videoType);
-            }
-        });
-    }
-
-    // Handle video file input
-    if (videoFileInput) {
-        videoFileInput.addEventListener('change', function(e) {
-            console.log('Video file selected');
-            const file = e.target.files[0];
-            
-            if (!file) {
-                if (videoPlayer) videoPlayer.innerHTML = '';
-                if (videoPreview) videoPreview.style.display = 'none';
-                return;
-            }
-            
-            // Show file info
-            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-            console.log(`File: ${file.name}, Size: ${fileSizeMB}MB, Type: ${file.type}`);
-            
-            // Validate file size (20MB max)
-            if (file.size > 20 * 1024 * 1024) {
-                alert(`File is too large (${fileSizeMB}MB). Maximum size is 20MB.`);
-                this.value = '';
-                return;
-            }
-            
-            // Validate file type
-            const validTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv', 'video/x-matroska'];
-            if (!validTypes.includes(file.type)) {
-                alert('Please select a valid video file (MP4, MOV, AVI, WMV, MKV)');
-                this.value = '';
-                return;
-            }
-            
-            // Show preview
-            try {
-                const url = URL.createObjectURL(file);
-                if (videoPlayer) {
-                    videoPlayer.innerHTML = `
-                        <div class="text-center p-3">
-                            <div class="mb-2">
-                                <iconify-icon icon="mdi:video" class="icon-2x text-primary"></iconify-icon>
-                            </div>
-                            <div class="mb-2">
-                                <strong>${file.name}</strong>
-                            </div>
-                            <div class="text-muted small mb-3">
-                                ${fileSizeMB} MB • ${file.type}
-                            </div>
-                            <video controls style="width: 100%; max-height: 200px; border-radius: 8px;">
-                                <source src="${url}" type="${file.type}">
-                                Your browser does not support the video tag.
-                            </video>
-                        </div>
-                    `;
-                }
-                
-                if (videoPreview) {
-                    videoPreview.style.display = 'block';
-                }
-                
-                console.log('Video preview created successfully');
-                
-            } catch (error) {
-                console.error('Error creating preview:', error);
-                alert('Error previewing video. Please try a different file.');
-                this.value = '';
-            }
-        });
-    }
-
-    // Function to update video preview
-    function updateVideoPreview(url, videoType) {
-        if (!videoPlayer) return;
-        
-        let embedUrl = null;
-        
-        if (videoType === 'youtube') {
-            const videoId = extractYouTubeId(url);
-            if (videoId) {
-                embedUrl = `https://www.youtube.com/embed/${videoId}`;
-            }
-        } else if (videoType === 'vimeo') {
-            const videoId = extractVimeoId(url);
-            if (videoId) {
-                embedUrl = `https://player.vimeo.com/video/${videoId}`;
-            }
-        }
-        
-        if (embedUrl) {
-            videoPlayer.innerHTML = `
-                <iframe src="${embedUrl}" 
-                        width="100%" 
-                        height="100%" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen 
-                        style="border-radius: 8px;">
-                </iframe>
-            `;
-            
-            // Show preview container
-            if (videoPreview) {
-                videoPreview.style.display = 'block';
-            }
-            
-            console.log('Video preview updated:', embedUrl);
-        } else {
-            videoPlayer.innerHTML = '<p class="text-center text-muted py-4">Enter a valid video URL to see preview</p>';
-            if (videoPreview) {
-                videoPreview.style.display = 'block';
-            }
-        }
-    }
-
-    // Helper functions to extract video IDs
-    function extractYouTubeId(url) {
-        // Handle various YouTube URL formats
-        const patterns = [
-            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?\/]+)/,
-            /youtube\.com\/.*[?&]v=([^&]+)/,
-            /youtu\.be\/([^?]+)/
-        ];
-        
-        for (const pattern of patterns) {
-            const match = url.match(pattern);
-            if (match && match[1]) {
-                return match[1];
-            }
-        }
-        return null;
-    }
-
-    function extractVimeoId(url) {
-        const pattern = /vimeo\.com\/(?:video\/)?(\d+)/;
-        const match = url.match(pattern);
-        return match ? match[1] : null;
-    }
+    
+    updateModuleCount();
+    updateStats();
+    updatePricingDisplay();
 
     // Form validation
     const courseForm = document.getElementById('courseForm');
     if (courseForm) {
         courseForm.addEventListener('submit', function(e) {
-            console.log('Form submitted');
-            
-            // Clear previous custom validity messages
             const inputs = this.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.setCustomValidity('');
             });
 
-            // Validate discount price
             if (discountInput && priceInput) {
                 const price = parseFloat(priceInput.value) || 0;
                 const discount = parseFloat(discountInput.value) || 0;
@@ -1367,18 +890,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Validate video fields
-            const videoType = videoTypeSelect ? videoTypeSelect.value : 'none';
-            if (videoType === 'youtube' || videoType === 'vimeo') {
-                if (!videoUrlInput || !videoUrlInput.value.trim()) {
-                    e.preventDefault();
-                    alert('Please enter a video URL for the selected video type');
-                    if (videoUrlInput) videoUrlInput.focus();
-                    return;
-                }
-            }
-            
-            // Validate bulk modules
             const bulkModulesTextarea = document.querySelector('textarea[name="bulk_modules"]');
             if (bulkModulesTextarea && !bulkModulesTextarea.value.trim()) {
                 e.preventDefault();
@@ -1387,38 +898,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Confirm before submitting
             if (!confirm('Are you sure you want to create this course? This will create all modules from the bulk content.')) {
                 e.preventDefault();
                 return;
             }
-            
-            console.log('Form validation passed');
         });
     }
 
-    // Module preview count
-    function updateModuleCount() {
-        const bulkModulesTextarea = document.querySelector('textarea[name="bulk_modules"]');
-        if (bulkModulesTextarea) {
-            bulkModulesTextarea.addEventListener('input', function() {
-                const content = this.value;
-                const moduleCount = (content.match(/Module\s+\d+:/gi) || []).length;
-                if (moduleCount > 0) {
-                    document.getElementById('moduleCountPreview').textContent = `Total Modules: ${moduleCount}`;
-                    document.getElementById('statsModules').textContent = moduleCount;
-                    document.getElementById('totalModules').value = moduleCount;
-                }
-            });
-        }
-    }
-    
-    updateModuleCount();
-
     console.log('All event listeners attached');
-
-
 });
 </script>
 @endpush
-
