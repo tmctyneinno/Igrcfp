@@ -15,7 +15,7 @@ export default function NavBar({ auth }) {
             ) {
                 setIsMobileMenuOpen(false);
             }
-        };  
+        };   
 
         if (isMobileMenuOpen) {
             document.addEventListener("mousedown", handleClickOutside);
@@ -200,11 +200,6 @@ export default function NavBar({ auth }) {
                         </div>
                     </div>
                     
-                    {/* <Link 
-                        href={route('certifications')} 
-                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
-                    >Certifications
-                    </Link> */}
                     
                     <Link 
                         href="/events" 
@@ -219,7 +214,7 @@ export default function NavBar({ auth }) {
                         Blog
                     </Link>
                     <Link 
-                        href="/news" 
+                        href={route('news.index')}
                         className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
                     >
                         News

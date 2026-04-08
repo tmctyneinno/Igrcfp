@@ -24,7 +24,7 @@ import {
   TrophyIcon,
   PhotoIcon
 } from '@heroicons/react/24/outline';
-import { 
+import {  
   CheckCircleIcon as CheckCircleSolid 
 } from '@heroicons/react/24/solid';
 

@@ -153,9 +153,11 @@ class HomeController extends Controller
     }
 
     public function cgfcsSpecialist(){
+        \Log::info('CGFCS Specialist route accessed');
+    
         return Inertia::render('Certifications/CGFCSSpecialist', [
-            'title' => 'Certification Pathway',
-            'description' => '',
+            'title' => 'CGFCS Specialist',
+            'description' => 'Certified GRC & Financial Crime Specialist',
         ]);
     }
 
@@ -331,7 +333,7 @@ class HomeController extends Controller
         if ($request->has('featured') && $request->featured) {
             $query->where('is_featured', true);
         }
-
+ 
         if ($request->has('popular') && $request->popular) {
             $query->where('is_popular', true);
         }

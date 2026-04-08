@@ -47,7 +47,7 @@ export default function GuestLayout({ children, auth }) {
                 data-aos-duration="1400"
             >
                 <NavBar auth={auth}/>
-            </nav>
+            </nav> 
 
             {/* Main Content */}
             <main className="pt-16">

@@ -11,7 +11,7 @@ class LessonCompletionController extends Controller
 {
     public function markComplete(Lesson $lesson)
     {
-        $user = auth()->user();
+        $user = auth()->user(); 
         
         // Get the enrollment for this course
         $enrollment = Enrollment::where('user_id', $user->id)

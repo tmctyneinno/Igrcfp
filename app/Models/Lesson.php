@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class Lesson extends Model
 {
     use SoftDeletes;
-
+ 
     protected $fillable = [
         'module_id',
         'title',
@@ -98,6 +98,18 @@ class Lesson extends Model
         return $this->users()
             ->wherePivot('enrollment_id', $enrollment->id)
             ->get();
+    }
+
+    public function scopeWithCompletionStatus($query, $userId, $enrollmentId)
+    {
+        return $query->addSelect([
+            'completed' => \DB::table('lesson_user')
+                ->select('completed')
+                ->whereColumn('lesson_id', 'lessons.id')
+                ->where('user_id', $userId)
+                ->where('enrollment_id', $enrollmentId)
+                ->limit(1)
+        ]);
     }
 
      public function isCompletedBy(User $user, Enrollment $enrollment): bool
