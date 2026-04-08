@@ -55,13 +55,13 @@ export default function Show({ course, enrollment, modules = [], auth }) {
   const { user } = auth;
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModule, setExpandedModule] = useState(null);
+  const [isEnrolling, setIsEnrolling] = useState(false);
   
   const isEnrolled = !!enrollment;
   const progress = enrollment?.progress || 0;
 
   // Get image URLs
   const courseImageUrl = course.image_url || course.image;
-  const bannerImageUrl = course.banner_image_url || course.banner_image;
 
   // Price calculations
   const price = parseFloat(course.price) || 0;
@@ -80,46 +80,81 @@ export default function Show({ course, enrollment, modules = [], auth }) {
     { id: 'certification', label: 'Certification', icon: AcademicCapIcon },
   ];
 
-  // In your EnrollmentContext.jsx or wherever startEnrollment is defined
+  // Direct enrollment for free courses - follows cart → checkout pattern
+  const directEnrollment = (course) => {
+    setIsEnrolling(true);
+    const loadingToast = toast.loading('Adding to cart...');
+    
+    // Step 1: Add to cart first (same as paid courses)
+    router.post(route('dashboard.cart.add', course.slug), {}, {
+      preserveState: true,
+      onSuccess: (page) => {
+        toast.dismiss(loadingToast);
+        
+        if (page.props.flash?.success) {
+          toast.success('Course added to cart!');
+          
+          // Step 2: Proceed to checkout (same flow as paid courses)
+          // The checkout controller will handle free courses automatically
+          // since total_amount will be 0, it enrolls directly without payment
+          router.visit(route('checkout.index'));
+        } else if (page.props.flash?.info) {
+          // Course already in cart
+          toast.success('Course is already in your cart!');
+          router.visit(route('checkout.index'));
+        } else {
+          toast.success('Proceeding to checkout...');
+          router.visit(route('checkout.index'));
+        }
+        setIsEnrolling(false);
+      },
+      onError: (errors) => {
+        toast.dismiss(loadingToast);
+        setIsEnrolling(false);
+        console.error('Cart add errors:', errors);
+        toast.error('Failed to add course to cart. Please try again.');
+      }
+    });
+  };
 
-const startEnrollment = (course) => {
+  const startEnrollment = (course) => {
     // Check if user is authenticated
     if (!user) {
-        toast.error('Please login to enroll');
-        router.visit(route('login'));
-        return;
+      toast.error('Please login to enroll');
+      router.visit(route('login'));
+      return;
     }
 
     // For paid courses, add to cart and go to checkout
     if (course.price > 0) {
-        // Show loading
-        const loadingToast = toast.loading('Processing...');
-        
-        // Add to cart first
-        router.post(route('dashboard.cart.add', course.slug), {}, {
-            preserveState: true,
-            onSuccess: (page) => {
-                toast.dismiss(loadingToast);
-                
-                if (page.props.flash?.success) {
-                    // Redirect to checkout
-                    router.visit(route('checkout.index'));
-                } else {
-                    toast.success('Course added to cart!');
-                    // Optional: redirect to cart instead
-                    router.visit(route('dashboard.cart.index'));
-                }
-            },
-            onError: (errors) => {
-                toast.dismiss(loadingToast);
-                toast.error('Failed to add course to cart');
-            }
-        });
+      // Show loading
+      const loadingToast = toast.loading('Processing...');
+      
+      // Add to cart first
+      router.post(route('dashboard.cart.add', course.slug), {}, {
+        preserveState: true,
+        onSuccess: (page) => {
+          toast.dismiss(loadingToast);
+          
+          if (page.props.flash?.success) {
+            // Redirect to checkout
+            router.visit(route('checkout.index'));
+          } else {
+            toast.success('Course added to cart!');
+            // Optional: redirect to cart instead
+            router.visit(route('dashboard.cart.index'));
+          }
+        },
+        onError: (errors) => {
+          toast.dismiss(loadingToast);
+          toast.error('Failed to add course to cart');
+        }
+      });
     } else {
-        // For free courses, enroll directly
-        directEnrollment(course);
+      // For free courses, enroll directly
+      directEnrollment(course);
     }
-};
+  };
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
@@ -153,15 +188,6 @@ const startEnrollment = (course) => {
 
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">
-        {/* Banner Image Background */}
-        {bannerImageUrl && (
-          <img 
-            src={bannerImageUrl} 
-            alt={`${course.title} banner`}
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
-          />
-        )}
-        <div className="absolute inset-0 bg-black opacity-50"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="grid lg:grid-cols-3 gap-12">
@@ -296,9 +322,14 @@ const startEnrollment = (course) => {
                   ) : (
                     <button
                       onClick={() => startEnrollment(course)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-2 rounded-xl transition transform hover:-translate-y-0.5 mb-4"
+                      disabled={isEnrolling}
+                      className={`w-full text-white font-bold py-3 px-2 rounded-xl transition transform hover:-translate-y-0.5 mb-4 ${
+                        isEnrolling 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-blue-600 hover:bg-blue-700'
+                      }`}
                     >
-                      Enroll Now
+                      {isEnrolling ? 'Enrolling...' : 'Enroll Now'}
                     </button>
                   )}
 
@@ -645,9 +676,14 @@ const startEnrollment = (course) => {
             </p>
             <button
               onClick={() => startEnrollment(course)}
-              className="bg-white text-blue-900 font-bold py-4 px-12 rounded-xl hover:bg-gray-100 transition transform hover:-translate-y-0.5 text-lg"
+              disabled={isEnrolling}
+              className={`text-blue-900 font-bold py-4 px-12 rounded-xl transition transform hover:-translate-y-0.5 text-lg ${
+                isEnrolling 
+                  ? 'bg-gray-300 cursor-not-allowed' 
+                  : 'bg-white hover:bg-gray-100'
+              }`}
             >
-              Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
+              {isEnrolling ? 'Enrolling...' : `Enroll Now - ${hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}`}
             </button>
           </div>
         </section>

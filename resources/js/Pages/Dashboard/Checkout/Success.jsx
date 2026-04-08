@@ -1,10 +1,11 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function CheckoutSuccess({ enrollments }) {
     return (
-        <GuestLayout>
+        <AuthenticatedLayout>
             <Head title="Checkout Successful" />
             
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -14,7 +15,7 @@ export default function CheckoutSuccess({ enrollments }) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    
+                     
                     <div className="p-8">
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">
                             Payment Successful!
@@ -38,10 +39,10 @@ export default function CheckoutSuccess({ enrollments }) {
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
-                                href="/courses"
+                                href={route('dashboard.my-courses')}
                                 className="px-6 py-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700"
                             >
-                                Browse More Courses
+                                My Courses
                             </Link>
                             <Link
                                 href="/dashboard"
@@ -53,6 +54,6 @@ export default function CheckoutSuccess({ enrollments }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </AuthenticatedLayout>
     );
 }

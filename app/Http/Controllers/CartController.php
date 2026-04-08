@@ -10,7 +10,7 @@ use Inertia\Inertia;
 class CartController extends Controller
 {
     public function index(Request $request)
-    {
+    { 
         $cart = $request->user()->carts()
             ->with(['items.course'])
             ->where('status', 'active')
@@ -57,7 +57,7 @@ class CartController extends Controller
         
         if (!$course->status) {
             return redirect()->back()->with('error', 'Course not available.');
-        }
+        } 
 
         $cart = $request->user()->carts()->firstOrCreate(
             ['status' => 'active'],
@@ -108,5 +108,5 @@ class CartController extends Controller
         }
 
         return redirect()->back()->with('success', 'Cart cleared.');
-    }
+    } 
 }
