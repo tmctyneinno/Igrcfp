@@ -17,6 +17,7 @@ Route::get('/our-structure', [HomeController::class, 'OurStructure'])->name('our
 Route::get('/why-igrcfp', [HomeController::class, 'whyIgrcfp'])->name('why-igrcfp');
 Route::get('/membership', [HomeController::class, 'membership'])->name('membership');
 Route::get('/certifications', [HomeController::class, 'certifications'])->name('certifications');
+Route::get('/certifications/overview', [HomeController::class, 'certificationsOverview'])->name('certifications.overview');
 Route::get('/certifications/pathway', [HomeController::class, 'certificationsPathway'])->name('certifications.pathway');
 Route::get('/cgfcs/specialist', [HomeController::class, 'cgfcsSpecialist'])->name('cgfcs.specialist');
 
@@ -75,4 +76,4 @@ Route::prefix('programmes')->group(function () {
     Route::get('/cybersecurity', [ProgrammesController::class, 'cybersecurity'])->name('programmes.cybersecurity');
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
 });
-// Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
+Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
