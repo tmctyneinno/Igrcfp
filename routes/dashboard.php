@@ -16,7 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 
-    Route::get('/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
+    Route::get('dashboard/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
     Route::get('/memebership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Checkout routes
     Route::get('dashboard/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('dashboard/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process'); 
-    Route::get('dashboard/checkout/success/{enrollment}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('dashboard/checkout/success/{enrollment?}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('dashboard/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
     // Stripe payment routes
