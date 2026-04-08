@@ -45,7 +45,7 @@ export default function CheckoutSuccess({ enrollments }) {
                                 My Courses
                             </Link>
                             <Link
-                                href="/dashboard"
+                                href={route('dashboard.index')}
                                 className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
                             >
                                 Go to Dashboard

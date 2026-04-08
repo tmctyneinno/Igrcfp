@@ -385,7 +385,7 @@ class DashboardController extends Controller
                     'modules_count' => $course->modules_count,
                 ];
             });
-        
+          
         // Get user's enrolled courses (you'll need to adjust based on your enrollment logic)
         $user = auth()->user();
         $enrolledCourses = $user->enrollments()
@@ -583,6 +583,13 @@ class DashboardController extends Controller
             'final_exam_passed' => $finalExam ? ($finalExam['passed'] ?? false) : null,
             'diploma_passed' => $diplomaAssessment ? ($diplomaAssessment['passed'] ?? false) : null,
         ];
+        // Load modules with lessons and completion status
+        $modules = $course->modules()
+            ->with(['lessons' => function($query) use ($enrollment) {
+                $query->withCompletionStatus(auth()->id(), $enrollment->id ?? null);
+            }])
+            ->orderBy('module_number')
+            ->get();
 
         if (!$enrollment) {
             return Inertia::render('Dashboard/Courses/Show', [
@@ -600,10 +607,10 @@ class DashboardController extends Controller
             ]);
         }
 
-        return Inertia::render('Dashboard/Courses/Enrollment', [
+        return Inertia::render('Dashboard/Courses/EnrollmentIndex', [
             'course' => $course,
             'enrollment' => $enrollment,
-            'modules' => $course->modules()->with('lessons')->get(),
+            'modules' => $modules, 
             'quizzes' => $quizzes,
             'moduleAssessments' => $moduleAssessments,
             'finalExam' => $finalExam,

@@ -10,7 +10,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
             'Intermediate': 'bg-amber-100 text-amber-800',
             'Advanced': 'bg-emerald-100 text-emerald-800',
             'Expert': 'bg-purple-100 text-purple-800'
-        };  
+        };   
         return levelMap[level] || 'bg-blue-100 text-blue-800';
     };
 
@@ -83,7 +83,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
             {/* COURSE CARDS */}
             {enrolledCourses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {enrolledCourses.map((course, index) => {
                         const progress = calculateProgress(course);
                         
@@ -122,7 +122,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                 </div>
 
                                 {/* Content */}
-                                <div className="p-2">
+                                <div className="p-4">
                                     <Link href={route('dashboard.courses.show', course.slug || course.id)}>
                                         <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2 h-14">
                                             {course.title}
@@ -146,13 +146,12 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                                 {course.format}
                                             </span>
                                         )}
-                                        {/* Add Category Badge */}
                                         {course.category && (
                                             <Link 
                                                 href={route('dashboard.courses.by-category', { slug: course.category.slug })}
                                                 className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition"
                                             >
-                                                 {course.category.name}
+                                                {course.category.name}
                                             </Link>
                                         )}
                                     </div>
@@ -171,7 +170,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                         )}
                                     </div>
 
-                                    {/* Progress Bar - Kept as requested */}
+                                    {/* Progress Bar */}
                                     <div className="mb-4">
                                         <div className="flex justify-between text-xs text-gray-600 mb-1">
                                             <span>Progress</span>
@@ -183,7 +182,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                                 animate={{ width: `${progress}%` }}
                                                 transition={{ duration: 0.5, delay: 0.2 }}
                                                 className="h-2 rounded-full bg-blue-900"
-                                            ></motion.div>
+                                            />
                                         </div>
                                     </div>
 
@@ -204,7 +203,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="col-span-4 text-center py-16 bg-white rounded-xl shadow-md"
+                    className="text-center py-16 bg-white rounded-xl shadow-md"
                 >
                     <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
                         <span className="text-3xl">📚</span>

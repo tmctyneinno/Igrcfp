@@ -37,7 +37,6 @@ Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [NewsController::class, 'news'])->name('index');
     Route::get('/category/{slug}', [NewsController::class, 'category'])->name('category');
     Route::get('/{slug}/show', [NewsController::class, 'showNews'])->name('show');
-
 }); 
 
 
@@ -76,4 +75,4 @@ Route::prefix('programmes')->group(function () {
     Route::get('/cybersecurity', [ProgrammesController::class, 'cybersecurity'])->name('programmes.cybersecurity');
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
 });
-Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
+// Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');

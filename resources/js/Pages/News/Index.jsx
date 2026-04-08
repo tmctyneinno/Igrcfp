@@ -62,7 +62,7 @@ export default function News({
 
   return (
     <GuestLayout auth={auth}>
-      <Head title={title} />
+      <Head title={title} /> 
       
       {/* Hero Section */}
       <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
@@ -602,12 +602,12 @@ export default function News({
             >
               Request a Consultation
             </Link>
-            <Link
+            {/* <Link
               href="/services/advisory"
               className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition"
             >
               View Advisory Services
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
