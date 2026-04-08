@@ -185,7 +185,7 @@ export default function ArticleShow({
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-gray-900">{article.author.name}</h3>
+                {/* <h3 className="font-semibold text-gray-900">{article.author.name}</h3> */}
                 {article.author.title && (
                   <p className="text-sm text-gray-600">{article.author.title}</p>
                 )}
@@ -291,26 +291,9 @@ export default function ArticleShow({
               {/* Author Bio */}
               <div className="mb-12 p-6 bg-gray-50 rounded-xl">
                 <div className="flex items-start">
-                  {article.author.avatar ? (
-                    <img 
-                      src={article.author.avatar} 
-                      alt={article.author.name}
-                      className="w-16 h-16 rounded-full mr-4 border-2 border-white"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-4 border-2 border-white">
-                      <UserIcon className="w-8 h-8 text-blue-600" />
-                    </div>
-                  )}
+                  
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      About {article.author.name}
-                    </h3>
-                    {article.author.bio ? (
-                      <p className="text-gray-600 mb-4">{article.author.bio}</p>
-                    ) : (
-                      <p className="text-gray-600 mb-4">{article.author.title}</p>
-                    )}
+                   
                     {article.author.social_links && Object.keys(article.author.social_links).length > 0 && (
                       <div className="flex space-x-3">
                         {article.author.social_links.twitter && (
@@ -577,12 +560,12 @@ export default function ArticleShow({
             >
               Request a Consultation
             </Link>
-            <Link
+            {/* <Link
               href="/services/advisory"
               className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition"
             >
               View Advisory Services
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
