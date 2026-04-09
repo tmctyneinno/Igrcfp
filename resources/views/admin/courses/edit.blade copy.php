@@ -105,7 +105,7 @@
                                 @error('short_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> 
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>

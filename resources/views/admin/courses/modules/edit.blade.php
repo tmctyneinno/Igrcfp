@@ -44,7 +44,7 @@
     @endif
 
     <form action="{{ route('admin.courses.modules.update', ['course' => $course->slug, 'module' => $module->id]) }}" method="POST" id="moduleForm">
-        @csrf
+        @csrf 
         @method('PUT')
         <div class="row gy-4">
             <div class="col-lg-8">
@@ -153,7 +153,6 @@
                             <h6 class="card-title mb-0">Module Lessons</h6>
                             <a href="{{ route('admin.courses.modules.lessons.create', [$course->slug, $module->id]) }}" 
                                class="btn btn-sm btn-primary">
-                                <iconify-icon icon="mdi:plus"></iconify-icon>
                                 Add Lesson
                             </a>
                         </div>

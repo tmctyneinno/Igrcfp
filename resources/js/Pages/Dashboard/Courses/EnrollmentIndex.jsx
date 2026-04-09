@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 
@@ -17,7 +16,7 @@ import CertificationCard from './components/CertificationCard';
 export default function EnrollmentIndex({ 
     course, 
     enrollment, 
-    modules = [], 
+    modules: initialModules = [], 
     candidate, 
     quizzes = [], 
     moduleAssessments = [], 
@@ -25,59 +24,176 @@ export default function EnrollmentIndex({
     diplomaAssessment = null,
     examResults = {} 
 }) {
+    // Temporary debug
+    console.log('initialModules on render:', JSON.stringify(
+        initialModules?.[0]?.lessons?.map(l => ({ id: l.id, completed: l.completed }))
+    ));
     const [expandedModules, setExpandedModules] = useState({});
     const [completingLesson, setCompletingLesson] = useState(null);
     const [processingExam, setProcessingExam] = useState(null);
+    const [moduleCompletionStatus, setModuleCompletionStatus] = useState({});
+    const [localModules, setLocalModules] = useState(initialModules);
+
     
+
     const progress = enrollment?.progress || 0;
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     const isIdentityVerified = enrollment?.identity_verified || false;
-    
-    // Lesson completion functions
-    const markLessonComplete = (lessonId) => {
-        setCompletingLesson(lessonId);
-        
-        router.post(route('lessons.complete', lessonId), {}, {
-            preserveState: true,
-            preserveScroll: true,
-            onSuccess: (page) => {
-                setCompletingLesson(null);
-                if (page.props.flash?.success) {
-                    toast.success(page.props.flash.success);
-                }
-            },
-            onError: () => {
-                setCompletingLesson(null);
-                toast.error('Failed to mark lesson as complete');
-            }
-        });
-    };
 
-    const markLessonIncomplete = (lessonId) => {
+    // Check if module is complete
+    const checkModuleCompletion = useCallback((moduleId) => {
+        const module = localModules.find(m => m.id === moduleId);
+        if (!module) return false;
+        
+        const allLessonsCompleted = module.lessons?.every(l => l.completed) ?? false;
+        
+        if (allLessonsCompleted && !moduleCompletionStatus[moduleId]) {
+            setModuleCompletionStatus(prev => ({
+                ...prev,
+                [moduleId]: true
+            }));
+            
+            toast.success(`🎉 Module ${module.module_number} completed! Next module unlocked.`, {
+                duration: 5000,
+                icon: '🔓'
+            });
+            
+            return true;
+        }
+        
+        return allLessonsCompleted;
+    }, [localModules, moduleCompletionStatus]);
+
+    // Mark lesson as complete
+    // In EnrollmentIndex.jsx - markLessonComplete function
+
+    const markLessonComplete = useCallback((lessonId, moduleId, metadata = {}) => {
+    console.log('EnrollmentIndex markLessonComplete:', { lessonId, moduleId, metadata });
+    
+    setCompletingLesson(lessonId);
+    
+    // Optimistically update local state FIRST
+    setLocalModules(prevModules => {
+        const updated = prevModules.map(module => {
+            if (module.id === moduleId) {
+                return {
+                    ...module,
+                    lessons: module.lessons?.map(lesson => 
+                        lesson.id === lessonId 
+                            ? { ...lesson, completed: true } 
+                            : lesson
+                    ) || []
+                };
+            }
+            return module;
+        });
+        return updated;
+    });
+    
+   router.post(route('lessons.complete', lessonId), {
+    time_spent: metadata.timeSpent || 0,
+    auto_completed: metadata.autoCompleted || false,
+    scroll_progress: metadata.scrollProgress || 100,
+}, {
+    preserveState: true,
+    preserveScroll: true,
+    only: ['flash'],  // 👈 Only fetch flash, ignore modules/enrollment props
+    onSuccess: (page) => {
+        setCompletingLesson(null);
+        
+        if (moduleId) {
+            checkModuleCompletion(moduleId);
+        }
+        
+        toast.success('Lesson completed!');
+    },
+    onError: (errors) => {
+        console.error('ERROR:', errors);  // 👈 Add this if not there
+        toast.error('Failed: ' + JSON.stringify(errors));
+        console.error('Server error:', errors);
+        setCompletingLesson(null);
+        
+        // Revert optimistic update on error
+        setLocalModules(prevModules => 
+            prevModules.map(module => {
+                if (module.id === moduleId) {
+                    return {
+                        ...module,
+                        lessons: module.lessons?.map(lesson => 
+                            lesson.id === lessonId 
+                                ? { ...lesson, completed: false } 
+                                : lesson
+                        ) || []
+                    };
+                }
+                return module;
+            })
+        );
+        
+        toast.error('Failed to mark lesson as complete');
+    },
+});
+}, [checkModuleCompletion]);
+
+    // Mark lesson as incomplete
+    const markLessonIncomplete = useCallback((lessonId, moduleId) => {
+        setLocalModules(prevModules => 
+            prevModules.map(module => {
+                if (module.id === moduleId) {
+                    return {
+                        ...module,
+                        lessons: module.lessons?.map(lesson => 
+                            lesson.id === lessonId 
+                                ? { ...lesson, completed: false } 
+                                : lesson
+                        ) || []
+                    };
+                }
+                return module;
+            })
+        );
+        
         router.delete(route('lessons.incomplete', lessonId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props.flash?.success) {
-                    toast.success(page.props.flash.success);
+                if (page.props.modules) {
+                    setLocalModules(page.props.modules);
                 }
+                toast.success('Lesson marked as incomplete');
             },
             onError: () => {
+                setLocalModules(prevModules => 
+                    prevModules.map(module => {
+                        if (module.id === moduleId) {
+                            return {
+                                ...module,
+                                lessons: module.lessons?.map(lesson => 
+                                    lesson.id === lessonId 
+                                        ? { ...lesson, completed: true } 
+                                        : lesson
+                                ) || []
+                            };
+                        }
+                        return module;
+                    })
+                );
                 toast.error('Failed to update lesson status');
             }
         });
-    };
+    }, []);
 
-    const toggleModule = (moduleId) => {
+    // Toggle module expansion
+    const toggleModule = useCallback((moduleId) => {
         setExpandedModules(prev => ({
             ...prev,
             [moduleId]: !prev[moduleId]
         }));
-    };
+    }, []);
 
     // Assessment navigation functions
-    const handleStartAssessment = (assessmentId, type) => {
+    const handleStartAssessment = useCallback((assessmentId, type) => {
         if ((type === 'final_exam' || type === 'diploma') && !isIdentityVerified) {
             toast.error('Please verify your identity first before starting this assessment.');
             document.getElementById('identity-verification-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -94,9 +210,9 @@ export default function EnrollmentIndex({
         };
         
         window.location.href = urlMap[type];
-    };
+    }, [enrollment?.id, isIdentityVerified]);
 
-    const handleContinueAssessment = (assessmentId, type) => {
+    const handleContinueAssessment = useCallback((assessmentId, type) => {
         setProcessingExam(assessmentId);
         
         const urlMap = {
@@ -107,9 +223,9 @@ export default function EnrollmentIndex({
         };
         
         window.location.href = urlMap[type];
-    };
+    }, [enrollment?.id]);
 
-    const handleReviewAssessment = (assessmentId, type) => {
+    const handleReviewAssessment = useCallback((assessmentId, type) => {
         const urlMap = {
             'quiz': `/assessment/quiz/review/${enrollment.id}/${assessmentId}`,
             'module_assessment': `/assessment/module/review/${enrollment.id}/${assessmentId}`,
@@ -118,7 +234,7 @@ export default function EnrollmentIndex({
         };
         
         window.location.href = urlMap[type];
-    };
+    }, [enrollment?.id]);
 
     return (
         <AuthenticatedLayout>
@@ -136,7 +252,7 @@ export default function EnrollmentIndex({
                             <CourseHeader 
                                 course={course} 
                                 enrollment={enrollment} 
-                                modulesCount={modules?.length || 0} 
+                                modulesCount={localModules?.length || 0} 
                                 progress={progress} 
                             />
 
@@ -146,13 +262,14 @@ export default function EnrollmentIndex({
                                     Course Content
                                 </h2>
                                 
-                                <ModuleList
-                                    modules={modules}
+                                <ModuleList 
+                                    modules={localModules}
                                     expandedModules={expandedModules}
                                     toggleModule={toggleModule}
                                     completingLesson={completingLesson}
                                     markLessonComplete={markLessonComplete}
                                     markLessonIncomplete={markLessonIncomplete}
+                                    moduleCompletionStatus={moduleCompletionStatus}
                                 />
                             </div>
                         </div>

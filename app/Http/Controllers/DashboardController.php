@@ -451,8 +451,9 @@ class DashboardController extends Controller
         $course = Course::where('slug', $slug)->firstOrFail();
         
         $enrollment = Enrollment::where('user_id', auth()->id())
-            ->where('course_id', $course->id)
-            ->first();
+        ->where('course_id', $course->id)
+        ->whereIn('status', ['enrolled', 'active', 'completed'])
+        ->first();
 
         // Get all assessments for this course with user's attempt status
         $quizzes = Assessment::where('course_id', $course->id)
@@ -583,13 +584,44 @@ class DashboardController extends Controller
             'final_exam_passed' => $finalExam ? ($finalExam['passed'] ?? false) : null,
             'diploma_passed' => $diplomaAssessment ? ($diplomaAssessment['passed'] ?? false) : null,
         ];
-        // Load modules with lessons and completion status
+       
         $modules = $course->modules()
-            ->with(['lessons' => function($query) use ($enrollment) {
-                $query->withCompletionStatus(auth()->id(), $enrollment->id ?? null);
-            }])
-            ->orderBy('module_number')
-            ->get();
+        ->with(['lessons' => function($query) use ($enrollment) {
+            if ($enrollment) {
+                $query->withCompletionStatus(auth()->id(), $enrollment->id);
+            }
+        }])
+        ->orderBy('module_number')
+        ->get()
+        ->map(function ($module) {
+            return [
+                'id' => $module->id,
+                'title' => $module->title,
+                'module_number' => $module->module_number,
+                'learning_objectives' => $module->learning_objectives,
+                'full_content' => $module->full_content,
+                'estimated_hours' => $module->estimated_hours,
+                'lessons' => $module->lessons->map(function ($lesson) {
+                    return [
+                        'id' => $lesson->id,
+                        'title' => $lesson->title,
+                        'description' => $lesson->description,
+                        'duration' => $lesson->duration,
+                        'lesson_type' => $lesson->lesson_type ?? 'reading',
+                        'content' => $lesson->content,
+                        'completed' => (bool) ($lesson->completed ?? false), // 👈 this is the key line
+                    ];
+                })->toArray(),
+                // 'materials' => $module->materials->map(function ($material) {
+                //     return [
+                //         'id' => $material->id,
+                //         'title' => $material->title,
+                //         'file_url' => $material->file_url,
+                //     ];
+                // })->toArray(),
+            ];
+        });
+        // dd($modules->first()['lessons']);
 
         if (!$enrollment) {
             return Inertia::render('Dashboard/Courses/Show', [
@@ -604,7 +636,7 @@ class DashboardController extends Controller
                 'auth' => [
                     'user' => auth()->user()
                 ]
-            ]);
+            ]); 
         }
 
         return Inertia::render('Dashboard/Courses/EnrollmentIndex', [

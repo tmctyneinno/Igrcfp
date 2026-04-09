@@ -61,10 +61,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/submit/{enrollment}/{exam}', [ExamController::class, 'submit'])->name('submit');
         Route::get('/submit/show', [ExamController::class, 'show'])->name('dashboard.exam.show');
     // });
-
-
+ 
+ 
     Route::post('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markComplete'])
-        ->name('lessons.complete');
+    ->name('lessons.complete')
+    ->where('lesson', '[0-9]+'); 
     Route::delete('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markIncomplete'])
         ->name('lessons.incomplete');
 
