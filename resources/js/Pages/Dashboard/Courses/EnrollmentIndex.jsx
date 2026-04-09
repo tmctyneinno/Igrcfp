@@ -176,7 +176,7 @@ export default function EnrollmentIndex({
         if (!quiz.unlocked) {
             toast.error(quiz.reason || 'Complete lessons first');
             return;
-        }
+        } 
         setProcessingExam(quiz.id);
         const actualQuizId = quiz.quiz_ids?.[0] || quiz.id;
         window.location.href = route('dashboard.quiz.take', { 
@@ -229,7 +229,7 @@ export default function EnrollmentIndex({
                                             📝 Take Quiz
                                         </button>
                                     )}
-                                </div>
+                                </div> 
                             ))}
 
                             <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} progress={progress} />

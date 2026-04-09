@@ -141,51 +141,19 @@ class QuizController extends Controller
             'timeRemaining' => $timeRemaining,
             'timeLimit' => $timeLimit,
         ]);
-    }
+    } 
     
     /**
      * Get all modules with their questions for the sidebar
      */
     private function getModulesWithQuestions($course, $assessment)
     {
-        // If assessment is linked to a specific module, only show that module
-        if ($assessment->module_id) {
-            $module = $course->modules()->find($assessment->module_id);
-            if (!$module) {
-                return [];
-            }
-            
-            $moduleQuestions = $assessment->questions()
-                ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
-                ->get()
-                ->map(function ($q) {
-                    $options = $q->options;
-                    if (is_string($options)) {
-                        $options = json_decode($options, true);
-                    }
-                    return [
-                        'id' => $q->id,
-                        'text' => $q->question_text,
-                        'options' => $options,
-                        'marks' => $q->marks ?? 1,
-                        'correct_answer' => $q->correct_answer,
-                    ];
-                });
-            
-            return [[
-                'id' => $module->id,
-                'title' => $module->title,
-                'module_number' => $module->module_number,
-                'questions' => $moduleQuestions->values()->toArray(),
-                'questions_count' => $moduleQuestions->count(),
-            ]];
-        }
-        
-        // Otherwise, show all modules that have questions for this assessment
+        // Get ALL course modules
         return $course->modules()
             ->orderBy('module_number')
             ->get()
             ->map(function ($module) use ($assessment) {
+                // Get questions for this module
                 $moduleQuestions = $assessment->questions()
                     ->where('module_id', $module->id)
                     ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
@@ -212,141 +180,147 @@ class QuizController extends Controller
                     'questions_count' => $moduleQuestions->count(),
                 ];
             })
-            ->filter(function ($module) {
-                return $module['questions_count'] > 0;
-            })
             ->values()
-            ->toArray();
+            ->toArray(); // ✅ Removed the filter so ALL modules show
     }
     
     public function submit(Request $request, Course $course, $assessmentId)
-    {
-        $user = auth()->user();
-        $assessment = $this->findAssessment($assessmentId);
-        
-        if (!$assessment) {
-            abort(404, 'Assessment not found');
-        }
-        
-        $enrollment = Enrollment::where('user_id', $user->id)
-            ->where('course_id', $course->id)
-            ->firstOrFail();
-        
-        $attempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->where('status', 'in_progress')
-            ->firstOrFail();
-        
-        $answers = $request->input('answers', []);
-        $questions = $assessment->questions()->get();
-        
-        $totalMarks = 0;
-        $earnedMarks = 0;
-        $correctAnswers = 0;
-        
-        foreach ($questions as $question) {
-            $marks = $question->marks ?? 1;
-            $totalMarks += $marks;
-            $userAnswer = $answers[$question->id] ?? null;
-            $correctAnswer = $question->correct_answer;
-            
-            if ($userAnswer === $correctAnswer) {
-                $earnedMarks += $marks;
-                $correctAnswers++;
-            }
-        }
-        
-        $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
-        $passed = $score >= ($assessment->passing_score ?? 70);
-        
-        $attempt->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-            'answers' => json_encode($answers),
-            'score' => $score,
-            'earned_marks' => $earnedMarks,
-            'total_marks' => $totalMarks,
-            'correct_answers' => $correctAnswers,
-            'passed' => $passed,
-        ]);
-        
-        if ($passed) {
-            $enrollment->updateProgress();
-        }
-        
-        return redirect()->route('dashboard.quiz.results', [
-            'course' => $course->slug,
-            'assessment' => $assessmentId
-        ])->with('success', $passed ? 'Congratulations! You passed the quiz!' : 'Quiz submitted.');
+{
+    $user = auth()->user();
+    $assessment = $this->findAssessment($assessmentId);
+    
+    if (!$assessment) {
+        abort(404, 'Assessment not found');
     }
     
-    public function results(Course $course, $assessmentId)
-    {
-        $user = auth()->user();
-        $assessment = $this->findAssessment($assessmentId);
+    $enrollment = Enrollment::where('user_id', $user->id)
+        ->where('course_id', $course->id)
+        ->firstOrFail();
+    
+    $attempt = AssessmentAttempt::where('user_id', $user->id)
+        ->where('assessment_id', $assessment->id)
+        ->where('enrollment_id', $enrollment->id)
+        ->where('status', 'in_progress')
+        ->firstOrFail();
+    
+    $answers = $request->input('answers', []);
+    $questions = $assessment->questions()->get();
+    
+    $totalMarks = 0;
+    $earnedMarks = 0;
+    $correctAnswers = 0;
+    
+    foreach ($questions as $question) {
+        $marks = $question->points ?? 1;
+        $totalMarks += $marks;
+        $userAnswer = $answers[$question->id] ?? null;
+        $isCorrect = $question->isAnswerCorrect($userAnswer);
         
-        if (!$assessment) {
-            abort(404, 'Assessment not found');
+        if ($isCorrect === true) {
+            $earnedMarks += $marks;
+            $correctAnswers++;
+        }
+    }
+    
+    $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
+    $passed = $score >= ($assessment->passing_score ?? 70);
+    
+    $attempt->update([
+        'status' => 'completed',
+        'completed_at' => now(),
+        'answers' => json_encode($answers),
+        'score' => $score,
+        'earned_marks' => $earnedMarks,
+        'total_marks' => $totalMarks,
+        'correct_answers' => $correctAnswers,
+        'passed' => $passed,
+    ]);
+    
+    if ($passed) {
+        $enrollment->updateProgress();
+    }
+    
+    // ✅ Return Inertia location instead of redirect
+    return Inertia::location(route('dashboard.quiz.results', [
+        'course' => $course->slug,
+        'assessment' => $assessmentId
+    ]));
+}
+    
+    public function results(Course $course, $assessmentId)
+{
+    $user = auth()->user();
+    $assessment = $this->findAssessment($assessmentId);
+    
+    if (!$assessment) {
+        abort(404, 'Assessment not found');
+    }
+    
+    $enrollment = Enrollment::where('user_id', $user->id)
+        ->where('course_id', $course->id)
+        ->firstOrFail();
+    
+    // Find ANY completed attempt (don't use firstOrFail)
+    $attempt = AssessmentAttempt::where('user_id', $user->id)
+        ->where('assessment_id', $assessment->id)
+        ->where('enrollment_id', $enrollment->id)
+        ->where('status', 'completed')
+        ->latest()
+        ->first();
+    
+    // ✅ If no completed attempt, redirect to course page (NOT back to quiz)
+    if (!$attempt) {
+        return redirect()->route('dashboard.courses.show', $course->slug)
+            ->with('error', 'No completed quiz attempt found.');
+    }
+    
+    $questions = $assessment->questions()->get();
+    $answers = json_decode($attempt->answers, true) ?? [];
+    
+    $questionsWithResults = $questions->map(function ($question) use ($answers) {
+        $userAnswer = $answers[$question->id] ?? null;
+        $isCorrect = $question->isAnswerCorrect($userAnswer);
+        
+        $options = $question->options;
+        if (is_string($options)) {
+            $options = json_decode($options, true);
         }
         
-        $enrollment = Enrollment::where('user_id', $user->id)
-            ->where('course_id', $course->id)
-            ->firstOrFail();
-        
-        $attempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->where('status', 'completed')
-            ->firstOrFail();
-        
-        $questions = $assessment->questions()->get();
-        $answers = json_decode($attempt->answers, true) ?? [];
-        
-        $questionsWithResults = $questions->map(function ($question) use ($answers) {
-            $userAnswer = $answers[$question->id] ?? null;
-            $isCorrect = $userAnswer === $question->correct_answer;
-            
-            $options = $question->options;
-            if (is_string($options)) {
-                $options = json_decode($options, true);
-            }
-            
-            return [
-                'id' => $question->id,
-                'text' => $question->question_text,
-                'options' => $options,
-                'correct_answer' => $question->correct_answer,
-                'user_answer' => $userAnswer,
-                'is_correct' => $isCorrect,
-                'marks' => $question->marks ?? 1,
-            ];
-        });
-        
-        return Inertia::render('Dashboard/Quiz/Results', [
-            'course' => [
-                'id' => $course->id,
-                'title' => $course->title,
-                'slug' => $course->slug,
-            ],
-            'assessment' => [
-                'id' => $assessment->id,
-                'title' => $assessment->title,
-                'passing_score' => $assessment->passing_score ?? 70,
-                'total_marks' => $attempt->total_marks,
-            ],
-            'attempt' => [
-                'id' => $attempt->id,
-                'score' => $attempt->score,
-                'earned_marks' => $attempt->earned_marks,
-                'total_marks' => $attempt->total_marks,
-                'correct_answers' => $attempt->correct_answers,
-                'passed' => $attempt->passed,
-                'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
-            ],
-            'questions' => $questionsWithResults,
-        ]);
-    }
+        return [
+            'id' => $question->id,
+            'text' => $question->question_text,
+            'options' => $options,
+            'correct_answer' => $question->correct_answer,
+            'user_answer' => $userAnswer,
+            'is_correct' => $isCorrect,
+            'points' => $question->points ?? 1,
+        ];
+    });
+    
+    // ✅ RENDER THE RESULTS PAGE (don't redirect)
+    return Inertia::render('Dashboard/Quiz/Results', [
+        'course' => [
+            'id' => $course->id,
+            'title' => $course->title,
+            'slug' => $course->slug,
+        ],
+        'assessment' => [
+            'id' => $assessment->id,
+            'title' => $assessment->title,
+            'passing_score' => $assessment->passing_score ?? 70,
+        ],
+        'attempt' => [
+            'id' => $attempt->id,
+            'score' => $attempt->score,
+            'earned_marks' => $attempt->earned_marks,
+            'total_marks' => $attempt->total_marks,
+            'correct_answers' => $attempt->correct_answers,
+            'passed' => $attempt->passed,
+            'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
+        ],
+        'questions' => $questionsWithResults,
+    ]);
+}
     
     public function continue(Course $course, $assessmentId)
     {
