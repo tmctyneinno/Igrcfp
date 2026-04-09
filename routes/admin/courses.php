@@ -91,7 +91,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
-    Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
+    Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update'); 
     Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
     Route::post('/assessments/course/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');

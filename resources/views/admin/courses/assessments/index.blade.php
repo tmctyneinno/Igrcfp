@@ -342,7 +342,7 @@
                                             <iconify-icon icon="solar:users-group-rounded-outline" class="menu-icon"></iconify-icon>
                                         </a>
                                         <form action="{{ route('admin.assessments.destroy', $assessment->id) }}" method="POST" class="d-inline">
-                                            @csrf
+                                            @csrf 
                                             @method('DELETE')
                                             <button type="submit" 
                                                     class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0"

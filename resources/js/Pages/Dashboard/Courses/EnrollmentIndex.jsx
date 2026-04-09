@@ -3,8 +3,6 @@ import { Head, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
-
-// Import components
 import Breadcrumb from './components/Breadcrumb';
 import CandidateBanner from './components/CandidateBanner';
 import CourseHeader from './components/CourseHeader';
@@ -29,11 +27,9 @@ export default function EnrollmentIndex({
     const [processingExam, setProcessingExam] = useState(null);
     const [moduleCompletionStatus, setModuleCompletionStatus] = useState({});
     const [localModules, setLocalModules] = useState(initialModules);
-    const [quizUnlockVersion, setQuizUnlockVersion] = useState(0); // Force recompute
+    const [quizUnlockVersion, setQuizUnlockVersion] = useState(0);
 
-    // Sync with initialModules when they change from server
     useEffect(() => {
-        console.log('initialModules updated:', initialModules);
         setLocalModules(initialModules);
     }, [initialModules]);
 
@@ -42,33 +38,17 @@ export default function EnrollmentIndex({
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     const isIdentityVerified = enrollment?.identity_verified || false;
 
-    // Helper function to check if a quiz/module assessment is unlocked
     const getQuizUnlockStatus = useCallback((quiz) => {
-        // Convert module_id to number for comparison
         const quizModuleId = typeof quiz.module_id === 'string' 
             ? parseInt(quiz.module_id, 10) 
             : quiz.module_id;
         
-        console.log('getQuizUnlockStatus - quiz:', { 
-            id: quiz.id, 
-            module_id: quizModuleId,
-            title: quiz.title 
-        });
-        
-        // Find the module this quiz belongs to
         const module = localModules.find(m => {
             const moduleId = typeof m.id === 'string' ? parseInt(m.id, 10) : m.id;
             return moduleId === quizModuleId;
         });
         
-        console.log('getQuizUnlockStatus - found module:', module ? {
-            id: module.id,
-            title: module.title,
-            lessonsCount: module.lessons?.length
-        } : 'NOT FOUND');
-        
         if (!module) {
-            // If no module found, quiz might be general - unlocked by default
             return { unlocked: true, reason: null, progress: 100 };
         }
         
@@ -76,41 +56,17 @@ export default function EnrollmentIndex({
         const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
         const allLessonsComplete = totalLessons > 0 && completedLessons === totalLessons;
         
-        console.log('getQuizUnlockStatus - lesson status:', {
-            totalLessons,
-            completedLessons,
-            allLessonsComplete
-        });
-        
         return {
             unlocked: allLessonsComplete,
-            reason: allLessonsComplete 
-                ? null 
-                : `Complete all lessons in "${module.title}" first (${completedLessons}/${totalLessons})`,
+            reason: allLessonsComplete ? null : `Complete all lessons in "${module.title}" first (${completedLessons}/${totalLessons})`,
             progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
         };
-    }, [localModules, quizUnlockVersion]); // Add quizUnlockVersion to force recompute
+    }, [localModules, quizUnlockVersion]);
 
-    // Use useMemo to recompute when dependencies change
     const quizzesWithUnlockStatus = useMemo(() => {
-        console.log('Computing quizzesWithUnlockStatus...');
-        const result = quizzes.map(quiz => ({
-            ...quiz,
-            ...getQuizUnlockStatus(quiz)
-        }));
-        console.log('quizzesWithUnlockStatus result:', result);
-        return result;
+        return quizzes.map(quiz => ({ ...quiz, ...getQuizUnlockStatus(quiz) }));
     }, [quizzes, getQuizUnlockStatus, quizUnlockVersion]);
 
-    // Also apply to module assessments
-    const moduleAssessmentsWithUnlockStatus = useMemo(() => {
-        return moduleAssessments.map(assessment => ({
-            ...assessment,
-            ...getQuizUnlockStatus(assessment)
-        }));
-    }, [moduleAssessments, getQuizUnlockStatus, quizUnlockVersion]);
-
-    // Check if module is complete
     const checkModuleCompletion = useCallback((moduleId) => {
         const module = localModules.find(m => m.id === moduleId);
         if (!module) return false;
@@ -118,49 +74,27 @@ export default function EnrollmentIndex({
         const allLessonsCompleted = module.lessons?.every(l => l.completed) ?? false;
         
         if (allLessonsCompleted && !moduleCompletionStatus[moduleId]) {
-            setModuleCompletionStatus(prev => ({
-                ...prev,
-                [moduleId]: true
-            }));
-            
-            // Force quiz unlock status to recompute
+            setModuleCompletionStatus(prev => ({ ...prev, [moduleId]: true }));
             setQuizUnlockVersion(prev => prev + 1);
-            
-            toast.success(`🎉 Module ${module.module_number} completed! Quiz now unlocked.`, {
-                duration: 5000,
-                icon: '🔓'
-            });
-            
+            toast.success(`🎉 Module ${module.module_number} completed!`);
             return true;
         }
-        
         return allLessonsCompleted;
     }, [localModules, moduleCompletionStatus]);
 
-    // Mark lesson as complete
     const markLessonComplete = useCallback((lessonId, moduleId, metadata = {}) => {
-        console.log('EnrollmentIndex markLessonComplete:', { lessonId, moduleId, metadata });
-        
         setCompletingLesson(lessonId);
-        
-        // Optimistically update local state
-        setLocalModules(prevModules => {
-            const updated = prevModules.map(module => {
-                if (module.id === moduleId) {
-                    return {
-                        ...module,
-                        lessons: module.lessons?.map(lesson => 
-                            lesson.id === lessonId 
-                                ? { ...lesson, completed: true } 
-                                : lesson
-                        ) || []
-                    };
-                }
-                return module;
-            });
-            console.log('Optimistically updated modules:', updated);
-            return updated;
-        });
+        setLocalModules(prevModules => prevModules.map(module => {
+            if (module.id === moduleId) {
+                return {
+                    ...module,
+                    lessons: module.lessons?.map(lesson => 
+                        lesson.id === lessonId ? { ...lesson, completed: true } : lesson
+                    ) || []
+                };
+            }
+            return module;
+        }));
         
         router.post(route('lessons.complete', lessonId), {
             time_spent: metadata.timeSpent || 0,
@@ -171,196 +105,103 @@ export default function EnrollmentIndex({
             preserveScroll: true,
             onSuccess: (page) => {
                 setCompletingLesson(null);
-                
-                // Update with server data if provided
-                if (page.props?.flash?.modules) {
-                    console.log('Updating with server modules');
-                    setLocalModules(page.props.flash.modules);
-                }
-                
-                // Force quiz unlock status to recompute
+                if (page.props?.flash?.modules) setLocalModules(page.props.flash.modules);
                 setQuizUnlockVersion(prev => prev + 1);
-                
-                // Check module completion - this will show the unlock toast
-                if (moduleId) {
-                    checkModuleCompletion(moduleId);
-                }
-                
+                if (moduleId) checkModuleCompletion(moduleId);
                 toast.success('Lesson completed!');
             },
-            onError: (errors) => {
-                console.error('Server error:', errors);
+            onError: () => {
                 setCompletingLesson(null);
-                
-                // Revert optimistic update on error
-                setLocalModules(prevModules =>
-                    prevModules.map(module => {
-                        if (module.id === moduleId) {
-                            return {
-                                ...module,
-                                lessons: module.lessons?.map(lesson => 
-                                    lesson.id === lessonId 
-                                        ? { ...lesson, completed: false } 
-                                        : lesson
-                                ) || []
-                            };
-                        }
-                        return module;
-                    })
-                );
+                setLocalModules(prevModules => prevModules.map(module => {
+                    if (module.id === moduleId) {
+                        return {
+                            ...module,
+                            lessons: module.lessons?.map(lesson => 
+                                lesson.id === lessonId ? { ...lesson, completed: false } : lesson
+                            ) || []
+                        };
+                    }
+                    return module;
+                }));
                 toast.error('Failed to mark lesson as complete');
             },
         });
     }, [checkModuleCompletion]);
 
-    // Mark lesson as incomplete
     const markLessonIncomplete = useCallback((lessonId, moduleId) => {
-        setLocalModules(prevModules => 
-            prevModules.map(module => {
-                if (module.id === moduleId) {
-                    return {
-                        ...module,
-                        lessons: module.lessons?.map(lesson => 
-                            lesson.id === lessonId 
-                                ? { ...lesson, completed: false } 
-                                : lesson
-                        ) || []
-                    };
-                }
-                return module;
-            })
-        );
-        
-        // Force recompute
+        setLocalModules(prevModules => prevModules.map(module => {
+            if (module.id === moduleId) {
+                return {
+                    ...module,
+                    lessons: module.lessons?.map(lesson => 
+                        lesson.id === lessonId ? { ...lesson, completed: false } : lesson
+                    ) || []
+                };
+            }
+            return module;
+        }));
         setQuizUnlockVersion(prev => prev + 1);
         
         router.delete(route('lessons.incomplete', lessonId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props?.flash?.modules) {
-                    setLocalModules(page.props.flash.modules);
-                }
+                if (page.props?.flash?.modules) setLocalModules(page.props.flash.modules);
                 setQuizUnlockVersion(prev => prev + 1);
                 toast.success('Lesson marked as incomplete');
             },
             onError: () => {
-                setLocalModules(prevModules => 
-                    prevModules.map(module => {
-                        if (module.id === moduleId) {
-                            return {
-                                ...module,
-                                lessons: module.lessons?.map(lesson => 
-                                    lesson.id === lessonId 
-                                        ? { ...lesson, completed: true } 
-                                        : lesson
-                                ) || []
-                            };
-                        }
-                        return module;
-                    })
-                );
+                setLocalModules(prevModules => prevModules.map(module => {
+                    if (module.id === moduleId) {
+                        return {
+                            ...module,
+                            lessons: module.lessons?.map(lesson => 
+                                lesson.id === lessonId ? { ...lesson, completed: true } : lesson
+                            ) || []
+                        };
+                    }
+                    return module;
+                }));
                 toast.error('Failed to update lesson status');
             }
         });
     }, []);
 
     const toggleModule = useCallback((moduleId) => {
-        setExpandedModules(prev => ({
-            ...prev,
-            [moduleId]: !prev[moduleId]
-        }));
+        setExpandedModules(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
     }, []);
 
-    const handleStartAssessment = useCallback((assessmentId, type) => {
-        if ((type === 'final_exam' || type === 'diploma') && !isIdentityVerified) {
-            toast.error('Please verify your identity first before starting this assessment.');
-            document.getElementById('identity-verification-section')?.scrollIntoView({ behavior: 'smooth' });
+    // Start quiz - passes the module_id to the quiz page
+    const handleStartQuiz = useCallback((quiz) => {
+        if (!quiz.unlocked) {
+            toast.error(quiz.reason || 'Complete lessons first');
             return;
         }
-        
-        setProcessingExam(assessmentId);
-        
-        const urlMap = {
-            'quiz': `/assessment/quiz/${enrollment.id}/${assessmentId}`,
-            'module_assessment': `/assessment/module/${enrollment.id}/${assessmentId}`,
-            'final_exam': `/assessment/final/${enrollment.id}/${assessmentId}`,
-            'diploma': `/assessment/diploma/${enrollment.id}/${assessmentId}`
-        };
-        
-        window.location.href = urlMap[type];
-    }, [enrollment?.id, isIdentityVerified]);
-
-    const handleContinueAssessment = useCallback((assessmentId, type) => {
-        setProcessingExam(assessmentId);
-        
-        const urlMap = {
-            'quiz': `/assessment/quiz/continue/${enrollment.id}/${assessmentId}`,
-            'module_assessment': `/assessment/module/continue/${enrollment.id}/${assessmentId}`,
-            'final_exam': `/assessment/final/continue/${enrollment.id}/${assessmentId}`,
-            'diploma': `/assessment/diploma/continue/${enrollment.id}/${assessmentId}`
-        };
-        
-        window.location.href = urlMap[type];
-    }, [enrollment?.id]);
-
-    const handleReviewAssessment = useCallback((assessmentId, type) => {
-        const urlMap = {
-            'quiz': `/assessment/quiz/review/${enrollment.id}/${assessmentId}`,
-            'module_assessment': `/assessment/module/review/${enrollment.id}/${assessmentId}`,
-            'final_exam': `/assessment/final/review/${enrollment.id}/${assessmentId}`,
-            'diploma': `/assessment/diploma/review/${enrollment.id}/${assessmentId}`
-        };
-        
-        window.location.href = urlMap[type];
-    }, [enrollment?.id]);
-
-    // Debug log
-    useEffect(() => {
-        console.log('=== STATE UPDATED ===');
-        console.log('localModules lessons completed:', 
-            localModules.map(m => ({
-                id: m.id,
-                title: m.title,
-                completed: m.lessons?.filter(l => l.completed).length,
-                total: m.lessons?.length
-            }))
-        );
-        console.log('quizzesWithUnlockStatus:', 
-            quizzesWithUnlockStatus.map(q => ({
-                id: q.id,
-                title: q.title,
-                unlocked: q.unlocked,
-                reason: q.reason
-            }))
-        );
-    }, [localModules, quizzesWithUnlockStatus]);
+        setProcessingExam(quiz.id);
+        const actualQuizId = quiz.quiz_ids?.[0] || quiz.id;
+        window.location.href = route('dashboard.quiz.take', { 
+            course: course.slug, 
+            assessment: actualQuizId,
+            module: quiz.module_id  // Pass module ID
+        });
+    }, [course?.slug]);
 
     return (
         <AuthenticatedLayout>
             <Head title={`${course?.title || 'Course'} | My Learning`} />
-
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <Breadcrumb courseTitle={course?.title} />
-
                     {candidate && <CandidateBanner candidate={candidate} enrollment={enrollment} />}
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-6">
-                            <CourseHeader 
-                                course={course} 
-                                enrollment={enrollment} 
-                                modulesCount={localModules?.length || 0} 
-                                progress={progress} 
-                            />
-
+                            <CourseHeader course={course} enrollment={enrollment} modulesCount={localModules?.length || 0} progress={progress} />
                             <div className="space-y-4">
                                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                                     <BookOpenIcon className="w-5 h-5 text-indigo-600" />
                                     Course Content
                                 </h2>
-                                
                                 <ModuleList 
                                     modules={localModules}
                                     expandedModules={expandedModules}
@@ -368,77 +209,30 @@ export default function EnrollmentIndex({
                                     completingLesson={completingLesson}
                                     markLessonComplete={markLessonComplete}
                                     markLessonIncomplete={markLessonIncomplete}
-                                    moduleCompletionStatus={moduleCompletionStatus}
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-6">
-                            <IdentityVerificationCard 
-                                enrollment={enrollment} 
-                                isIdentityVerified={isIdentityVerified} 
-                            />
+                            <IdentityVerificationCard enrollment={enrollment} isIdentityVerified={isIdentityVerified} />
+                            
+                            {/* Quiz buttons in sidebar - NOT inside modules */}
+                            {quizzesWithUnlockStatus.map((quiz) => (
+                                <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-3">{quiz.title}</h3>
+                                    {!quiz.unlocked ? (
+                                        <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg">
+                                            🔒 {quiz.reason}
+                                        </button>
+                                    ) : (
+                                        <button onClick={() => handleStartQuiz(quiz)} className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                            📝 Take Quiz
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
 
-                            <AssessmentList
-                                title="Module Quizzes"
-                                icon="quiz"
-                                assessments={quizzesWithUnlockStatus}
-                                type="quiz"
-                                processingExam={processingExam}
-                                isIdentityVerified={isIdentityVerified}
-                                onStart={handleStartAssessment}
-                                onContinue={handleContinueAssessment}
-                                onReview={handleReviewAssessment}
-                            />
-
-                            <AssessmentList
-                                title="Module Assessments"
-                                icon="module"
-                                assessments={moduleAssessmentsWithUnlockStatus}
-                                type="module_assessment"
-                                processingExam={processingExam}
-                                isIdentityVerified={isIdentityVerified}
-                                onStart={handleStartAssessment}
-                                onContinue={handleContinueAssessment}
-                                onReview={handleReviewAssessment}
-                            />
-
-                            {finalExam && (
-                                <AssessmentList
-                                    title="Final Exam"
-                                    icon="final"
-                                    assessments={[finalExam]}
-                                    type="final_exam"
-                                    processingExam={processingExam}
-                                    isIdentityVerified={isIdentityVerified}
-                                    onStart={handleStartAssessment}
-                                    onContinue={handleContinueAssessment}
-                                    onReview={handleReviewAssessment}
-                                />
-                            )}
-
-                            {diplomaAssessment && (
-                                <AssessmentList
-                                    title="Diploma Project"
-                                    icon="diploma"
-                                    assessments={[diplomaAssessment]}
-                                    type="diploma"
-                                    processingExam={processingExam}
-                                    isIdentityVerified={isIdentityVerified}
-                                    onStart={handleStartAssessment}
-                                    onContinue={handleContinueAssessment}
-                                    onReview={handleReviewAssessment}
-                                />
-                            )}
-
-                            <CertificationCard
-                                enrollment={enrollment}
-                                hasCertificate={hasCertificate}
-                                certificateNumber={certificateNumber}
-                                isIdentityVerified={isIdentityVerified}
-                                examResults={examResults}
-                                progress={progress}
-                            />
+                            <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} progress={progress} />
                         </div>
                     </div>
                 </div>
