@@ -23,8 +23,9 @@ export default function QuizTake({
     const [activeModule, setActiveModule] = useState(null);
     
     const currentQuestion = questions[currentQuestionIndex];
-    const progress = questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0;
-    
+   const progress = questions.length > 0 
+        ? Math.round(((currentQuestionIndex + 1) / questions.length) * 100) 
+        : 0;
     // Debug log
     useEffect(() => {
         console.log('QuizTake - modules:', modules);
@@ -40,7 +41,7 @@ export default function QuizTake({
             setActiveModule(firstModuleId);
         }
     }, [modules]);
-    
+     
     // Find which module the current question belongs to
     useEffect(() => {
         if (currentQuestion && modules.length > 0) {
@@ -55,6 +56,7 @@ export default function QuizTake({
     }, [currentQuestionIndex, currentQuestion, modules]);
     
     // Timer
+     // ✅ Fix: Timer effect with proper cleanup
     useEffect(() => {
         const timer = setInterval(() => {
             setTimeRemaining(prev => {
@@ -66,12 +68,17 @@ export default function QuizTake({
                 return prev - 1;
             });
         }, 1000);
+        
         return () => clearInterval(timer);
     }, []);
     
+    // ✅ Fix: Timer format without decimals
     const formatTime = (seconds) => {
+        if (isNaN(seconds) || seconds < 0) return '0:00';
+        
         const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
+        const secs = Math.floor(seconds % 60);
+        
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
     
@@ -116,21 +123,31 @@ export default function QuizTake({
         setExpandedModules(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
     };
     
-    const handleSubmit = () => {
-        const unanswered = questions.filter(q => !answers[q.id]).length;
-        if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) {
-            return;
-        }
-        
-        setIsSubmitting(true);
-        router.post(route('dashboard.quiz.submit', { 
-            course: course.slug, 
-            assessment: assessment.id 
-        }), { answers }, {
-            onFinish: () => setIsSubmitting(false),
-            onError: () => toast.error('Failed to submit quiz.')
-        });
-    };
+  const handleSubmit = () => {
+    const unanswered = questions.filter(q => !answers[q.id]).length;
+    if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) {
+        return;
+    }
+    
+    setIsSubmitting(true);
+    
+    const submitUrl = route('dashboard.quiz.submit', { 
+        course: course.slug, 
+        assessment: assessment.id 
+    });
+    
+    // ✅ Use router.post with proper Inertia handling
+    router.post(submitUrl, { answers }, {
+        onFinish: () => setIsSubmitting(false),
+        onSuccess: () => {
+            // Success - Inertia will handle the redirect from server
+        },
+        onError: (errors) => {
+            setIsSubmitting(false);
+            toast.error('Failed to submit quiz. Please try again.');
+        },
+    });
+};
     
     const getModuleProgress = (module) => {
         if (!module.questions?.length) return 0;
@@ -185,7 +202,7 @@ export default function QuizTake({
                         <div className="max-w-[1600px] mx-auto">
                             <div className="flex justify-between text-xs text-gray-500 mb-1">
                                 <span>Overall Progress</span>
-                                <span>{Math.round(progress)}%</span>
+                                <span>{progress}%</span>
                             </div>
                             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                                 <div className="h-full bg-blue-600 rounded-full transition-all" style={{ width: `${progress}%` }} />

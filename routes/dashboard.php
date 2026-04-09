@@ -155,23 +155,23 @@ Route::prefix('assessment')->name('assessment.')->group(function () {
         ->name('diploma.save');
 
 });
-
-Route::prefix('dashboard')->name('dashboard.')->group(function () {
-    // ============== QUIZ ROUTES ==============
-    // Take quiz page
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    
+    // ✅ POST ROUTES FIRST
+    Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])
+        ->name('quiz.submit');
+    
+    Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])
+        ->name('quiz.save');
+    
+    // ✅ SPECIFIC GET ROUTES NEXT
+    Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
+        ->name('quiz.results');
+    
+    Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])
+        ->name('quiz.continue');
+    
+    // ✅ GENERAL GET ROUTE LAST
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
-        ->where('assessment', '.*') // Accept any characters including hyphens
         ->name('quiz.take');
-        
-    // Continue quiz
-    Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])->name('quiz.continue');
-    
-    // Submit quiz
-    Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
-    
-    // Save progress (AJAX)
-    Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])->name('quiz.save');
-     // Quiz results/review page
-    Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])->name('quiz.results');
-
 });

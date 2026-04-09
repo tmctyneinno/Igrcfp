@@ -50,9 +50,9 @@ class AssessmentController extends Controller
 
         $assessments = $query->paginate(15);
         $courses = Course::orderBy('title')->get();
-        
+         
         // Statistics
-        $statistics = [
+         $statistics = [
             'total' => Assessment::count(),
             'quizzes' => Assessment::quizzes()->count(),
             'module_assessments' => Assessment::moduleAssessments()->count(),
@@ -599,6 +599,7 @@ private function saveQuestions(Assessment $assessment, array $questions): void
         // Both answer columns default to null
         $row = [
             'assessment_id'    => $assessment->id,
+            'module_id'        => $assessment->module_id ?? $questionData['module_id'] ?? null, // ✅ ADD THIS
             'question_text'    => $questionData['text'],
             'question_type'    => $questionData['type'],
             'points'           => $questionData['points'],
@@ -607,7 +608,7 @@ private function saveQuestions(Assessment $assessment, array $questions): void
             'is_required'      => true,
             'correct_answer'   => null,
             'correct_answers'  => null,
-        ];
+        ]; 
  
         switch ($questionData['type']) {
  
