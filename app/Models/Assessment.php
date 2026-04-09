@@ -12,7 +12,7 @@ class Assessment extends Model
     use SoftDeletes;
 
     protected $table = 'assessments';
-
+ 
     protected $fillable = [
         'course_id',
         'module_id',

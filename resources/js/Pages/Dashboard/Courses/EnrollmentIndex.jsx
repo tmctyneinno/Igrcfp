@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Head, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
@@ -24,22 +24,91 @@ export default function EnrollmentIndex({
     diplomaAssessment = null,
     examResults = {} 
 }) {
-    // Temporary debug
-    console.log('initialModules on render:', JSON.stringify(
-        initialModules?.[0]?.lessons?.map(l => ({ id: l.id, completed: l.completed }))
-    ));
     const [expandedModules, setExpandedModules] = useState({});
     const [completingLesson, setCompletingLesson] = useState(null);
     const [processingExam, setProcessingExam] = useState(null);
     const [moduleCompletionStatus, setModuleCompletionStatus] = useState({});
     const [localModules, setLocalModules] = useState(initialModules);
+    const [quizUnlockVersion, setQuizUnlockVersion] = useState(0); // Force recompute
 
-    
+    // Sync with initialModules when they change from server
+    useEffect(() => {
+        console.log('initialModules updated:', initialModules);
+        setLocalModules(initialModules);
+    }, [initialModules]);
 
     const progress = enrollment?.progress || 0;
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     const isIdentityVerified = enrollment?.identity_verified || false;
+
+    // Helper function to check if a quiz/module assessment is unlocked
+    const getQuizUnlockStatus = useCallback((quiz) => {
+        // Convert module_id to number for comparison
+        const quizModuleId = typeof quiz.module_id === 'string' 
+            ? parseInt(quiz.module_id, 10) 
+            : quiz.module_id;
+        
+        console.log('getQuizUnlockStatus - quiz:', { 
+            id: quiz.id, 
+            module_id: quizModuleId,
+            title: quiz.title 
+        });
+        
+        // Find the module this quiz belongs to
+        const module = localModules.find(m => {
+            const moduleId = typeof m.id === 'string' ? parseInt(m.id, 10) : m.id;
+            return moduleId === quizModuleId;
+        });
+        
+        console.log('getQuizUnlockStatus - found module:', module ? {
+            id: module.id,
+            title: module.title,
+            lessonsCount: module.lessons?.length
+        } : 'NOT FOUND');
+        
+        if (!module) {
+            // If no module found, quiz might be general - unlocked by default
+            return { unlocked: true, reason: null, progress: 100 };
+        }
+        
+        const totalLessons = module.lessons?.length || 0;
+        const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
+        const allLessonsComplete = totalLessons > 0 && completedLessons === totalLessons;
+        
+        console.log('getQuizUnlockStatus - lesson status:', {
+            totalLessons,
+            completedLessons,
+            allLessonsComplete
+        });
+        
+        return {
+            unlocked: allLessonsComplete,
+            reason: allLessonsComplete 
+                ? null 
+                : `Complete all lessons in "${module.title}" first (${completedLessons}/${totalLessons})`,
+            progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+        };
+    }, [localModules, quizUnlockVersion]); // Add quizUnlockVersion to force recompute
+
+    // Use useMemo to recompute when dependencies change
+    const quizzesWithUnlockStatus = useMemo(() => {
+        console.log('Computing quizzesWithUnlockStatus...');
+        const result = quizzes.map(quiz => ({
+            ...quiz,
+            ...getQuizUnlockStatus(quiz)
+        }));
+        console.log('quizzesWithUnlockStatus result:', result);
+        return result;
+    }, [quizzes, getQuizUnlockStatus, quizUnlockVersion]);
+
+    // Also apply to module assessments
+    const moduleAssessmentsWithUnlockStatus = useMemo(() => {
+        return moduleAssessments.map(assessment => ({
+            ...assessment,
+            ...getQuizUnlockStatus(assessment)
+        }));
+    }, [moduleAssessments, getQuizUnlockStatus, quizUnlockVersion]);
 
     // Check if module is complete
     const checkModuleCompletion = useCallback((moduleId) => {
@@ -54,7 +123,10 @@ export default function EnrollmentIndex({
                 [moduleId]: true
             }));
             
-            toast.success(`🎉 Module ${module.module_number} completed! Next module unlocked.`, {
+            // Force quiz unlock status to recompute
+            setQuizUnlockVersion(prev => prev + 1);
+            
+            toast.success(`🎉 Module ${module.module_number} completed! Quiz now unlocked.`, {
                 duration: 5000,
                 icon: '🔓'
             });
@@ -66,75 +138,80 @@ export default function EnrollmentIndex({
     }, [localModules, moduleCompletionStatus]);
 
     // Mark lesson as complete
-    // In EnrollmentIndex.jsx - markLessonComplete function
-
     const markLessonComplete = useCallback((lessonId, moduleId, metadata = {}) => {
-    console.log('EnrollmentIndex markLessonComplete:', { lessonId, moduleId, metadata });
-    
-    setCompletingLesson(lessonId);
-    
-    // Optimistically update local state FIRST
-    setLocalModules(prevModules => {
-        const updated = prevModules.map(module => {
-            if (module.id === moduleId) {
-                return {
-                    ...module,
-                    lessons: module.lessons?.map(lesson => 
-                        lesson.id === lessonId 
-                            ? { ...lesson, completed: true } 
-                            : lesson
-                    ) || []
-                };
-            }
-            return module;
-        });
-        return updated;
-    });
-    
-   router.post(route('lessons.complete', lessonId), {
-    time_spent: metadata.timeSpent || 0,
-    auto_completed: metadata.autoCompleted || false,
-    scroll_progress: metadata.scrollProgress || 100,
-}, {
-    preserveState: true,
-    preserveScroll: true,
-    only: ['flash'],  // 👈 Only fetch flash, ignore modules/enrollment props
-    onSuccess: (page) => {
-        setCompletingLesson(null);
+        console.log('EnrollmentIndex markLessonComplete:', { lessonId, moduleId, metadata });
         
-        if (moduleId) {
-            checkModuleCompletion(moduleId);
-        }
+        setCompletingLesson(lessonId);
         
-        toast.success('Lesson completed!');
-    },
-    onError: (errors) => {
-        console.error('ERROR:', errors);  // 👈 Add this if not there
-        toast.error('Failed: ' + JSON.stringify(errors));
-        console.error('Server error:', errors);
-        setCompletingLesson(null);
-        
-        // Revert optimistic update on error
-        setLocalModules(prevModules => 
-            prevModules.map(module => {
+        // Optimistically update local state
+        setLocalModules(prevModules => {
+            const updated = prevModules.map(module => {
                 if (module.id === moduleId) {
                     return {
                         ...module,
                         lessons: module.lessons?.map(lesson => 
                             lesson.id === lessonId 
-                                ? { ...lesson, completed: false } 
+                                ? { ...lesson, completed: true } 
                                 : lesson
                         ) || []
                     };
                 }
                 return module;
-            })
-        );
+            });
+            console.log('Optimistically updated modules:', updated);
+            return updated;
+        });
         
-        toast.error('Failed to mark lesson as complete');
-    },
-});
-}, [checkModuleCompletion]);
+        router.post(route('lessons.complete', lessonId), {
+            time_spent: metadata.timeSpent || 0,
+            auto_completed: metadata.autoCompleted || false,
+            scroll_progress: metadata.scrollProgress || 100,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (page) => {
+                setCompletingLesson(null);
+                
+                // Update with server data if provided
+                if (page.props?.flash?.modules) {
+                    console.log('Updating with server modules');
+                    setLocalModules(page.props.flash.modules);
+                }
+                
+                // Force quiz unlock status to recompute
+                setQuizUnlockVersion(prev => prev + 1);
+                
+                // Check module completion - this will show the unlock toast
+                if (moduleId) {
+                    checkModuleCompletion(moduleId);
+                }
+                
+                toast.success('Lesson completed!');
+            },
+            onError: (errors) => {
+                console.error('Server error:', errors);
+                setCompletingLesson(null);
+                
+                // Revert optimistic update on error
+                setLocalModules(prevModules =>
+                    prevModules.map(module => {
+                        if (module.id === moduleId) {
+                            return {
+                                ...module,
+                                lessons: module.lessons?.map(lesson => 
+                                    lesson.id === lessonId 
+                                        ? { ...lesson, completed: false } 
+                                        : lesson
+                                ) || []
+                            };
+                        }
+                        return module;
+                    })
+                );
+                toast.error('Failed to mark lesson as complete');
+            },
+        });
+    }, [checkModuleCompletion]);
 
     // Mark lesson as incomplete
     const markLessonIncomplete = useCallback((lessonId, moduleId) => {
@@ -154,13 +231,17 @@ export default function EnrollmentIndex({
             })
         );
         
+        // Force recompute
+        setQuizUnlockVersion(prev => prev + 1);
+        
         router.delete(route('lessons.incomplete', lessonId), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                if (page.props.modules) {
-                    setLocalModules(page.props.modules);
+                if (page.props?.flash?.modules) {
+                    setLocalModules(page.props.flash.modules);
                 }
+                setQuizUnlockVersion(prev => prev + 1);
                 toast.success('Lesson marked as incomplete');
             },
             onError: () => {
@@ -184,7 +265,6 @@ export default function EnrollmentIndex({
         });
     }, []);
 
-    // Toggle module expansion
     const toggleModule = useCallback((moduleId) => {
         setExpandedModules(prev => ({
             ...prev,
@@ -192,7 +272,6 @@ export default function EnrollmentIndex({
         }));
     }, []);
 
-    // Assessment navigation functions
     const handleStartAssessment = useCallback((assessmentId, type) => {
         if ((type === 'final_exam' || type === 'diploma') && !isIdentityVerified) {
             toast.error('Please verify your identity first before starting this assessment.');
@@ -236,6 +315,27 @@ export default function EnrollmentIndex({
         window.location.href = urlMap[type];
     }, [enrollment?.id]);
 
+    // Debug log
+    useEffect(() => {
+        console.log('=== STATE UPDATED ===');
+        console.log('localModules lessons completed:', 
+            localModules.map(m => ({
+                id: m.id,
+                title: m.title,
+                completed: m.lessons?.filter(l => l.completed).length,
+                total: m.lessons?.length
+            }))
+        );
+        console.log('quizzesWithUnlockStatus:', 
+            quizzesWithUnlockStatus.map(q => ({
+                id: q.id,
+                title: q.title,
+                unlocked: q.unlocked,
+                reason: q.reason
+            }))
+        );
+    }, [localModules, quizzesWithUnlockStatus]);
+
     return (
         <AuthenticatedLayout>
             <Head title={`${course?.title || 'Course'} | My Learning`} />
@@ -247,7 +347,6 @@ export default function EnrollmentIndex({
                     {candidate && <CandidateBanner candidate={candidate} enrollment={enrollment} />}
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Left Column - Course Info & Modules */}
                         <div className="lg:col-span-2 space-y-6">
                             <CourseHeader 
                                 course={course} 
@@ -274,7 +373,6 @@ export default function EnrollmentIndex({
                             </div>
                         </div>
 
-                        {/* Right Column - Assessments & Certification */}
                         <div className="space-y-6">
                             <IdentityVerificationCard 
                                 enrollment={enrollment} 
@@ -284,7 +382,7 @@ export default function EnrollmentIndex({
                             <AssessmentList
                                 title="Module Quizzes"
                                 icon="quiz"
-                                assessments={quizzes}
+                                assessments={quizzesWithUnlockStatus}
                                 type="quiz"
                                 processingExam={processingExam}
                                 isIdentityVerified={isIdentityVerified}
@@ -296,7 +394,7 @@ export default function EnrollmentIndex({
                             <AssessmentList
                                 title="Module Assessments"
                                 icon="module"
-                                assessments={moduleAssessments}
+                                assessments={moduleAssessmentsWithUnlockStatus}
                                 type="module_assessment"
                                 processingExam={processingExam}
                                 isIdentityVerified={isIdentityVerified}

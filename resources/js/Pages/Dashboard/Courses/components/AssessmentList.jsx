@@ -12,7 +12,7 @@ const iconMap = {
 
 export default function AssessmentList({ 
     title, 
-    icon, 
+    icon,  
     assessments = [], 
     type, 
     processingExam, 
