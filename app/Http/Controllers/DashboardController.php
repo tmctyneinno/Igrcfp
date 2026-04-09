@@ -447,145 +447,128 @@ class DashboardController extends Controller
     } 
  
     public function showCourse($slug)
-    {
-        $course = Course::where('slug', $slug)->firstOrFail();
-        
-        $enrollment = Enrollment::where('user_id', auth()->id())
+{
+    $course = Course::where('slug', $slug)->firstOrFail();
+     
+    $enrollment = Enrollment::where('user_id', auth()->id())
         ->where('course_id', $course->id)
         ->whereIn('status', ['enrolled', 'active', 'completed'])
         ->first();
 
-        // Get all assessments for this course with user's attempt status
-        $quizzes = Assessment::where('course_id', $course->id)
+    // Get the COMBINED course quiz (one assessment that contains all module questions)
+    $combinedQuiz = Assessment::where('course_id', $course->id)
         ->where('assessment_level', 'quiz')
         ->with(['submissions' => function($query) {
             $query->where('user_id', auth()->id());
         }])
+        ->first();
+    
+    if ($combinedQuiz) {
+        $submission = $combinedQuiz->submissions->first();
+        $quizzes = [[
+            'id' => $combinedQuiz->id,
+            'title' => $combinedQuiz->title ?? 'Course Quiz',
+            'description' => $combinedQuiz->description,
+            'duration' => $combinedQuiz->duration,
+            'questions_count' => $combinedQuiz->questions()->count(),
+            'total_marks' => $combinedQuiz->total_marks,
+            'passing_score' => $combinedQuiz->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            'score' => $submission ? $submission->score : null,
+            'passed' => $submission ? $submission->passed : null,
+            'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
+            'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
+        ]];
+    } else {
+        $quizzes = [];
+    }
+
+    $moduleAssessments = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'module_assessment')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->orderBy('created_at')
         ->get()
-        ->groupBy('module_id') // Group by module_id
-        ->map(function($moduleQuizzes, $moduleId) {
-            // Get the module info from the first quiz in the group
-            $firstQuiz = $moduleQuizzes->first();
-            $module = $firstQuiz->module;
-            
-            // Calculate total questions across all quizzes in this module
-            $totalQuestions = $moduleQuizzes->sum(function($quiz) {
-                return $quiz->questions()->count();
-            });
-            
-            // Get the user's submission status (if any)
-            $submission = $moduleQuizzes->first()->submissions->first();
-            
+        ->map(function($assessment) {
+            $submission = $assessment->submissions->first();
             return [
-                'id' => 'module-' . $moduleId, // Create a unique ID for the grouped quiz
-                'module_id' => $moduleId,
-                'module_name' => $module ? $module->title : 'General',
-                'module_number' => $module ? $module->module_number : null,
-                'title' => $module ? "Module {$module->module_number} Quiz" : "Module Quiz",
-                'description' => $module ? "Complete all quizzes for Module {$module->module_number}" : "Module Quiz",
-                'duration' => $moduleQuizzes->sum('duration'), // Total duration
-                'questions_count' => $totalQuestions,
-                'total_marks' => $moduleQuizzes->sum('total_marks'),
-                'passing_score' => $moduleQuizzes->avg('passing_score'), // Average passing score
-                'status' => $this->getModuleQuizStatus($moduleQuizzes), // Custom function to determine status
-                'score' => $submission ? $submission->score : null,
-                'passed' => $submission ? $submission->passed : null,
-                'due_date' => $moduleQuizzes->max('due_date'), // Latest due date
-                'quiz_ids' => $moduleQuizzes->pluck('id'), // Store the actual quiz IDs
-            ];
-        })->values(); // Reset keys
-        
-        $moduleAssessments = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'module_assessment')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->orderBy('created_at')
-            ->get()
-            ->map(function($assessment) {
-                $submission = $assessment->submissions->first();
-                return [
-                    'id' => $assessment->id,
-                    'title' => $assessment->title,
-                    'description' => $assessment->description,
-                    'duration' => $assessment->duration,
-                    'questions_count' => $assessment->questions()->count(),
-                    'total_marks' => $assessment->total_marks,
-                    'passing_score' => $assessment->passing_score,
-                    'status' => $submission ? $submission->status : 'not_started',
-                    'score' => $submission ? $submission->score : null,
-                    'passed' => $submission ? $submission->passed : null,
-                    'due_date' => $assessment->due_date,
-                    'requires_identity_verification' => $assessment->requires_identity_verification,
-                ];
-            });
-
-        $finalExam = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'final_exam')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->first();
-
-        if ($finalExam) {
-            $submission = $finalExam->submissions->first();
-            $finalExam = [
-                'id' => $finalExam->id,
-                'title' => $finalExam->title,
-                'description' => $finalExam->description,
-                'duration' => $finalExam->duration,
-                'questions_count' => $finalExam->questions()->count(),
-                'total_marks' => $finalExam->total_marks,
-                'passing_score' => $finalExam->passing_score,
+                'id' => $assessment->id,
+                'title' => $assessment->title,
+                'description' => $assessment->description,
+                'duration' => $assessment->duration,
+                'questions_count' => $assessment->questions()->count(),
+                'total_marks' => $assessment->total_marks,
+                'passing_score' => $assessment->passing_score,
                 'status' => $submission ? $submission->status : 'not_started',
                 'score' => $submission ? $submission->score : null,
                 'passed' => $submission ? $submission->passed : null,
-                'due_date' => $finalExam->due_date,
-                'requires_identity_verification' => $finalExam->requires_identity_verification,
+                'due_date' => $assessment->due_date,
+                'requires_identity_verification' => $assessment->requires_identity_verification,
             ];
-        } else {
-            $finalExam = null;
-        }
+        });
 
-        $diplomaAssessment = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'diploma')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->first();
+    $finalExam = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'final_exam')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->first();
 
-        if ($diplomaAssessment) {
-            $submission = $diplomaAssessment->submissions->first();
-            $diplomaAssessment = [
-                'id' => $diplomaAssessment->id,
-                'title' => $diplomaAssessment->title,
-                'description' => $diplomaAssessment->description,
-                'project_brief' => $diplomaAssessment->project_brief,
-                'total_marks' => $diplomaAssessment->total_marks,
-                'passing_score' => $diplomaAssessment->passing_score,
-                'status' => $submission ? $submission->status : 'not_started',
-                'score' => $submission ? $submission->score : null,
-                'passed' => $submission ? $submission->passed : null,
-                'due_date' => $diplomaAssessment->due_date,
-                'requires_identity_verification' => $diplomaAssessment->requires_identity_verification,
-                'needs_manual_marking' => $diplomaAssessment->needs_manual_marking,
-            ];
-        } else {
-            $diplomaAssessment = null;
-        }
-
-        // Calculate exam results summary
-        $examResults = [
-            'all_passed' => $this->checkAllAssessmentsPassed($course->id),
-            'quizzes_completed' => $quizzes->where('status', 'completed')->count(),
-            'total_quizzes' => $quizzes->count(),
-            'assessments_completed' => $moduleAssessments->where('status', 'completed')->count(),
-            'total_assessments' => $moduleAssessments->count(),
-            'final_exam_passed' => $finalExam ? ($finalExam['passed'] ?? false) : null,
-            'diploma_passed' => $diplomaAssessment ? ($diplomaAssessment['passed'] ?? false) : null,
+    if ($finalExam) {
+        $submission = $finalExam->submissions->first();
+        $finalExam = [
+            'id' => $finalExam->id,
+            'title' => $finalExam->title,
+            'description' => $finalExam->description,
+            'duration' => $finalExam->duration,
+            'questions_count' => $finalExam->questions()->count(),
+            'total_marks' => $finalExam->total_marks,
+            'passing_score' => $finalExam->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            'score' => $submission ? $submission->score : null,
+            'passed' => $submission ? $submission->passed : null,
+            'due_date' => $finalExam->due_date,
+            'requires_identity_verification' => $finalExam->requires_identity_verification,
         ];
-       
-        $modules = $course->modules()
+    } else {
+        $finalExam = null;
+    }
+
+    $diplomaAssessment = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'diploma')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->first();
+
+    if ($diplomaAssessment) {
+        $submission = $diplomaAssessment->submissions->first();
+        $diplomaAssessment = [
+            'id' => $diplomaAssessment->id,
+            'title' => $diplomaAssessment->title,
+            'description' => $diplomaAssessment->description,
+            'project_brief' => $diplomaAssessment->project_brief,
+            'total_marks' => $diplomaAssessment->total_marks,
+            'passing_score' => $diplomaAssessment->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            'score' => $submission ? $submission->score : null,
+            'passed' => $submission ? $submission->passed : null,
+            'due_date' => $diplomaAssessment->due_date,
+            'requires_identity_verification' => $diplomaAssessment->requires_identity_verification,
+            'needs_manual_marking' => $diplomaAssessment->needs_manual_marking,
+        ];
+    } else {
+        $diplomaAssessment = null;
+    }
+
+    $examResults = [
+        'all_passed' => $this->checkAllAssessmentsPassed($course->id),
+        'final_exam_passed' => $finalExam ? ($finalExam['passed'] ?? false) : null,
+        'diploma_passed' => $diplomaAssessment ? ($diplomaAssessment['passed'] ?? false) : null,
+    ];
+   
+    $modules = $course->modules()
         ->with(['lessons' => function($query) use ($enrollment) {
             if ($enrollment) {
                 $query->withCompletionStatus(auth()->id(), $enrollment->id);
@@ -609,50 +592,63 @@ class DashboardController extends Controller
                         'duration' => $lesson->duration,
                         'lesson_type' => $lesson->lesson_type ?? 'reading',
                         'content' => $lesson->content,
-                        'completed' => (bool) ($lesson->completed ?? false), // 👈 this is the key line
+                        'completed' => (bool) ($lesson->completed ?? false),
                     ];
                 })->toArray(),
-                // 'materials' => $module->materials->map(function ($material) {
-                //     return [
-                //         'id' => $material->id,
-                //         'title' => $material->title,
-                //         'file_url' => $material->file_url,
-                //     ];
-                // })->toArray(),
             ];
         });
-        // dd($modules->first()['lessons']);
 
-        if (!$enrollment) {
-            return Inertia::render('Dashboard/Courses/Show', [
-                'course' => $course,
-                'enrollment' => $enrollment,
-                'modules' => $course->modules()->with('lessons')->get(),
-                'quizzes' => $quizzes,
-                'moduleAssessments' => $moduleAssessments,
-                'finalExam' => $finalExam,
-                'diplomaAssessment' => $diplomaAssessment,
-                'examResults' => $examResults,
-                'auth' => [
-                    'user' => auth()->user()
-                ]
-            ]); 
-        }
-
-        return Inertia::render('Dashboard/Courses/EnrollmentIndex', [
+    if (!$enrollment) {
+        return Inertia::render('Dashboard/Courses/Show', [
             'course' => $course,
             'enrollment' => $enrollment,
-            'modules' => $modules, 
+            'modules' => $course->modules()->with('lessons')->get(),
             'quizzes' => $quizzes,
             'moduleAssessments' => $moduleAssessments,
             'finalExam' => $finalExam,
             'diplomaAssessment' => $diplomaAssessment,
-            'candidate' => [
-                'certificate_id' => $enrollment->certificate_number ?? auth()->user()->candidate_id,
-            ],
             'examResults' => $examResults,
-        ]);
+            'auth' => ['user' => auth()->user()]
+        ]); 
     }
+
+    return Inertia::render('Dashboard/Courses/EnrollmentIndex', [
+        'course' => $course,
+        'enrollment' => $enrollment,
+        'modules' => $modules, 
+        'quizzes' => $quizzes,
+        'moduleAssessments' => $moduleAssessments,
+        'finalExam' => $finalExam,
+        'diplomaAssessment' => $diplomaAssessment,
+        'candidate' => [
+            'certificate_id' => $enrollment->certificate_number ?? auth()->user()->candidate_id,
+        ],
+        'examResults' => $examResults,
+    ]);
+}
+
+
+private function isCourseQuizUnlocked($course, $enrollment)
+{
+    if (!$enrollment) return false;
+    
+    $modules = $course->modules()
+        ->with(['lessons' => function($query) use ($enrollment) {
+            $query->withCompletionStatus($enrollment->user_id, $enrollment->id);
+        }])
+        ->get();
+    
+    foreach ($modules as $module) {
+        $totalLessons = $module->lessons->count();
+        $completedLessons = $module->lessons->filter(fn($l) => $l->completed)->count();
+        
+        if ($totalLessons > 0 && $completedLessons < $totalLessons) {
+            return false;
+        }
+    }
+    
+    return true;
+}
 
     private function getModuleQuizStatus($moduleQuizzes)
     {

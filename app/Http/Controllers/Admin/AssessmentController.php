@@ -416,6 +416,12 @@ class AssessmentController extends Controller
     /**
      * Delete assessment
      */
+    /**
+     * Delete assessment
+     */
+    /**
+ * Delete assessment
+ */
     public function destroy(Assessment $assessment)
     {
         DB::beginTransaction();
@@ -429,18 +435,18 @@ class AssessmentController extends Controller
             // Delete related data
             $assessment->questions()->delete();
             $assessment->submissions()->delete();
-            $assessment->attempts()->delete();
             
-            $courseId = $assessment->course_id;
             $assessment->delete();
 
             DB::commit();
 
-            return redirect()->route('admin.assessments.course', $courseId)
+            // Use a route that definitely exists
+            return redirect()->route('admin.assessments.all')
                 ->with('success', 'Assessment deleted successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Assessment deletion failed: ' . $e->getMessage());
             return back()->with('error', 'Error deleting assessment: ' . $e->getMessage());
         }
     }

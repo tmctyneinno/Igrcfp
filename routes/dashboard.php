@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonCompletionController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
+use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -152,4 +153,25 @@ Route::prefix('assessment')->name('assessment.')->group(function () {
     
     Route::post('/diploma/save/{attempt}', [AssessmentAttemptController::class, 'saveDiplomaProgress'])
         ->name('diploma.save');
+
+});
+
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    // ============== QUIZ ROUTES ==============
+    // Take quiz page
+    Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
+        ->where('assessment', '.*') // Accept any characters including hyphens
+        ->name('quiz.take');
+        
+    // Continue quiz
+    Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])->name('quiz.continue');
+    
+    // Submit quiz
+    Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
+    
+    // Save progress (AJAX)
+    Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])->name('quiz.save');
+     // Quiz results/review page
+    Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])->name('quiz.results');
+
 });
