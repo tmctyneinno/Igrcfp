@@ -25,6 +25,7 @@ class LessonController extends Controller
 
     public function store(Request $request, Course $course, CourseModule $module)
     {
+        // dd($request->all());
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'short_description' => 'nullable|string',
@@ -33,13 +34,17 @@ class LessonController extends Controller
             'video_embed_code' => 'nullable|string',
             'duration' => 'nullable|integer|min:1',
             'sort_order' => 'nullable|integer',
-            'is_free' => 'boolean',
-            'is_published' => 'boolean',
+            'is_free' => 'nullable|in:0,1',
+            'is_published' => 'nullable|in:0,1',
         ]);
+
+        // ✅ Convert to boolean
+        $validated['is_free'] = (bool) $request->input('is_free', 0);
+        $validated['is_published'] = (bool) $request->input('is_published', 0);
 
         $validated['module_id'] = $module->id;
         $validated['sort_order'] = $validated['sort_order'] ?? $module->lessons()->count() + 1;
-
+        
         Lesson::create($validated);
 
         return redirect()->route('admin.courses.modules.lessons.index', [$course->slug, $module->id])

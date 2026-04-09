@@ -86,7 +86,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
-                                <textarea name="short_description" class="form-control @error('short_description') is-invalid @enderror" 
+                                <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required>{{ old('short_description') }}</textarea>
                                 <div class="character-count" data-target="short_description">0/500</div>
                                 @error('short_description')
@@ -96,7 +96,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea id="full_description" name="full_description" class="form-control @error('full_description') is-invalid @enderror" 
+                                <textarea id="full_description" name="full_description" class="form-control rich-editor @error('full_description') is-invalid @enderror" 
                                           rows="8" placeholder="Detailed description of the course...">{{ old('full_description') }}</textarea>
                                 @error('full_description')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -204,7 +204,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Certifying Body <span class="text-danger">*</span></label>
-                                <input type="text" name="certifying_body" class="form-control @error('certifying_body') is-invalid @enderror" 
+                                <input type="text" name="certifying_body" class="form-control rich-editor @error('certifying_body') is-invalid @enderror" 
                                        placeholder="e.g., Institute of GRC and Financial Crime Prevention (IGRCFP)" value="{{ old('certifying_body') }}" required>
                                 @error('certifying_body')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -281,7 +281,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Programme Overview</label>
-                                <textarea id="programme_overview" name="programme_overview" class="form-control @error('programme_overview') is-invalid @enderror" rows="6" 
+                                <textarea id="programme_overview" name="programme_overview" class="form-control rich-editor @error('programme_overview') is-invalid @enderror" rows="6" 
                                           placeholder="Detailed programme overview...">{{ old('programme_overview', '') }}</textarea>
                                 @error('programme_overview')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -290,7 +290,7 @@
                             
                            <div class="col-12">
                                 <label class="form-label">Programme Architecture</label>
-                                <textarea id="programme_architecture" name="programme_architecture" class="form-control @error('programme_architecture') is-invalid @enderror" rows="6"
+                                <textarea id="programme_architecture" name="programme_architecture" class="form-control rich-editor @error('programme_architecture') is-invalid @enderror" rows="6"
                                     placeholder="Describe the programme tiers and structure...">{{ old('programme_architecture') }}</textarea>
                                 @error('programme_architecture')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -299,7 +299,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Learning Outcomes (one per line) <span class="text-danger">*</span></label>
-                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control @error('learning_outcomes') is-invalid @enderror" rows="8" 
+                                <textarea id="learning_outcomes" name="learning_outcomes" class="form-control rich-editor @error('learning_outcomes') is-invalid @enderror" rows="8" 
                                           placeholder="Enter learning outcomes, one per line" required>{{ old('learning_outcomes') }}</textarea>
                                 @error('learning_outcomes')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -308,7 +308,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Target Audience (one per line) <span class="text-danger">*</span></label>
-                                <textarea name="target_audience" class="form-control @error('target_audience') is-invalid @enderror" rows="5" 
+                                <textarea name="target_audience" class="form-control rich-editor @error('target_audience') is-invalid @enderror" rows="5" 
                                           placeholder="Enter target audience, one per line" required>{{ old('target_audience') }}</textarea>
                                 @error('target_audience')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -317,7 +317,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Prerequisites</label>
-                                <textarea name="prerequisites" class="form-control @error('prerequisites') is-invalid @enderror" 
+                                <textarea name="prerequisites" class="form-control rich-editor @error('prerequisites') is-invalid @enderror" 
                                           rows="3" placeholder="Requirements before taking this course">{{ old('prerequisites') }}</textarea>
                                 @error('prerequisites')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -326,7 +326,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Career Pathways (one per line)</label>
-                                <textarea name="career_pathways" class="form-control @error('career_pathways') is-invalid @enderror" rows="4" 
+                                <textarea name="career_pathways" class="form-control rich-editor @error('career_pathways') is-invalid @enderror" rows="4" 
                                           placeholder="Enter career pathways, one per line">{{ old('career_pathways') }}</textarea>
                                 @error('career_pathways')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -335,7 +335,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Assessment Structure (one per line)</label>
-                                <textarea name="assessment_structure" class="form-control @error('assessment_structure') is-invalid @enderror" rows="4" 
+                                <textarea name="assessment_structure" class="form-control rich-editor @error('assessment_structure') is-invalid @enderror" rows="4" 
                                           placeholder="Enter assessment structure, one per line">{{ old('assessment_structure') }}</textarea>
                                 @error('assessment_structure')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -344,7 +344,7 @@
                             
                             <div class="col-12">
                                 <label class="form-label">Code of Professional Conduct (one per line)</label>
-                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control @error('code_of_conduct') is-invalid @enderror" rows="4" 
+                                <textarea id="code_of_conduct" name="code_of_conduct" class="form-control rich-editor @error('code_of_conduct') is-invalid @enderror" rows="4" 
                                           placeholder="Enter code of conduct, one per line">{{ old('code_of_conduct') }}</textarea>
                                 @error('code_of_conduct')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -373,7 +373,7 @@
                         
                         <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            <textarea name="bulk_modules" class="form-control @error('bulk_modules') is-invalid @enderror" rows="20" 
+                            <textarea name="bulk_modules" class="form-control rich-editor @error('bulk_modules') is-invalid @enderror" rows="20" 
                                       placeholder="Module 1: Introduction to GRC&#10;This module provides an overview of Governance, Risk, and Compliance...&#10;&#10;Module 2: Risk Management Framework&#10;Learn about risk assessment methodologies and frameworks...">{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -391,7 +391,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Meta Description</label>
-                                <textarea name="meta_description" id="metaDescription" class="form-control @error('meta_description') is-invalid @enderror" 
+                                <textarea name="meta_description" id="metaDescription" class="form-control rich-editor @error('meta_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description for search engines (max 160 characters)">{{ old('meta_description') }}</textarea>
                                 <div class="character-count" data-target="meta_description">0/160</div>
                                 @error('meta_description')
@@ -401,7 +401,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Meta Keywords</label>
-                                <textarea name="meta_keywords" id="meta_keywords" class="form-control @error('meta_keywords') is-invalid @enderror" 
+                                <textarea name="meta_keywords" id="meta_keywords" class="form-control rich-editor @error('meta_keywords') is-invalid @enderror" 
                                           rows="3" placeholder="keyword1, keyword2, keyword3" maxlength="200">{{ old('meta_keywords') }}</textarea>
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate keywords with commas</p>
                                 @error('meta_keywords')
@@ -643,6 +643,70 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Document loaded - initializing course form');
+    // Initialize CKEditor with delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCKEditors();
+    }, 300);
+    
+    function initializeCKEditors() {
+        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
+        
+        if (editors.length === 0) return;
+        
+        // Load CKEditor dynamically if not loaded
+        if (typeof ClassicEditor === 'undefined') {
+            console.error('CKEditor not loaded');
+            return;
+        }
+        
+        editors.forEach(textarea => {
+            // Skip if already initialized
+            if (textarea.hasAttribute('data-ck-initialized')) {
+                return;
+            }
+            
+            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' 
+            // || textarea.name === 'full_description' 
+            // || textarea.name === 'programme_overview'
+            //  || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' 
+            //  || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' 
+            //  || textarea.name === 'meta_keywords' || textarea.name === 'target_audience'
+            ) {
+                console.log('Skipping CKEditor for full_description - using plain textarea');
+                textarea.setAttribute('data-ck-initialized', 'true');
+                return;
+            }
+            
+            // // Ensure textarea has an ID for debugging
+            // if (!textarea.id) {
+            //     textarea.id = `editor-${index}-${Date.now()}`;
+            // }
+            
+            try {
+                ClassicEditor
+                    .create(textarea)
+                    .then(editor => {
+                        textarea.setAttribute('data-ck-initialized', 'true');
+                        
+                        // Update form on submit
+                        const form = textarea.closest('form');
+                        if (form) {
+                            form.addEventListener('submit', function() {
+                                textarea.value = editor.getData();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('CKEditor error:', error);
+                        // Don't break the form
+                        textarea.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('CKEditor initialization error:', error);
+            }
+        });
+    }
+
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');
@@ -908,4 +972,4 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('All event listeners attached');
 });
 </script>
-@endpush
+@endpush 

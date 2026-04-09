@@ -105,6 +105,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::put('/{lesson}', [LessonController::class, 'update'])->name('update');
         Route::delete('/{lesson}', [LessonController::class, 'destroy'])->name('destroy');
         Route::post('/reorder', [LessonController::class, 'reorder'])->name('reorder');
-    });
+    }); 
   
 });

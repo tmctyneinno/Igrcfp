@@ -500,4 +500,20 @@ public function getCompletedAssessmentsAttribute()
           ->where('status', 'graded');
     })->get();
 }
+    public function completedLessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_user')
+            ->withPivot([
+                'enrollment_id',
+                'completed',
+                'completed_at',
+                'time_spent',
+                'auto_completed',
+                'scroll_progress',
+                'attempts',
+                'last_viewed_at',
+                'metadata'
+            ])
+            ->withTimestamps();
+    }
 }

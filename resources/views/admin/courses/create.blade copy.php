@@ -18,7 +18,7 @@
             <li>-</li>
             <li class="fw-medium">Create Course</li>
         </ul>
-    </div>
+    </div> 
 
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -54,7 +54,7 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Course Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control rich-editor @error('title') is-invalid @enderror" 
+                                <input type="text" name="title" class="form-control  @error('title') is-invalid @enderror" 
                                        placeholder="Enter course title" value="{{ old('title') }}" required>
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -527,7 +527,7 @@
 
                             <div class="col-12">
                                 <label class="form-label">Sort Order</label>
-                                <input type="number" name="sort_order" class="form-control rich-editor @error('sort_order') is-invalid @enderror" 
+                                <input type="number" name="sort_order" class="form-control  @error('sort_order') is-invalid @enderror" 
                                        placeholder="0" value="{{ old('sort_order', 0) }}">
                                 <p class="text-sm mt-1 mb-0 text-muted">Lower numbers appear first</p>
                                 @error('sort_order')
@@ -825,107 +825,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function initializeCKEditorsdd() {
-        // Check if ClassicEditor is available
-        if (typeof ClassicEditor === 'undefined') {
-            console.error('CKEditor not loaded - retrying in 500ms');
-            setTimeout(initializeCKEditors, 500);
-            return;
-        }
-        
-        const editors = document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])');
-        
-        if (editors.length === 0) {
-            console.log('No editors found to initialize');
-            return;
-        }
-        
-        console.log(`Found ${editors.length} editors to initialize`);
-        
-        editors.forEach((textarea, index) => {
-            // Skip if already initialized
-            if (textarea.hasAttribute('data-ck-initialized')) {
-                return;
-            }
-            
-            if (textarea.name === 'prerequisites' || textarea.name === 'short_description' || textarea.name === 'full_description' || textarea.name === 'programme_overview' || textarea.name === 'certifying_body' || textarea.name === 'programme_architecture' || textarea.name === 'learning_outcomes' || textarea.name === 'meta_description' || textarea.name === 'meta_keywords' || textarea.name === 'target_audience') {
-                console.log('Skipping CKEditor for full_description - using plain textarea');
-                textarea.setAttribute('data-ck-initialized', 'true');
-                return;
-            }
-            
-            // Ensure textarea has an ID for debugging
-            if (!textarea.id) {
-                textarea.id = `editor-${index}-${Date.now()}`;
-            }
-            
-            try {
-                console.log(`Initializing CKEditor for: ${textarea.id || textarea.name}`);
-               
-                ClassicEditor
-                    .create(textarea, {
-                        toolbar: {
-                            items: [
-                                'heading',
-                                '|',
-                                'bold',
-                                'italic',
-                                'link',
-                                'bulletedList',
-                                'numberedList',
-                                '|',
-                                'outdent',
-                                'indent',
-                                '|',
-                                'blockQuote',
-                                'insertTable',
-                                'undo',
-                                'redo'
-                            ]
-                        },
-                        heading: {
-                            options: [
-                                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                            ]
-                        },
-                        table: {
-                            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                        },
-                        removePlugins: ['ImageUpload', 'MediaEmbed']
-                    })
-                    .then(editor => {
-                        textarea.setAttribute('data-ck-initialized', 'true');
-                        console.log(`CKEditor initialized successfully for: ${textarea.id}`);
-                        
-                        // Store editor instance
-                        textarea.ckeditorInstance = editor;
-                        
-                        // Update form on submit
-                        const form = textarea.closest('form');
-                        if (form) {
-                            const submitHandler = function() {
-                                textarea.value = editor.getData();
-                                console.log(`Editor content updated for: ${textarea.id}`);
-                            };
-                            
-                            form.removeEventListener('submit', submitHandler);
-                            form.addEventListener('submit', submitHandler);
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`CKEditor error for ${textarea.id}:`, error);
-                        textarea.style.display = 'block';
-                        textarea.classList.add('form-control');
-                    });
-            } catch (error) {
-                console.error(`CKEditor initialization error for ${textarea.id}:`, error);
-                textarea.style.display = 'block';
-            }
-        });
-    }
     
     // Image preview functionality
     const imageInput = document.getElementById('imageInput');

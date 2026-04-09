@@ -30,8 +30,11 @@ class LessonUser extends Pivot
         'completed',
         'completed_at',
         'time_spent',
+        'auto_completed',
+        'scroll_progress',
         'attempts',
-        'metadata'
+        'last_viewed_at',
+        'metadata',
     ];
 
     /**

@@ -68,7 +68,7 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
     Route::post('{module}/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
     Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
     Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
-});
+}); 
    
 // Admin assessment routes
 
