@@ -174,4 +174,5 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ GENERAL GET ROUTE LAST
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
         ->name('quiz.take');
+        
 });

@@ -2,50 +2,64 @@ import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { CheckCircleIcon, XCircleIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
 
 export default function Results({ course, assessment, attempt, questions = [] }) {
     
     const handleRetake = () => {
-        router.visit(route('dashboard.quiz.take', { 
-            course: course.slug, 
-            assessment: assessment.id 
-        }));
+        // Check if we have the required data
+        if (!course?.slug || !assessment?.id) {
+            toast.error('Missing course or assessment information');
+            console.error('Missing data:', { course, assessment });
+            return;
+        }
+        
+        // Build the URL directly
+        const url = `/dashboard/courses/${course.slug}/quiz/${assessment.id}`;
+        console.log('Retaking quiz, navigating to:', url);
+        
+        // Use window.location for reliable navigation
+        window.location.href = url;
     };
     
     const handleBackToCourse = () => {
-        router.visit(route('dashboard.courses.show', course.slug));
+        if (!course?.slug) {
+            toast.error('Missing course information');
+            return;
+        }
+        window.location.href = `/dashboard/courses/${course.slug}`;
     };
     
     return (
         <AuthenticatedLayout>
-            <Head title={`${assessment.title} | Results`} />
+            <Head title={`${assessment?.title || 'Quiz'} | Results`} />
             
             <div className="min-h-screen bg-gray-50 py-12">
                 <div className="max-w-4xl mx-auto px-4">
                     {/* Score Card */}
                     <div className="bg-white rounded-xl shadow-sm p-6 mb-6 text-center">
-                        {attempt.passed ? (
+                        {attempt?.passed ? (
                             <TrophyIcon className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
                         ) : (
                             <XCircleIcon className="w-16 h-16 text-red-500 mx-auto mb-4" />
                         )}
                         
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                            {assessment.title}
+                            {assessment?.title || 'Quiz Results'}
                         </h1>
                         
-                        <div className="text-5xl font-bold mb-2" style={{ color: attempt.passed ? '#059669' : '#DC2626' }}>
-                            {attempt.score}%
+                        <div className="text-5xl font-bold mb-2" style={{ color: attempt?.passed ? '#059669' : '#DC2626' }}>
+                            {attempt?.score || 0}%
                         </div>
                         
                         <p className="text-gray-600 mb-4">
-                            {attempt.passed ? 'Congratulations! You passed!' : 'You did not pass. Keep learning!'}
+                            {attempt?.passed ? 'Congratulations! You passed!' : 'You did not pass. Keep learning!'}
                         </p>
                         
                         <div className="flex justify-center gap-4 text-sm text-gray-500">
-                            <span>✅ {attempt.correct_answers} correct</span>
-                            <span>📊 {attempt.earned_marks}/{attempt.total_marks} points</span>
-                            <span>🎯 Passing: {assessment.passing_score}%</span>
+                            <span>✅ {attempt?.correct_answers || 0} correct</span>
+                            <span>📊 {attempt?.earned_marks || 0}/{attempt?.total_marks || 0} points</span>
+                            <span>🎯 Passing: {assessment?.passing_score || 70}%</span>
                         </div>
                     </div>
                     
@@ -84,7 +98,7 @@ export default function Results({ course, assessment, attempt, questions = [] })
                             Back to Course
                         </button>
                         
-                        {!attempt.passed && (
+                        {!attempt?.passed && (
                             <button
                                 onClick={handleRetake}
                                 className="flex-1 text-center py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"

@@ -147,61 +147,121 @@ class QuizController extends Controller
      * Get all modules with their questions for the sidebar
      */
     private function getModulesWithQuestions($course, $assessment)
-    {
-        // Get ALL course modules
-        return $course->modules()
-            ->orderBy('module_number')
-            ->get()
-            ->map(function ($module) use ($assessment) {
-                // Get questions for this module
-                $moduleQuestions = $assessment->questions()
-                    ->where('module_id', $module->id)
-                    ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
-                    ->get()
-                    ->map(function ($q) {
-                        $options = $q->options;
-                        if (is_string($options)) {
-                            $options = json_decode($options, true);
-                        }
-                        return [
-                            'id' => $q->id,
-                            'text' => $q->question_text,
-                            'options' => $options,
-                            'marks' => $q->marks ?? 1,
-                            'correct_answer' => $q->correct_answer,
-                        ];
-                    });
-                
-                return [
-                    'id' => $module->id,
-                    'title' => $module->title,
-                    'module_number' => $module->module_number,
-                    'questions' => $moduleQuestions->values()->toArray(),
-                    'questions_count' => $moduleQuestions->count(),
-                ];
-            })
-            ->values()
-            ->toArray(); // ✅ Removed the filter so ALL modules show
-    }
+{
+    return $course->modules()
+        ->orderBy('module_number')
+        ->get()
+        ->map(function ($module) use ($course) {
+            // Get ALL quizzes for this module
+            $moduleQuizzes = Assessment::where('course_id', $course->id)
+                ->where('module_id', $module->id)
+                ->where('assessment_level', 'quiz')
+                ->where('status', 'active')
+                ->get()
+                ->map(function ($quiz) {
+                    $questions = $quiz->questions()
+                        ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
+                        ->get()
+                        ->map(function ($q) {
+                            $options = $q->options;
+                            if (is_string($options)) {
+                                $options = json_decode($options, true);
+                            }
+                            return [
+                                'id' => $q->id,
+                                'text' => $q->question_text,
+                                'options' => $options,
+                                'marks' => $q->marks ?? 1,
+                                'correct_answer' => $q->correct_answer,
+                            ];
+                        });
+                    
+                    return [
+                        'id' => $quiz->id,
+                        'title' => $quiz->title,
+                        'description' => $quiz->description,
+                        'duration' => $quiz->duration,
+                        'total_marks' => $quiz->total_marks,
+                        'passing_score' => $quiz->passing_score,
+                        'questions' => $questions->values()->toArray(),
+                        'questions_count' => $questions->count(),
+                    ];
+                });
+            
+            return [
+                'id' => $module->id,
+                'title' => $module->title,
+                'module_number' => $module->module_number,
+                'quizzes' => $moduleQuizzes->values()->toArray(),
+                'quizzes_count' => $moduleQuizzes->count(),
+            ];
+        })
+        ->values()
+        ->toArray();
+}
     
     public function submit(Request $request, Course $course, $assessmentId)
 {
+    \Log::info('Submit method called', [
+        'course_slug' => $course->slug,
+        'assessment_id' => $assessmentId,
+        'request_all' => $request->all()
+    ]);
+    
     $user = auth()->user();
     $assessment = $this->findAssessment($assessmentId);
     
     if (!$assessment) {
+        \Log::error('Assessment not found', ['assessment_id' => $assessmentId]);
         abort(404, 'Assessment not found');
     }
+    
+    \Log::info('Assessment found', ['assessment' => $assessment->id]);
     
     $enrollment = Enrollment::where('user_id', $user->id)
         ->where('course_id', $course->id)
         ->firstOrFail();
     
+    // Find or create an in-progress attempt for THIS assessment
     $attempt = AssessmentAttempt::where('user_id', $user->id)
         ->where('assessment_id', $assessment->id)
         ->where('enrollment_id', $enrollment->id)
         ->where('status', 'in_progress')
-        ->firstOrFail();
+        ->first();
+    
+    // If no in-progress attempt, check if there's a not_started one
+    if (!$attempt) {
+        $attempt = AssessmentAttempt::where('user_id', $user->id)
+            ->where('assessment_id', $assessment->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->where('status', 'not_started')
+            ->first();
+        
+        if ($attempt) {
+            $attempt->update(['status' => 'in_progress']);
+        }
+    }
+    
+    // If still no attempt, create one
+    if (!$attempt) {
+        $lastAttempt = AssessmentAttempt::where('user_id', $user->id)
+            ->where('assessment_id', $assessment->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->orderBy('attempt_number', 'desc')
+            ->first();
+        
+        $attemptNumber = $lastAttempt ? $lastAttempt->attempt_number + 1 : 1;
+        
+        $attempt = AssessmentAttempt::create([
+            'user_id' => $user->id,
+            'assessment_id' => $assessment->id,
+            'enrollment_id' => $enrollment->id,
+            'attempt_number' => $attemptNumber,
+            'status' => 'in_progress',
+            'started_at' => now(),
+            'answers' => json_encode([]),
+        ]);
+    }
     
     $answers = $request->input('answers', []);
     $questions = $assessment->questions()->get();
@@ -240,7 +300,11 @@ class QuizController extends Controller
         $enrollment->updateProgress();
     }
     
-    // ✅ Return Inertia location instead of redirect
+    \Log::info('Quiz submitted successfully', [
+        'score' => $score,
+        'passed' => $passed
+    ]);
+    
     return Inertia::location(route('dashboard.quiz.results', [
         'course' => $course->slug,
         'assessment' => $assessmentId

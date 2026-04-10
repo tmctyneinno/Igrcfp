@@ -59,9 +59,10 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     const handleAddToCartClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (onAddToCart && course) {
-            onAddToCart(course);
-        }
+        window.location.href = route('dashboard.cart.index');
+        // if (onAddToCart && course) {
+        //     onAddToCart(course);
+        // }
     };
 
     const handleViewCartClick = (e) => {
