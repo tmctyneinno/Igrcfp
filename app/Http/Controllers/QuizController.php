@@ -9,7 +9,7 @@ use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+ 
 class QuizController extends Controller
 {
     /**

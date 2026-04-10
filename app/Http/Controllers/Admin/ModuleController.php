@@ -11,6 +11,16 @@ use Illuminate\Support\Str;
 
 class ModuleController extends Controller
 {
+    public function index(Course $course)
+    {
+        $modules = $course->modules()
+            ->orderBy('module_number')
+            ->orderBy('sort_order')
+            ->get();
+        
+        return view('admin.courses.modules.index', compact('course', 'modules'));
+    }
+    
     /**
      * Show the form for creating a new module.
      */

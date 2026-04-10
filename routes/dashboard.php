@@ -155,6 +155,7 @@ Route::prefix('assessment')->name('assessment.')->group(function () {
         ->name('diploma.save');
 
 });
+
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     
     // ✅ POST ROUTES FIRST
@@ -164,21 +165,23 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])
         ->name('quiz.save');
     
-    // ✅ SPECIFIC GET ROUTES NEXT
+    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])
+        ->name('quiz.save-progress');
+    
+    // ✅ ALL SPECIFIC GET ROUTES - MUST COME BEFORE THE GENERAL ONE
+    Route::get('/courses/{course:slug}/quiz/results', [QuizController::class, 'results'])
+        ->name('quiz.results.all'); 
+
+    Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
+        ->name('quiz.results');
     
     Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])
         ->name('quiz.continue');
     
-    // ✅ GENERAL GET ROUTE LAST
+    // ✅ GENERAL GET ROUTE - MUST BE LAST
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
         ->name('quiz.take');
-    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])
-    ->name('quiz.save-progress');
-
-    Route::get('/courses/{course:slug}/quiz/results', [QuizController::class, 'results'])
-    ->name('quiz.results.all');
-
-Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
-    ->name('quiz.results');
-        
+ 
+    Route::get('/courses/{course:slug}/project-assessment', [QuizController::class, 'projectAssessment'])
+    ->name('quiz.project-assessment');
 });
