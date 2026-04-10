@@ -219,10 +219,11 @@ export default function EnrollmentIndex({
                             {/* Quiz buttons in sidebar - NOT inside modules */}
                             {quizzesWithUnlockStatus.map((quiz) => (
                                 <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
-                                    <h3 className="font-semibold text-gray-900 mb-3">{quiz.title}</h3>
+                                    {/* <h3 className="font-semibold text-gray-900 mb-3">{quiz.title}</h3> */}
+                                    <h3 className="font-semibold text-gray-900 mb-3">Take Quiz</h3>
                                     {!quiz.unlocked ? (
                                         <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg">
-                                            🔒 {quiz.reason}
+                                            {/* 🔒 {quiz.reason} */}
                                         </button>
                                     ) : (
                                         <button onClick={() => handleStartQuiz(quiz)} className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +17,8 @@ class AssessmentQuestion extends Model
         'question_text',
         'question_type',
         'options',
-        'correct_answer',   // singular  — used by: multiple_choice, true_false, short_answer
-        'correct_answers',  // plural    — used by: multiple_answer ONLY
+        'correct_answer',
+        'correct_answers',
         'points',
         'is_required',
         'image_url',
@@ -35,6 +36,18 @@ class AssessmentQuestion extends Model
         'tags'             => 'array',
         'points'           => 'decimal:2',
     ];
+
+    // ✅ ADD THIS RELATIONSHIP
+    public function assessment()
+    {
+        return $this->belongsTo(Assessment::class);
+    }
+
+    // ✅ ADD THIS RELATIONSHIP
+    public function module()
+    {
+        return $this->belongsTo(CourseModule::class, 'module_id');
+    }
 
     // ── Accessor: always return options as array ──────────────────────────────
 
@@ -63,12 +76,10 @@ class AssessmentQuestion extends Model
             case 'multiple_choice':
             case 'true_false':
             case 'short_answer':
-                // All three use correct_answer (singular), case-insensitive
                 return strtolower(trim((string) $answer))
                     === strtolower(trim((string) $this->correct_answer));
 
             case 'multiple_answer':
-                // Uses correct_answers (plural JSON array)
                 $correct   = is_array($this->correct_answers)
                     ? $this->correct_answers
                     : json_decode($this->correct_answers, true);
@@ -84,7 +95,7 @@ class AssessmentQuestion extends Model
 
             case 'essay':
             case 'case_study':
-                return null; // manual marking
+                return null;
 
             default:
                 return false;
@@ -96,7 +107,6 @@ class AssessmentQuestion extends Model
     public function calculatePoints($answer): ?float
     {
         $isCorrect = $this->isAnswerCorrect($answer);
-
         return $isCorrect === null ? null : ($isCorrect ? (float) $this->points : 0.0);
     }
 
