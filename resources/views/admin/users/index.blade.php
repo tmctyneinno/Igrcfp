@@ -144,15 +144,17 @@
                                         $completedEnrollments = $user->completedEnrollments->count();
                                     @endphp
                                     @if($enrollmentCount > 0)
-                                        <span class="badge bg-success-600 text-white px-12 py-6 radius-8">
-                                            {{ $enrollmentCount }} Course{{ $enrollmentCount != 1 ? 's' : '' }}
-                                        </span>
-                                        @if($activeEnrollments > 0)
-                                            <br><small class="text-success">{{ $activeEnrollments }} active</small>
-                                        @endif
-                                        @if($completedEnrollments > 0)
-                                            <br><small class="text-info">{{ $completedEnrollments }} completed</small>
-                                        @endif
+                                        <a href="{{ route('admin.users.enrollments', $user) }}" class="text-decoration-none">
+                                            <span class="badge bg-success-600 text-white px-12 py-6 radius-8 hover-bg-success-700">
+                                                {{ $enrollmentCount }} Course{{ $enrollmentCount != 1 ? 's' : '' }}
+                                            </span>
+                                            @if($activeEnrollments > 0)
+                                                <br><small class="text-success">{{ $activeEnrollments }} active</small>
+                                            @endif
+                                            @if($completedEnrollments > 0)
+                                                <br><small class="text-info">{{ $completedEnrollments }} completed</small>
+                                            @endif
+                                        </a>
                                     @else
                                         <span class="badge bg-secondary-600 text-white px-12 py-6 radius-8">
                                             Not Enrolled

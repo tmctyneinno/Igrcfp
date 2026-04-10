@@ -97,17 +97,17 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.assessments.create.module') }}">
+                            <a href="{{ route('admin.assessments.create.project') }}">
                                 <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
-                                Module Assessment
-                            </a>
+                                Project Assessment 
+                            </a> 
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="{{ route('admin.assessments.create.final') }}">
                                 <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
                                 Final Exam
                             </a>
-                        </li>
+                        </li> -->
                     @endif
                 </ul>
             </li>

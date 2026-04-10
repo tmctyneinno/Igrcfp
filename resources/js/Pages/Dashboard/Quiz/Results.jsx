@@ -292,12 +292,22 @@ export default function Results({
                             </button>
                         )}
                         
-                        {overallStats.completed_quizzes === overallStats.total_quizzes && overallStats.passed_quizzes === overallStats.total_quizzes && (
+                        {/* {overallStats.completed_quizzes === overallStats.total_quizzes && overallStats.passed_quizzes === overallStats.total_quizzes && (
                             <button
                                 onClick={() => window.location.href = route('dashboard.certificates.generate', enrollment.id)}
                                 className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
                             >
                                 🎓 View Certificate
+                            </button>
+                        )}  */}
+                       {overallStats.completed_quizzes === overallStats.total_quizzes && overallStats.passed_quizzes === overallStats.total_quizzes && (
+                            <button
+                                onClick={() => window.location.href = route('dashboard.quiz.project-assessment', { 
+                                    course: course.slug 
+                                })}
+                                className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
+                            >
+                                🏆 Take Final Project Assessment
                             </button>
                         )}
                     </div>
@@ -305,4 +315,4 @@ export default function Results({
             </div>
         </AuthenticatedLayout>
     );
-}
+} 

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\AssessmentController;
+use App\Http\Controllers\Admin\ProjectAssessmentController;
 use Illuminate\Support\Facades\Route;
 
 // Course Management Routes (Protected - admin & super_admin)
@@ -68,6 +69,8 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
     Route::post('{module}/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
     Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
     Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
+    Route::get('/', [ModuleController::class, 'index'])->name('index');
+
 }); 
    
 // Admin assessment routes
@@ -80,7 +83,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // Separate create pages for each assessment type
     Route::get('/assessments/create/quiz', [AssessmentController::class, 'createQuiz'])->name('assessments.create.quiz');
-    Route::get('/assessments/create/module-assessment', [AssessmentController::class, 'createModuleAssessment'])->name('assessments.create.module');
+    Route::get('/assessments/create/project-assessment', [ProjectAssessmentController::class, 'index'])->name('assessments.create.project');
     Route::get('/assessments/create/final-exam', [AssessmentController::class, 'createFinalExam'])->name('assessments.create.final');
     Route::get('/assessments/create/diploma', [AssessmentController::class, 'createDiploma'])->name('assessments.create.diploma');
     

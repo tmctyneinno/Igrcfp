@@ -73,6 +73,16 @@ class UserManagementController extends Controller
         return view('admin.users.show', compact('user'));
     }
 
+    public function enrollments(User $user)
+    {
+        $enrollments = $user->enrollments()
+            ->with(['course', 'course.modules'])
+            ->latest()
+            ->paginate(15);
+        
+        return view('admin.users.enrollments', compact('user', 'enrollments'));
+    }
+
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));

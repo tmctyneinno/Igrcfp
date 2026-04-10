@@ -446,14 +446,16 @@ export default function QuizTake({
         setIsSubmitting(false);
     }
 }, [questions, answers, course.slug, currentQuiz, confirmUnanswered]);
-    
+     
     const handleViewResults = useCallback(() => {
-        setShowCompletionModal(false);
-        window.location.href = route('dashboard.quiz.results.all', {
-            course: course.slug
-        });
-    }, [course.slug]);
-    
+    setShowCompletionModal(false);
+    // ✅ Use the route with the current assessment ID
+    window.location.href = route('dashboard.quiz.results', {
+        course: course.slug,
+        assessment: currentQuiz.id  // Pass the current quiz ID
+    });
+}, [course.slug, currentQuiz?.id]);
+     
     // ==================== HELPER FUNCTIONS ====================
     
     const formatTime = useCallback((seconds) => {
