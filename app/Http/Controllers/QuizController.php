@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Assessment;
 use App\Models\Enrollment;
+use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class QuizController extends Controller
 {
+    /**
+     * Take a quiz (initialize or continue)
+     */
     public function take(Course $course, $assessmentId)
     {
         $user = auth()->user();
@@ -21,97 +25,30 @@ class QuizController extends Controller
             abort(404, 'Assessment not found');
         }
         
+        // Verify enrollment
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
             ->whereIn('status', ['enrolled', 'active', 'completed'])
             ->firstOrFail();
         
-        // Get the next attempt number
-        $lastAttempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->orderBy('attempt_number', 'desc')
-            ->first();
+        // Get or create attempt for THIS assessment
+        $attempt = $this->getOrCreateAttempt($user->id, $assessment->id, $enrollment->id);
         
-        $attemptNumber = $lastAttempt ? $lastAttempt->attempt_number + 1 : 1;
-        
-        // Check if there's an existing not_started or in_progress attempt
-        $attempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->whereIn('status', ['not_started', 'in_progress'])
-            ->first();
-        
-        if (!$attempt) {
-            $attempt = new AssessmentAttempt();
-            $attempt->user_id = $user->id;
-            $attempt->assessment_id = $assessment->id;
-            $attempt->enrollment_id = $enrollment->id;
-            $attempt->attempt_number = $attemptNumber;
-            $attempt->status = 'not_started';
-            $attempt->started_at = now();
-            $attempt->answers = json_encode([]);
-            $attempt->save();
-        }
-        
-        // If already completed, redirect to results
-        $completedAttempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->where('status', 'completed')
-            ->first();
-            
-        if ($completedAttempt) {
-            return redirect()->route('dashboard.quiz.results', [
-                'course' => $course->slug,
-                'assessment' => $assessmentId
-            ]);
-        }
-        
-        // Update status to in_progress
-        $attempt->status = 'in_progress';
-        $attempt->started_at = $attempt->started_at ?? now();
-        $attempt->save();
-        
-        // Get ALL modules with their questions for this assessment
+        // Get all modules with their questions for sidebar
         $modules = $this->getModulesWithQuestions($course, $assessment);
         
-        // Get ALL questions for the quiz
+        // Get ALL questions for this assessment
         $allQuestions = $assessment->questions()
             ->select('id', 'question_text', 'options', 'marks', 'correct_answer', 'module_id')
             ->inRandomOrder()
             ->get()
             ->map(function ($question) {
-                $options = $question->options;
-                if (is_string($options)) {
-                    $options = json_decode($options, true);
-                }
-                
-                return [
-                    'id' => $question->id,
-                    'text' => $question->question_text,
-                    'options' => $options,
-                    'marks' => $question->marks ?? 1,
-                    'correct_answer' => $question->correct_answer,
-                    'module_id' => $question->module_id,
-                ];
+                return $this->formatQuestion($question);
             });
         
+        // Calculate time remaining
         $timeLimit = $assessment->duration * 60;
-        $timeRemaining = $timeLimit;
-        
-        if ($attempt->started_at) {
-            $elapsed = now()->diffInSeconds($attempt->started_at);
-            $timeRemaining = max(0, $timeLimit - $elapsed);
-        }
-        
-        // Debug log
-        \Log::info('Quiz modules data:', [
-            'course_id' => $course->id,
-            'assessment_id' => $assessment->id,
-            'modules_count' => count($modules),
-            'questions_count' => $allQuestions->count()
-        ]);
+        $timeRemaining = $this->calculateTimeRemaining($attempt, $timeLimit);
         
         return Inertia::render('Dashboard/Quiz/Take', [
             'course' => [
@@ -141,121 +78,390 @@ class QuizController extends Controller
             'timeRemaining' => $timeRemaining,
             'timeLimit' => $timeLimit,
         ]);
-    } 
-    
-    /**
-     * Get all modules with their questions for the sidebar
-     */
-    private function getModulesWithQuestions($course, $assessment)
-{
-    return $course->modules()
-        ->orderBy('module_number')
-        ->get()
-        ->map(function ($module) use ($course) {
-            // Get ALL quizzes for this module
-            $moduleQuizzes = Assessment::where('course_id', $course->id)
-                ->where('module_id', $module->id)
-                ->where('assessment_level', 'quiz')
-                ->where('status', 'active')
-                ->get()
-                ->map(function ($quiz) {
-                    $questions = $quiz->questions()
-                        ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
-                        ->get()
-                        ->map(function ($q) {
-                            $options = $q->options;
-                            if (is_string($options)) {
-                                $options = json_decode($options, true);
-                            }
-                            return [
-                                'id' => $q->id,
-                                'text' => $q->question_text,
-                                'options' => $options,
-                                'marks' => $q->marks ?? 1,
-                                'correct_answer' => $q->correct_answer,
-                            ];
-                        });
-                    
-                    return [
-                        'id' => $quiz->id,
-                        'title' => $quiz->title,
-                        'description' => $quiz->description,
-                        'duration' => $quiz->duration,
-                        'total_marks' => $quiz->total_marks,
-                        'passing_score' => $quiz->passing_score,
-                        'questions' => $questions->values()->toArray(),
-                        'questions_count' => $questions->count(),
-                    ];
-                });
-            
-            return [
-                'id' => $module->id,
-                'title' => $module->title,
-                'module_number' => $module->module_number,
-                'quizzes' => $moduleQuizzes->values()->toArray(),
-                'quizzes_count' => $moduleQuizzes->count(),
-            ];
-        })
-        ->values()
-        ->toArray();
-}
-    
-    public function submit(Request $request, Course $course, $assessmentId)
-{
-    \Log::info('Submit method called', [
-        'course_slug' => $course->slug,
-        'assessment_id' => $assessmentId,
-        'request_all' => $request->all()
-    ]);
-    
-    $user = auth()->user();
-    $assessment = $this->findAssessment($assessmentId);
-    
-    if (!$assessment) {
-        \Log::error('Assessment not found', ['assessment_id' => $assessmentId]);
-        abort(404, 'Assessment not found');
     }
     
-    \Log::info('Assessment found', ['assessment' => $assessment->id]);
+    /**
+     * Auto-save quiz progress
+     */
+    public function saveProgress(Request $request, AssessmentAttempt $attempt)
+    {
+        // Verify user owns this attempt
+        if ($attempt->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        
+        $attempt->update([
+            'answers' => json_encode($request->input('answers', [])),
+            'last_activity_at' => now(),
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Progress saved',
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    }
+    
+    /**
+     * Submit a completed quiz (ONE quiz at a time)
+     */
+   public function submit(Request $request, Course $course, $assessmentId)
+    {
+        \Log::info('Submit method called', [
+            'course' => $course->slug,
+            'assessment_id' => $assessmentId,
+            'skip_results' => $request->input('skip_results'),
+            'answers' => $request->input('answers')
+        ]);
+        
+        $user = auth()->user();
+        $assessment = $this->findAssessment($assessmentId);
+        
+        if (!$assessment) {
+            return response()->json(['error' => 'Assessment not found'], 404);
+        }
+        
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+        
+        if (!$enrollment) {
+            return response()->json(['error' => 'Enrollment not found'], 404);
+        }
+        
+        // Find or create attempt
+        $attempt = AssessmentAttempt::where('user_id', $user->id)
+            ->where('assessment_id', $assessment->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->where('status', 'in_progress')
+            ->first();
+        
+        if (!$attempt) {
+            $attempt = AssessmentAttempt::where('user_id', $user->id)
+                ->where('assessment_id', $assessment->id)
+                ->where('enrollment_id', $enrollment->id)
+                ->where('status', 'not_started')
+                ->first();
+            
+            if ($attempt) {
+                $attempt->update(['status' => 'in_progress']);
+            }
+        }
+        
+        if (!$attempt) {
+            $lastAttempt = AssessmentAttempt::where('user_id', $user->id)
+                ->where('assessment_id', $assessment->id)
+                ->where('enrollment_id', $enrollment->id)
+                ->orderBy('attempt_number', 'desc')
+                ->first();
+            
+            $attemptNumber = $lastAttempt ? $lastAttempt->attempt_number + 1 : 1;
+            
+            $attempt = AssessmentAttempt::create([
+                'user_id' => $user->id,
+                'assessment_id' => $assessment->id,
+                'enrollment_id' => $enrollment->id,
+                'attempt_number' => $attemptNumber,
+                'status' => 'in_progress',
+                'started_at' => now(),
+                'answers' => json_encode([]),
+            ]);
+        }
+        
+        $answers = $request->input('answers', []);
+        $questions = $assessment->questions()->get();
+        
+        $totalMarks = 0;
+        $earnedMarks = 0;
+        $correctAnswers = 0;
+        $questionResponses = [];
+        
+        foreach ($questions as $question) {
+            $marks = $question->points ?? 1;
+            $totalMarks += $marks;
+            $userAnswer = $answers[$question->id] ?? null;
+            $isCorrect = $question->isAnswerCorrect($userAnswer);
+            
+            $pointsEarned = ($isCorrect === true) ? $marks : 0;
+            
+            // Store detailed question responses for the submission
+            $questionResponses[$question->id] = [
+                'question_id' => $question->id,
+                'question_text' => $question->question_text,
+                'answer' => $userAnswer,
+                'correct_answer' => $question->correct_answer,
+                'points_earned' => $pointsEarned,
+                'points_possible' => $marks,
+                'correct' => $isCorrect === true,
+            ];
+            
+            if ($isCorrect === true) {
+                $earnedMarks += $marks;
+                $correctAnswers++;
+            }
+        }
+        
+        $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
+        $passed = $score >= ($assessment->passing_score ?? 70);
+        
+        // Update the attempt
+        $attempt->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+            'answers' => json_encode($answers),
+            'score' => $score,
+            'earned_marks' => $earnedMarks,
+            'total_marks' => $totalMarks,
+            'correct_answers' => $correctAnswers,
+            'passed' => $passed,
+        ]);
+        
+        // ✅ CREATE OR UPDATE ASSESSMENT SUBMISSION
+        $submission = AssessmentSubmission::where('assessment_id', $assessment->id)
+            ->where('user_id', $user->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->first();
+        
+        $isNewSubmission = !$submission;
+        
+        if ($isNewSubmission) {
+            // Get attempt count for this assessment
+            $attemptCount = AssessmentSubmission::where('assessment_id', $assessment->id)
+                ->where('user_id', $user->id)
+                ->count();
+            
+            $submission = new AssessmentSubmission();
+            $submission->assessment_id = $assessment->id;
+            $submission->user_id = $user->id;
+            $submission->enrollment_id = $enrollment->id;
+            $submission->attempt_number = $attemptCount + 1;
+            $submission->started_at = $attempt->started_at;
+        }
+        
+        // Calculate time spent
+        $timeSpent = 0;
+        if ($attempt->started_at) {
+            $timeSpent = now()->diffInSeconds($attempt->started_at);
+        } elseif ($submission->started_at) {
+            $timeSpent = now()->diffInSeconds($submission->started_at);
+        }
+        
+        $submission->submitted_at = now();
+        $submission->status = $assessment->needs_manual_marking ? 'submitted' : 'graded';
+        $submission->answers = $answers;
+        $submission->question_responses = $questionResponses;
+        $submission->score = $earnedMarks;
+        $submission->percentage = $score;
+        $submission->passed = $passed;
+        $submission->time_spent = $timeSpent;
+        $submission->ip_address = $request->ip();
+        $submission->user_agent = $request->userAgent();
+        
+        // If auto-graded, set graded_at
+        if (!$assessment->needs_manual_marking) {
+            $submission->graded_at = now();
+        }
+        
+        $submission->save();
+        
+        // Link attempt to submission
+        $attempt->update(['submission_id' => $submission->id]);
+        
+        // Update assessment statistics
+        $assessment->calculateStatistics();
+        
+        // Update enrollment progress if passed
+        if ($passed) {
+            $enrollment->updateProgress();
+        }
+        
+        \Log::info('Quiz submitted successfully', [
+            'score' => $score,
+            'passed' => $passed,
+            'submission_id' => $submission->id,
+            'skip_results' => $request->input('skip_results')
+        ]);
+        
+        // ✅ ALWAYS return JSON for fetch requests
+        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Quiz submitted successfully!',
+                'score' => $score,
+                'passed' => $passed,
+                'submission_id' => $submission->id,
+            ]);
+        }
+        
+        // For Inertia requests, return redirect
+        return Inertia::location(route('dashboard.quiz.results', [
+            'course' => $course->slug,
+            'assessment' => $assessmentId
+        ]));
+    }
+
+    
+    /**
+     * View quiz results
+     */
+    /**
+ * View ALL quiz results for the course
+ */
+public function results(Course $course, $assessmentId = null)
+{
+    $user = auth()->user();
     
     $enrollment = Enrollment::where('user_id', $user->id)
         ->where('course_id', $course->id)
         ->firstOrFail();
     
-    // Find or create an in-progress attempt for THIS assessment
-    $attempt = AssessmentAttempt::where('user_id', $user->id)
-        ->where('assessment_id', $assessment->id)
-        ->where('enrollment_id', $enrollment->id)
-        ->where('status', 'in_progress')
-        ->first();
+    // Get ALL quizzes for this course with their attempts
+    $allQuizzes = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'quiz')
+        ->where('status', 'active')
+        ->with(['module'])
+        ->get()
+        ->map(function ($quiz) use ($user, $enrollment) {
+            // Get the latest completed attempt for this quiz
+            $attempt = AssessmentAttempt::where('user_id', $user->id)
+                ->where('assessment_id', $quiz->id)
+                ->where('enrollment_id', $enrollment->id)
+                ->where('status', 'completed')
+                ->latest()
+                ->first();
+            
+            // Get questions with user's answers
+            $questions = $quiz->questions()->get();
+            $answers = $attempt ? (json_decode($attempt->answers, true) ?? []) : [];
+            
+            $questionsWithResults = $questions->map(function ($question) use ($answers) {
+                $userAnswer = $answers[$question->id] ?? null;
+                $isCorrect = $question->isAnswerCorrect($userAnswer);
+                
+                $options = $question->options;
+                if (is_string($options)) {
+                    $options = json_decode($options, true);
+                }
+                
+                return [
+                    'id' => $question->id,
+                    'text' => $question->question_text,
+                    'options' => $options,
+                    'correct_answer' => $question->correct_answer,
+                    'user_answer' => $userAnswer,
+                    'is_correct' => $isCorrect,
+                    'points' => $question->points ?? 1,
+                ];
+            });
+            
+            return [
+                'id' => $quiz->id,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'duration' => $quiz->duration,
+                'total_marks' => $quiz->total_marks,
+                'passing_score' => $quiz->passing_score,
+                'module' => $quiz->module ? [
+                    'id' => $quiz->module->id,
+                    'title' => $quiz->module->title,
+                    'module_number' => $quiz->module->module_number,
+                ] : null,
+                'attempt' => $attempt ? [
+                    'id' => $attempt->id,
+                    'score' => $attempt->score,
+                    'earned_marks' => $attempt->earned_marks,
+                    'total_marks' => $attempt->total_marks,
+                    'correct_answers' => $attempt->correct_answers,
+                    'passed' => $attempt->passed,
+                    'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
+                ] : null,
+                'questions' => $questionsWithResults,
+                'has_attempt' => !is_null($attempt),
+            ];
+        });
     
-    // If no in-progress attempt, check if there's a not_started one
-    if (!$attempt) {
-        $attempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
-            ->where('status', 'not_started')
+    // Calculate overall stats
+    $completedQuizzes = $allQuizzes->filter(fn($q) => $q['has_attempt']);
+    $passedQuizzes = $allQuizzes->filter(fn($q) => $q['attempt']['passed'] ?? false);
+    
+    $overallStats = [
+        'total_quizzes' => $allQuizzes->count(),
+        'completed_quizzes' => $completedQuizzes->count(),
+        'passed_quizzes' => $passedQuizzes->count(),
+        'average_score' => $completedQuizzes->count() > 0 
+            ? round($completedQuizzes->avg(fn($q) => $q['attempt']['score'] ?? 0)) 
+            : 0,
+        'total_points' => $completedQuizzes->sum(fn($q) => $q['attempt']['earned_marks'] ?? 0),
+        'total_possible' => $completedQuizzes->sum(fn($q) => $q['attempt']['total_marks'] ?? 0),
+    ];
+    
+    // Get the specific assessment if provided (for highlighting)
+    $currentAssessment = $assessmentId ? $this->findAssessment($assessmentId) : null;
+    
+    return Inertia::render('Dashboard/Quiz/Results', [
+        'course' => [
+            'id' => $course->id,
+            'title' => $course->title,
+            'slug' => $course->slug,
+        ],
+        'currentAssessment' => $currentAssessment ? [
+            'id' => $currentAssessment->id,
+            'title' => $currentAssessment->title,
+        ] : null,
+        'quizzes' => $allQuizzes->values(),
+        'overallStats' => $overallStats,
+        'enrollment' => [
+            'id' => $enrollment->id,
+            'progress' => $enrollment->progress,
+            'status' => $enrollment->status,
+        ],
+    ]);
+}
+    
+    /**
+     * Continue a quiz (alias for take)
+     */
+    public function continue(Course $course, $assessmentId)
+    {
+        return $this->take($course, $assessmentId);
+    }
+    
+    // ==================== HELPER METHODS ====================
+    
+    /**
+     * Get or create an attempt for a quiz
+     */
+    private function getOrCreateAttempt($userId, $assessmentId, $enrollmentId)
+    {
+        // Check for existing in-progress attempt
+        $attempt = AssessmentAttempt::where('user_id', $userId)
+            ->where('assessment_id', $assessmentId)
+            ->where('enrollment_id', $enrollmentId)
+            ->whereIn('status', ['not_started', 'in_progress'])
             ->first();
         
         if ($attempt) {
-            $attempt->update(['status' => 'in_progress']);
+            // Reuse existing attempt
+            $attempt->update([
+                'status' => 'in_progress',
+                'started_at' => $attempt->started_at ?? now(),
+            ]);
+            return $attempt;
         }
-    }
-    
-    // If still no attempt, create one
-    if (!$attempt) {
-        $lastAttempt = AssessmentAttempt::where('user_id', $user->id)
-            ->where('assessment_id', $assessment->id)
-            ->where('enrollment_id', $enrollment->id)
+        
+        // Create new attempt with proper attempt number
+        $lastAttempt = AssessmentAttempt::where('user_id', $userId)
+            ->where('assessment_id', $assessmentId)
+            ->where('enrollment_id', $enrollmentId)
             ->orderBy('attempt_number', 'desc')
             ->first();
         
         $attemptNumber = $lastAttempt ? $lastAttempt->attempt_number + 1 : 1;
         
-        $attempt = AssessmentAttempt::create([
-            'user_id' => $user->id,
-            'assessment_id' => $assessment->id,
-            'enrollment_id' => $enrollment->id,
+        return AssessmentAttempt::create([
+            'user_id' => $userId,
+            'assessment_id' => $assessmentId,
+            'enrollment_id' => $enrollmentId,
             'attempt_number' => $attemptNumber,
             'status' => 'in_progress',
             'started_at' => now(),
@@ -263,88 +469,24 @@ class QuizController extends Controller
         ]);
     }
     
-    $answers = $request->input('answers', []);
-    $questions = $assessment->questions()->get();
-    
-    $totalMarks = 0;
-    $earnedMarks = 0;
-    $correctAnswers = 0;
-    
-    foreach ($questions as $question) {
-        $marks = $question->points ?? 1;
-        $totalMarks += $marks;
-        $userAnswer = $answers[$question->id] ?? null;
-        $isCorrect = $question->isAnswerCorrect($userAnswer);
-        
-        if ($isCorrect === true) {
-            $earnedMarks += $marks;
-            $correctAnswers++;
+    /**
+     * Calculate remaining time for a quiz
+     */
+    private function calculateTimeRemaining($attempt, $timeLimit)
+    {
+        if (!$attempt->started_at) {
+            return $timeLimit;
         }
-    }
-    
-    $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
-    $passed = $score >= ($assessment->passing_score ?? 70);
-    
-    $attempt->update([
-        'status' => 'completed',
-        'completed_at' => now(),
-        'answers' => json_encode($answers),
-        'score' => $score,
-        'earned_marks' => $earnedMarks,
-        'total_marks' => $totalMarks,
-        'correct_answers' => $correctAnswers,
-        'passed' => $passed,
-    ]);
-    
-    if ($passed) {
-        $enrollment->updateProgress();
-    }
-    
-    \Log::info('Quiz submitted successfully', [
-        'score' => $score,
-        'passed' => $passed
-    ]);
-    
-    return Inertia::location(route('dashboard.quiz.results', [
-        'course' => $course->slug,
-        'assessment' => $assessmentId
-    ]));
-}
-    
-    public function results(Course $course, $assessmentId)
-{
-    $user = auth()->user();
-    $assessment = $this->findAssessment($assessmentId);
-    
-    if (!$assessment) {
-        abort(404, 'Assessment not found');
-    }
-    
-    $enrollment = Enrollment::where('user_id', $user->id)
-        ->where('course_id', $course->id)
-        ->firstOrFail();
-    
-    // Find ANY completed attempt (don't use firstOrFail)
-    $attempt = AssessmentAttempt::where('user_id', $user->id)
-        ->where('assessment_id', $assessment->id)
-        ->where('enrollment_id', $enrollment->id)
-        ->where('status', 'completed')
-        ->latest()
-        ->first();
-    
-    // ✅ If no completed attempt, redirect to course page (NOT back to quiz)
-    if (!$attempt) {
-        return redirect()->route('dashboard.courses.show', $course->slug)
-            ->with('error', 'No completed quiz attempt found.');
-    }
-    
-    $questions = $assessment->questions()->get();
-    $answers = json_decode($attempt->answers, true) ?? [];
-    
-    $questionsWithResults = $questions->map(function ($question) use ($answers) {
-        $userAnswer = $answers[$question->id] ?? null;
-        $isCorrect = $question->isAnswerCorrect($userAnswer);
         
+        $elapsed = now()->diffInSeconds($attempt->started_at);
+        return max(0, $timeLimit - $elapsed);
+    }
+    
+    /**
+     * Format a question for frontend display
+     */
+    private function formatQuestion($question)
+    {
         $options = $question->options;
         if (is_string($options)) {
             $options = json_decode($options, true);
@@ -353,54 +495,121 @@ class QuizController extends Controller
         return [
             'id' => $question->id,
             'text' => $question->question_text,
-            'options' => $options,
+            'options' => $options ?? [],
+            'marks' => $question->marks ?? 1,
             'correct_answer' => $question->correct_answer,
-            'user_answer' => $userAnswer,
-            'is_correct' => $isCorrect,
-            'points' => $question->points ?? 1,
+            'module_id' => $question->module_id,
         ];
-    });
-    
-    // ✅ RENDER THE RESULTS PAGE (don't redirect)
-    return Inertia::render('Dashboard/Quiz/Results', [
-        'course' => [
-            'id' => $course->id,
-            'title' => $course->title,
-            'slug' => $course->slug,
-        ],
-        'assessment' => [
-            'id' => $assessment->id,
-            'title' => $assessment->title,
-            'passing_score' => $assessment->passing_score ?? 70,
-        ],
-        'attempt' => [
-            'id' => $attempt->id,
-            'score' => $attempt->score,
-            'earned_marks' => $attempt->earned_marks,
-            'total_marks' => $attempt->total_marks,
-            'correct_answers' => $attempt->correct_answers,
-            'passed' => $attempt->passed,
-            'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
-        ],
-        'questions' => $questionsWithResults,
-    ]);
-}
-    
-    public function continue(Course $course, $assessmentId)
-    {
-        return $this->take($course, $assessmentId);
     }
     
-    public function saveProgress(Request $request, AssessmentAttempt $attempt)
+    /**
+     * Score a quiz submission
+     */
+    private function scoreQuiz($assessment, $answers)
     {
-        $attempt->update([
-            'answers' => json_encode($request->input('answers', [])),
-            'last_activity_at' => now(),
-        ]);
+        $questions = $assessment->questions()->get();
         
-        return response()->json(['success' => true]);
+        $totalMarks = 0;
+        $earnedMarks = 0;
+        $correctAnswers = 0;
+        
+        foreach ($questions as $question) {
+            $marks = $question->points ?? 1;
+            $totalMarks += $marks;
+            
+            $userAnswer = $answers[$question->id] ?? null;
+            $isCorrect = $question->isAnswerCorrect($userAnswer);
+            
+            if ($isCorrect === true) {
+                $earnedMarks += $marks;
+                $correctAnswers++;
+            }
+        }
+        
+        $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
+        $passed = $score >= ($assessment->passing_score ?? 70);
+        
+        return [
+            'score' => $score,
+            'earned_marks' => $earnedMarks,
+            'total_marks' => $totalMarks,
+            'correct_answers' => $correctAnswers,
+            'passed' => $passed,
+        ];
     }
     
+    /**
+     * Get all modules with their questions for the sidebar
+     */
+    private function getModulesWithQuestions($course, $assessment)
+    {
+        return $course->modules()
+            ->orderBy('module_number')
+            ->get()
+            ->map(function ($module) use ($course) {
+                // Get ALL quizzes for this module
+                $moduleQuizzes = Assessment::where('course_id', $course->id)
+                    ->where('module_id', $module->id)
+                    ->where('assessment_level', 'quiz')
+                    ->where('status', 'active')
+                    ->get()
+                    ->map(function ($quiz) {
+                        $questions = $quiz->questions()
+                            ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
+                            ->get()
+                            ->map(function ($q) {
+                                return $this->formatQuestion($q);
+                            });
+                        
+                        return [
+                            'id' => $quiz->id,
+                            'title' => $quiz->title,
+                            'description' => $quiz->description,
+                            'duration' => $quiz->duration,
+                            'total_marks' => $quiz->total_marks,
+                            'passing_score' => $quiz->passing_score,
+                            'questions' => $questions->values()->toArray(),
+                            'questions_count' => $questions->count(),
+                            'status' => $quiz->status ?? 'not_started',
+                        ];
+                    });
+                
+                // Get lesson completion status for this module
+                $enrollment = Enrollment::where('user_id', auth()->id())
+                    ->where('course_id', $course->id)
+                    ->first();
+                
+                $lessons = $module->lessons()
+                    ->withCompletionStatus(auth()->id(), $enrollment->id ?? null)
+                    ->get()
+                    ->map(function ($lesson) {
+                        return [
+                            'id' => $lesson->id,
+                            'title' => $lesson->title,
+                            'completed' => (bool) ($lesson->completed ?? false),
+                        ];
+                    });
+                
+                return [
+                    'id' => $module->id,
+                    'title' => $module->title,
+                    'module_number' => $module->module_number,
+                    'quizzes' => $moduleQuizzes->values()->toArray(),
+                    'quizzes_count' => $moduleQuizzes->count(),
+                    'lessons' => $lessons->values()->toArray(),
+                ];
+            })
+            ->filter(function ($module) {
+                // Only return modules that have at least one quiz
+                return $module['quizzes_count'] > 0;
+            })
+            ->values()
+            ->toArray();
+    }
+    
+    /**
+     * Find assessment by ID or module ID
+     */
     private function findAssessment($assessmentId)
     {
         if (is_numeric($assessmentId)) {

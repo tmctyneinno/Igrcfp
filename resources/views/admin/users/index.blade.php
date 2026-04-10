@@ -52,9 +52,21 @@
                     <select name="status" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>Suspended</option>
                     </select>
-                    @if(request('search') || request('status') || request('per_page') != 10)
+                    <select name="role" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px ms-2" onchange="this.form.submit()">
+                        <option value="">All Roles</option>
+                        <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="tutor" {{ request('role') == 'tutor' ? 'selected' : '' }}>Tutor</option>
+                        <option value="learner" {{ request('role') == 'learner' ? 'selected' : '' }}>Learner</option>
+                    </select>
+                    <select name="enrolled" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px ms-2" onchange="this.form.submit()">
+                        <option value="">All Users</option>
+                        <option value="1" {{ request('enrolled') == '1' ? 'selected' : '' }}>Enrolled</option>
+                        <option value="0" {{ request('enrolled') == '0' ? 'selected' : '' }}>Not Enrolled</option>
+                    </select>
+                    @if(request('search') || request('status') || request('role') || request('enrolled') || request('per_page') != 10)
                         <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
                     @endif
                 </form>
@@ -93,10 +105,12 @@
                                 <th scope="col">Join Date</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
-                                <th scope="col">Department</th>
-                                <th scope="col">Designation</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col" class="text-center">Enrollments</th>
+                                <th scope="col" class="text-center">Transactions</th>
                                 <th scope="col" class="text-center">Role</th>
                                 <th scope="col" class="text-center">Status</th>
+                                <th scope="col" class="text-center">Verified</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -114,37 +128,115 @@
                                 <td>{{ $user->created_at->format('d M Y') }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        {{-- <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"> --}}
+                                        <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" 
+                                             class="w-20-px h-20-px rounded-circle flex-shrink-0 me-12 overflow-hidden">
                                         <div class="flex-grow-1">
                                             <span class="text-md mb-0 fw-normal text-secondary-light">{{ $user->name }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>{{ $user->email }}</td>
-                                <td>{{ $user->department ?? 'N/A' }}</td>
-                                <td>{{ $user->designation ?? 'N/A' }}</td>
+                                <td>{{ $user->phone ?? 'N/A' }}</td>
                                 <td class="text-center">
-                                    <span class="badge bg-{{ $user->is_admin ? 'warning' : 'secondary' }}">
-                                        {{ $user->is_admin ? 'Admin' : 'User' }}
+                                    @php
+                                        $enrollmentCount = $user->enrollments->count();
+                                        $activeEnrollments = $user->activeEnrollments->count();
+                                        $completedEnrollments = $user->completedEnrollments->count();
+                                    @endphp
+                                    @if($enrollmentCount > 0)
+                                        <span class="badge bg-success-600 text-white px-12 py-6 radius-8">
+                                            {{ $enrollmentCount }} Course{{ $enrollmentCount != 1 ? 's' : '' }}
+                                        </span>
+                                        @if($activeEnrollments > 0)
+                                            <br><small class="text-success">{{ $activeEnrollments }} active</small>
+                                        @endif
+                                        @if($completedEnrollments > 0)
+                                            <br><small class="text-info">{{ $completedEnrollments }} completed</small>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary-600 text-white px-12 py-6 radius-8">
+                                            Not Enrolled
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $transactionCount = $user->transactions->count();
+                                        $totalSpent = $user->transactions->where('status', 'completed')->sum('amount');
+                                        $completedTransactions = $user->transactions->where('status', 'completed')->count();
+                                    @endphp
+                                    @if($transactionCount > 0)
+                                        <span class="badge bg-info-600 text-white px-12 py-6 radius-8">
+                                            {{ $transactionCount }} Transaction{{ $transactionCount != 1 ? 's' : '' }}
+                                        </span>
+                                        @if($totalSpent > 0)
+                                            <br><small class="text-success">${{ number_format($totalSpent, 2) }} spent</small>
+                                        @endif
+                                        @if($completedTransactions > 0)
+                                            <br><small class="text-muted">{{ $completedTransactions }} completed</small>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary-600 text-white px-12 py-6 radius-8">
+                                            No Transactions
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $roleColors = [
+                                            'admin' => 'danger',
+                                            'tutor' => 'info',
+                                            'learner' => 'primary'
+                                        ];
+                                        $roleColor = $roleColors[$user->role] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $roleColor }}-600 text-white px-12 py-6 radius-8">
+                                        {{ ucfirst($user->role ?? 'Learner') }}
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-{{ $user->is_active ? 'success' : 'danger' }}">
-                                        {{ $user->is_active ? 'Active' : 'Inactive' }}
+                                    @php
+                                        $statusColors = [
+                                            'active' => 'success',
+                                            'pending' => 'warning',
+                                            'suspended' => 'danger'
+                                        ];
+                                        $statusColor = $statusColors[$user->status] ?? 'secondary';
+                                    @endphp
+                                    <span class="badge bg-{{ $statusColor }}-600 text-white px-12 py-6 radius-8">
+                                        {{ ucfirst($user->status ?? 'Active') }}
                                     </span>
+                                </td>
+                                <td class="text-center">
+                                    @if($user->email_verified_at)
+                                        <span class="badge bg-success-600 text-white px-8 py-4 radius-4" title="Email Verified">
+                                            <iconify-icon icon="solar:check-circle-bold" class="icon"></iconify-icon>
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning-600 text-white px-8 py-4 radius-4" title="Email Not Verified">
+                                            <iconify-icon icon="solar:clock-circle-bold" class="icon"></iconify-icon>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="text-center"> 
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
-                                        <a href="{{ route('admin.users.show', $user) }}" class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"> 
+                                        <a href="{{ route('admin.users.show', $user) }}" 
+                                           class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
+                                           title="View Details"> 
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"> 
+                                        <!-- <a href="{{ route('admin.users.edit', $user) }}" 
+                                           class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
+                                           title="Edit"> 
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                        </a>
+                                        </a> -->
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" onclick="return confirm('Are you sure you want to delete this user?')"> 
+                                            <button type="submit" 
+                                                    class="bg-danger-focus bg-hover-danger-200 text-danger-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
+                                                    onclick="return confirm('Are you sure you want to delete this user?')"
+                                                    title="Delete"> 
                                                 <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
                                             </button>
                                         </form>
@@ -153,7 +245,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">
+                                <td colspan="11" class="text-center py-4">
                                     <div class="text-muted">No users found.</div>
                                 </td>
                             </tr>
@@ -172,10 +264,26 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+    .w-30-px { width: 30px; }
+    .h-30-px { height: 30px; }
+    .w-40-px { width: 40px; }
+    .h-40-px { height: 40px; }
+    .rounded-8 { border-radius: 8px; }
+    .object-fit-cover { object-fit: cover; }
+    .bg-danger-600 { background-color: #dc2626 !important; }
+    .bg-info-600 { background-color: #2563eb !important; }
+    .bg-success-600 { background-color: #16a34a !important; }
+    .bg-warning-600 { background-color: #d97706 !important; }
+    .bg-secondary-600 { background-color: #6b7280 !important; }
+    .bg-primary-600 { background-color: #2563eb !important; }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Select all checkboxes
     const selectAll = document.getElementById('selectAll');
     const userCheckboxes = document.querySelectorAll('.user-checkbox');
     
@@ -187,7 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Bulk action form validation
     const bulkForm = document.getElementById('bulk-action-form');
     if (bulkForm) {
         bulkForm.addEventListener('submit', function(e) {

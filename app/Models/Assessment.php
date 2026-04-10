@@ -77,7 +77,7 @@ class Assessment extends Model
     {
         return $this->belongsTo(CourseModule::class, 'module_id');
     }
-
+ 
     public function questions()
     {
         return $this->hasMany(AssessmentQuestion::class);

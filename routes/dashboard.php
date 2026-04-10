@@ -165,8 +165,6 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         ->name('quiz.save');
     
     // ✅ SPECIFIC GET ROUTES NEXT
-    Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
-        ->name('quiz.results');
     
     Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])
         ->name('quiz.continue');
@@ -174,5 +172,13 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ GENERAL GET ROUTE LAST
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
         ->name('quiz.take');
+    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])
+    ->name('quiz.save-progress');
+
+    Route::get('/courses/{course:slug}/quiz/results', [QuizController::class, 'results'])
+    ->name('quiz.results.all');
+
+Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
+    ->name('quiz.results');
         
 });
