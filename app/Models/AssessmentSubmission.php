@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class AssessmentSubmission extends Model
 {
     protected $table = 'assessment_submissions';
-
+ 
     protected $fillable = [
         'assessment_id',
         'user_id',

@@ -512,8 +512,13 @@ public function getCompletedAssessmentsAttribute()
                 'scroll_progress',
                 'attempts',
                 'last_viewed_at',
-                'metadata'
+                 'metadata'
             ])
             ->withTimestamps();
     }
-}
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+} 

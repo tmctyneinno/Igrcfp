@@ -182,7 +182,7 @@ export default function EnrollmentIndex({
         window.location.href = route('dashboard.quiz.take', { 
             course: course.slug, 
             assessment: actualQuizId,
-            module: quiz.module_id  // Pass module ID
+            
         });
     }, [course?.slug]);
 

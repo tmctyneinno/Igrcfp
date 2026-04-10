@@ -595,7 +595,7 @@ class AssessmentController extends Controller
 private function saveQuestions(Assessment $assessment, array $questions): void
 {
     foreach ($questions as $order => $questionData) {
- 
+  
         // Both answer columns default to null
         $row = [
             'assessment_id'    => $assessment->id,
@@ -608,7 +608,7 @@ private function saveQuestions(Assessment $assessment, array $questions): void
             'is_required'      => true,
             'correct_answer'   => null,
             'correct_answers'  => null,
-        ]; 
+        ];  
  
         switch ($questionData['type']) {
  
