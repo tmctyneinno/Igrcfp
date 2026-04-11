@@ -13,7 +13,7 @@ import {
     CalendarIcon,
     ExclamationTriangleIcon,
     PencilSquareIcon,
-    EyeIcon
+    EyeIcon,TrophyIcon
 } from '@heroicons/react/24/outline';
 
 export default function ProjectSubmit({ 
@@ -216,7 +216,7 @@ export default function ProjectSubmit({
                                                     Submitted: {existingSubmission.submitted_at}
                                                 </p>
                                             </div>
-                                            <a 
+                                            <a  
                                                 href={existingSubmission.file_url} 
                                                 target="_blank"
                                                 className="text-blue-600 hover:text-blue-800 flex-shrink-0"
@@ -427,13 +427,17 @@ export default function ProjectSubmit({
                             Back to Course
                         </Link>
                         
-                        {hasSubmitted && existingSubmission.status === 'graded' && existingSubmission.passed && (
-                            <Link
+                       {/* Certificate Available Badge */}
+                        {existingSubmission?.status === 'graded' && existingSubmission?.passed && (
+                            <a
                                 href={route('dashboard.certificates.generate', enrollment.id)}
-                                className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-center rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition flex items-center gap-2"
                             >
-                                🎓 View Certificate
-                            </Link>
+                                <TrophyIcon className="w-4 h-4" />
+                                Certificate Available
+                            </a>
                         )}
                     </div>
                 </div>

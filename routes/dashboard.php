@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('dashboard.certificates.download');
     Route::get('dashboard/badge/{enrollment}', [CertificateController::class, 'badge'])->name('dashboard.certificates.badge');
     Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificate.verify');
-    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry');
+    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry'); 
 
     // Exam Routes
     // Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
@@ -194,4 +194,14 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ ADD THIS POST ROUTE
     Route::post('/courses/{course:slug}/project/{assessment}/submit', [QuizProjectAssessmentController::class, 'submitProject'])
         ->name('quiz.project.submit');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/recent', [NotificationController::class, 'recent'])->name('notifications.recent');
 });

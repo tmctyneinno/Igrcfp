@@ -116,4 +116,6 @@ Route::prefix('admin/projects')->name('admin.projects.')->group(function () {
     Route::delete('/{assessment}', [ProjectAssessmentController::class, 'destroy'])->name('destroy');
     Route::get('/{assessment}/submissions', [ProjectAssessmentController::class, 'submissions'])->name('submissions');
     Route::get('/get-modules/{courseId}', [ProjectAssessmentController::class, 'getModulesByCourse'])->name('get-modules');
+     Route::get('/submission/{submission}', [ProjectAssessmentController::class, 'viewSubmission'])->name('submission.view');
+    Route::post('/submission/{submission}/grade', [ProjectAssessmentController::class, 'gradeSubmission'])->name('submission.grade');
 });

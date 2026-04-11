@@ -8,15 +8,17 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
     AcademicCapIcon,
-    ChartBarIcon
+    ChartBarIcon,
+    DocumentTextIcon,
+    ClockIcon
 } from '@heroicons/react/24/outline';
-import toast from 'react-hot-toast';
 
 export default function Results({ 
     course, 
     currentAssessment, 
     quizzes = [], 
     overallStats = {},
+    projectStatus = null,
     enrollment 
 }) {
     const [expandedQuizzes, setExpandedQuizzes] = useState({});
@@ -76,6 +78,69 @@ export default function Results({
                         <h1 className="text-2xl font-bold text-gray-900 mt-2">{course.title}</h1>
                         <p className="text-gray-600">Quiz Results Summary</p>
                     </div>
+                    
+                    {/* Project Status Card */}
+                    {projectStatus && (
+                        <div className={`mb-6 p-6 rounded-xl shadow-sm border ${
+                            projectStatus.is_graded 
+                                ? (projectStatus.has_passed ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200')
+                                : projectStatus.has_submitted 
+                                    ? 'bg-yellow-50 border-yellow-200' 
+                                    : 'bg-blue-50 border-blue-200'
+                        }`}>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                                        projectStatus.is_graded 
+                                            ? (projectStatus.has_passed ? 'bg-green-100' : 'bg-orange-100')
+                                            : projectStatus.has_submitted 
+                                                ? 'bg-yellow-100' 
+                                                : 'bg-blue-100'
+                                    }`}>
+                                        {projectStatus.is_graded ? (
+                                            projectStatus.has_passed ? (
+                                                <TrophyIcon className="w-6 h-6 text-green-600" />
+                                            ) : (
+                                                <ChartBarIcon className="w-6 h-6 text-orange-600" />
+                                            )
+                                        ) : projectStatus.has_submitted ? (
+                                            <ClockIcon className="w-6 h-6 text-yellow-600" />
+                                        ) : (
+                                            <DocumentTextIcon className="w-6 h-6 text-blue-600" />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">{projectStatus.title}</h3>
+                                        <p className="text-sm">
+                                            {projectStatus.is_graded ? (
+                                                projectStatus.has_passed ? (
+                                                    <span className="text-green-600">✅ Passed with {projectStatus.score}% - Certificate Available</span>
+                                                ) : (
+                                                    <span className="text-orange-600">❌ Score: {projectStatus.score}% - Did not pass</span>
+                                                )
+                                            ) : projectStatus.has_submitted ? (
+                                                <span className="text-yellow-600">⏳ Submitted on {projectStatus.submitted_at} - Awaiting grading</span>
+                                            ) : (
+                                                <span className="text-blue-600">📝 Ready to submit your final project</span>
+                                            )}
+                                        </p>
+                                    </div>
+                                </div>
+                                <Link
+                                    href={route('dashboard.quiz.project-assessment', { course: course.slug })}
+                                    className="text-sm font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                                >
+                                    View Details
+                                    <ChevronRightIcon className="w-4 h-4" />
+                                </Link>
+                            </div>
+                            {projectStatus.is_graded && projectStatus.graded_at && (
+                                <p className="text-xs text-gray-500 mt-3 pl-16">
+                                    Graded on {projectStatus.graded_at}
+                                </p>
+                            )}
+                        </div>
+                    )}
                     
                     {/* Overall Stats Card */}
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 mb-6 text-white">
@@ -292,27 +357,27 @@ export default function Results({
                             </button>
                         )}
                         
-                        {/* {overallStats.completed_quizzes === overallStats.total_quizzes && overallStats.passed_quizzes === overallStats.total_quizzes && (
-                            <button
-                                onClick={() => window.location.href = route('dashboard.certificates.generate', enrollment.id)}
-                                className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
-                            >
-                                🎓 View Certificate
-                            </button>
-                        )}  */}
-                       {overallStats.completed_quizzes === overallStats.total_quizzes && overallStats.passed_quizzes === overallStats.total_quizzes && (
+                        {/* Always go to project assessment page - status is shown there */}
+                        {overallStats.completed_quizzes === overallStats.total_quizzes && 
+                         overallStats.passed_quizzes === overallStats.total_quizzes && 
+                         projectStatus && (
                             <button
                                 onClick={() => window.location.href = route('dashboard.quiz.project-assessment', { 
                                     course: course.slug 
                                 })}
                                 className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
                             >
-                                🏆 Take Final Project Assessment
+                                {projectStatus.is_graded 
+                                    ? (projectStatus.has_passed ? '🏆 View Project & Certificate' : '📋 View Project Results')
+                                    : projectStatus.has_submitted 
+                                        ? '⏳ View Submission Status' 
+                                        : '🏆 Take Final Project Assessment'
+                                }
                             </button>
-                        )} 
-                    </div> 
+                        )}
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>
     );
-} 
+}
