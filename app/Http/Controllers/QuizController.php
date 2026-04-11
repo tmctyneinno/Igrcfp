@@ -105,7 +105,7 @@ class QuizController extends Controller
     /**
      * Submit a completed quiz (ONE quiz at a time)
      */
-   public function submit(Request $request, Course $course, $assessmentId)
+    public function submit(Request $request, Course $course, $assessmentId)
     {
         \Log::info('Submit method called', [
             'course' => $course->slug,
@@ -394,6 +394,31 @@ class QuizController extends Controller
             'total_points' => $completedQuizzes->sum(fn($q) => $q['attempt']['earned_marks'] ?? 0),
             'total_possible' => $completedQuizzes->sum(fn($q) => $q['attempt']['total_marks'] ?? 0),
         ];
+
+        // ✅ GET PROJECT ASSESSMENT STATUS
+        $projectAssessment = Assessment::where('course_id', $course->id)
+        ->whereIn('assessment_level', ['diploma', 'project'])
+        ->where('status', 'active')
+        ->first();
+
+        $projectStatus = null;
+        if ($projectAssessment) {
+            $submission = AssessmentSubmission::where('assessment_id', $projectAssessment->id)
+                ->where('user_id', $user->id)
+                ->where('enrollment_id', $enrollment->id)
+                ->first();
+            
+            $projectStatus = [
+                'id' => $projectAssessment->id,
+                'title' => $projectAssessment->title,
+                'has_submitted' => !is_null($submission),
+                'is_graded' => $submission && $submission->status === 'graded',
+                'has_passed' => $submission && $submission->passed,
+                'score' => $submission ? $submission->percentage : null,
+                'submitted_at' => $submission ? $submission->submitted_at?->format('M d, Y') : null,
+                'graded_at' => $submission ? $submission->graded_at?->format('M d, Y') : null,
+            ];
+        }
         
         // Get the specific assessment if provided (for highlighting)
         $currentAssessment = $assessmentId ? $this->findAssessment($assessmentId) : null;
@@ -410,6 +435,7 @@ class QuizController extends Controller
             ] : null,
             'quizzes' => $allQuizzes->values(),
             'overallStats' => $overallStats,
+            'projectStatus' => $projectStatus,
             'enrollment' => [
                 'id' => $enrollment->id,
                 'progress' => $enrollment->progress,

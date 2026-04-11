@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
+use App\Models\AssessmentSubmission;
 use App\Models\Course;
 use App\Models\CourseModule;
 use Illuminate\Http\Request;
@@ -156,7 +157,13 @@ class ProjectAssessmentController extends Controller
     {
         $assessment->load(['course', 'module', 'submissions.user']);
         
-        return view('admin.projects.show', compact('assessment'));
+        // Load submission counts
+        $assessment->loadCount('submissions');
+        $assessment->loadCount(['submissions as pending_grading_count' => function($q) {
+            $q->where('status', 'submitted');
+        }]);
+        
+        return view('admin.courses.assessments.projects.show', compact('assessment'));
     }
  
     /**
@@ -248,11 +255,54 @@ class ProjectAssessmentController extends Controller
     public function submissions(Assessment $assessment)
     {
         $submissions = $assessment->submissions()
-            ->with(['user'])
+            ->with(['user', 'grader'])
             ->orderBy('submitted_at', 'desc')
             ->paginate(20);
+        
+        $statistics = [
+            'total' => $assessment->submissions()->count(),
+            'pending' => $assessment->submissions()->where('status', 'submitted')->count(),
+            'graded' => $assessment->submissions()->where('status', 'graded')->count(),
+            'late' => $assessment->submissions()->where('status', 'late')->count(),
+            'passed' => $assessment->submissions()->where('passed', true)->count(),
+            'failed' => $assessment->submissions()->where('passed', false)->whereNotNull('graded_at')->count(),
+            'average_score' => $assessment->submissions()->whereNotNull('percentage')->avg('percentage') ?? 0,
+        ];
 
-        return view('admin.projects.submissions', compact('assessment', 'submissions'));
+        return view('admin.courses.assessments.projects.submissions', compact('assessment', 'submissions', 'statistics'));
+    }
+
+    public function viewSubmission(AssessmentSubmission $submission)
+    {
+        $submission->load(['user', 'assessment.course', 'assessment.module', 'grader']);
+        
+        return view('admin.courses.assessments.projects.submission-view', compact('submission'));
+    }
+
+    public function gradeSubmission(Request $request, AssessmentSubmission $submission)
+    {
+        $validated = $request->validate([
+            'score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
+            'feedback' => 'nullable|string',
+            'passed' => 'boolean',
+        ]);
+
+        $submission->score = $validated['score'];
+        $submission->percentage = $submission->assessment->total_marks > 0 
+            ? ($validated['score'] / $submission->assessment->total_marks) * 100 
+            : 0;
+        $submission->passed = $request->boolean('passed', $submission->percentage >= $submission->assessment->passing_score);
+        $submission->feedback = $validated['feedback'];
+        $submission->graded_at = now();
+        $submission->graded_by = auth()->id();
+        $submission->status = 'graded';
+        $submission->save();
+        
+        // Update assessment statistics
+        $submission->assessment->calculateStatistics();
+
+        return redirect()->route('admin.projects.submissions', $submission->assessment)
+            ->with('success', 'Submission graded successfully!');
     }
 
     /**

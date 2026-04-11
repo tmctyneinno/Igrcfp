@@ -521,4 +521,20 @@ public function getCompletedAssessmentsAttribute()
     {
         return $this->hasMany(Transaction::class);
     }
+
+    // In User model, add this relationship:
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->orderBy('created_at', 'desc');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->hasMany(Notification::class)->whereNull('read_at')->orderBy('created_at', 'desc');
+    }
+
+    public function getUnreadNotificationsCountAttribute()
+    {
+        return $this->unreadNotifications()->count();
+    }
 } 
