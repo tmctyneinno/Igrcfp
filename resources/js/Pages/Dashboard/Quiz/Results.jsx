@@ -309,8 +309,8 @@ export default function Results({
                             >
                                 🏆 Take Final Project Assessment
                             </button>
-                        )}
-                    </div>
+                        )} 
+                    </div> 
                 </div>
             </div>
         </AuthenticatedLayout>
