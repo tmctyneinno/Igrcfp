@@ -14,7 +14,8 @@ import {
     ArrowRightIcon,
     BookOpenIcon,
     TrophyIcon,
-    SparklesIcon
+    SparklesIcon,
+    XCircleIcon
 } from '@heroicons/react/24/outline';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -76,7 +77,8 @@ export default function QuizTake({
                 moduleId: module.id,
                 moduleTitle: module.title,
                 moduleNumber: module.module_number,
-                lessonsCompleted: areModuleLessonsCompleted(module)
+                lessonsCompleted: areModuleLessonsCompleted(module),
+                attempt: quiz.attempt || null
             }))
         );
     }, [modules, areModuleLessonsCompleted]);
@@ -100,13 +102,11 @@ export default function QuizTake({
         return quiz.lessonsCompleted;
     }, []);
     
-    // ✅ Check if this is the last quiz (or only quiz)
     const isLastQuiz = currentQuizIndex === allQuizzesWithStatus.length - 1;
     const isOnlyQuiz = allQuizzesWithStatus.length === 1;
     const allQuizzesCompleted = allQuizzesWithStatus.length > 0 && 
         allQuizzesWithStatus.every(q => completedQuizzes.has(q.id));
     
-    // ✅ Check if current quiz is completed
     const isCurrentQuizCompleted = currentQuiz && completedQuizzes.has(currentQuiz.id);
     
     // ==================== AUTO-SAVE LOGIC ====================
@@ -169,7 +169,6 @@ export default function QuizTake({
     
     useEffect(() => {
         if (allQuizzesWithStatus.length > 0 && !selectedQuiz) {
-            // Find first UNCOMPLETED unlocked quiz
             const firstUnlockedIndex = allQuizzesWithStatus.findIndex(q => {
                 return q.moduleUnlocked && q.lessonsCompleted && !completedQuizzes.has(q.id);
             });
@@ -182,7 +181,6 @@ export default function QuizTake({
                     [allQuizzesWithStatus[firstUnlockedIndex].moduleId]: true 
                 }));
             } else if (allQuizzesWithStatus.length > 0) {
-                // All quizzes completed - show the first one as read-only
                 setCurrentQuizIndex(0);
                 setSelectedQuiz(allQuizzesWithStatus[0]);
             }
@@ -250,10 +248,19 @@ export default function QuizTake({
         const index = allQuizzesWithStatus.findIndex(q => q.id === quiz.id);
         if (index === -1) return;
         
-        // ✅ COMPLETELY PREVENT selecting completed quizzes
-        if (completedQuizzes.has(quiz.id)) {
-            toast('This quiz is already completed', { icon: '✓' });
-            return; // ✅ DO NOT select completed quizzes
+        const quizAttempt = quiz.attempt;
+        const hasPassed = quizAttempt?.passed === true;
+        
+        if (hasPassed) {
+            toast.success('You have already passed this quiz! View results for details.', {
+                icon: '🏆',
+                duration: 3000,
+            });
+            return;
+        }
+        
+        if (completedQuizzes.has(quiz.id) && !hasPassed) {
+            toast('You can retake this quiz to improve your score.', { icon: '📝' });
         }
         
         if (!isQuizUnlocked(quiz)) {
@@ -276,12 +283,11 @@ export default function QuizTake({
         setFlaggedQuestions(new Set());
         setHasUnsavedChanges(false);
     }, [allQuizzesWithStatus, isQuizUnlocked, completedQuizzes, hasUnsavedChanges, autoSaveProgress]);
-    
+
     const handleNextQuiz = useCallback(() => {
         for (let i = currentQuizIndex + 1; i < allQuizzesWithStatus.length; i++) {
             const quiz = allQuizzesWithStatus[i];
             
-            // Skip completed quizzes
             if (!completedQuizzes.has(quiz.id) && isQuizUnlocked(quiz)) {
                 setCurrentQuizIndex(i);
                 setSelectedQuiz(quiz);
@@ -298,7 +304,6 @@ export default function QuizTake({
     const handlePreviousQuiz = useCallback(() => {
         for (let i = currentQuizIndex - 1; i >= 0; i--) {
             const quiz = allQuizzesWithStatus[i];
-            // Skip completed quizzes for previous navigation too
             if (!completedQuizzes.has(quiz.id) && isQuizUnlocked(quiz)) {
                 setCurrentQuizIndex(i);
                 setSelectedQuiz(quiz);
@@ -337,124 +342,119 @@ export default function QuizTake({
     }, []);
 
     const handleSubmitAndContinue = useCallback(async () => {
-    const unanswered = questions.filter(q => !answers[q.id]).length;
-    
-    if (unanswered > 0) {
-        const confirmed = await confirmUnanswered(unanswered);
-        if (!confirmed) return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-        const submitUrl = route('dashboard.quiz.submit', { 
-            course: course.slug, 
-            assessment: currentQuiz.id 
-        });
+        const unanswered = questions.filter(q => !answers[q.id]).length;
         
-        const response = await fetch(submitUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest', // ✅ Add this
-            },
-            body: JSON.stringify({ answers, skip_results: true }),
-        });
+        if (unanswered > 0) {
+            const confirmed = await confirmUnanswered(unanswered);
+            if (!confirmed) return;
+        }
         
-        // ✅ Check content type to avoid parsing HTML as JSON
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(data.message || 'Submission failed');
-            }
-            
-            setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
-            setHasUnsavedChanges(false);
-            
-            toast.success(`✅ Module ${currentQuiz.moduleNumber} completed!`, {
-                icon: '🎯',
-                duration: 2000,
+        setIsSubmitting(true);
+        
+        try {
+            const submitUrl = route('dashboard.quiz.submit', { 
+                course: course.slug, 
+                assessment: currentQuiz.id 
             });
             
-            handleNextQuiz();
-        } else {
-            // If HTML returned, likely a redirect - just reload or navigate
-            const text = await response.text();
-            console.error('HTML response received:', text.substring(0, 200));
-            throw new Error('Server returned HTML instead of JSON');
-        }
-        
-    } catch (error) {
-        if (isDev) console.error('Submit error:', error);
-        toast.error('Failed to submit quiz. Please try again.');
-    } finally {
-        setIsSubmitting(false);
-    }
-}, [questions, answers, course.slug, currentQuiz, handleNextQuiz, confirmUnanswered]);
-
-   const handleSubmitAndFinish = useCallback(async () => {
-    const unanswered = questions.filter(q => !answers[q.id]).length;
-    
-    if (unanswered > 0) {
-        const confirmed = await confirmUnanswered(unanswered);
-        if (!confirmed) return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-        const submitUrl = route('dashboard.quiz.submit', { 
-            course: course.slug, 
-            assessment: currentQuiz.id 
-        });
-        
-        const response = await fetch(submitUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest', // ✅ Add this
-            },
-            body: JSON.stringify({ answers }),
-        });
-        
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ answers, skip_results: true }),
+            });
             
-            if (!response.ok) {
-                throw new Error(data.message || 'Submission failed');
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Submission failed');
+                }
+                
+                setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
+                setHasUnsavedChanges(false);
+                
+                toast.success(`✅ Module ${currentQuiz.moduleNumber} completed!`, {
+                    icon: '🎯',
+                    duration: 2000,
+                });
+                
+                handleNextQuiz();
+            } else {
+                throw new Error('Server returned HTML instead of JSON');
             }
             
-            setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
-            setHasUnsavedChanges(false);
-            setFinalScore(data.score);
-            setShowCompletionModal(true);
-        } else {
-            throw new Error('Server returned HTML instead of JSON');
+        } catch (error) {
+            if (isDev) console.error('Submit error:', error);
+            toast.error('Failed to submit quiz. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [questions, answers, course.slug, currentQuiz, handleNextQuiz, confirmUnanswered]);
+
+    const handleSubmitAndFinish = useCallback(async () => {
+        const unanswered = questions.filter(q => !answers[q.id]).length;
+        
+        if (unanswered > 0) {
+            const confirmed = await confirmUnanswered(unanswered);
+            if (!confirmed) return;
         }
         
-    } catch (error) {
-        if (isDev) console.error('Submit error:', error);
-        toast.error('Failed to submit quiz. Please try again.');
-    } finally {
-        setIsSubmitting(false);
-    }
-}, [questions, answers, course.slug, currentQuiz, confirmUnanswered]);
+        setIsSubmitting(true);
+        
+        try {
+            const submitUrl = route('dashboard.quiz.submit', { 
+                course: course.slug, 
+                assessment: currentQuiz.id 
+            });
+            
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ answers }),
+            });
+            
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Submission failed');
+                }
+                
+                setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
+                setHasUnsavedChanges(false);
+                setFinalScore(data.score);
+                setShowCompletionModal(true);
+            } else {
+                throw new Error('Server returned HTML instead of JSON');
+            }
+            
+        } catch (error) {
+            if (isDev) console.error('Submit error:', error);
+            toast.error('Failed to submit quiz. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [questions, answers, course.slug, currentQuiz, confirmUnanswered]);
      
     const handleViewResults = useCallback(() => {
-    setShowCompletionModal(false);
-    // ✅ Use the route with the current assessment ID
-    window.location.href = route('dashboard.quiz.results', {
-        course: course.slug,
-        assessment: currentQuiz.id  // Pass the current quiz ID
-    });
-}, [course.slug, currentQuiz?.id]);
+        setShowCompletionModal(false);
+        window.location.href = route('dashboard.quiz.results', {
+            course: course.slug,
+            assessment: currentQuiz.id
+        });
+    }, [course.slug, currentQuiz?.id]);
      
     // ==================== HELPER FUNCTIONS ====================
     
@@ -466,7 +466,11 @@ export default function QuizTake({
     }, []);
     
     const getQuizStatus = useCallback((quiz) => {
-        if (completedQuizzes.has(quiz.id)) return 'completed';
+        const quizAttempt = quiz.attempt;
+        const hasPassed = quizAttempt?.passed === true;
+        
+        if (hasPassed) return 'passed';
+        if (completedQuizzes.has(quiz.id)) return 'completed-failed';
         if (!quiz.moduleUnlocked) return 'locked-module';
         if (!isQuizUnlocked(quiz)) return 'locked-lessons';
         if (currentQuiz?.id === quiz.id) return 'active';
@@ -554,27 +558,23 @@ export default function QuizTake({
                                     {allQuizzesWithStatus.length > 1 && (
                                         <> • Quiz {currentQuizIndex + 1} of {allQuizzesWithStatus.length}</>
                                     )}
-                                    {isCurrentQuizCompleted && (
-                                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            ✓ Completed
-                                        </span>
-                                    )}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
-                                {hasUnsavedChanges && !isCurrentQuizCompleted && (
+                                {hasUnsavedChanges && !isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
                                     <div className="text-xs text-amber-600 flex items-center gap-1">
                                         <div className="w-2 h-2 bg-amber-600 rounded-full animate-pulse"></div>
                                         Unsaved
                                     </div>
                                 )}
-                                {lastSaved && !hasUnsavedChanges && !isCurrentQuizCompleted && (
+                                {lastSaved && !hasUnsavedChanges && !isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
                                     <div className="text-xs text-green-600">
                                         ✓ Saved
                                     </div>
                                 )}
                                 
-                                {!isCurrentQuizCompleted && (
+                                {/* Timer - Only for active quizzes */}
+                                {!isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
                                     <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
                                         timeRemaining < 60 ? 'bg-red-100 text-red-700' : 
                                         timeRemaining < 300 ? 'bg-amber-100 text-amber-700' : 
@@ -584,11 +584,28 @@ export default function QuizTake({
                                         <span className="font-mono text-lg font-bold">{formatTime(timeRemaining)}</span>
                                     </div>
                                 )}
+                                
+                                {/* Passed Badge */}
+                                {currentQuiz?.attempt?.passed && (
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-green-700">
+                                        <TrophyIcon className="w-5 h-5" />
+                                        <span className="font-semibold">Passed • {currentQuiz.attempt.score}%</span>
+                                    </div>
+                                )}
+                                
+                                {/* Failed Badge */}
+                                {isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 text-orange-700">
+                                        <XCircleIcon className="w-5 h-5" />
+                                        <span className="font-semibold">Score: {currentQuiz?.attempt?.score || 0}%</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                     
-                    {currentQuiz && !isCurrentQuizCompleted && (
+                    {/* Progress Bar - Only for active quizzes */}
+                    {currentQuiz && !isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
                         <div className="px-4 pb-3">
                             <div className="max-w-[1600px] mx-auto">
                                 <div className="flex justify-between text-xs text-gray-500 mb-1">
@@ -597,6 +614,50 @@ export default function QuizTake({
                                 </div>
                                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div className="h-full bg-blue-600 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Mini indicator for passed quizzes */}
+                    {currentQuiz?.attempt?.passed && (
+                        <div className="px-4 pb-3">
+                            <div className="max-w-[1600px] mx-auto">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <CheckCircleIcon className="w-4 h-4 text-green-600" />
+                                    <span className="text-gray-500">Quiz completed on {currentQuiz.attempt.completed_at}</span>
+                                    <span className="text-gray-400">•</span>
+                                    <button
+                                        onClick={() => window.location.href = route('dashboard.quiz.results', {
+                                            course: course.slug,
+                                            assessment: currentQuiz.id
+                                        })}
+                                        className="text-blue-600 hover:text-blue-800 font-medium"
+                                    >
+                                        View Results →
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Mini indicator for failed quizzes */}
+                    {isCurrentQuizCompleted && !currentQuiz?.attempt?.passed && (
+                        <div className="px-4 pb-3">
+                            <div className="max-w-[1600px] mx-auto">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <XCircleIcon className="w-4 h-4 text-orange-600" />
+                                    <span className="text-gray-500">Passing score: {currentQuiz.passing_score}%</span>
+                                    <span className="text-gray-400">•</span>
+                                    <button
+                                        onClick={() => window.location.href = route('dashboard.quiz.results', {
+                                            course: course.slug,
+                                            assessment: currentQuiz.id
+                                        })}
+                                        className="text-blue-600 hover:text-blue-800 font-medium"
+                                    >
+                                        View Results →
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -657,6 +718,8 @@ export default function QuizTake({
                                                 <div className="border-t border-gray-100 bg-gray-50">
                                                     {moduleQuizzes.map((quiz) => {
                                                         const status = getQuizStatus(quiz);
+                                                        const quizAttempt = quiz.attempt;
+                                                        const hasPassed = quizAttempt?.passed === true;
                                                         const isCompleted = completedQuizzes.has(quiz.id);
                                                         const isActive = currentQuiz?.id === quiz.id;
                                                         
@@ -664,9 +727,9 @@ export default function QuizTake({
                                                             <button
                                                                 key={quiz.id}
                                                                 onClick={() => handleSelectQuiz(quiz)}
-                                                                disabled={status === 'locked-module' || status === 'locked-lessons' || isCompleted}
+                                                                disabled={status === 'locked-module' || status === 'locked-lessons' || hasPassed}
                                                                 className={`w-full px-4 py-3 text-left border-b border-gray-100 last:border-b-0 transition ${
-                                                                    status === 'locked-module' || status === 'locked-lessons' || isCompleted
+                                                                    status === 'locked-module' || status === 'locked-lessons' || hasPassed
                                                                         ? 'opacity-60 cursor-not-allowed' 
                                                                         : 'hover:bg-gray-100 cursor-pointer'
                                                                 } ${isActive ? 'bg-blue-100 border-l-4 border-l-blue-600' : ''}`}
@@ -677,14 +740,16 @@ export default function QuizTake({
                                                                             <LockClosedIcon className="w-4 h-4 text-gray-500" />
                                                                         ) : status === 'locked-lessons' ? (
                                                                             <LockClosedIcon className="w-4 h-4 text-orange-500" />
+                                                                        ) : hasPassed ? (
+                                                                            <TrophyIcon className="w-4 h-4 text-yellow-500" />
                                                                         ) : isCompleted ? (
-                                                                            <CheckCircleIcon className="w-4 h-4 text-green-600" />
+                                                                            <CheckCircleIcon className="w-4 h-4 text-orange-500" />
                                                                         ) : isActive ? (
                                                                             <PlayCircleIcon className="w-4 h-4 text-blue-600 animate-pulse" />
                                                                         ) : (
                                                                             <PlayCircleIcon className="w-4 h-4 text-blue-600" />
                                                                         )}
-                                                                        <span className={`text-sm font-medium ${isCompleted ? 'text-gray-500' : 'text-gray-800'}`}>
+                                                                        <span className={`text-sm font-medium ${hasPassed ? 'text-yellow-700' : isCompleted ? 'text-gray-500' : 'text-gray-800'}`}>
                                                                             {quiz.title}
                                                                         </span>
                                                                     </div>
@@ -702,9 +767,15 @@ export default function QuizTake({
                                                                         Complete module lessons first
                                                                     </p>
                                                                 )}
-                                                                {isCompleted && (
-                                                                    <p className="text-xs text-green-600 mt-1">
-                                                                        ✓ Completed
+                                                                {hasPassed && (
+                                                                    <p className="text-xs text-yellow-600 mt-1 flex items-center gap-1">
+                                                                        <TrophyIcon className="w-3 h-3" />
+                                                                        Passed with {quizAttempt?.score}%
+                                                                    </p>
+                                                                )}
+                                                                {isCompleted && !hasPassed && (
+                                                                    <p className="text-xs text-orange-600 mt-1">
+                                                                        Failed - Click to retake
                                                                     </p>
                                                                 )}
                                                             </button>
@@ -756,7 +827,7 @@ export default function QuizTake({
                         </div>
                     </div>
                     
-                    {/* Right Content - Questions */}
+                    {/* Right Content - Questions OR Results Summary */}
                     <div className="flex-1 p-6">
                         <div className="max-w-3xl mx-auto">
                             {!currentQuiz ? (
@@ -773,133 +844,248 @@ export default function QuizTake({
                                 </div>
                             ) : (
                                 <>
-                                    {isCurrentQuizCompleted && (
-                                        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
-                                            <CheckCircleIcon className="w-6 h-6 text-green-600" />
-                                            <div>
-                                                <p className="font-medium text-green-800">Quiz Completed</p>
-                                                <p className="text-sm text-green-600">You've already completed this quiz.</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                    
-                                    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-                                        <div className="flex items-start justify-between mb-4">
-                                            <div>
-                                                <span className="text-sm text-gray-500 mb-1 block">
-                                                    Question {currentQuestionIndex + 1} of {questions.length}
-                                                </span>
-                                                <h2 className="text-lg font-medium text-gray-900">
-                                                    {currentQuestion?.text}
+                                    {/* Check if user has already passed this quiz */}
+                                    {currentQuiz?.attempt?.passed ? (
+                                        // Show PASSED summary view
+                                        <div className="space-y-6">
+                                            <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-6 text-center">
+                                                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    <TrophyIcon className="w-8 h-8 text-white" />
+                                                </div>
+                                                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                                                    Quiz Already Passed! 🎉
                                                 </h2>
+                                                <p className="text-gray-600 mb-4">
+                                                    You've successfully completed this quiz.
+                                                </p>
+                                                
+                                                <div className="bg-white rounded-lg p-4 mb-4 inline-block mx-auto">
+                                                    <p className="text-sm text-gray-500">Your Score</p>
+                                                    <p className="text-4xl font-bold text-green-600">
+                                                        {currentQuiz.attempt.score}%
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        Completed on {currentQuiz.attempt.completed_at}
+                                                    </p>
+                                                </div>
+                                                
+                                                <div className="flex gap-3 justify-center">
+                                                    <button
+                                                        onClick={() => window.location.href = route('dashboard.quiz.results', {
+                                                            course: course.slug,
+                                                            assessment: currentQuiz.id
+                                                        })}
+                                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                                    >
+                                                        View Detailed Results
+                                                    </button>
+                                                    
+                                                    {currentQuizIndex < allQuizzesWithStatus.length - 1 && (
+                                                        <button
+                                                            onClick={handleNextQuiz}
+                                                            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2"
+                                                        >
+                                                            Next Quiz
+                                                            <ArrowRightIcon className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            {!isCurrentQuizCompleted && (
-                                                <button 
-                                                    onClick={() => toggleFlag(currentQuestion?.id)}
-                                                    className={`p-2 rounded-lg transition ${
-                                                        flaggedQuestions.has(currentQuestion?.id) 
-                                                            ? 'text-amber-500 bg-amber-50' 
-                                                            : 'text-gray-400 hover:text-amber-500 hover:bg-gray-50'
-                                                    }`}
-                                                    title="Flag for review"
-                                                >
-                                                    <FlagIcon className="w-5 h-5" />
-                                                </button>
-                                            )}
+                                            
+                                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                                <h3 className="font-semibold text-gray-900 mb-4">Quiz Summary</h3>
+                                                <div className="grid grid-cols-3 gap-4 text-center">
+                                                    <div>
+                                                        <p className="text-2xl font-bold text-gray-900">{currentQuiz.questions_count}</p>
+                                                        <p className="text-sm text-gray-500">Questions</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-2xl font-bold text-green-600">{currentQuiz.attempt.score}%</p>
+                                                        <p className="text-sm text-gray-500">Score</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-2xl font-bold text-gray-900">{currentQuiz.passing_score}%</p>
+                                                        <p className="text-sm text-gray-500">Passing Score</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        
-                                        <div className="space-y-3">
-                                            {currentQuestion?.options?.map((option, index) => (
-                                                <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
-                                                    isCurrentQuizCompleted 
-                                                        ? 'cursor-not-allowed opacity-80'
-                                                        : 'cursor-pointer hover:bg-gray-50'
-                                                } ${
-                                                    answers[currentQuestion?.id] === option 
-                                                        ? 'border-blue-500 bg-blue-50' 
-                                                        : 'border-gray-200'
-                                                }`}>
-                                                    <input
-                                                        type="radio"
-                                                        name={`q-${currentQuestion?.id}`}
-                                                        value={option}
-                                                        checked={answers[currentQuestion?.id] === option}
-                                                        onChange={() => handleAnswer(currentQuestion?.id, option)}
-                                                        disabled={isCurrentQuizCompleted}
-                                                        className="w-4 h-4 text-blue-600 disabled:opacity-50"
-                                                    />
-                                                    <span className="ml-3 text-gray-700">{option}</span>
-                                                </label>
-                                            ))}
+                                    ) : isCurrentQuizCompleted && !currentQuiz?.attempt?.passed ? (
+                                        // Show FAILED summary view
+                                        <div className="space-y-6">
+                                            <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-6 text-center">
+                                                <div className="w-16 h-16 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                    <XCircleIcon className="w-8 h-8 text-white" />
+                                                </div>
+                                                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                                                    Quiz Not Passed
+                                                </h2>
+                                                <p className="text-gray-600 mb-4">
+                                                    You didn't reach the passing score. You can retake this quiz.
+                                                </p>
+                                                
+                                                <div className="bg-white rounded-lg p-4 mb-4 inline-block mx-auto">
+                                                    <p className="text-sm text-gray-500">Your Score</p>
+                                                    <p className="text-4xl font-bold text-red-600">
+                                                        {currentQuiz.attempt?.score || 0}%
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">
+                                                        Passing: {currentQuiz.passing_score}%
+                                                    </p>
+                                                </div>
+                                                
+                                                <div className="flex gap-3 justify-center">
+                                                    <button
+                                                        onClick={() => window.location.href = route('dashboard.quiz.results', {
+                                                            course: course.slug,
+                                                            assessment: currentQuiz.id
+                                                        })}
+                                                        className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                                                    >
+                                                        View Results
+                                                    </button>
+                                                    
+                                                    <button
+                                                        onClick={() => {
+                                                            setAnswers({});
+                                                            setCurrentQuestionIndex(0);
+                                                            setFlaggedQuestions(new Set());
+                                                            setHasUnsavedChanges(false);
+                                                            setCompletedQuizzes(prev => {
+                                                                const newSet = new Set(prev);
+                                                                newSet.delete(currentQuiz.id);
+                                                                return newSet;
+                                                            });
+                                                        }}
+                                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                                    >
+                                                        Retake Quiz
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div className="flex items-center justify-between">
-                                        <button
-                                            onClick={handlePrevious}
-                                            disabled={currentQuestionIndex === 0}
-                                            className="flex items-center gap-2 px-4 py-2 text-gray-600 disabled:opacity-50 hover:bg-gray-100 rounded-lg"
-                                        >
-                                            <ChevronLeftIcon className="w-4 h-4" />
-                                            Previous
-                                        </button>
-                                        
-                                        <div className="flex gap-3">
-                                            {currentQuestionIndex < questions.length - 1 ? (
-                                                <button
-                                                    onClick={handleNext}
-                                                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md"
-                                                >
-                                                    Next
-                                                    <ChevronRightIcon className="w-4 h-4" />
-                                                </button>
-                                            ) : (
-                                                <>
+                                    ) : (
+                                        // Show ACTIVE quiz questions
+                                        <>
+                                            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div>
+                                                        <span className="text-sm text-gray-500 mb-1 block">
+                                                            Question {currentQuestionIndex + 1} of {questions.length}
+                                                        </span>
+                                                        <h2 className="text-lg font-medium text-gray-900">
+                                                            {currentQuestion?.text}
+                                                        </h2>
+                                                    </div>
                                                     {!isCurrentQuizCompleted && (
+                                                        <button 
+                                                            onClick={() => toggleFlag(currentQuestion?.id)}
+                                                            className={`p-2 rounded-lg transition ${
+                                                                flaggedQuestions.has(currentQuestion?.id) 
+                                                                    ? 'text-amber-500 bg-amber-50' 
+                                                                    : 'text-gray-400 hover:text-amber-500 hover:bg-gray-50'
+                                                            }`}
+                                                            title="Flag for review"
+                                                        >
+                                                            <FlagIcon className="w-5 h-5" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                
+                                                <div className="space-y-3">
+                                                    {currentQuestion?.options?.map((option, index) => (
+                                                        <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
+                                                            isCurrentQuizCompleted 
+                                                                ? 'cursor-not-allowed opacity-80'
+                                                                : 'cursor-pointer hover:bg-gray-50'
+                                                        } ${
+                                                            answers[currentQuestion?.id] === option 
+                                                                ? 'border-blue-500 bg-blue-50' 
+                                                                : 'border-gray-200'
+                                                        }`}>
+                                                            <input
+                                                                type="radio"
+                                                                name={`q-${currentQuestion?.id}`}
+                                                                value={option}
+                                                                checked={answers[currentQuestion?.id] === option}
+                                                                onChange={() => handleAnswer(currentQuestion?.id, option)}
+                                                                disabled={isCurrentQuizCompleted}
+                                                                className="w-4 h-4 text-blue-600 disabled:opacity-50"
+                                                            />
+                                                            <span className="ml-3 text-gray-700">{option}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex items-center justify-between">
+                                                <button
+                                                    onClick={handlePrevious}
+                                                    disabled={currentQuestionIndex === 0}
+                                                    className="flex items-center gap-2 px-4 py-2 text-gray-600 disabled:opacity-50 hover:bg-gray-100 rounded-lg"
+                                                >
+                                                    <ChevronLeftIcon className="w-4 h-4" />
+                                                    Previous
+                                                </button>
+                                                
+                                                <div className="flex gap-3">
+                                                    {currentQuestionIndex < questions.length - 1 ? (
+                                                        <button
+                                                            onClick={handleNext}
+                                                            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md"
+                                                        >
+                                                            Next
+                                                            <ChevronRightIcon className="w-4 h-4" />
+                                                        </button>
+                                                    ) : (
                                                         <>
-                                                            {!isOnlyQuiz && !isLastQuiz ? (
-                                                                <button
-                                                                    onClick={handleSubmitAndContinue}
-                                                                    disabled={isSubmitting}
-                                                                    className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 shadow-md transition"
-                                                                >
-                                                                    {isSubmitting ? (
-                                                                        <>
-                                                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                                            Submitting...
-                                                                        </>
+                                                            {!isCurrentQuizCompleted && (
+                                                                <>
+                                                                    {!isOnlyQuiz && !isLastQuiz ? (
+                                                                        <button
+                                                                            onClick={handleSubmitAndContinue}
+                                                                            disabled={isSubmitting}
+                                                                            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 shadow-md transition"
+                                                                        >
+                                                                            {isSubmitting ? (
+                                                                                <>
+                                                                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                                    Submitting...
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <CheckCircleIcon className="w-4 h-4" />
+                                                                                    Complete & Continue
+                                                                                </>
+                                                                            )}
+                                                                        </button>
                                                                     ) : (
-                                                                        <>
-                                                                            <CheckCircleIcon className="w-4 h-4" />
-                                                                            Complete & Continue
-                                                                        </>
+                                                                        <button
+                                                                            onClick={handleSubmitAndFinish}
+                                                                            disabled={isSubmitting}
+                                                                            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 shadow-md transition"
+                                                                        >
+                                                                            {isSubmitting ? (
+                                                                                <>
+                                                                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                                    Submitting...
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <SparklesIcon className="w-4 h-4" />
+                                                                                    Submit & View Results
+                                                                                </>
+                                                                            )}
+                                                                        </button>
                                                                     )}
-                                                                </button>
-                                                            ) : (
-                                                                <button
-                                                                    onClick={handleSubmitAndFinish}
-                                                                    disabled={isSubmitting}
-                                                                    className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 shadow-md transition"
-                                                                >
-                                                                    {isSubmitting ? (
-                                                                        <>
-                                                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                                            Submitting...
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <SparklesIcon className="w-4 h-4" />
-                                                                            Submit & View Results
-                                                                        </>
-                                                                    )}
-                                                                </button>
+                                                                </>
                                                             )}
                                                         </>
                                                     )}
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>

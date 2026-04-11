@@ -104,3 +104,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // AJAX endpoint for getting modules by course
     Route::get('/get-modules/{courseId}', [AssessmentController::class, 'getModulesByCourse'])->name('assessments.get-modules');
 });
+
+// Project Assessment Routes
+Route::prefix('admin/projects')->name('admin.projects.')->group(function () {
+    Route::get('/', [ProjectAssessmentController::class, 'index'])->name('index');
+    Route::get('/create', [ProjectAssessmentController::class, 'create'])->name('create');
+    Route::post('/', [ProjectAssessmentController::class, 'store'])->name('store');
+    Route::get('/{assessment}', [ProjectAssessmentController::class, 'show'])->name('show');
+    Route::get('/{assessment}/edit', [ProjectAssessmentController::class, 'edit'])->name('edit');
+    Route::put('/{assessment}', [ProjectAssessmentController::class, 'update'])->name('update');
+    Route::delete('/{assessment}', [ProjectAssessmentController::class, 'destroy'])->name('destroy');
+    Route::get('/{assessment}/submissions', [ProjectAssessmentController::class, 'submissions'])->name('submissions');
+    Route::get('/get-modules/{courseId}', [ProjectAssessmentController::class, 'getModulesByCourse'])->name('get-modules');
+});

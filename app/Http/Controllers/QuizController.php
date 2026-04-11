@@ -305,118 +305,118 @@ class QuizController extends Controller
      * View quiz results
      */
     /**
- * View ALL quiz results for the course
- */
-public function results(Course $course, $assessmentId = null)
-{
-    $user = auth()->user();
-    
-    $enrollment = Enrollment::where('user_id', $user->id)
-        ->where('course_id', $course->id)
-        ->firstOrFail();
-    
-    // Get ALL quizzes for this course with their attempts
-    $allQuizzes = Assessment::where('course_id', $course->id)
-        ->where('assessment_level', 'quiz')
-        ->where('status', 'active')
-        ->with(['module'])
-        ->get()
-        ->map(function ($quiz) use ($user, $enrollment) {
-            // Get the latest completed attempt for this quiz
-            $attempt = AssessmentAttempt::where('user_id', $user->id)
-                ->where('assessment_id', $quiz->id)
-                ->where('enrollment_id', $enrollment->id)
-                ->where('status', 'completed')
-                ->latest()
-                ->first();
-            
-            // Get questions with user's answers
-            $questions = $quiz->questions()->get();
-            $answers = $attempt ? (json_decode($attempt->answers, true) ?? []) : [];
-            
-            $questionsWithResults = $questions->map(function ($question) use ($answers) {
-                $userAnswer = $answers[$question->id] ?? null;
-                $isCorrect = $question->isAnswerCorrect($userAnswer);
+     * View ALL quiz results for the course
+     */
+    public function results(Course $course, $assessmentId = null)
+    {
+        $user = auth()->user();
+        
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->firstOrFail();
+        
+        // Get ALL quizzes for this course with their attempts
+        $allQuizzes = Assessment::where('course_id', $course->id)
+            ->where('assessment_level', 'quiz')
+            ->where('status', 'active')
+            ->with(['module'])
+            ->get()
+            ->map(function ($quiz) use ($user, $enrollment) {
+                // Get the latest completed attempt for this quiz
+                $attempt = AssessmentAttempt::where('user_id', $user->id)
+                    ->where('assessment_id', $quiz->id)
+                    ->where('enrollment_id', $enrollment->id)
+                    ->where('status', 'completed')
+                    ->latest()
+                    ->first();
                 
-                $options = $question->options;
-                if (is_string($options)) {
-                    $options = json_decode($options, true);
-                }
+                // Get questions with user's answers
+                $questions = $quiz->questions()->get();
+                $answers = $attempt ? (json_decode($attempt->answers, true) ?? []) : [];
+                
+                $questionsWithResults = $questions->map(function ($question) use ($answers) {
+                    $userAnswer = $answers[$question->id] ?? null;
+                    $isCorrect = $question->isAnswerCorrect($userAnswer);
+                    
+                    $options = $question->options;
+                    if (is_string($options)) {
+                        $options = json_decode($options, true);
+                    }
+                    
+                    return [
+                        'id' => $question->id,
+                        'text' => $question->question_text,
+                        'options' => $options,
+                        'correct_answer' => $question->correct_answer,
+                        'user_answer' => $userAnswer,
+                        'is_correct' => $isCorrect,
+                        'points' => $question->points ?? 1,
+                    ];
+                });
                 
                 return [
-                    'id' => $question->id,
-                    'text' => $question->question_text,
-                    'options' => $options,
-                    'correct_answer' => $question->correct_answer,
-                    'user_answer' => $userAnswer,
-                    'is_correct' => $isCorrect,
-                    'points' => $question->points ?? 1,
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                    'description' => $quiz->description,
+                    'duration' => $quiz->duration,
+                    'total_marks' => $quiz->total_marks,
+                    'passing_score' => $quiz->passing_score,
+                    'module' => $quiz->module ? [
+                        'id' => $quiz->module->id,
+                        'title' => $quiz->module->title,
+                        'module_number' => $quiz->module->module_number,
+                    ] : null,
+                    'attempt' => $attempt ? [
+                        'id' => $attempt->id,
+                        'score' => $attempt->score,
+                        'earned_marks' => $attempt->earned_marks,
+                        'total_marks' => $attempt->total_marks,
+                        'correct_answers' => $attempt->correct_answers,
+                        'passed' => $attempt->passed,
+                        'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
+                    ] : null,
+                    'questions' => $questionsWithResults,
+                    'has_attempt' => !is_null($attempt),
                 ];
             });
-            
-            return [
-                'id' => $quiz->id,
-                'title' => $quiz->title,
-                'description' => $quiz->description,
-                'duration' => $quiz->duration,
-                'total_marks' => $quiz->total_marks,
-                'passing_score' => $quiz->passing_score,
-                'module' => $quiz->module ? [
-                    'id' => $quiz->module->id,
-                    'title' => $quiz->module->title,
-                    'module_number' => $quiz->module->module_number,
-                ] : null,
-                'attempt' => $attempt ? [
-                    'id' => $attempt->id,
-                    'score' => $attempt->score,
-                    'earned_marks' => $attempt->earned_marks,
-                    'total_marks' => $attempt->total_marks,
-                    'correct_answers' => $attempt->correct_answers,
-                    'passed' => $attempt->passed,
-                    'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
-                ] : null,
-                'questions' => $questionsWithResults,
-                'has_attempt' => !is_null($attempt),
-            ];
-        });
-    
-    // Calculate overall stats
-    $completedQuizzes = $allQuizzes->filter(fn($q) => $q['has_attempt']);
-    $passedQuizzes = $allQuizzes->filter(fn($q) => $q['attempt']['passed'] ?? false);
-    
-    $overallStats = [
-        'total_quizzes' => $allQuizzes->count(),
-        'completed_quizzes' => $completedQuizzes->count(),
-        'passed_quizzes' => $passedQuizzes->count(),
-        'average_score' => $completedQuizzes->count() > 0 
-            ? round($completedQuizzes->avg(fn($q) => $q['attempt']['score'] ?? 0)) 
-            : 0,
-        'total_points' => $completedQuizzes->sum(fn($q) => $q['attempt']['earned_marks'] ?? 0),
-        'total_possible' => $completedQuizzes->sum(fn($q) => $q['attempt']['total_marks'] ?? 0),
-    ];
-    
-    // Get the specific assessment if provided (for highlighting)
-    $currentAssessment = $assessmentId ? $this->findAssessment($assessmentId) : null;
-    
-    return Inertia::render('Dashboard/Quiz/Results', [
-        'course' => [
-            'id' => $course->id,
-            'title' => $course->title,
-            'slug' => $course->slug,
-        ],
-        'currentAssessment' => $currentAssessment ? [
-            'id' => $currentAssessment->id,
-            'title' => $currentAssessment->title,
-        ] : null,
-        'quizzes' => $allQuizzes->values(),
-        'overallStats' => $overallStats,
-        'enrollment' => [
-            'id' => $enrollment->id,
-            'progress' => $enrollment->progress,
-            'status' => $enrollment->status,
-        ],
-    ]);
-}
+        
+        // Calculate overall stats
+        $completedQuizzes = $allQuizzes->filter(fn($q) => $q['has_attempt']);
+        $passedQuizzes = $allQuizzes->filter(fn($q) => $q['attempt']['passed'] ?? false);
+        
+        $overallStats = [
+            'total_quizzes' => $allQuizzes->count(),
+            'completed_quizzes' => $completedQuizzes->count(),
+            'passed_quizzes' => $passedQuizzes->count(),
+            'average_score' => $completedQuizzes->count() > 0 
+                ? round($completedQuizzes->avg(fn($q) => $q['attempt']['score'] ?? 0)) 
+                : 0,
+            'total_points' => $completedQuizzes->sum(fn($q) => $q['attempt']['earned_marks'] ?? 0),
+            'total_possible' => $completedQuizzes->sum(fn($q) => $q['attempt']['total_marks'] ?? 0),
+        ];
+        
+        // Get the specific assessment if provided (for highlighting)
+        $currentAssessment = $assessmentId ? $this->findAssessment($assessmentId) : null;
+        
+        return Inertia::render('Dashboard/Quiz/Results', [
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+            ],
+            'currentAssessment' => $currentAssessment ? [
+                'id' => $currentAssessment->id,
+                'title' => $currentAssessment->title,
+            ] : null,
+            'quizzes' => $allQuizzes->values(),
+            'overallStats' => $overallStats,
+            'enrollment' => [
+                'id' => $enrollment->id,
+                'progress' => $enrollment->progress,
+                'status' => $enrollment->status,
+            ],
+        ]);
+    }
     
     /**
      * Continue a quiz (alias for take)
@@ -543,23 +543,36 @@ public function results(Course $course, $assessmentId = null)
      */
     private function getModulesWithQuestions($course, $assessment)
     {
+        $user = auth()->user();
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+        
         return $course->modules()
             ->orderBy('module_number')
             ->get()
-            ->map(function ($module) use ($course) {
+            ->map(function ($module) use ($course, $user, $enrollment) {
                 // Get ALL quizzes for this module
                 $moduleQuizzes = Assessment::where('course_id', $course->id)
                     ->where('module_id', $module->id)
                     ->where('assessment_level', 'quiz')
                     ->where('status', 'active')
                     ->get()
-                    ->map(function ($quiz) {
+                    ->map(function ($quiz) use ($user, $enrollment) {
                         $questions = $quiz->questions()
                             ->select('id', 'question_text', 'options', 'marks', 'correct_answer')
                             ->get()
                             ->map(function ($q) {
                                 return $this->formatQuestion($q);
                             });
+                        
+                        // ✅ Get user's attempt for this quiz
+                        $attempt = AssessmentAttempt::where('user_id', $user->id)
+                            ->where('assessment_id', $quiz->id)
+                            ->where('enrollment_id', $enrollment->id)
+                            ->where('status', 'completed')
+                            ->latest()
+                            ->first();
                         
                         return [
                             'id' => $quiz->id,
@@ -571,16 +584,18 @@ public function results(Course $course, $assessmentId = null)
                             'questions' => $questions->values()->toArray(),
                             'questions_count' => $questions->count(),
                             'status' => $quiz->status ?? 'not_started',
+                            'attempt' => $attempt ? [
+                                'id' => $attempt->id,
+                                'score' => $attempt->score,
+                                'passed' => $attempt->passed,
+                                'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y') : null,
+                            ] : null,
                         ];
                     });
                 
                 // Get lesson completion status for this module
-                $enrollment = Enrollment::where('user_id', auth()->id())
-                    ->where('course_id', $course->id)
-                    ->first();
-                
                 $lessons = $module->lessons()
-                    ->withCompletionStatus(auth()->id(), $enrollment->id ?? null)
+                    ->withCompletionStatus($user->id, $enrollment->id ?? null)
                     ->get()
                     ->map(function ($lesson) {
                         return [
@@ -600,7 +615,6 @@ public function results(Course $course, $assessmentId = null)
                 ];
             })
             ->filter(function ($module) {
-                // Only return modules that have at least one quiz
                 return $module['quizzes_count'] > 0;
             })
             ->values()

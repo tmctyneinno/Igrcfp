@@ -47,6 +47,9 @@ class Assessment extends Model
         'average_score',
         'highest_score',
         'lowest_score',
+         'instructions',
+    'max_file_size',
+    'allowed_file_types',
     ];
 
     protected $casts = [
@@ -63,6 +66,8 @@ class Assessment extends Model
         'average_score' => 'decimal:2',
         'highest_score' => 'decimal:2',
         'lowest_score' => 'decimal:2',
+        'allowed_file_types' => 'array',
+    'max_file_size' => 'integer',
     ];
 
     /**
@@ -288,5 +293,19 @@ class Assessment extends Model
         
         $this->save();
     }
+
+    // In Assessment model - add these scopes
+
+public function scopeProjects($query) {
+    return $query->whereIn('assessment_level', ['diploma', 'project']);
+}
+
+public function isProject(): bool {
+    return in_array($this->assessment_level, ['diploma', 'project']);
+}
+
+public function isQuiz(): bool {
+    return $this->assessment_level === 'quiz';
+}
 
 }

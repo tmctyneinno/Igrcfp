@@ -143,8 +143,8 @@
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
-                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                             </select>
                         </div>
 

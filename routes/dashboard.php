@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonCompletionController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
+use App\Http\Controllers\QuizProjectAssessmentController;
 use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -182,6 +183,15 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
         ->name('quiz.take');
  
-    Route::get('/courses/{course:slug}/project-assessment', [QuizController::class, 'projectAssessment'])
-    ->name('quiz.project-assessment');
+   
+});
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Project assessment routes
+    Route::get('/courses/{course:slug}/project-assessment', [QuizProjectAssessmentController::class, 'projectAssessment'])
+        ->name('quiz.project-assessment');
+    
+    // ✅ ADD THIS POST ROUTE
+    Route::post('/courses/{course:slug}/project/{assessment}/submit', [QuizProjectAssessmentController::class, 'submitProject'])
+        ->name('quiz.project.submit');
 });
