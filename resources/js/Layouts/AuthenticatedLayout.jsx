@@ -20,34 +20,61 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = props.auth.user; 
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
+    const [notifications, setNotifications] = useState([]);
+    const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
     
     const cartCount = props.cart_count || 0;
 
-    
- 
-    // Check for enrollment redirect on dashboard load
+    // ✅ Fetch notification count and recent notifications
     useEffect(() => {
-        const enrollmentRedirect = sessionStorage.getItem('enrollment_redirect');
-        const intendedUrl = sessionStorage.getItem('intended_url');
+        fetchNotificationCount();
+        fetchRecentNotifications();
         
-        if (enrollmentRedirect && intendedUrl) {
-            // Clear the storage
-            sessionStorage.removeItem('enrollment_redirect');
-            sessionStorage.removeItem('intended_url');
-            
-            // Redirect to enrollment page
-            setTimeout(() => {
-                router.visit(enrollmentRedirect);
-            }, 100);
-        }
+        // Poll for new notifications every 30 seconds
+        const interval = setInterval(() => {
+            fetchNotificationCount();
+        }, 30000);
         
-        // You can still fetch notification count if needed
-        setNotificationCount(3); // Mock notification count
+        return () => clearInterval(interval);
     }, []);
+    
+    const fetchNotificationCount = async () => {
+        try {
+            const response = await fetch(route('dashboard.notifications.unread-count'));
+            const data = await response.json();
+            setNotificationCount(data.count || 0);
+        } catch (error) {
+            console.error('Failed to fetch notification count:', error);
+        }
+    };
+    
+    const fetchRecentNotifications = async () => {
+        try {
+            const response = await fetch(route('dashboard.notifications.recent'));
+            const data = await response.json();
+            setNotifications(data.notifications || []);
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+        }
+    };
+    
+    const markAsRead = async (notificationId) => {
+        try {
+            await fetch(route('dashboard.notifications.mark-read', notificationId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                },
+            });
+            fetchNotificationCount();
+            fetchRecentNotifications();
+        } catch (error) {
+            console.error('Failed to mark notification as read:', error);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Add Toaster component here - it should be at the root level */}
             <Toaster 
                 position="top-right"
                 toastOptions={{
@@ -111,30 +138,106 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard.memebership')}
                                     active={route().current('dashboard.memebership')}
                                 >
-                                    Memebership
+                                    Membership
                                 </NavLink> 
                             </div>
                         </div>
 
                         {/* Right side icons and user dropdown */}
                         <div className="flex items-center space-x-4">
-                            {/* Notification Icon */}
+                            {/* ✅ Notification Icon with Dropdown */}
                             <div className="relative">
-                                <Link
-                                    href={route('dashboard.notifications.index')}
-                                    className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition"
+                                <button
+                                    onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+                                    className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition relative"
                                 >
                                     <BellIcon className="h-6 w-6" /> 
                                     {notificationCount > 0 && (
                                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                           0
-                                            {/* {notificationCount > 9 ? '9+' : notificationCount} */}
+                                            {notificationCount > 9 ? '9+' : notificationCount}
                                         </span>
                                     )}
-                                </Link>
+                                </button>
+                                
+                                {/* ✅ Notification Dropdown */}
+                                {showNotificationDropdown && (
+                                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                        <div className="p-3 border-b border-gray-100 flex items-center justify-between">
+                                            <h3 className="font-semibold text-gray-900">Notifications</h3>
+                                            <Link 
+                                                href={route('dashboard.notifications.index')}
+                                                className="text-xs text-blue-600 hover:text-blue-800"
+                                                onClick={() => setShowNotificationDropdown(false)}
+                                            >
+                                                View All
+                                            </Link>
+                                        </div>
+                                        <div className="max-h-96 overflow-y-auto">
+                                            {notifications.length > 0 ? (
+                                                notifications.map((notification) => (
+                                                    <div 
+                                                        key={notification.id}
+                                                        className={`p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
+                                                            !notification.is_read ? 'bg-blue-50' : ''
+                                                        }`}
+                                                        onClick={() => {
+                                                            markAsRead(notification.id);
+                                                            if (notification.link) {
+                                                                window.location.href = notification.link;
+                                                            }
+                                                            setShowNotificationDropdown(false);
+                                                        }}
+                                                    >
+                                                        <div className="flex items-start gap-3">
+                                                            <span className="text-xl">{notification.icon}</span>
+                                                            <div className="flex-1">
+                                                                <p className="text-sm font-medium text-gray-900">
+                                                                    {notification.title}
+                                                                </p>
+                                                                <p className="text-xs text-gray-600 line-clamp-2">
+                                                                    {notification.message}
+                                                                </p>
+                                                                <p className="text-xs text-gray-400 mt-1">
+                                                                    {notification.time_ago}
+                                                                </p>
+                                                            </div>
+                                                            {!notification.is_read && (
+                                                                <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="p-6 text-center text-gray-500">
+                                                    <BellIcon className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                                                    <p className="text-sm">No notifications yet</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {notifications.length > 0 && (
+                                            <div className="p-2 border-t border-gray-100">
+                                                <button
+                                                    onClick={async () => {
+                                                        await fetch(route('dashboard.notifications.mark-all-read'), {
+                                                            method: 'POST',
+                                                            headers: {
+                                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                                            },
+                                                        });
+                                                        fetchNotificationCount();
+                                                        fetchRecentNotifications();
+                                                    }}
+                                                    className="w-full text-center text-xs text-blue-600 hover:text-blue-800 py-1"
+                                                >
+                                                    Mark all as read
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div> 
 
-                            {/* Cart Icon with Dynamic Count from Backend */}
+                            {/* Cart Icon */}
                             <div className="relative">
                                 <Link
                                     href={route('dashboard.cart.index')}
@@ -180,7 +283,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                             <p className="text-sm font-medium text-gray-900">{user.name}</p>
                                             <p className="text-xs text-gray-500 truncate">{user.email}</p>
                                         </div>
-                                        {/* ✅ My Learning Dashboard - Quick access to progress */}
+                                        <Dropdown.Link href={route('dashboard.my-courses')} className="flex items-center">
+                                            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                            </svg>
+                                            My Learning Overview
+                                        </Dropdown.Link>
                                         <Dropdown.Link href={route('dashboard.my-courses')} className="flex items-center">
                                             <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -192,10 +300,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                             <UserCircleIcon className="h-4 w-4 mr-2" />
                                             Profile
                                         </Dropdown.Link>
-                                        {/* <Dropdown.Link href={route('settings')} className="flex items-center">
-                                            <CogIcon className="h-4 w-4 mr-2" />
-                                            Settings
-                                        </Dropdown.Link> */}
                                         <div className="border-t border-gray-100"></div>
                                         <Dropdown.Link
                                             href={route('logout')}
@@ -238,7 +342,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <ResponsiveNavLink href={route('dashboard.index')} active={route().current('dashboard.index')}>
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('courses.index')} active={route().current('courses.index')}>
+                        <ResponsiveNavLink href={route('dashboard.courses.index')} active={route().current('dashboard.courses.index')}>
                             Courses
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('dashboard.my-courses')} active={route().current('dashboard.my-courses')}>
@@ -246,10 +350,10 @@ export default function AuthenticatedLayout({ header, children }) {
                         </ResponsiveNavLink>
                     </div>
                     
-                    {/* Mobile notification and cart with counts */}
+                    {/* Mobile notification and cart */}
                     <div className="pt-4 pb-3 border-t border-gray-200">
                         <div className="flex items-center px-4 space-x-4">
-                            <Link href={route('notifications.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
+                            <Link href={route('dashboard.notifications.index')} className="relative p-2 text-gray-500 hover:text-gray-700">
                                 <BellIcon className="h-6 w-6" />
                                 {notificationCount > 0 && (
                                     <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
@@ -274,11 +378,11 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="text-sm font-medium text-gray-500">{user.email}</div>
                         </div>
                         <div className="mt-3 space-y-1">
+                            <ResponsiveNavLink href={route('dashboard.my-courses')} >
+                                My Learning Overview
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink href={route('profile.edit')}>
                                 Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('settings')}>
-                                Settings
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
@@ -307,6 +411,14 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             </main>
             <AuthenticatedFooter/>
+            
+            {/* ✅ Close notification dropdown when clicking outside */}
+            {showNotificationDropdown && (
+                <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowNotificationDropdown(false)}
+                />
+            )}
         </div>
     );
 }

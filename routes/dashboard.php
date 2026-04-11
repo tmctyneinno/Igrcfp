@@ -9,6 +9,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
 use App\Http\Controllers\QuizProjectAssessmentController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
