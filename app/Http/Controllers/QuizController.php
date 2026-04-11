@@ -1,5 +1,5 @@
 <?php
-
+ 
 namespace App\Http\Controllers;
 
 use App\Models\Course;
@@ -7,6 +7,7 @@ use App\Models\Assessment;
 use App\Models\Enrollment;
 use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
+use App\Models\Notification; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Inertia\Inertia;
  
@@ -275,6 +276,9 @@ class QuizController extends Controller
             $enrollment->updateProgress();
         }
         
+        // ✅ CREATE NOTIFICATION FOR QUIZ SUBMISSION
+        $this->createQuizNotification($user, $course, $assessment, $passed, $score);
+        
         \Log::info('Quiz submitted successfully', [
             'score' => $score,
             'passed' => $passed,
@@ -300,12 +304,91 @@ class QuizController extends Controller
         ]));
     }
 
+    /**
+     * ✅ Create notification for quiz submission
+     */
+    private function createQuizNotification($user, $course, $assessment, $passed, $score)
+    {
+        $moduleName = $assessment->module ? "Module {$assessment->module->module_number}: {$assessment->module->title}" : $course->title;
+        
+        if ($passed) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'quiz_passed',
+                'title' => '🎉 Quiz Passed!',
+                'message' => "Congratulations! You passed the '{$assessment->title}' quiz with a score of {$score}%.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'module_name' => $moduleName,
+                    'score' => $score,
+                    'passed' => true,
+                ],
+            ]);
+        } else {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'quiz_failed',
+                'title' => '📝 Quiz Submitted',
+                'message' => "You scored {$score}% on '{$assessment->title}'. You can retake the quiz to improve your score.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'module_name' => $moduleName,
+                    'score' => $score,
+                    'passed' => false,
+                    'passing_score' => $assessment->passing_score,
+                ],
+            ]);
+        }
+    }
+
+    /**
+     * ✅ Check and notify when all module quizzes are completed
+     */
+    private function checkAndNotifyAllQuizzesCompleted($user, $course, $enrollment)
+    {
+        $allQuizzes = Assessment::where('course_id', $course->id)
+            ->where('assessment_level', 'quiz')
+            ->where('status', 'active')
+            ->get();
+        
+        $passedQuizzes = Assessment::where('course_id', $course->id)
+            ->where('assessment_level', 'quiz')
+            ->where('status', 'active')
+            ->whereHas('attempts', function($q) use ($user, $enrollment) {
+                $q->where('user_id', $user->id)
+                    ->where('enrollment_id', $enrollment->id)
+                    ->where('passed', true);
+            })
+            ->get();
+        
+        // Check if all quizzes are passed
+        if ($allQuizzes->count() > 0 && $passedQuizzes->count() === $allQuizzes->count()) {
+            // Check if notification already sent
+            $existingNotification = Notification::where('user_id', $user->id)
+                ->where('type', 'all_quizzes_completed')
+                ->where('data->course_slug', $course->slug)
+                ->exists();
+            
+            if (!$existingNotification) {
+                Notification::create([
+                    'user_id' => $user->id,
+                    'type' => 'all_quizzes_completed',
+                    'title' => '🏆 All Quizzes Completed!',
+                    'message' => "You've passed all quizzes for '{$course->title}'! You're now eligible for the final project assessment.",
+                    'data' => [
+                        'course_slug' => $course->slug,
+                        'course_title' => $course->title,
+                        'total_quizzes' => $allQuizzes->count(),
+                    ],
+                ]);
+            }
+        }
+    }
     
     /**
      * View quiz results
-     */
-    /**
-     * View ALL quiz results for the course
      */
     public function results(Course $course, $assessmentId = null)
     {
@@ -397,9 +480,9 @@ class QuizController extends Controller
 
         // ✅ GET PROJECT ASSESSMENT STATUS
         $projectAssessment = Assessment::where('course_id', $course->id)
-        ->whereIn('assessment_level', ['diploma', 'project'])
-        ->where('status', 'active')
-        ->first();
+            ->whereIn('assessment_level', ['diploma', 'project'])
+            ->where('status', 'active')
+            ->first();
 
         $projectStatus = null;
         if ($projectAssessment) {
@@ -418,6 +501,28 @@ class QuizController extends Controller
                 'submitted_at' => $submission ? $submission->submitted_at?->format('M d, Y') : null,
                 'graded_at' => $submission ? $submission->graded_at?->format('M d, Y') : null,
             ];
+            
+            // ✅ Check if user is eligible for final project and hasn't been notified
+            if ($passedQuizzes->count() === $allQuizzes->count() && $allQuizzes->count() > 0) {
+                $existingNotification = Notification::where('user_id', $user->id)
+                    ->where('type', 'project_eligible')
+                    ->where('data->course_slug', $course->slug)
+                    ->exists();
+                
+                if (!$existingNotification) {
+                    Notification::create([
+                        'user_id' => $user->id,
+                        'type' => 'project_eligible',
+                        'title' => '🎯 Final Project Unlocked!',
+                        'message' => "You've passed all quizzes! You can now submit your final project for '{$course->title}'.",
+                        'data' => [
+                            'course_slug' => $course->slug,
+                            'course_title' => $course->title,
+                            'project_id' => $projectAssessment->id,
+                        ],
+                    ]);
+                }
+            }
         }
         
         // Get the specific assessment if provided (for highlighting)

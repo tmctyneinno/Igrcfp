@@ -30,10 +30,18 @@ class CertificateController extends Controller
             $enrollment->certificate_generated = true;
             $enrollment->certificate_generated_date = now();
             $enrollment->save();
-        }
+        } 
 
         // ✅ Send notification (email/in-app)
         $this->sendCertificateNotification($enrollment);
+        // ✅ Send email notification
+        try {
+            Mail::to($enrollment->user->email)->send(new CertificateGeneratedMail($enrollment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send certificate email: ' . $e->getMessage());
+            // Don't block certificate generation if email fails
+        }
+        
 
         // Prepare data for the view
         $data = [
@@ -272,8 +280,13 @@ class CertificateController extends Controller
             'read_at' => null,
         ]);
 
-        // You can also send email notification here
-        Mail::to($user->email)->send(new CertificateGeneratedMail($enrollment));
+        // ✅ Send email notification
+        try {
+            Mail::to($enrollment->user->email)->send(new CertificateGeneratedMail($enrollment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send certificate email: ' . $e->getMessage());
+            // Don't block certificate generation if email fails
+        }
     }
 
 }
