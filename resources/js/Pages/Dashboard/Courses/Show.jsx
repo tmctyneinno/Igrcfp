@@ -216,9 +216,18 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                 {course.title}
               </h1>
 
-              <p className="text-xl text-gray-200 mb-8 leading-relaxed max-w-3xl">
-                {course.short_description || truncateText(course.description, 200)}
-              </p>
+              <div 
+                className="
+                  text-xl 
+                  prose-headings:font-bold prose-headings:text-gray-900
+                  prose-p:text-gray-600 prose-p:leading-relaxed
+                  prose-ul:list-disc prose-ul:pl-5
+                  prose-li:text-gray-600
+                  prose-strong:text-gray-900
+                  prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                "
+                dangerouslySetInnerHTML={{ __html: course.short_description || truncateText(course.description, 200) }}
+              />
 
               <div className="flex flex-wrap items-center gap-6 text-gray-200">
                 {course.rating && (
