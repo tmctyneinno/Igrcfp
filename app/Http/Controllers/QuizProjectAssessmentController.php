@@ -7,6 +7,7 @@ use App\Models\Assessment;
 use App\Models\Enrollment;
 use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
+use App\Models\Notification; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Str; 
 use Inertia\Inertia;
@@ -187,8 +188,198 @@ class QuizProjectAssessmentController extends Controller
         // Update assessment statistics
         $assessment->calculateStatistics();
         
+        // ✅ CREATE NOTIFICATION FOR PROJECT SUBMISSION
+        $this->createProjectSubmissionNotification($user, $course, $assessment, $submission, $isNew);
+        
         return redirect()->route('dashboard.quiz.project-assessment', $course->slug)
             ->with('success', 'Your project has been submitted successfully!');
+    }
+
+    /**
+     * ✅ Create notification for project submission
+     */
+    private function createProjectSubmissionNotification($user, $course, $assessment, $submission, $isNew)
+    {
+        if ($isNew) {
+            // First time submission
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'project_submitted',
+                'title' => '📤 Project Submitted!',
+                'message' => "Your project '{$assessment->title}' for '{$course->title}' has been submitted successfully and is pending review.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'submission_id' => $submission->id,
+                    'submitted_at' => $submission->submitted_at->format('M d, Y H:i'),
+                ],
+            ]);
+        } else {
+            // Resubmission
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'project_resubmitted',
+                'title' => '🔄 Project Resubmitted',
+                'message' => "Your updated project '{$assessment->title}' has been submitted and is pending review.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'submission_id' => $submission->id,
+                    'attempt_number' => $submission->attempt_number,
+                ],
+            ]);
+        }
+        
+        // ✅ Also notify admins (optional)
+        $this->notifyAdminsOfSubmission($user, $course, $assessment, $submission);
+    }
+    
+    /**
+     * ✅ Notify admins of new submission
+     */
+    private function notifyAdminsOfSubmission($user, $course, $assessment, $submission)
+    {
+        // Get admin users
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'type' => 'admin_project_submitted',
+                'title' => '📋 New Project Submission',
+                'message' => "{$user->name} has submitted '{$assessment->title}' for '{$course->title}'.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'submission_id' => $submission->id,
+                    'student_name' => $user->name,
+                    'student_id' => $user->id,
+                ],
+            ]);
+        }
+    }
+
+    /**
+     * ✅ Create notification when project is graded (called from admin)
+     */
+    public function notifyProjectGraded($submissionId)
+    {
+        $submission = AssessmentSubmission::with(['user', 'assessment.course'])->find($submissionId);
+        
+        if (!$submission) {
+            return;
+        }
+        
+        $user = $submission->user;
+        $assessment = $submission->assessment;
+        $course = $assessment->course;
+        
+        if ($submission->passed) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'project_passed',
+                'title' => '🎉 Project Passed!',
+                'message' => "Congratulations! You passed '{$assessment->title}' with a score of {$submission->percentage}%. Your certificate is now available!",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'submission_id' => $submission->id,
+                    'score' => $submission->percentage,
+                    'passed' => true,
+                ],
+            ]);
+            
+            // ✅ Also create course completed notification if this was the final requirement
+            $this->checkAndNotifyCourseCompleted($user, $course);
+        } else {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'project_graded',
+                'title' => '📊 Project Graded',
+                'message' => "Your project '{$assessment->title}' has been graded. Score: {$submission->percentage}%. You can resubmit to improve your score.",
+                'data' => [
+                    'course_slug' => $course->slug,
+                    'assessment_id' => $assessment->id,
+                    'submission_id' => $submission->id,
+                    'score' => $submission->percentage,
+                    'passed' => false,
+                    'passing_score' => $assessment->passing_score,
+                    'feedback' => $submission->feedback,
+                ],
+            ]);
+        }
+    }
+    
+    /**
+     * ✅ Check and notify when course is fully completed
+     */
+    private function checkAndNotifyCourseCompleted($user, $course)
+    {
+        $enrollment = Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->first();
+        
+        if ($enrollment && $enrollment->progress >= 100) {
+            $existingNotification = Notification::where('user_id', $user->id)
+                ->where('type', 'course_completed')
+                ->where('data->course_slug', $course->slug)
+                ->exists();
+            
+            if (!$existingNotification) {
+                Notification::create([
+                    'user_id' => $user->id,
+                    'type' => 'course_completed',
+                    'title' => '🏆 Course Completed!',
+                    'message' => "Congratulations! You've successfully completed '{$course->title}'. Your certificate is ready!",
+                    'data' => [
+                        'course_slug' => $course->slug,
+                        'course_title' => $course->title,
+                        'enrollment_id' => $enrollment->id,
+                    ],
+                ]);
+            }
+        }
+    }
+
+    /**
+     * ✅ Send reminder notification for pending project (can be called via scheduled task)
+     */
+    public function sendProjectReminders()
+    {
+        $pendingAssessments = Assessment::whereIn('assessment_level', ['diploma', 'project'])
+            ->where('status', 'active')
+            ->where('due_date', '>', now())
+            ->where('due_date', '<', now()->addDays(3))
+            ->with('course.enrollments.user')
+            ->get();
+        
+        foreach ($pendingAssessments as $assessment) {
+            foreach ($assessment->course->enrollments as $enrollment) {
+                $user = $enrollment->user;
+                
+                // Check if user hasn't submitted yet
+                $hasSubmitted = AssessmentSubmission::where('assessment_id', $assessment->id)
+                    ->where('user_id', $user->id)
+                    ->exists();
+                
+                if (!$hasSubmitted) {
+                    $daysLeft = now()->diffInDays($assessment->due_date);
+                    
+                    Notification::create([
+                        'user_id' => $user->id,
+                        'type' => 'assessment_due',
+                        'title' => '⏰ Project Deadline Approaching',
+                        'message' => "Your project '{$assessment->title}' is due in {$daysLeft} day(s). Submit soon to avoid penalties.",
+                        'data' => [
+                            'course_slug' => $assessment->course->slug,
+                            'assessment_id' => $assessment->id,
+                            'due_date' => $assessment->due_date->format('M d, Y H:i'),
+                            'days_left' => $daysLeft,
+                        ],
+                    ]);
+                }
+            }
+        }
     }
 
 }

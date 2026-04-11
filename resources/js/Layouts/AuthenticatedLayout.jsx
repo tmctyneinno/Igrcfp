@@ -121,7 +121,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             {/* Notification Icon */}
                             <div className="relative">
                                 <Link
-                                    href={route('notifications.index')}
+                                    href={route('dashboard.notifications.index')}
                                     className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition"
                                 >
                                     <BellIcon className="h-6 w-6" /> 
@@ -132,7 +132,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </span>
                                     )}
                                 </Link>
-                            </div>
+                            </div> 
 
                             {/* Cart Icon with Dynamic Count from Backend */}
                             <div className="relative">
