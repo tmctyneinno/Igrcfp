@@ -156,7 +156,14 @@ export default function Checkout({ cart, user }) {
                                     const itemPrice = parseFloat(item.price) || 0;
                                     return (
                                         <div key={item.id} className="flex justify-between text-sm">
-                                            <span className="text-gray-600">{item.title}</span>
+                                            <span className="text-gray-600">
+                                                {item.title}
+                                                {item.item_type === 'membership' && (
+                                                    <span className="ml-2 inline-flex items-center rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                                                        Membership
+                                                    </span>
+                                                )}
+                                            </span>
                                             <span className="text-gray-900 font-medium">€{itemPrice.toFixed(2)}</span>
                                         </div>
                                     );

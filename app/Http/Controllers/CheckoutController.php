@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Enrollment; 
+use App\Models\Membership;
 use App\Models\Transaction; 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,7 +18,7 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $cart = $request->user()->carts()
-            ->with(['items.course'])
+            ->with(['items.course', 'items.membershipPlan.tier'])
             ->where('status', 'active')
             ->latest()
             ->first();
@@ -35,8 +36,11 @@ class CheckoutController extends Controller
                     return [
                         'id' => $item->id,
                         'course_id' => $item->course_id,
-                        'title' => $item->course->title,
+                        'title' => $item->item_type === 'membership'
+                            ? ($item->membershipPlan?->name ?? 'Membership')
+                            : ($item->course?->title ?? 'Course'),
                         'price' => $item->price,
+                        'item_type' => $item->item_type ?? 'course',
                     ];
                 })
             ],
@@ -58,7 +62,7 @@ class CheckoutController extends Controller
     ]);
 
     $cart = $request->user()->carts()
-        ->with('items.course')
+        ->with(['items.course', 'items.membershipPlan'])
         ->where('status', 'active')
         ->latest()
         ->first();
@@ -67,14 +71,19 @@ class CheckoutController extends Controller
         return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
     }
 
+    $courseItems = $cart->items->filter(function ($item) {
+        return $item->item_type !== 'membership';
+    });
+    $membershipItems = $cart->items->where('item_type', 'membership');
+
     // Check if user is already enrolled in any of the courses
     $existingEnrollments = [];
-    foreach ($cart->items as $item) {
+    foreach ($courseItems as $item) {
         $existing = Enrollment::where('user_id', $request->user()->id)
             ->where('course_id', $item->course_id)
             ->whereIn('status', ['enrolled', 'completed'])
             ->first();
-        
+
         if ($existing) {
             $existingEnrollments[] = $item->course->title;
         }
@@ -84,6 +93,26 @@ class CheckoutController extends Controller
         return redirect()->route('dashboard.cart.index')->with('error', 
             'You are already enrolled in: ' . implode(', ', $existingEnrollments)
         );
+    }
+
+    // Prevent duplicate active memberships
+    if ($membershipItems->isNotEmpty()) {
+        if ($membershipItems->count() > 1) {
+            return redirect()->route('dashboard.memberships.index')
+                ->with('error', 'Please purchase one membership plan at a time.');
+        }
+        $existingMembership = Membership::where('user_id', $request->user()->id)
+            ->whereIn('status', ['pending_payment', 'pending_approval', 'active'])
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->first();
+
+        if ($existingMembership) {
+            return redirect()->route('dashboard.memberships.status')
+                ->with('info', 'You already have an active or pending membership.');
+        }
     }
 
     // Use database transaction to ensure data integrity
@@ -99,7 +128,7 @@ class CheckoutController extends Controller
 
         // Create enrollments
         $enrollments = [];
-        foreach ($cart->items as $item) {
+        foreach ($courseItems as $item) {
             \Log::info('Processing cart item', [
                 'course_id' => $item->course_id,
                 'course_title' => $item->course->title ?? 'N/A',
@@ -155,12 +184,32 @@ class CheckoutController extends Controller
             }
         }
 
+        $memberships = [];
+        foreach ($membershipItems as $item) {
+            if (!$item->membershipPlan) {
+                throw new \Exception('Membership plan not found for cart item: ' . $item->id);
+            }
+
+            $membership = Membership::create([
+                'user_id' => $request->user()->id,
+                'membership_plan_id' => $item->membership_plan_id,
+                'status' => 'pending_payment',
+            ]);
+
+            $memberships[] = $membership;
+        }
+
         // Store enrollment IDs in session
         $enrollmentIds = array_map(function($e) { 
             return $e->id; 
         }, $enrollments);
+
+        $membershipIds = array_map(function($m) {
+            return $m->id;
+        }, $memberships);
         
         session(['pending_enrollments' => $enrollmentIds]);
+        session(['pending_memberships' => $membershipIds]);
         session(['cart_id' => $cart->id]);
 
         \Log::info('Enrollments created/retrieved', [
@@ -183,6 +232,13 @@ class CheckoutController extends Controller
                     'new_status' => $enrollment->fresh()->status
                 ]);
             }
+
+            foreach ($memberships as $membership) {
+                $membership->update([
+                    'status' => 'pending_approval',
+                    'purchased_at' => now(),
+                ]);
+            }
             
             // Mark cart as checked out
             $cart->update(['status' => 'checked_out']);
@@ -197,6 +253,11 @@ class CheckoutController extends Controller
                 'enrollment_ids' => $enrollmentIds,
             ]);
             
+            if (!empty($membershipIds) && empty($enrollmentIds)) {
+                return redirect()->route('dashboard.memberships.status')
+                    ->with('success', 'Membership purchase completed and is pending approval.');
+            }
+
             return redirect()->route('checkout.success')->with('success', 'Enrollment successful! You can now start learning.');
         }
 
@@ -216,11 +277,15 @@ class CheckoutController extends Controller
 
         $lineItems = [];
         foreach ($cart->items as $item) {
+            $itemName = $item->item_type === 'membership'
+                ? ($item->membershipPlan?->name ?? 'Membership')
+                : ($item->course?->title ?? 'Course');
+
             $lineItems[] = [
                 'price_data' => [
                     'currency' => 'gbp',
                     'product_data' => [
-                        'name' => $item->course->title,
+                        'name' => $itemName,
                     ],
                     'unit_amount' => (int)($item->price * 100),
                 ],
@@ -239,6 +304,7 @@ class CheckoutController extends Controller
                 'cart_id' => (string) $cart->id,
                 'user_id' => (string) $request->user()->id,
                 'enrollment_ids' => implode(',', $enrollmentIds),
+                'membership_ids' => implode(',', $membershipIds),
             ],
         ]);
 
@@ -332,10 +398,15 @@ class CheckoutController extends Controller
             
             // Get enrollment IDs from session or metadata
             $enrollmentIds = session('pending_enrollments', []);
+            $membershipIds = session('pending_memberships', []);
             
             // If not in session, try to get from metadata
             if (empty($enrollmentIds) && isset($session->metadata->enrollment_ids)) {
                 $enrollmentIds = explode(',', $session->metadata->enrollment_ids);
+            }
+
+            if (empty($membershipIds) && isset($session->metadata->membership_ids)) {
+                $membershipIds = explode(',', $session->metadata->membership_ids);
             }
             
             $cartId = session('cart_id') ?? $session->metadata->cart_id ?? null;
@@ -356,6 +427,7 @@ class CheckoutController extends Controller
                         Transaction::create([
                             'user_id' => $enrollment->user_id,
                             'enrollment_id' => $enrollment->id,
+                            'membership_id' => null,
                             'transaction_id' => $session->payment_intent ?? $sessionId,
                             'payment_method' => 'stripe',
                             'amount' => $enrollment->amount,
@@ -397,6 +469,7 @@ class CheckoutController extends Controller
                             Transaction::create([
                                 'user_id' => $enrollment->user_id,
                                 'enrollment_id' => $enrollment->id,
+                                'membership_id' => null,
                                 'transaction_id' => $session->payment_intent ?? $sessionId,
                                 'payment_method' => 'stripe',
                                 'amount' => $item->price,
@@ -415,6 +488,67 @@ class CheckoutController extends Controller
                     }
                 }
             }
+
+            if (!empty($membershipIds)) {
+                foreach ($membershipIds as $membershipId) {
+                    $membership = Membership::find($membershipId);
+                    if ($membership) {
+                        $membership->update([
+                            'status' => 'pending_approval',
+                            'purchased_at' => now(),
+                        ]);
+
+                        Transaction::create([
+                            'user_id' => $membership->user_id,
+                            'membership_id' => $membership->id,
+                            'transaction_id' => $session->payment_intent ?? $sessionId,
+                            'payment_method' => 'stripe',
+                            'amount' => $membership->plan?->price ?? 0,
+                            'currency' => 'usd',
+                            'status' => 'completed',
+                            'payment_details' => [
+                                'session_id' => $sessionId,
+                                'payment_intent' => $session->payment_intent,
+                                'customer_email' => $session->customer_details->email ?? $session->customer_email,
+                            ],
+                            'reference' => $sessionId,
+                            'session_id' => $sessionId,
+                            'paid_at' => now(),
+                        ]);
+                    }
+                }
+            }
+            elseif ($cartId) {
+                $cart = Cart::with('items.membershipPlan')->find($cartId);
+                if ($cart) {
+                    foreach ($cart->items->where('item_type', 'membership') as $item) {
+                        $membership = Membership::create([
+                            'user_id' => $session->metadata->user_id,
+                            'membership_plan_id' => $item->membership_plan_id,
+                            'status' => 'pending_approval',
+                            'purchased_at' => now(),
+                        ]);
+
+                        Transaction::create([
+                            'user_id' => $membership->user_id,
+                            'membership_id' => $membership->id,
+                            'transaction_id' => $session->payment_intent ?? $sessionId,
+                            'payment_method' => 'stripe',
+                            'amount' => $item->price,
+                            'currency' => 'usd',
+                            'status' => 'completed',
+                            'payment_details' => [
+                                'session_id' => $sessionId,
+                                'payment_intent' => $session->payment_intent,
+                                'customer_email' => $session->customer_details->email ?? $session->customer_email,
+                            ],
+                            'reference' => $sessionId,
+                            'session_id' => $sessionId,
+                            'paid_at' => now(),
+                        ]);
+                    }
+                }
+            }
             
             // Mark cart as checked out
             if ($cartId) {
@@ -422,13 +556,18 @@ class CheckoutController extends Controller
             }
             
             // Clear session data
-            session()->forget(['pending_enrollments', 'cart_id']);
+            session()->forget(['pending_enrollments', 'pending_memberships', 'cart_id']);
             
             DB::commit();
 
              // Get the first enrollment ID
             $firstEnrollmentId = !empty($enrollmentIds) ? $enrollmentIds[0] : null;
             
+            if (!empty($membershipIds) && empty($enrollmentIds)) {
+                return redirect()->route('dashboard.memberships.status')
+                    ->with('success', 'Membership purchase completed and is pending approval.');
+            }
+
             if ($firstEnrollmentId) {
                 return redirect()->route('checkout.success', ['enrollment' => $firstEnrollmentId])
                     ->with('success', 'Payment successful! You are now enrolled.');
@@ -451,12 +590,17 @@ class CheckoutController extends Controller
         try {
             // Clean up pending enrollments
             $enrollmentIds = session('pending_enrollments', []);
+            $membershipIds = session('pending_memberships', []);
             
             if (!empty($enrollmentIds)) {
                 Enrollment::whereIn('id', $enrollmentIds)->delete();
             }
+
+            if (!empty($membershipIds)) {
+                Membership::whereIn('id', $membershipIds)->delete();
+            }
             
-            session()->forget(['pending_enrollments', 'cart_id']);
+            session()->forget(['pending_enrollments', 'pending_memberships', 'cart_id']);
             
             DB::commit();
             

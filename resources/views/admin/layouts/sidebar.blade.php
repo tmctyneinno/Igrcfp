@@ -134,6 +134,40 @@
                 </ul>
             </li>
 
+            <!-- Memberships & Mentors -->
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:account-badge-outline" class="menu-icon"></iconify-icon>
+                    <span>Memberships</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.membership-tiers.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Tiers</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.membership-plans.index') }}"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> Plans</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.membership-approvals.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Approvals</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Mentors</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.mentors.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Mentor List</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.mentor-applications.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Applications</a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- Transactions & Reports - Only for admins -->
             @if(auth()->guard('admin')->user()->isAdmin())
                 <li class="dropdown">

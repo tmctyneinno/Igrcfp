@@ -11,7 +11,9 @@ class CartItem extends Model
 
     protected $fillable = [
         'cart_id',
+        'item_type',
         'course_id',
+        'membership_plan_id',
         'price',
         'quantity'
     ];
@@ -30,6 +32,11 @@ class CartItem extends Model
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function membershipPlan()
+    {
+        return $this->belongsTo(MembershipPlan::class, 'membership_plan_id');
     }
 
     // Accessors

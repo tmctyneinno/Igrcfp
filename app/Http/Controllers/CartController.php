@@ -12,7 +12,7 @@ class CartController extends Controller
     public function index(Request $request)
     { 
         $cart = $request->user()->carts()
-            ->with(['items.course'])
+            ->with(['items.course', 'items.membershipPlan.tier'])
             ->where('status', 'active')
             ->latest()
             ->first();
@@ -27,6 +27,10 @@ class CartController extends Controller
                         'id' => $item->id,
                         'price' => $item->price,
                         'quantity' => $item->quantity,
+                        'item_type' => $item->item_type ?? 'course',
+                        'title' => $item->item_type === 'membership'
+                            ? ($item->membershipPlan?->name ?? 'Membership')
+                            : ($item->course?->title ?? 'Course'),
                         'course' => $item->course ? [
                             'id' => $item->course->id,
                             'title' => $item->course->title,
@@ -34,7 +38,14 @@ class CartController extends Controller
                             'image_url' => $item->course->image_url,
                             'level' => $item->course->level,
                             'duration' => $item->course->duration,
-                        ] : null
+                        ] : null,
+                        'membership_plan' => $item->membershipPlan ? [
+                            'id' => $item->membershipPlan->id,
+                            'name' => $item->membershipPlan->name,
+                            'tier' => $item->membershipPlan->tier?->name,
+                            'price' => $item->membershipPlan->price,
+                            'currency' => $item->membershipPlan->currency,
+                        ] : null,
                     ];
                 })
             ] : null
@@ -70,6 +81,7 @@ class CartController extends Controller
         }
 
         $cart->items()->create([
+            'item_type' => 'course',
             'course_id' => $course->id,
             'price' => $course->discount_price ?? $course->price,
         ]);

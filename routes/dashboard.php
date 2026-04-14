@@ -8,6 +8,12 @@ use App\Http\Controllers\LessonCompletionController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MentorController;
+use App\Http\Controllers\MentorApplicationController;
+use App\Http\Controllers\MentorshipApplicationController;
+use App\Http\Controllers\MentorshipController;
+use App\Http\Controllers\MentorshipUpdateController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,9 +24,47 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('dashboard/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
-    Route::get('/memebership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
+    Route::get('/membership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
     Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
     Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
+
+    // Membership (Blade)
+    Route::get('/dashboard/memberships', [MembershipController::class, 'index'])->name('dashboard.memberships.index');
+    Route::get('/dashboard/memberships/status', [MembershipController::class, 'status'])->name('dashboard.memberships.status');
+    Route::post('/dashboard/memberships/{plan}/cart', [MembershipController::class, 'addToCart'])->name('dashboard.memberships.add-to-cart');
+    Route::get('/dashboard/memberships/checkout', [MembershipController::class, 'checkout'])->name('dashboard.memberships.checkout');
+
+    // Mentors & Mentorship (Blade)
+    Route::get('/dashboard/mentors', [MentorController::class, 'index'])->name('dashboard.mentors.index');
+    Route::get('/dashboard/mentors/apply', [MentorApplicationController::class, 'create'])
+        ->middleware('mentor.membership')
+        ->name('dashboard.mentors.apply-to-become');
+    Route::post('/dashboard/mentors/apply', [MentorApplicationController::class, 'store'])
+        ->middleware('mentor.membership')
+        ->name('dashboard.mentors.apply-to-become.store');
+    Route::get('/dashboard/mentors/{mentor}', [MentorController::class, 'show'])->name('dashboard.mentors.show');
+    Route::get('/dashboard/mentors/{mentor}/apply', [MentorshipApplicationController::class, 'create'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentors.apply');
+    Route::post('/dashboard/mentors/{mentor}/apply', [MentorshipApplicationController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentors.apply.store');
+
+    Route::get('/dashboard/mentorships', [MentorshipController::class, 'index'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.index');
+    Route::post('/dashboard/mentorships/applications/{application}/decision', [MentorshipController::class, 'decide'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.decide');
+    Route::get('/dashboard/mentorships/{mentorship}', [MentorshipController::class, 'show'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.show');
+    Route::post('/dashboard/mentorships/{mentorship}/updates', [MentorshipUpdateController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.updates.store');
+    Route::post('/dashboard/mentorships/{mentorship}/complete', [MentorshipController::class, 'complete'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.complete');
 
     Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
     Route::get('dashboard/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');

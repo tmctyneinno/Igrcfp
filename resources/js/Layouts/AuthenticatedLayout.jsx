@@ -111,7 +111,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard.memebership')}
                                     active={route().current('dashboard.memebership')}
                                 >
-                                    Memebership
+                                    Membership
                                 </NavLink> 
                             </div>
                         </div>

@@ -45,7 +45,9 @@ class Cart extends Model
     {
         $this->load('items');
         $this->update([
-            'total_amount' => $this->items->sum('price'),
+            'total_amount' => $this->items->sum(function ($item) {
+                return ($item->price ?? 0) * ($item->quantity ?? 1);
+            }),
             'item_count' => $this->items->count(),
         ]);
     }
@@ -60,6 +62,7 @@ class Cart extends Model
             ]);
         } else {
             $this->items()->create([
+                'item_type' => 'course',
                 'course_id' => $courseId,
                 'price' => $price,
                 'quantity' => $quantity

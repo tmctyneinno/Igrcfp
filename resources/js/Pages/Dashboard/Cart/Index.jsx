@@ -18,6 +18,9 @@ export default function CartIndex({ cart }) {
             return total + (itemPrice * itemQuantity);
         }, 0);
     };
+
+    const hasMembership = cart?.items?.some(item => item.item_type === 'membership');
+    const hasCourses = cart?.items?.some(item => item.item_type !== 'membership');
  
     const handleRemove = (item) => {
         // Pass both the cart item ID and the course ID
@@ -77,20 +80,33 @@ export default function CartIndex({ cart }) {
                                         {cart.items.map((item) => (
                                             <div key={item.id} className="flex items-center space-x-4 py-4 border-b last:border-0">
                                                 <img 
-                                                    src={item.course?.image_url || '/images/fallback-course.jpg'}
-                                                    alt={item.course?.title}
+                                                    src={item.item_type === 'membership' ? '/assets/images/innerpage/gallery/mentor.png' : (item.course?.image_url || '/images/fallback-course.jpg')}
+                                                    alt={item.title}
                                                     className="w-20 h-20 object-cover rounded-lg"
                                                 />
                                                 
                                                 <div className="flex-1">
-                                                    <Link href={`/courses/${item.course?.slug}`}>
-                                                        <h3 className="font-semibold text-gray-900 hover:text-blue-700">
-                                                            {item.course?.title}
-                                                        </h3>
-                                                    </Link>
-                                                    <p className="text-sm text-gray-600 mt-1">
-                                                        Level: {item.course?.level} | Duration: {item.course?.duration}
-                                                    </p>
+                                                    {item.item_type === 'membership' ? (
+                                                        <div>
+                                                            <h3 className="font-semibold text-gray-900">
+                                                                {item.title}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-600 mt-1">
+                                                                Membership Plan {item.membership_plan?.tier ? `â€¢ ${item.membership_plan.tier}` : ''}
+                                                            </p>
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <Link href={`/courses/${item.course?.slug}`}>
+                                                                <h3 className="font-semibold text-gray-900 hover:text-blue-700">
+                                                                    {item.course?.title}
+                                                                </h3>
+                                                            </Link>
+                                                            <p className="text-sm text-gray-600 mt-1">
+                                                                Level: {item.course?.level} | Duration: {item.course?.duration}
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 
                                                 <div className="text-right">
@@ -135,7 +151,7 @@ export default function CartIndex({ cart }) {
                                     href={route('checkout.index')}
                                     className="block w-full text-center py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
                                 >
-                                    Complete Enrollment
+                                    {hasMembership && !hasCourses ? 'Complete Membership' : 'Complete Enrollment'}
                                 </Link>
                                 
                                 <Link

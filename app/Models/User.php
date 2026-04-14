@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\CustomResetPasswordNotification;
+use App\Models\Membership;
+use App\Models\MentorProfile;
+use App\Models\MentorApplication;
+use App\Models\Mentorship;
+use App\Models\MentorshipApplication;
  
 class User extends Authenticatable
 {
@@ -464,6 +469,52 @@ class User extends Authenticatable
     public function activeCart()
     {
         return $this->hasOne(Cart::class)->where('status', 'active');
+    }
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function activeMemberships()
+    {
+        return $this->memberships()->active();
+    }
+
+    public function activeMembership()
+    {
+        return $this->activeMemberships()->latest('approved_at')->first();
+    }
+
+    public function hasActiveMembership(): bool
+    {
+        return (bool) $this->activeMembership();
+    }
+
+    public function hasMentorMembership(): bool
+    {
+        $membership = $this->activeMembership();
+        return $membership && (int) $membership->membership_plan_id === 3;
+    }
+
+    public function mentorProfile()
+    {
+        return $this->hasOne(MentorProfile::class);
+    }
+
+    public function mentorApplications()
+    {
+        return $this->hasMany(MentorApplication::class);
+    }
+
+    public function mentorshipApplications()
+    {
+        return $this->hasMany(MentorshipApplication::class, 'mentee_id');
+    }
+
+    public function mentorshipsAsMentee()
+    {
+        return $this->hasMany(Mentorship::class, 'mentee_id');
     }
     /**
  * Assessment relationships for User model

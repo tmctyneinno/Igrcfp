@@ -13,6 +13,7 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'enrollment_id',
+        'membership_id',
         'transaction_id',
         'payment_method',
         'amount',
@@ -46,6 +47,11 @@ class Transaction extends Model
     public function enrollment()
     {
         return $this->belongsTo(Enrollment::class);
+    }
+
+    public function membership()
+    {
+        return $this->belongsTo(Membership::class);
     }
 
     /**
