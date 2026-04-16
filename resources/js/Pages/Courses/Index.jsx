@@ -8,11 +8,48 @@ import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import GuestLayout from '@/Layouts/GuestLayout';
  
-export default function Courses({ auth, courses, filters, filterOptions }) {
+export default function Courses({ auth, courses, filters, filterOptions, title, description, igrcfpCategory }) {
     const { url } = usePage(); 
     const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters || {});
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+    const pathwayGuidance = {
+        'IGRCFP Certificates': {
+            heading: 'IGRCFP CERTIFICATES',
+            intro: 'Specialist programmes such as:',
+            items: [
+                'Trade Based Money Laundering (TBML)',
+                'Crypto & Digital Asset Risk',
+                'Cybersecurity & Digital Risk',
+                'Blockchain Governance',
+                'AML & Financial Crime Foundations',
+            ],
+            note: 'Learners are expected to complete these specialist certificate pathways before progressing to IGRCFP Diploma courses.',
+        },
+        'IGRCFP Diploma': {
+            heading: 'IGRCFP DIPLOMA',
+            intro: 'Before progressing to the IGRCFP Advanced Diploma, learners should complete the operational and practitioner-level pillars in:',
+            items: [
+                'Governance',
+                'Risk',
+                'Compliance',
+                'FinCrime',
+            ],
+            note: 'These diploma studies build the practitioner-level foundation required for advancement into the next stage.',
+        },
+        'IGRCFP Advanced Diploma': {
+            heading: 'IGRCFP ADVANCED DIPLOMA',
+            intro: 'Learners in this category are expected to attain Advanced Professional Status before accessing:',
+            items: [
+                'IGRCFP Fellowship',
+                'F-IGRCFP - Senior Leaders',
+            ],
+            note: 'Fellowship is a recognition stage based on professional experience, leadership, and contribution to the field.',
+        },
+    };
+
+    const currentGuidance = igrcfpCategory ? pathwayGuidance[igrcfpCategory] : null;
 
     // Provide default values for filterOptions if undefined
     const defaultFilterOptions = {
@@ -71,9 +108,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
 
     // Handle sort change
     const handleSortChange = (e) => {
-        const [sort_field, sort_direction] = e.target.value.split('_');
-        handleFilterChange('sort_field', sort_field);
-        handleFilterChange('sort_direction', sort_direction);
+        handleFilterChange('sort_field', e.target.value);
     };
 
     // Reset all filters
@@ -94,11 +129,46 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
 
     return (
         <GuestLayout auth={auth}> 
-            <Head title='IGRCFP | Courses' />
+            <Head title={title ? `IGRCFP | ${title}` : 'IGRCFP | Courses'} />
             <div className="min-h-screen bg-gray-50">
+                <section className="bg-white border-b border-gray-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                        <p className="text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
+                            {igrcfpCategory || 'Courses'}
+                        </p>
+                        <h1 className="mt-3 text-3xl md:text-4xl font-bold text-gray-900">
+                            {title || 'Courses'}
+                        </h1>
+                        <p className="mt-3 max-w-3xl text-gray-600">
+                            {description || 'Browse our latest professional learning programmes.'}
+                        </p>
+                    </div>
+                </section>
                
                 {/* Main Content */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    {currentGuidance && (
+                        <div className="mb-8 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-slate-50 p-6 shadow-sm">
+                            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                                {currentGuidance.heading}
+                            </p>
+                            <p className="mt-3 text-lg font-semibold text-gray-900">
+                                {currentGuidance.intro}
+                            </p>
+                            <ul className="mt-4 space-y-2 text-gray-700">
+                                {currentGuidance.items.map((item) => (
+                                    <li key={item} className="flex items-start gap-3">
+                                        <span className="mt-1 h-2 w-2 rounded-full bg-blue-600"></span>
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <p className="mt-4 text-sm leading-6 text-gray-600">
+                                {currentGuidance.note}
+                            </p>
+                        </div>
+                    )}
+
                     {/* Search and Filter Bar */}
                     <div className="mb-8">
                         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
@@ -115,7 +185,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                             <div className="flex items-center gap-4 w-full lg:w-auto">
                                 {/* Sort Dropdown */}
                                 <select
-                                    value={`${selectedFilters?.sort_field || 'title'}_${selectedFilters?.sort_direction || 'asc'}`}
+                                    value={selectedFilters?.sort_field || 'created_at_desc'}
                                     onChange={handleSortChange}
                                     className="flex-1 lg:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                                 >

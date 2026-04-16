@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\CourseCategory;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -144,7 +145,7 @@ class HomeController extends Controller
             'description' => 'Learn about the Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) Professionals body.',
         ]);
     }
-
+ 
     public function certificationsOverview(){
     
         return Inertia::render('Certifications/CertificationsOverview', [
@@ -306,9 +307,42 @@ class HomeController extends Controller
 
 
   
-    public function courses(Request $request)
+    public function showIgrcfpProgramme(Request $request, string $programme)
     {
+        $programmeConfig = [
+            'certificates' => [
+                'category' => 'IGRCFP Certificates',
+                'title' => 'IGRCFP Certificates',
+                'description' => 'Browse IGRCFP certificate courses and specialist programmes.',
+            ],
+            'diploma' => [
+                'category' => 'IGRCFP Diploma',
+                'title' => 'IGRCFP Diploma',
+                'description' => 'Browse courses in the IGRCFP Diploma pathway.',
+            ],
+            'advanced-diploma' => [
+                'category' => 'IGRCFP Advanced Diploma',
+                'title' => 'IGRCFP Advanced Diploma',
+                'description' => 'Browse courses in the IGRCFP Advanced Diploma pathway.',
+            ],
+            'certified-grc-financial-crime-specialist' => [
+                'category' => 'Certified GRC & Financial Crime Specialist',
+                'title' => 'Certified GRC & Financial Crime Specialist',
+                'description' => 'Browse courses for the Certified GRC & Financial Crime Specialist pathway.',
+            ],
+            'fellowship' => [
+                'category' => 'IGRCFP Fellowship',
+                'title' => 'IGRCFP Fellowship',
+                'description' => 'Browse courses in the IGRCFP Fellowship pathway.',
+            ],
+        ];
+
+        abort_unless(isset($programmeConfig[$programme]), 404);
+
+        $currentProgramme = $programmeConfig[$programme];
+
         $query = Course::published()
+            ->where('igrcfp_category', $currentProgramme['category'])
             ->withCount('modules');
 
         // Search
@@ -324,6 +358,11 @@ class HomeController extends Controller
         // Filter by level
         if ($request->has('level') && !empty($request->level)) {
             $query->where('level', $request->level);
+        }
+
+        // Filter by course category
+        if ($request->has('category') && !empty($request->category)) {
+            $query->where('category_id', $request->category);
         }
 
         // Filter by price type
@@ -394,6 +433,16 @@ class HomeController extends Controller
 
         // Get filter options for dropdowns
         $levels = Course::published()->select('level')->distinct()->pluck('level');
+        $categories = CourseCategory::where('is_active', true)
+            ->whereIn('id', Course::published()
+                ->where('igrcfp_category', $currentProgramme['category'])
+                ->whereNotNull('category_id')
+                ->select('category_id')
+                ->distinct()
+            )
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name']);
         
         // Get unique formats if they exist
         $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
@@ -434,9 +483,13 @@ class HomeController extends Controller
         });
  
         return Inertia::render('Courses/Index', [
+            'title' => $currentProgramme['title'],
+            'description' => $currentProgramme['description'],
+            'igrcfpCategory' => $currentProgramme['category'],
             'filters' => [
                 'search' => $request->search ?? '',
                 'level' => $request->level ?? '',
+                'category' => $request->category ?? '',
                 'price_type' => $request->price_type ?? '',
                 'featured' => $request->featured ?? false,
                 'popular' => $request->popular ?? false,
@@ -446,6 +499,7 @@ class HomeController extends Controller
             'courses' => $courses,
             'filterOptions' => [
                 'levels' => $levels,
+                'categories' => $categories,
                 'formats' => $formats,
                 'priceTypes' => [
                     ['value' => '', 'label' => 'All Prices'],
@@ -466,5 +520,7 @@ class HomeController extends Controller
         ]);
     }
 
+
+ 
    
 }

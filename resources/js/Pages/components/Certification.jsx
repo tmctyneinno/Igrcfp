@@ -58,7 +58,7 @@ export default function Certification({ courses }) { // Remove default value fro
                 </div>
 
                 <Link
-                    href="/courses"
+                    href={route('igrcfp.certificates.index')}
                     className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
                 >
                     View All Courses →
@@ -196,7 +196,7 @@ export default function Certification({ courses }) { // Remove default value fro
                             No courses available at the moment.
                         </p>
                         <Link
-                            href="/courses"
+                            href={route('igrcfp.certificates.index')}
                             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                         >
                             Browse All Courses
@@ -209,7 +209,7 @@ export default function Certification({ courses }) { // Remove default value fro
             {coursesData.length > 0 && (
                 <div className="text-center mt-12">
                     <Link
-                        href="/courses"
+                        href={route('igrcfp.certificates.index')}
                         className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
                     >
                         View All Courses →
