@@ -4,6 +4,20 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { format, parseISO } from 'date-fns';
 
 export default function EventShow({ auth, event, relatedEvents }) {
+    const getMeetingLink = (url) => {
+        if (!url) return '';
+
+        const trimmedUrl = url.trim();
+
+        if (/^https?:\/\//i.test(trimmedUrl)) {
+            return trimmedUrl;
+        }
+
+        return `https://${trimmedUrl}`;
+    };
+
+    const meetingLink = getMeetingLink(event.meeting_link);
+
     // Helper function to get image URL
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) return '/images/default-event.jpg';
@@ -261,19 +275,30 @@ export default function EventShow({ auth, event, relatedEvents }) {
                                     
                                     {/* Action Button */}
                                     
-                                    <a
-                                        href={event.meeting_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block w-full text-center py-3 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                                    >
-                                        <span className="flex items-center justify-center">
-                                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
-                                            Join Meeting
-                                        </span>
-                                    </a>
+                                    {meetingLink ? (
+                                        <a
+                                            href={meetingLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="block w-full text-center py-3 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        >
+                                            <span className="flex items-center justify-center">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Join Meeting
+                                            </span>
+                                        </a>
+                                    ) : (
+                                        <div className="block w-full text-center py-3 px-4 bg-gray-300 text-gray-600 font-semibold rounded-lg cursor-not-allowed">
+                                            <span className="flex items-center justify-center">
+                                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                Meeting Link Unavailable
+                                            </span>
+                                        </div>
+                                    )}
                                     
                                     
                                     
