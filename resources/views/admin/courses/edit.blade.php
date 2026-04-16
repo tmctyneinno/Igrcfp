@@ -89,6 +89,21 @@
                             </div>
 
                             <div class="col-12">
+                                <label class="form-label">IGRCFP Category</label>
+                                <select name="igrcfp_category" class="form-select @error('igrcfp_category') is-invalid @enderror">
+                                    <option value="">Select IGRCFP Category</option>
+                                    <option value="IGRCFP Certificates" {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Certificates' ? 'selected' : '' }}>IGRCFP Certificates</option>
+                                    <option value="IGRCFP Diploma" {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Diploma' ? 'selected' : '' }}>IGRCFP Diploma</option>
+                                    <option value="IGRCFP Advanced Diploma" {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Advanced Diploma' ? 'selected' : '' }}>IGRCFP Advanced Diploma</option>
+                                    <option value="Certified GRC &amp; Financial Crime Specialist" {{ old('igrcfp_category', $course->igrcfp_category) == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
+                                    <option value="IGRCFP Fellowship" {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Fellowship' ? 'selected' : '' }}>IGRCFP Fellowship</option>
+                                </select>
+                                @error('igrcfp_category')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-12">
                                 <label class="form-label">Short Description <span class="text-danger">*</span></label>
                                 <textarea name="short_description" class="form-control rich-editor @error('short_description') is-invalid @enderror" 
                                           rows="3" placeholder="Brief description of the course (max 500 characters)" required>{{ old('short_description', $course->short_description) }}</textarea>
@@ -411,15 +426,12 @@
                                                    class="btn btn-sm btn-outline-primary">
                                                     <iconify-icon icon="mdi:pencil"></iconify-icon>
                                                 </a>
-                                                <form action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->id]) }}" 
-                                                      method="POST" class="d-inline"
-                                                      onsubmit="return confirm('Delete this module?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <iconify-icon icon="mdi:trash"></iconify-icon>
-                                                    </button>
-                                                </form>
+                                                <button type="submit"
+                                                        form="delete-module-{{ $module->id }}"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Delete this module?')">
+                                                    <iconify-icon icon="mdi:trash"></iconify-icon>
+                                                </button>
                                             </div>
                                         </div>
                                     @endforeach
@@ -696,6 +708,16 @@
             </div>
         </div>
     </form>
+
+    @foreach($course->modules as $module)
+        <form id="delete-module-{{ $module->id }}"
+              action="{{ route('admin.courses.modules.destroy', ['course' => $course->slug, 'module' => $module->id]) }}"
+              method="POST"
+              class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
 </div>
 
 <!-- Bulk Update Modal -->

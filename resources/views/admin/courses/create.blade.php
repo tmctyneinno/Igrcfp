@@ -82,6 +82,19 @@
                                 @error('category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div> 
+
+                            <div class="col-12">
+                                <label class="form-label">IGRCFP Category</label>
+                                <select name="igrcfp_category" class="form-select">
+                                    <option value="">Select IGRCFP Category</option>
+                                    <option value="IGRCFP Certificates" {{ old('igrcfp_category') == 'IGRCFP Certificates' ? 'selected' : '' }}>IGRCFP Certificates</option>
+                                    <option value="IGRCFP Diploma" {{ old('igrcfp_category') == 'IGRCFP Diploma' ? 'selected' : '' }}>IGRCFP Diploma</option>
+                                    <option value="IGRCFP Advanced Diploma" {{ old('igrcfp_category') == 'IGRCFP Advanced Diploma' ? 'selected' : '' }}>IGRCFP Advanced Diploma</option>
+                                    <option value="Certified GRC &amp; Financial Crime Specialist" {{ old('igrcfp_category') == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
+                                    <option value="IGRCFP Fellowship" {{ old('igrcfp_category') == 'IGRCFP Fellowship' ? 'selected' : '' }}>IGRCFP Fellowship</option>
+                                </select>
+                                <p class="text-sm mt-1 mb-0 text-muted">Separate from the standard course category.</p>
                             </div>
 
                             <div class="col-12">

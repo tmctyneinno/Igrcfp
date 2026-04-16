@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Arr;
 use App\Models\CourseCategory;
 use DB;
 
@@ -23,7 +24,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $allCourses = Course::all();
-        $query = Course::withCount('modules');
+        $query = Course::with('category')->withCount('modules');
         $categories = CourseCategory::orderBy('name')->get();
         // Add category filter to query
         if ($request->has('category') && $request->category != '') {
@@ -32,7 +33,7 @@ class CourseController extends Controller
      
         $courses = $query->get();
         $totalCourses = Course::count();
-        $query = Course::withCount('modules');
+        $query = Course::with('category')->withCount('modules');
        
         // Search functionality
         if ($request->has('search') && $request->search != '') {
@@ -59,7 +60,7 @@ class CourseController extends Controller
         $query->latest();
         
         // Pagination - REMOVED the early $query->get() call
-        $perPage = $request->get('per_page', 10);
+        $perPage = $request->get('per_page', 25);
         $courses = $query->paginate($perPage);
         
         return view('admin.courses.index', compact('courses', 'categories'));
@@ -112,7 +113,7 @@ class CourseController extends Controller
                    ->orderBy('name')
                    ->get();
         return view('admin.courses.create', compact('categories'));
-    }
+    } 
 
     /**
      * Store a newly created resource in storage.
@@ -121,7 +122,6 @@ class CourseController extends Controller
     {
         \Log::info('Course Store Request - Full Details:', [
             'input' => $request->except(['_token', '_method']),
-            
         ]);
 
         $validated = $this->validateRequest($request);
@@ -143,8 +143,6 @@ class CourseController extends Controller
             if ($request->video_type === 'upload' && $request->hasFile('video')) {
                 $validated['video'] = $request->file('video')->store('courses/videos', 'public');
             }
-
-          
 
             // Create course
             $course = Course::create($validated);
@@ -175,6 +173,7 @@ class CourseController extends Controller
             'short_title' => 'required|string|max:100',
             'short_description' => 'required|string',
             'category_id' => 'nullable|exists:course_categories,id',
+            'igrcfp_category' => 'nullable|in:IGRCFP Certificates,IGRCFP Diploma,IGRCFP Advanced Diploma,Certified GRC & Financial Crime Specialist,IGRCFP Fellowship',
             'full_description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
@@ -241,9 +240,6 @@ class CourseController extends Controller
      */
     public function update(Request $request, $slug)
     {
-        \Log::info('=== COURSE UPDATE DEBUG ===');
-        \Log::info('Raw request category_id:', ['category_id' => $request->category_id]);
-    
         // Find course by slug or id
         $course = is_numeric($slug)
             ? Course::findOrFail($slug)
@@ -253,12 +249,16 @@ class CourseController extends Controller
             'current_category_id' => $course->category_id,
             'current_category' => $course->category?->name
         ]);
+
+        // Never allow normal course updates to carry soft-delete state.
+        $request->request->remove('deleted_at');
+
         $validated = $this->validateRequest($request, $course);
             \Log::info('After validation - category_id:', [
             'validated_category_id' => $validated['category_id'] ?? null,
             'all_validated_keys' => array_keys($validated)
         ]);
-        unset($validated['deleted_at']);
+        $validated = Arr::except($validated, ['deleted_at']);
 
         try {
 
@@ -301,9 +301,21 @@ class CourseController extends Controller
 
             
             $course->update($validated);
+
+            if ($course->trashed()) {
+                \Log::warning('Course became soft-deleted during update. Restoring automatically.', [
+                    'course_id' => $course->id,
+                    'slug' => $course->slug,
+                ]);
+
+                $course->restore();
+                $course->refresh();
+            }
+
              \Log::info('After update - check if category changed:', [
             'new_category_id' => $course->fresh()->category_id,
-            'new_category' => $course->fresh()->category?->name
+            'new_category' => $course->fresh()->category?->name,
+            'deleted_at' => $course->fresh()->deleted_at
         ]);
             if ($request->filled('bulk_modules')) {
                 $this->processBulkModules($course, $request->bulk_modules, true);
@@ -398,7 +410,7 @@ class CourseController extends Controller
 
     /**
      * Bulk import modules from formatted text
-     */
+     */ 
     private function processBulkModules(Course $course, string $bulkContent, bool $replace = false)
     {
         // Parse the bulk content (assuming a specific format)

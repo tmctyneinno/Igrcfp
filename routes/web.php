@@ -75,5 +75,19 @@ Route::prefix('programmes')->group(function () {
     Route::get('/crypto', [ProgrammesController::class, 'crypto'])->name('programmes.crypto');
     Route::get('/cybersecurity', [ProgrammesController::class, 'cybersecurity'])->name('programmes.cybersecurity');
     Route::get('/ai', [ProgrammesController::class, 'ai'])->name('programmes.ai');
-});
-Route::get('/courses', [HomeController::class, 'courses'])->name('courses.index');
+}); 
+Route::get('/igrcfp-certificates-courses', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'certificates')
+    ->name('igrcfp.certificates.index');
+Route::get('/igrcfp-diploma', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'diploma')
+    ->name('igrcfp.diploma.index');
+Route::get('/igrcfp-advanced-diploma', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'advanced-diploma')
+    ->name('igrcfp.advanced-diploma.index');
+Route::get('/igrcfp-certified-grc-financial-crime-specialist', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'certified-grc-financial-crime-specialist')
+    ->name('igrcfp.certified-grc-financial-crime-specialist.index');
+Route::get('/igrcfp-fellowship', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'fellowship')
+    ->name('igrcfp.fellowship.index');

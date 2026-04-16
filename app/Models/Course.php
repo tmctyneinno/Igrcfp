@@ -14,6 +14,7 @@ class Course extends Model
         'title',
         'slug',
         'category_id',
+        'igrcfp_category',
         'short_title',
         'short_description',
         'full_description',

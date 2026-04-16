@@ -84,7 +84,7 @@ export default function NavBar({ auth }) {
                     {/* Programmes & Courses Dropdown - UPDATED WITH DETAILED CONTENT */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
-                           <Link href={route('courses.index')}>  Programmes & Courses </Link>
+                           <Link href={route('igrcfp.certificates.index')}>  Programmes & Courses </Link>
                             <svg className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
@@ -98,53 +98,53 @@ export default function NavBar({ auth }) {
                             
                             {/* Programme List */}
                             <div className="max-h-[480px] overflow-y-auto">
-                                {/* GRC Pathway */}
+                                {/* IGRCFP Certificates */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'governance-risk-compliance' })}>
+                                    <Link href={route('igrcfp.certificates.index')}>
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                                            <h4 className="font-semibold text-gray-800">Governance, Risk & Compliance (GRC)</h4>
+                                            <h4 className="font-semibold text-gray-800">IGRCFP Certificates</h4>
                                         </div>
                                     </Link>
                                 </div>
-                                
-                                {/* Financial Crime Prevention */}
+
+                                {/* IGRCFP Diploma */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'financial-crime' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Financial Crime Prevention</h4>
-                                    </div>
+                                    <Link href={route('igrcfp.diploma.index')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">IGRCFP Diploma</h4>
+                                        </div>
                                     </Link>
                                 </div>
-                                
-                                {/* Crypto & Digital Assets */}
+
+                                {/* IGRCFP Advanced Diploma */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'crypto-digital-assets' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Crypto & Digital Assets</h4>
-                                    </div>
+                                    <Link href={route('igrcfp.advanced-diploma.index')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-purple-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">IGRCFP Advanced Diploma</h4>
+                                        </div>
                                     </Link>
                                 </div>
-                                
-                                {/* Cybersecurity & Digital Risk */}
+
+                                {/* Certified GRC & Financial Crime Specialist */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'cybersecurity-digital-risk' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">Cybersecurity & Digital Risk</h4>
-                                    </div>
+                                    <Link href={route('igrcfp.certified-grc-financial-crime-specialist.index')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">Certified GRC & Financial Crime Specialist</h4>
+                                        </div>
                                     </Link>
                                 </div>
-                                
-                                {/* AI & Emerging Technology */}
+
+                                {/* IGRCFP Fellowship */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
-                                    <Link href={route('courses.by-category', { slug: 'ai-emerging-technology' })}>
-                                    <div className="flex items-center">
-                                        <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
-                                        <h4 className="font-semibold text-gray-800">AI & Emerging Technology</h4>
-                                    </div>
+                                    <Link href={route('igrcfp.fellowship.index')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">IGRCFP Fellowship</h4>
+                                        </div>
                                     </Link>
                                 </div>
                             </div>
@@ -152,7 +152,7 @@ export default function NavBar({ auth }) {
                             {/* Footer */}
                             <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
                                 <Link 
-                                    href="courses" 
+                                    href={route('igrcfp.certificates.index')}
                                     className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
                                 >
                                     View All Programmes
