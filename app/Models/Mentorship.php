@@ -44,4 +44,9 @@ class Mentorship extends Model
     {
         return $this->hasMany(MentorshipUpdate::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(MentorshipMessage::class);
+    }
 }

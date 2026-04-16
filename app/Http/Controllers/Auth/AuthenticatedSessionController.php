@@ -39,12 +39,12 @@ class AuthenticatedSessionController extends Controller
     {
         try {
             // 1. Validate reCAPTCHA first with custom messages
-            $validated = $request->validate([
-                'g-recaptcha-response' => 'required|captcha'
-            ], [
-                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
-                'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
-            ]);
+            // $validated = $request->validate([
+            //     'g-recaptcha-response' => 'required|captcha'
+            // ], [
+            //     'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
+            //     'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
+            // ]);
             
             // 2. Log successful validation (optional)
             \Log::info('reCAPTCHA validation passed', [

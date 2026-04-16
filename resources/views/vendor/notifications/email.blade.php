@@ -16,9 +16,9 @@
         .email-container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: #fff;
             border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
         .email-header {
@@ -45,7 +45,7 @@
         .btn-primary {
             display: inline-block;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white !important;
+            color: #fff !important;
             text-decoration: none;
             padding: 12px 30px;
             border-radius: 5px;
@@ -62,36 +62,72 @@
             color: #555;
             word-break: break-all;
         }
-        .expiry-note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin: 15px 0;
-            color: #856404;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <div class="email-container">
-        <!-- Header with Logo -->
         <div class="email-header">
-            @if(isset($logo))
+            @if (isset($logo))
                 <img src="{{ $logo }}" alt="IGRCFP Logo" class="email-logo">
             @endif
-            <h1 style="color: white; margin: 0; font-size: 24px;">IGRCFP</h1>
+            <h1 style="color: #fff; margin: 0; font-size: 24px;">IGRCFP</h1>
         </div>
 
-        <!-- Email Content -->
         <div class="email-body">
-            {{ $slot }}
+            @if (isset($slot))
+                {{ $slot }}
+            @else
+                @php
+                    $introLines = $introLines ?? [];
+                    $outroLines = $outroLines ?? [];
+                @endphp
+
+                @if (! empty($greeting))
+                    <h2 style="margin-top: 0; color: #111827;">{{ $greeting }}</h2>
+                @else
+                    @if (($level ?? null) === 'error')
+                        <h2 style="margin-top: 0; color: #111827;">{{ __('Whoops!') }}</h2>
+                    @else
+                        <h2 style="margin-top: 0; color: #111827;">{{ __('Hello!') }}</h2>
+                    @endif
+                @endif
+
+                @foreach ($introLines as $line)
+                    <p>{{ $line }}</p>
+                @endforeach
+
+                @if (isset($actionText, $actionUrl))
+                    <div style="margin: 20px 0;">
+                        <a href="{{ $actionUrl }}" class="btn-primary">{{ $actionText }}</a>
+                    </div>
+                @endif
+
+                @foreach ($outroLines as $line)
+                    <p>{{ $line }}</p>
+                @endforeach
+
+                @if (! empty($salutation))
+                    <p>{!! nl2br(e($salutation)) !!}</p>
+                @else
+                    <p>{{ __('Regards,') }}<br>{{ config('app.name') }}</p>
+                @endif
+
+                @if (isset($actionText, $actionUrl))
+                    @php
+                        $displayableActionUrl = str_replace(['mailto:', 'tel:'], '', $actionUrl);
+                    @endphp
+                    <div class="help-text">
+                        {{ __("If you're having trouble clicking the \":actionText\" button, copy and paste the URL below into your web browser:", ['actionText' => $actionText]) }}
+                        <br>
+                        <a href="{{ $actionUrl }}">{{ $displayableActionUrl }}</a>
+                    </div>
+                @endif
+            @endif
         </div>
 
-        <!-- Footer -->
         <div class="email-footer">
             <p style="margin: 0 0 10px 0;">
-                © {{ date('Y') }} IGRCFP. All rights reserved.
+                &copy; {{ date('Y') }} IGRCFP. All rights reserved.
             </p>
             <p style="margin: 0; font-size: 12px; color: #999;">
                 This is an automated message, please do not reply to this email.

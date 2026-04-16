@@ -13,7 +13,9 @@ use App\Http\Controllers\MentorController;
 use App\Http\Controllers\MentorApplicationController;
 use App\Http\Controllers\MentorshipApplicationController;
 use App\Http\Controllers\MentorshipController;
+use App\Http\Controllers\MentorshipMessageController;
 use App\Http\Controllers\MentorshipUpdateController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,8 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
     Route::get('/membership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
-    Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
-    Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
+    Route::get('/notifications/index', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/settings', [NotificationController::class, 'updateSettings'])->name('notifications.settings.update');
+    Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
+    Route::get('/settings', [NotificationController::class, 'index'])->name('settings');
 
     // Membership (Blade)
     Route::get('/dashboard/memberships', [MembershipController::class, 'index'])->name('dashboard.memberships.index');
@@ -62,6 +66,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/mentorships/{mentorship}/updates', [MentorshipUpdateController::class, 'store'])
         ->middleware('active.membership')
         ->name('dashboard.mentorships.updates.store');
+    Route::post('/dashboard/mentorships/{mentorship}/messages', [MentorshipMessageController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.messages.store');
+    Route::get('/dashboard/mentorships/{mentorship}/messages', [MentorshipMessageController::class, 'index'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.messages.index');
     Route::post('/dashboard/mentorships/{mentorship}/complete', [MentorshipController::class, 'complete'])
         ->middleware('active.membership')
         ->name('dashboard.mentorships.complete');

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseCategory;
 use App\Models\Course;
+use App\Models\MembershipTier;
+use App\Models\MentorProfile;
+use App\Models\User;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
@@ -705,8 +708,113 @@ private function isCourseQuizUnlocked($course, $enrollment)
 
     public function memebership(Request $request)
     {
-        
-         // dd($popularCourses);
-        return Inertia::render('Dashboard/Memebership/Index');
+        $user = $request->user();
+        $latestMembership = $user->memberships()
+            ->with('plan.tier')
+            ->latest()
+            ->first();
+
+        $activeMembership = $user->activeMembership();
+        $hasActiveMembership = (bool) $activeMembership;
+        $hasMentorMembership = $user->hasMentorMembership();
+        $isPendingApproval = $latestMembership?->status === 'pending_approval';
+        $isPendingPayment = $latestMembership?->status === 'pending_payment';
+        $latestMentorApplication = $user->mentorApplications()->latest()->first();
+        $hasMentorProfile = $user->mentorProfile()->exists();
+
+        $tiers = MembershipTier::query()
+            ->where('is_active', true)
+            ->with(['plans' => function ($query) {
+                $query->where('is_active', true)
+                    ->with('tier')
+                    ->orderBy('price');
+            }])
+            ->orderBy('sort_order')
+            ->get()
+            ->map(function ($tier) {
+                return [
+                    'id' => $tier->id,
+                    'name' => $tier->name,
+                    'description' => $tier->description,
+                    'benefits' => $tier->benefits ?? [],
+                    'plans' => $tier->plans->map(function ($plan) {
+                        return [
+                            'id' => $plan->id,
+                            'name' => $plan->name,
+                            'price' => $plan->price,
+                            'currency' => $plan->currency,
+                            'billing_interval' => $plan->billing_interval,
+                            'benefits' => $plan->benefits ?? [],
+                            'tier_name' => $plan->tier?->name,
+                        ];
+                    })->values(),
+                ];
+            });
+
+        $featuredMentors = MentorProfile::query()
+            ->with('user:id,name,email,country')
+            ->where('is_active', true)
+            ->where('user_id', '!=', $user->id)
+            ->orderByDesc('rating')
+            ->take(6)
+            ->get()
+            ->map(function ($mentor) {
+                return [
+                    'id' => $mentor->id,
+                    'name' => $mentor->user?->name,
+                    'title' => $mentor->title,
+                    'domain' => $mentor->domain,
+                    'country' => $mentor->country,
+                    'region' => $mentor->region,
+                    'rating' => (float) $mentor->rating,
+                    'availability_status' => $mentor->availability_status,
+                    'slots_left' => $mentor->remainingCapacity(),
+                ];
+            });
+
+        $communityMembers = User::query()
+            ->select('id', 'name', 'email')
+            ->where('id', '!=', $user->id)
+            ->whereHas('memberships', function ($query) {
+                $query->active();
+            })
+            ->latest('id')
+            ->take(8)
+            ->get()
+            ->map(function ($member) {
+                return [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                    'job_title' => $member->job_title ?? null,
+                    'country' => $member->country ?? null,
+                ];
+            });
+
+        return Inertia::render('Dashboard/Memebership/Index', [
+            'membership' => $latestMembership ? [
+                'id' => $latestMembership->id,
+                'status' => $latestMembership->status,
+                'status_label' => $latestMembership->statusLabel(),
+                'plan_name' => $latestMembership->plan?->name,
+                'tier_name' => $latestMembership->plan?->tier?->name,
+                'purchased_at' => $latestMembership->purchased_at?->format('M d, Y'),
+            ] : null,
+            'membershipState' => [
+                'has_active_membership' => $hasActiveMembership,
+                'has_mentor_membership' => $hasMentorMembership,
+                'is_pending_approval' => $isPendingApproval,
+                'is_pending_payment' => $isPendingPayment,
+            ],
+            'mentorAccess' => [
+                'has_mentor_profile' => $hasMentorProfile,
+                'application_status' => $latestMentorApplication?->status,
+                'application_feedback' => $latestMentorApplication?->admin_feedback,
+                'application_processed_at' => $latestMentorApplication?->processed_at?->format('M d, Y'),
+            ],
+            'tiers' => $tiers,
+            'featuredMentors' => $featuredMentors,
+            'communityMembers' => $communityMembers,
+        ]);
     } 
 }

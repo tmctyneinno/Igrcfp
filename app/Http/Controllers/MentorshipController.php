@@ -68,6 +68,7 @@ class MentorshipController extends Controller
                 'id' => $app->id,
                 'mentor_name' => $app->mentorProfile->user->name,
                 'status' => $app->status,
+                'communication_method' => $app->communication_method,
                 'created_at' => $app->created_at->format('M d, Y'),
             ]);
 
@@ -84,27 +85,30 @@ class MentorshipController extends Controller
                     'mentee_name' => $app->mentee->name,
                     'goals' => \Str::limit($app->goals, 120),
                     'status' => $app->status,
+                    'communication_method' => $app->communication_method,
                 ]);
 
             $mentorMentorships = $mentorProfile->mentorships()
-                ->with('mentee')
+                ->with(['mentee', 'application'])
                 ->latest()
                 ->get()
                 ->map(fn ($m) => [
                     'id' => $m->id,
                     'mentee_name' => $m->mentee->name,
                     'status' => $m->status,
+                    'communication_method' => $m->application?->communication_method,
                 ]);
         }
 
         $menteeMentorships = $user->mentorshipsAsMentee()
-            ->with('mentorProfile.user')
+            ->with(['mentorProfile.user', 'application'])
             ->latest()
             ->get()
             ->map(fn ($m) => [
                 'id' => $m->id,
                 'mentor_name' => $m->mentorProfile->user->name,
                 'status' => $m->status,
+                'communication_method' => $m->application?->communication_method,
             ]);
 
         return Inertia::render('Dashboard/Mentorships/Index', [
@@ -203,7 +207,12 @@ class MentorshipController extends Controller
                 ->with('error', 'You are not authorized to view this mentorship.');
         }
 
-        $mentorship->load(['mentorProfile.user', 'mentee']);
+        $mentorship->load([
+            'mentorProfile.user',
+            'mentee',
+            'application',
+            'messages.user:id,name',
+        ]);
 
         $updates = $mentorship->updates()
             ->latest()
@@ -221,6 +230,19 @@ class MentorshipController extends Controller
                 ])
             );
 
+        $messages = $mentorship->messages
+            ->sortBy('created_at')
+            ->values()
+            ->map(fn ($message) => [
+                'id' => $message->id,
+                'message' => $message->message,
+                'sender_name' => $message->user?->name ?? 'Unknown',
+                'sender_id' => $message->user_id,
+                'created_at' => $message->created_at->format('M d, Y H:i'),
+            ]);
+
+        $isMentor = $mentorProfile->user_id === $user->id;
+
         return Inertia::render('Dashboard/Mentorships/Show', [
             'mentorship' => [
                 'id' => $mentorship->id,
@@ -228,8 +250,12 @@ class MentorshipController extends Controller
                 'mentee_name' => $mentorship->mentee->name,
                 'status' => $mentorship->status,
                 'started_at' => optional($mentorship->started_at)?->format('M d, Y'),
+                'communication_method' => $mentorship->application?->communication_method,
+                'user_role' => $isMentor ? 'mentor' : 'mentee',
             ],
             'updates' => $updates,
+            'messages' => $messages,
+            'currentUserId' => $user->id,
         ]);
     }
 

@@ -30,11 +30,15 @@ class MentorApplicationController extends Controller
             ->latest()
             ->first();
 
+        $blockedStatuses = ['pending', 'approved'];
+        $canSubmitNewApplication = !$existingApplication || !in_array($existingApplication->status, $blockedStatuses, true);
+
         return Inertia::render('Dashboard/Mentors/Apply', [
             'existingApplication' => $existingApplication ? [
                 'status' => $existingApplication->status,
                 'admin_feedback' => $existingApplication->admin_feedback,
             ] : null,
+            'canSubmitNewApplication' => $canSubmitNewApplication,
         ]);
     }
 
@@ -45,9 +49,13 @@ class MentorApplicationController extends Controller
             ->first();
 
         if ($existing) {
+            $message = $existing->status === 'approved'
+                ? 'You already have an approved mentor application.'
+                : 'Your previous mentor application is still pending review.';
+
             return redirect()
                 ->route('dashboard.mentors.apply-to-become')
-                ->with('info', 'You already have an active mentor application.');
+                ->with('info', $message);
         }
 
         $application = MentorApplication::create([

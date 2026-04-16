@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function MentorshipDashboard({
@@ -11,14 +11,9 @@ export default function MentorshipDashboard({
     menteeMentorships,
 }) {
 
-    const { post, setData } = useForm({
-        decision: '',
-        mentor_feedback: '',
-    });
-
     const decide = (id, decision) => {
-        post(route('dashboard.mentorships.decide', id), {
-            data: { decision },
+        router.post(route('dashboard.mentorships.decide', id), {
+            decision,
         });
     };
 
@@ -32,7 +27,7 @@ export default function MentorshipDashboard({
                         Mentorship Dashboard
                     </h2>
                     <p className="mt-2 text-gray-600">
-                        Track your applications and active mentorships.
+                        Track your applications, active mentorships, communication mode, and mentorship workspace access.
                     </p>
                 </div>
 
@@ -42,7 +37,7 @@ export default function MentorshipDashboard({
                     {/* Applications */}
                     <div className="bg-white rounded-2xl border p-6">
                         <h3 className="text-lg font-semibold mb-4">
-                            Your Applications (Mentee)
+                            Your Mentee Applications
                         </h3>
 
                         {menteeApplications.length > 0 ? (
@@ -50,6 +45,9 @@ export default function MentorshipDashboard({
                                 <div key={app.id} className="border p-4 rounded-xl mb-3">
                                     <p>Mentor: <b>{app.mentor_name}</b></p>
                                     <p>Status: {app.status}</p>
+                                    <p className="text-sm text-gray-600">
+                                        Communication: <b>{app.communication_method || 'Not specified'}</b>
+                                    </p>
                                     <p className="text-xs">{app.created_at}</p>
                                 </div>
                             ))
@@ -63,7 +61,7 @@ export default function MentorshipDashboard({
                     {/* Mentorships */}
                     <div className="bg-white rounded-2xl border p-6">
                         <h3 className="text-lg font-semibold mb-4">
-                            Your Mentorships (Mentee)
+                            Your Mentee Workspace
                         </h3>
 
                         {menteeMentorships.length > 0 ? (
@@ -72,13 +70,16 @@ export default function MentorshipDashboard({
                                     <div>
                                         <p>Mentor: <b>{m.mentor_name}</b></p>
                                         <p>Status: {m.status}</p>
+                                        <p className="text-sm text-gray-600">
+                                            Communication: <b>{m.communication_method || 'Not specified'}</b>
+                                        </p>
                                     </div>
 
                                     <Link
                                         href={route('dashboard.mentorships.show', m.id)}
-                                        className="text-blue-900"
+                                        className="text-blue-900 font-semibold"
                                     >
-                                        View
+                                        Open Workspace
                                     </Link>
                                 </div>
                             ))
@@ -106,6 +107,9 @@ export default function MentorshipDashboard({
                                         <p>Mentee: <b>{app.mentee_name}</b></p>
                                         <p className="text-sm">{app.goals}</p>
                                         <p>Status: {app.status}</p>
+                                        <p className="text-sm text-gray-600">
+                                            Communication: <b>{app.communication_method || 'Not specified'}</b>
+                                        </p>
 
                                         {app.status === 'pending' && (
                                             <div className="mt-3 flex gap-2">
@@ -145,13 +149,16 @@ export default function MentorshipDashboard({
                                         <div>
                                             <p>Mentee: <b>{m.mentee_name}</b></p>
                                             <p>Status: {m.status}</p>
+                                            <p className="text-sm text-gray-600">
+                                                Communication: <b>{m.communication_method || 'Not specified'}</b>
+                                            </p>
                                         </div>
 
                                         <Link
                                             href={route('dashboard.mentorships.show', m.id)}
-                                            className="text-blue-900"
+                                            className="text-blue-900 font-semibold"
                                         >
-                                            View
+                                            Open Workspace
                                         </Link>
                                     </div>
                                 ))

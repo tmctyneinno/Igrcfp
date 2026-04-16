@@ -19,13 +19,17 @@ export default function AuthenticatedLayout({ header, children }) {
     const { props } = usePage();
     const user = props.auth.user; 
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    const [notificationCount, setNotificationCount] = useState(0);
+    const [notificationCount, setNotificationCount] = useState(props.notification_count || 0);
     
     const cartCount = props.cart_count || 0;
 
     
  
     // Check for enrollment redirect on dashboard load
+    useEffect(() => {
+        setNotificationCount(props.notification_count || 0);
+    }, [props.notification_count]);
+
     useEffect(() => {
         const enrollmentRedirect = sessionStorage.getItem('enrollment_redirect');
         const intendedUrl = sessionStorage.getItem('intended_url');
@@ -41,8 +45,19 @@ export default function AuthenticatedLayout({ header, children }) {
             }, 100);
         }
         
-        // You can still fetch notification count if needed
-        setNotificationCount(3); // Mock notification count
+        const pollNotificationCount = async () => {
+            try {
+                const response = await window.axios.get(route('notifications.count'));
+                setNotificationCount(response?.data?.unread_count ?? 0);
+            } catch (error) {
+                // Keep existing count if polling fails.
+            }
+        };
+
+        pollNotificationCount();
+        const interval = setInterval(pollNotificationCount, 15000);
+
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -127,8 +142,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     <BellIcon className="h-6 w-6" /> 
                                     {notificationCount > 0 && (
                                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                           0
-                                            {/* {notificationCount > 9 ? '9+' : notificationCount} */}
+                                            {notificationCount > 9 ? '9+' : notificationCount}
                                         </span>
                                     )}
                                 </Link>

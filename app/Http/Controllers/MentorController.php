@@ -63,7 +63,8 @@ class MentorController extends Controller
     {
         $query = MentorProfile::query()
             ->with('user')
-            ->where('is_active', true);
+            ->where('is_active', true)
+            ->where('user_id', '!=', $request->user()->id);
 
         if ($request->filled('search')) {
             $search = $request->string('search');
