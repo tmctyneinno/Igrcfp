@@ -18,6 +18,7 @@ class Event extends Model
         'short_description',
         'image',
         'start_date',
+        'link',
         'end_date',
         'start_time',
         'end_time',
