@@ -118,3 +118,12 @@ Niroanbil and woman summit 13th november
 https://account.kudisms.net/bulksms/
 recovery twilio code
 46TY8C5NR9FPU6X2GV7M8SPC
+
+https://www.namecheap.com/support/knowledgebase/article.aspx/10212/2216/how-to-locate-email-spamming-activity-on-a-server/
+
+https://support.cpanel.net/hc/en-us/articles/360052272514-How-to-find-the-source-of-spam-emails
+
+
+Figma Account
+themorgansconsortium@gmail.com
+Morgans888
