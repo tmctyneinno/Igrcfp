@@ -13,7 +13,7 @@ import WhoAreWe from "@/Pages/components/WhoAreWe";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
  
-  
+   
  
 export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
