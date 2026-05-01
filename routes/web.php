@@ -44,7 +44,7 @@ Route::prefix('news')->name('news.')->group(function () {
  
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::get('/course-catalog', [CourseCatalogController::class, 'index'])->name('course.catalog.index');
+Route::get('/course-catalogue', [CourseCatalogController::class, 'index'])->name('course.catalog.index');
 Route::redirect('/course-catelog', '/course-catalog');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
@@ -54,7 +54,7 @@ Route::get('/courses/category/{slug}', [CourseController::class, 'byCategory'])-
 Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
 Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
 
-
+ 
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
