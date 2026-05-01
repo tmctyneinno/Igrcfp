@@ -81,6 +81,13 @@ export default function NavBar({ auth }) {
                         Membership
                     </Link>
 
+                    <Link
+                        href={route('course.catalog.index')}
+                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
+                    >
+                        Course Catalog
+                    </Link>
+
                     {/* Programmes & Courses Dropdown - UPDATED WITH DETAILED CONTENT */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
@@ -387,6 +394,14 @@ export default function NavBar({ auth }) {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Membership
+                        </Link>
+
+                        <Link
+                            href={route('course.catalog.index')}
+                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            Course Catalog
                         </Link>
                         
                         {/* Programmes & Courses Dropdown for Mobile */}

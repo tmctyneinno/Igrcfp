@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\CourseCatalogController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
@@ -42,6 +43,9 @@ Route::prefix('news')->name('news.')->group(function () {
 
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+Route::get('/course-catalog', [CourseCatalogController::class, 'index'])->name('course.catalog.index');
+Route::redirect('/course-catelog', '/course-catalog');
 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show'); 
