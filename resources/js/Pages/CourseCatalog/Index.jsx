@@ -1,788 +1,628 @@
-import { Link } from "@inertiajs/react";
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
+import GuestLayout from '@/Layouts/GuestLayout';
+import {
+    ArrowRight,
+    Award,
+    BookOpen,
+    BriefcaseBusiness,
+    Building2,
+    CheckCircle2,
+    ClipboardCheck,
+    Database,
+    GraduationCap,
+    Landmark,
+    Leaf,
+    Mail,
+    MonitorPlay,
+    Radar,
+    Search,
+    ShieldCheck,
+    Sparkles,
+    Users,
+    X,
+} from 'lucide-react';
 
-const categories = [
-    { id: "all", label: "All Courses", count: 62 },
-    { id: "grc", label: "Core GRC & Governance", count: 10 },
-    { id: "financial-crime", label: "Financial Crime & AML", count: 12 },
-    { id: "cyber", label: "Cybersecurity & Digital Risk", count: 10 },
-    { id: "data", label: "Data, Privacy & Technology", count: 8 },
-    { id: "audit", label: "Audit, Control & Assurance", count: 8 },
-    { id: "esg", label: "ESG, Ethics & Sustainability", count: 6 },
-    { id: "specialist", label: "Specialist & Emerging Risk", count: 8 },
+const courseGroups = [
+    {
+        id: 'grc',
+        title: 'Core GRC & Governance',
+        summary: 'Governance, risk, compliance, conduct, culture, and board oversight foundations.',
+        accent: 'blue',
+        icon: Landmark,
+        courses: [
+            'Certificate in Governance, Risk & Compliance (GRC)',
+            'Certificate in Corporate Governance',
+            'Certificate in Board Governance & Oversight',
+            'Certificate in Enterprise Risk Management (ERM)',
+            'Certificate in Operational Risk Management',
+            'Certificate in Strategic Risk & Decision Making',
+            'Certificate in Compliance & Regulatory Frameworks',
+            'Certificate in Regulatory Compliance (Global Frameworks)',
+            'Certificate in Ethics, Conduct & Culture',
+            'Certificate in Integrated GRC Frameworks',
+        ],
+    },
+    {
+        id: 'financial-crime',
+        title: 'Financial Crime & AML',
+        summary: 'AML, CFT, sanctions, KYC, investigations, fraud, and financial intelligence.',
+        accent: 'red',
+        icon: ShieldCheck,
+        courses: [
+            'Certificate in Financial Crime Prevention',
+            'Certificate in Anti-Money Laundering (AML & CFT)',
+            'Certificate in Know Your Customer (KYC & CDD)',
+            'Certificate in Sanctions & Financial Crime Compliance',
+            'Certificate in Transaction Monitoring & Suspicious Activity Reporting',
+            'Certificate in Fraud Risk Management',
+            'Certificate in Anti-Bribery & Corruption',
+            'Certificate in Counter Terrorist Financing (CTF)',
+            'Certificate in Financial Intelligence & Investigations',
+            'Certificate in Trade-Based Money Laundering (TBML)',
+            'Certificate in Politically Exposed Persons (PEPs) Risk Management',
+            'Certificate in Financial Crime Risk Assessment',
+        ],
+    },
+    {
+        id: 'cyber',
+        title: 'Cybersecurity & Digital Risk',
+        summary: 'Cyber governance, incident response, cloud security, resilience, and investigations.',
+        accent: 'violet',
+        icon: Radar,
+        courses: [
+            'Certificate in Cybersecurity & Digital Risk',
+            'Certificate in Information Security Management',
+            'Certificate in Cyber Risk Governance',
+            'Certificate in Cyber Threat Intelligence',
+            'Certificate in Incident Response & Cyber Crisis Management',
+            'Certificate in Digital Forensics & Investigation',
+            'Certificate in Cloud Security & Risk',
+            'Certificate in Network Security Fundamentals',
+            'Certificate in Cybersecurity for Financial Institutions',
+            'Certificate in Operational Resilience & Cyber Risk',
+        ],
+    },
+    {
+        id: 'data',
+        title: 'Data, Privacy & Technology',
+        summary: 'Data protection, AI, RegTech, SupTech, blockchain risk, and identity verification.',
+        accent: 'cyan',
+        icon: Database,
+        courses: [
+            'Certificate in Data Protection & Privacy (GDPR)',
+            'Certificate in Data Governance & Data Risk',
+            'Certificate in Information Governance',
+            'Certificate in Data Ethics & Responsible AI',
+            'Certificate in Artificial Intelligence & Digital Compliance',
+            'Certificate in RegTech & SupTech',
+            'Certificate in Blockchain & Cryptocurrency Risk',
+            'Certificate in Digital Identity & Verification',
+        ],
+    },
+    {
+        id: 'audit',
+        title: 'Audit, Control & Assurance',
+        summary: 'Internal audit, assurance frameworks, monitoring, testing, analytics, and investigations.',
+        accent: 'amber',
+        icon: ClipboardCheck,
+        courses: [
+            'Certificate in Internal Audit & Assurance',
+            'Certificate in Risk-Based Internal Audit',
+            'Certificate in Compliance Monitoring & Testing',
+            'Certificate in Controls & Assurance Frameworks',
+            'Certificate in Combined Assurance & Three Lines Model',
+            'Certificate in Audit Analytics & Data-Driven Assurance',
+            'Certificate in Investigations & Case Management',
+            'Certificate in Forensic Audit & Fraud Investigation',
+        ],
+    },
+    {
+        id: 'esg',
+        title: 'ESG, Ethics & Sustainability',
+        summary: 'ESG, climate risk, sustainability, CSR, ethical leadership, and sustainable finance.',
+        accent: 'emerald',
+        icon: Leaf,
+        courses: [
+            'Certificate in ESG (Environmental, Social & Governance)',
+            'Certificate in Sustainability & Risk Management',
+            'Certificate in Climate Risk & ESG Reporting',
+            'Certificate in Corporate Social Responsibility (CSR)',
+            'Certificate in Ethical Leadership & Governance',
+            'Certificate in Sustainable Finance',
+        ],
+    },
+    {
+        id: 'specialist',
+        title: 'Specialist & Emerging Risk Areas',
+        summary: 'FinTech, digital banking, crypto compliance, third-party risk, and global regulation.',
+        accent: 'slate',
+        icon: Sparkles,
+        courses: [
+            'Certificate in FinTech Risk & Compliance',
+            'Certificate in Digital Banking & Financial Crime',
+            'Certificate in Payments Fraud & Risk',
+            'Certificate in Crypto Compliance & AML',
+            'Certificate in Supply Chain Risk & Compliance',
+            'Certificate in Third-Party Risk Management',
+            'Certificate in Operational Resilience (Advanced)',
+            'Certificate in Global Risk & Regulatory Landscape',
+        ],
+    },
 ];
 
-const courses = [
-    // Core GRC & Governance
-    { id: 1, cat: "grc", title: "Certificate in Governance, Risk & Compliance (GRC)", pathway: ["Foundation"] },
-    { id: 2, cat: "grc", title: "Certificate in Corporate Governance", pathway: [] },
-    { id: 3, cat: "grc", title: "Certificate in Board Governance & Oversight", pathway: ["Leadership"] },
-    { id: 4, cat: "grc", title: "Certificate in Enterprise Risk Management (ERM)", pathway: ["Leadership"] },
-    { id: 5, cat: "grc", title: "Certificate in Operational Risk Management", pathway: [] },
-    { id: 6, cat: "grc", title: "Certificate in Strategic Risk & Decision Making", pathway: [] },
-    { id: 7, cat: "grc", title: "Certificate in Compliance & Regulatory Frameworks", pathway: ["Foundation"] },
-    { id: 8, cat: "grc", title: "Certificate in Regulatory Compliance (Global Frameworks)", pathway: [] },
-    { id: 9, cat: "grc", title: "Certificate in Ethics, Conduct & Culture", pathway: [] },
-    { id: 10, cat: "grc", title: "Certificate in Integrated GRC Frameworks", pathway: ["Leadership"] },
-
-    // Financial Crime & AML
-    { id: 11, cat: "financial-crime", title: "Certificate in Financial Crime Prevention", pathway: ["Foundation"] },
-    { id: 12, cat: "financial-crime", title: "Certificate in Anti-Money Laundering (AML & CFT)", pathway: ["Specialist"] },
-    { id: 13, cat: "financial-crime", title: "Certificate in Know Your Customer (KYC & CDD)", pathway: [] },
-    { id: 14, cat: "financial-crime", title: "Certificate in Sanctions & Financial Crime Compliance", pathway: [] },
-    { id: 15, cat: "financial-crime", title: "Certificate in Transaction Monitoring & Suspicious Activity Reporting", pathway: [] },
-    { id: 16, cat: "financial-crime", title: "Certificate in Fraud Risk Management", pathway: [] },
-    { id: 17, cat: "financial-crime", title: "Certificate in Anti-Bribery & Corruption", pathway: [] },
-    { id: 18, cat: "financial-crime", title: "Certificate in Counter Terrorist Financing (CTF)", pathway: [] },
-    { id: 19, cat: "financial-crime", title: "Certificate in Financial Intelligence & Investigations", pathway: [] },
-    { id: 20, cat: "financial-crime", title: "Certificate in Trade-Based Money Laundering (TBML)", pathway: ["Specialist"] },
-    { id: 21, cat: "financial-crime", title: "Certificate in Politically Exposed Persons (PEPs) Risk Management", pathway: [] },
-    { id: 22, cat: "financial-crime", title: "Certificate in Financial Crime Risk Assessment", pathway: [] },
-
-    // Cybersecurity & Digital Risk
-    { id: 23, cat: "cyber", title: "Certificate in Cybersecurity & Digital Risk", pathway: ["Specialist"] },
-    { id: 24, cat: "cyber", title: "Certificate in Information Security Management", pathway: [] },
-    { id: 25, cat: "cyber", title: "Certificate in Cyber Risk Governance", pathway: [] },
-    { id: 26, cat: "cyber", title: "Certificate in Cyber Threat Intelligence", pathway: [] },
-    { id: 27, cat: "cyber", title: "Certificate in Incident Response & Cyber Crisis Management", pathway: [] },
-    { id: 28, cat: "cyber", title: "Certificate in Digital Forensics & Investigation", pathway: [] },
-    { id: 29, cat: "cyber", title: "Certificate in Cloud Security & Risk", pathway: [] },
-    { id: 30, cat: "cyber", title: "Certificate in Network Security Fundamentals", pathway: [] },
-    { id: 31, cat: "cyber", title: "Certificate in Cybersecurity for Financial Institutions", pathway: [] },
-    { id: 32, cat: "cyber", title: "Certificate in Operational Resilience & Cyber Risk", pathway: ["Leadership"] },
-
-    // Data, Privacy & Technology
-    { id: 33, cat: "data", title: "Certificate in Data Protection & Privacy (GDPR)", pathway: ["Foundation"] },
-    { id: 34, cat: "data", title: "Certificate in Data Governance & Data Risk", pathway: [] },
-    { id: 35, cat: "data", title: "Certificate in Information Governance", pathway: [] },
-    { id: 36, cat: "data", title: "Certificate in Data Ethics & Responsible AI", pathway: [] },
-    { id: 37, cat: "data", title: "Certificate in Artificial Intelligence & Digital Compliance", pathway: [] },
-    { id: 38, cat: "data", title: "Certificate in RegTech & SupTech", pathway: [] },
-    { id: 39, cat: "data", title: "Certificate in Blockchain & Cryptocurrency Risk", pathway: ["Specialist"] },
-    { id: 40, cat: "data", title: "Certificate in Digital Identity & Verification", pathway: [] },
-
-    // Audit, Control & Assurance
-    { id: 41, cat: "audit", title: "Certificate in Internal Audit & Assurance", pathway: [] },
-    { id: 42, cat: "audit", title: "Certificate in Risk-Based Internal Audit", pathway: [] },
-    { id: 43, cat: "audit", title: "Certificate in Compliance Monitoring & Testing", pathway: [] },
-    { id: 44, cat: "audit", title: "Certificate in Controls & Assurance Frameworks", pathway: [] },
-    { id: 45, cat: "audit", title: "Certificate in Combined Assurance & Three Lines Model", pathway: [] },
-    { id: 46, cat: "audit", title: "Certificate in Audit Analytics & Data-Driven Assurance", pathway: [] },
-    { id: 47, cat: "audit", title: "Certificate in Investigations & Case Management", pathway: [] },
-    { id: 48, cat: "audit", title: "Certificate in Forensic Audit & Fraud Investigation", pathway: [] },
-
-    // ESG, Ethics & Sustainability
-    { id: 49, cat: "esg", title: "Certificate in ESG (Environmental, Social & Governance)", pathway: [] },
-    { id: 50, cat: "esg", title: "Certificate in Sustainability & Risk Management", pathway: [] },
-    { id: 51, cat: "esg", title: "Certificate in Climate Risk & ESG Reporting", pathway: [] },
-    { id: 52, cat: "esg", title: "Certificate in Corporate Social Responsibility (CSR)", pathway: [] },
-    { id: 53, cat: "esg", title: "Certificate in Ethical Leadership & Governance", pathway: [] },
-    { id: 54, cat: "esg", title: "Certificate in Sustainable Finance", pathway: [] },
-
-    // Specialist & Emerging Risk
-    { id: 55, cat: "specialist", title: "Certificate in FinTech Risk & Compliance", pathway: [] },
-    { id: 56, cat: "specialist", title: "Certificate in Digital Banking & Financial Crime", pathway: [] },
-    { id: 57, cat: "specialist", title: "Certificate in Payments Fraud & Risk", pathway: [] },
-    { id: 58, cat: "specialist", title: "Certificate in Crypto Compliance & AML", pathway: [] },
-    { id: 59, cat: "specialist", title: "Certificate in Supply Chain Risk & Compliance", pathway: [] },
-    { id: 60, cat: "specialist", title: "Certificate in Third-Party Risk Management", pathway: [] },
-    { id: 61, cat: "specialist", title: "Certificate in Operational Resilience (Advanced)", pathway: [] },
-    { id: 62, cat: "specialist", title: "Certificate in Global Risk & Regulatory Landscape", pathway: [] },
+const pathways = [
+    {
+        title: 'Foundation Pathway',
+        audience: 'Ideal for professionals entering GRC, compliance, financial crime, or cyber risk roles.',
+        icon: GraduationCap,
+        recommended: [
+            'Certificate in Governance, Risk & Compliance',
+            'Certificate in Financial Crime Prevention',
+            'Certificate in Compliance & Regulatory Frameworks',
+            'Certificate in Data Protection & Privacy',
+        ],
+    },
+    {
+        title: 'Specialist Pathway',
+        audience: 'Designed for practitioners who want deeper technical capability.',
+        icon: BriefcaseBusiness,
+        recommended: [
+            'Certificate in AML & CFT',
+            'Certificate in Trade-Based Money Laundering',
+            'Certificate in Cybersecurity & Digital Risk',
+            'Certificate in Blockchain & Cryptocurrency Risk',
+        ],
+    },
+    {
+        title: 'Leadership Pathway',
+        audience: 'Designed for senior professionals, executives, board members, and advisors.',
+        icon: Users,
+        recommended: [
+            'Certificate in Board Governance & Oversight',
+            'Certificate in Enterprise Risk Management',
+            'Certificate in Integrated GRC Frameworks',
+            'Certificate in Operational Resilience',
+        ],
+    },
 ];
 
-const catMeta = {
-    grc:              { color: "#3B82F6", bg: "rgba(59,130,246,0.08)",  label: "GRC" },
-    "financial-crime":{ color: "#EF4444", bg: "rgba(239,68,68,0.08)",   label: "Fin Crime" },
-    cyber:            { color: "#8B5CF6", bg: "rgba(139,92,246,0.08)",  label: "Cyber" },
-    data:             { color: "#06B6D4", bg: "rgba(6,182,212,0.08)",   label: "Data & Tech" },
-    audit:            { color: "#F59E0B", bg: "rgba(245,158,11,0.08)",  label: "Audit" },
-    esg:              { color: "#10B981", bg: "rgba(16,185,129,0.08)",  label: "ESG" },
-    specialist:       { color: "#F97316", bg: "rgba(249,115,22,0.08)",  label: "Specialist" },
+const deliveryOptions = [
+    'Self-paced online learning',
+    'Live virtual classes',
+    'In-person workshops',
+    'Corporate in-house training',
+    'Blended learning programmes',
+];
+
+const studyReasons = [
+    'Globally relevant',
+    'Practitioner-led',
+    'Case-study driven',
+    'Designed for regulated and high-risk environments',
+    'Aligned with recognised GRC, cybersecurity, and financial crime prevention principles',
+];
+
+const accentClasses = {
+    blue: {
+        border: 'border-blue-200',
+        bg: 'bg-blue-50',
+        icon: 'bg-blue-900 text-white',
+        pill: 'bg-blue-100 text-blue-800',
+    },
+    red: {
+        border: 'border-red-200',
+        bg: 'bg-red-50',
+        icon: 'bg-red-700 text-white',
+        pill: 'bg-red-100 text-red-800',
+    },
+    violet: {
+        border: 'border-violet-200',
+        bg: 'bg-violet-50',
+        icon: 'bg-violet-700 text-white',
+        pill: 'bg-violet-100 text-violet-800',
+    },
+    cyan: {
+        border: 'border-cyan-200',
+        bg: 'bg-cyan-50',
+        icon: 'bg-cyan-700 text-white',
+        pill: 'bg-cyan-100 text-cyan-800',
+    },
+    amber: {
+        border: 'border-amber-200',
+        bg: 'bg-amber-50',
+        icon: 'bg-amber-700 text-white',
+        pill: 'bg-amber-100 text-amber-800',
+    },
+    emerald: {
+        border: 'border-emerald-200',
+        bg: 'bg-emerald-50',
+        icon: 'bg-emerald-700 text-white',
+        pill: 'bg-emerald-100 text-emerald-800',
+    },
+    slate: {
+        border: 'border-slate-200',
+        bg: 'bg-slate-50',
+        icon: 'bg-slate-800 text-white',
+        pill: 'bg-slate-100 text-slate-800',
+    },
 };
 
-const pathwayColors = {
-    Foundation: { bg: "#EFF6FF", text: "#1D4ED8", border: "#BFDBFE" },
-    Specialist:  { bg: "#F5F3FF", text: "#6D28D9", border: "#DDD6FE" },
-    Leadership:  { bg: "#FFF7ED", text: "#C2410C", border: "#FDBA74" },
-};
+const allCourses = courseGroups.flatMap((group) =>
+    group.courses.map((title, index) => ({
+        number: courseGroups
+            .slice(0, courseGroups.findIndex((item) => item.id === group.id))
+            .reduce((total, item) => total + item.courses.length, 0) + index + 1,
+        title,
+        groupId: group.id,
+    }))
+);
 
-export default function CourseCatalogue({ auth }) {
-    const [activeCategory, setActiveCategory] = useState("all");
-    const [searchQuery, setSearchQuery]         = useState("");
-    const [activePathway, setActivePathway]     = useState("all");
-    const [viewMode, setViewMode]               = useState("grid"); // grid | list
+export default function CourseCatalog({ auth }) {
+    const [search, setSearch] = useState('');
+    const [activeGroup, setActiveGroup] = useState('all');
 
-    const filtered = useMemo(() => {
-        return courses.filter(c => {
-            const matchesCat     = activeCategory === "all" || c.cat === activeCategory;
-            const matchesSearch  = c.title.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesPathway = activePathway === "all" || c.pathway.includes(activePathway);
-            return matchesCat && matchesSearch && matchesPathway;
-        });
-    }, [activeCategory, searchQuery, activePathway]);
+    const filteredGroups = useMemo(() => {
+        const term = search.trim().toLowerCase();
+
+        return courseGroups
+            .filter((group) => activeGroup === 'all' || group.id === activeGroup)
+            .map((group) => ({
+                ...group,
+                courses: group.courses
+                    .map((title, index) => ({
+                        title,
+                        number: allCourses.find((course) => course.title === title)?.number || index + 1,
+                    }))
+                    .filter((course) => {
+                        if (!term) return true;
+
+                        return (
+                            course.title.toLowerCase().includes(term) ||
+                            group.title.toLowerCase().includes(term) ||
+                            group.summary.toLowerCase().includes(term)
+                        );
+                    }),
+            }))
+            .filter((group) => group.courses.length > 0);
+    }, [activeGroup, search]);
+
+    const filteredCount = filteredGroups.reduce((total, group) => total + group.courses.length, 0);
 
     return (
-        <>
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+        <GuestLayout auth={auth}>
+            <Head title="IGRCFP | Course Catalogue" />
 
-                .catalogue-root {
-                    --navy: #0B1B3E;
-                    --navy-mid: #162850;
-                    --gold: #C8933A;
-                    --gold-light: #E8B96A;
-                    --cream: #FAF7F2;
-                    --ink: #1A1A2E;
-                    font-family: 'DM Sans', sans-serif;
-                    background: var(--cream);
-                    min-height: 100vh;
-                }
+            <main className="bg-slate-50 text-slate-900">
+                <section className="relative overflow-hidden bg-slate-950 text-white">
+                    <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(30,64,175,0.35),transparent_38%,rgba(20,184,166,0.18))]" />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-50 to-transparent" />
 
-                .catalogue-hero {
-                    background: linear-gradient(135deg, var(--navy) 0%, #1A2F5E 60%, #0D2244 100%);
-                    position: relative;
-                    overflow: hidden;
-                    padding: 80px 0 60px;
-                }
-                .catalogue-hero::before {
-                    content: '';
-                    position: absolute;
-                    inset: 0;
-                    background-image: radial-gradient(circle at 20% 50%, rgba(200,147,58,0.12) 0%, transparent 50%),
-                                      radial-gradient(circle at 80% 20%, rgba(200,147,58,0.08) 0%, transparent 40%);
-                }
-                .catalogue-hero::after {
-                    content: '';
-                    position: absolute;
-                    bottom: 0; left: 0; right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-                }
-                .hero-grid-lines {
-                    position: absolute;
-                    inset: 0;
-                    background-image:
-                        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-                    background-size: 60px 60px;
-                }
+                    <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+                        <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                            <div>
+                                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-100">
+                                    <Award className="h-4 w-4" />
+                                    Professional Certificate Portfolio
+                                </div>
 
-                .hero-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: rgba(200,147,58,0.15);
-                    border: 1px solid rgba(200,147,58,0.35);
-                    color: var(--gold-light);
-                    padding: 6px 16px;
-                    border-radius: 100px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    letter-spacing: 0.08em;
-                    text-transform: uppercase;
-                    margin-bottom: 20px;
-                }
-                .hero-title {
-                    font-family: 'Playfair Display', Georgia, serif;
-                    font-size: clamp(2.2rem, 5vw, 3.5rem);
-                    font-weight: 700;
-                    color: #fff;
-                    line-height: 1.15;
-                    margin: 0 0 16px;
-                }
-                .hero-title span {
-                    color: var(--gold-light);
-                }
-                .hero-subtitle {
-                    color: rgba(255,255,255,0.65);
-                    font-size: 1.05rem;
-                    font-weight: 300;
-                    max-width: 560px;
-                    line-height: 1.7;
-                    margin: 0 0 36px;
-                }
-                .hero-stats {
-                    display: flex;
-                    gap: 36px;
-                    flex-wrap: wrap;
-                }
-                .hero-stat {
-                    display: flex;
-                    flex-direction: column;
-                }
-                .hero-stat-num {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 2rem;
-                    font-weight: 700;
-                    color: var(--gold-light);
-                    line-height: 1;
-                }
-                .hero-stat-label {
-                    font-size: 0.75rem;
-                    color: rgba(255,255,255,0.5);
-                    text-transform: uppercase;
-                    letter-spacing: 0.07em;
-                    margin-top: 4px;
-                }
+                                <h1 className="mt-6 max-w-4xl text-4xl font-bold leading-tight md:text-5xl">
+                                    IGRCFP Course Catalogue
+                                </h1>
 
-                /* Search & Filters */
-                .controls-bar {
-                    background: #fff;
-                    border-bottom: 1px solid #E8E4DE;
-                    position: sticky;
-                    top: 0;
-                    z-index: 40;
-                    box-shadow: 0 2px 12px rgba(11,27,62,0.06);
-                }
-                .search-wrap {
-                    position: relative;
-                }
-                .search-input {
-                    width: 100%;
-                    padding: 12px 16px 12px 44px;
-                    border: 1.5px solid #E8E4DE;
-                    border-radius: 10px;
-                    font-family: 'DM Sans', sans-serif;
-                    font-size: 0.95rem;
-                    color: var(--ink);
-                    background: #FAFAFA;
-                    outline: none;
-                    transition: border-color 0.2s, box-shadow 0.2s;
-                }
-                .search-input:focus {
-                    border-color: var(--gold);
-                    box-shadow: 0 0 0 3px rgba(200,147,58,0.12);
-                    background: #fff;
-                }
-                .search-icon {
-                    position: absolute;
-                    left: 14px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    color: #9CA3AF;
-                }
+                                <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
+                                    Professional certificates in governance, risk, compliance, cybersecurity, and financial crime prevention for modern regulated environments.
+                                </p>
 
-                /* Category Tabs */
-                .cat-tabs {
-                    display: flex;
-                    gap: 6px;
-                    overflow-x: auto;
-                    scrollbar-width: none;
-                    padding-bottom: 2px;
-                }
-                .cat-tabs::-webkit-scrollbar { display: none; }
-                .cat-tab {
-                    white-space: nowrap;
-                    padding: 8px 16px;
-                    border-radius: 8px;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                    border: 1.5px solid transparent;
-                    transition: all 0.18s;
-                    background: transparent;
-                    color: #6B7280;
-                    font-family: 'DM Sans', sans-serif;
-                }
-                .cat-tab:hover { background: #F3F4F6; color: var(--ink); }
-                .cat-tab.active {
-                    background: var(--navy);
-                    color: #fff;
-                    border-color: var(--navy);
-                }
+                                <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300">
+                                    IGRCFP offers a structured portfolio of specialist certificate programmes for professionals across governance, risk, compliance, financial crime prevention, cybersecurity, digital risk, audit, assurance, ESG, and emerging regulatory environments.
+                                </p>
 
-                /* Pathway Filter Pills */
-                .pathway-pill {
-                    padding: 5px 14px;
-                    border-radius: 100px;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                    border: 1.5px solid #E5E7EB;
-                    background: transparent;
-                    color: #6B7280;
-                    font-family: 'DM Sans', sans-serif;
-                    transition: all 0.18s;
-                }
-                .pathway-pill:hover { border-color: var(--gold); color: var(--gold); }
-                .pathway-pill.active {
-                    background: var(--gold);
-                    border-color: var(--gold);
-                    color: #fff;
-                }
-
-                /* View Toggle */
-                .view-toggle button {
-                    padding: 7px 10px;
-                    border: 1.5px solid #E5E7EB;
-                    background: transparent;
-                    cursor: pointer;
-                    color: #9CA3AF;
-                    transition: all 0.15s;
-                }
-                .view-toggle button:first-child { border-radius: 8px 0 0 8px; border-right: none; }
-                .view-toggle button:last-child  { border-radius: 0 8px 8px 0; }
-                .view-toggle button.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-
-                /* Course Grid */
-                .courses-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                    gap: 20px;
-                }
-                .course-card {
-                    background: #fff;
-                    border: 1px solid #EDE9E3;
-                    border-radius: 14px;
-                    padding: 24px;
-                    position: relative;
-                    overflow: hidden;
-                    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
-                    cursor: pointer;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 14px;
-                }
-                .course-card:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 12px 36px rgba(11,27,62,0.1);
-                    border-color: rgba(200,147,58,0.3);
-                }
-                .course-card::before {
-                    content: '';
-                    position: absolute;
-                    top: 0; left: 0; right: 0;
-                    height: 3px;
-                    background: var(--card-accent, #3B82F6);
-                    opacity: 0;
-                    transition: opacity 0.22s;
-                }
-                .course-card:hover::before { opacity: 1; }
-
-                .course-num {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 2rem;
-                    font-weight: 700;
-                    color: #EDE9E3;
-                    line-height: 1;
-                    position: absolute;
-                    top: 16px;
-                    right: 20px;
-                    transition: color 0.22s;
-                }
-                .course-card:hover .course-num { color: rgba(200,147,58,0.2); }
-
-                .course-cat-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 4px 10px;
-                    border-radius: 6px;
-                    font-size: 0.72rem;
-                    font-weight: 600;
-                    letter-spacing: 0.04em;
-                    text-transform: uppercase;
-                    width: fit-content;
-                }
-                .course-title {
-                    font-family: 'DM Sans', sans-serif;
-                    font-size: 0.95rem;
-                    font-weight: 600;
-                    color: var(--ink);
-                    line-height: 1.45;
-                    flex: 1;
-                }
-                .course-footer {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin-top: auto;
-                    padding-top: 12px;
-                    border-top: 1px solid #F3F0EB;
-                }
-                .pathway-tag {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 4px;
-                    padding: 3px 10px;
-                    border-radius: 100px;
-                    font-size: 0.72rem;
-                    font-weight: 600;
-                    border: 1px solid;
-                }
-                .enrol-btn {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    color: var(--navy);
-                    font-size: 0.82rem;
-                    font-weight: 600;
-                    text-decoration: none;
-                    transition: color 0.15s, gap 0.15s;
-                }
-                .course-card:hover .enrol-btn { color: var(--gold); gap: 10px; }
-
-                /* List View */
-                .courses-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0;
-                    border: 1px solid #EDE9E3;
-                    border-radius: 14px;
-                    overflow: hidden;
-                    background: #fff;
-                }
-                .list-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 20px;
-                    padding: 18px 24px;
-                    border-bottom: 1px solid #F3F0EB;
-                    transition: background 0.15s;
-                    cursor: pointer;
-                }
-                .list-item:last-child { border-bottom: none; }
-                .list-item:hover { background: #FAF7F2; }
-                .list-num {
-                    font-family: 'Playfair Display', serif;
-                    font-size: 1rem;
-                    color: #C9C5BE;
-                    min-width: 32px;
-                    font-weight: 700;
-                }
-                .list-title {
-                    flex: 1;
-                    font-size: 0.92rem;
-                    font-weight: 500;
-                    color: var(--ink);
-                }
-                .list-actions {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-
-                /* Results count */
-                .results-bar {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin-bottom: 20px;
-                }
-                .results-count {
-                    font-size: 0.88rem;
-                    color: #6B7280;
-                }
-                .results-count strong {
-                    color: var(--ink);
-                    font-weight: 600;
-                }
-
-                /* Empty State */
-                .empty-state {
-                    text-align: center;
-                    padding: 80px 20px;
-                    color: #9CA3AF;
-                }
-                .empty-state svg { margin: 0 auto 16px; display: block; }
-
-                /* Delivery badges */
-                .delivery-strip {
-                    background: var(--navy);
-                    color: rgba(255,255,255,0.7);
-                    font-size: 0.82rem;
-                    text-align: center;
-                    padding: 10px;
-                    letter-spacing: 0.03em;
-                }
-                .delivery-strip span {
-                    color: var(--gold-light);
-                    font-weight: 600;
-                }
-
-                @media (max-width: 640px) {
-                    .courses-grid { grid-template-columns: 1fr; }
-                    .hero-stats { gap: 20px; }
-                    .list-item { flex-wrap: wrap; }
-                }
-            `}</style>
-
-            <div className="catalogue-root">
-
-                {/* Delivery Strip */}
-                <div className="delivery-strip">
-                    Available via <span>self-paced online</span> · <span>live virtual</span> · <span>in-person workshops</span> · <span>corporate in-house</span>
-                </div>
-
-                {/* Hero */}
-                <section className="catalogue-hero">
-                    <div className="hero-grid-lines" />
-                    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", position: "relative" }}>
-                        <div className="hero-badge">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5"/>
-                                <path d="M4 6l1.5 1.5L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            IGRCFP · Professional Certificate Portfolio
-                        </div>
-                        <h1 className="hero-title">
-                            Course <span>Catalogue</span>
-                        </h1>
-                        <p className="hero-subtitle">
-                            Specialist programmes in Governance, Risk, Compliance, Financial Crime Prevention, Cybersecurity, and Emerging Regulatory Environments — built for professionals in complex, regulated settings.
-                        </p>
-                        <div className="hero-stats">
-                            <div className="hero-stat">
-                                <span className="hero-stat-num">62</span>
-                                <span className="hero-stat-label">Specialist Courses</span>
+                                <div className="mt-8 flex flex-wrap gap-3">
+                                    <a
+                                        href="#catalogue"
+                                        className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-cyan-50"
+                                    >
+                                        Browse Courses
+                                        <ArrowRight className="h-4 w-4" />
+                                    </a>
+                                    <a
+                                        href="mailto:training@igrcfp.org"
+                                        className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                                    >
+                                        Training Enquiries
+                                    </a>
+                                </div>
                             </div>
-                            <div className="hero-stat">
-                                <span className="hero-stat-num">7</span>
-                                <span className="hero-stat-label">Subject Areas</span>
-                            </div>
-                            <div className="hero-stat">
-                                <span className="hero-stat-num">3</span>
-                                <span className="hero-stat-label">Learning Pathways</span>
-                            </div>
-                            <div className="hero-stat">
-                                <span className="hero-stat-num">5</span>
-                                <span className="hero-stat-label">Delivery Modes</span>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                {[
+                                    ['62', 'Certificate Courses'],
+                                    ['7', 'Specialist Areas'],
+                                    ['3', 'Learning Pathways'],
+                                    ['5', 'Delivery Options'],
+                                ].map(([value, label]) => (
+                                    <div key={label} className="rounded-lg border border-white/10 bg-white/10 p-5 shadow-xl backdrop-blur">
+                                        <div className="text-3xl font-bold text-white">{value}</div>
+                                        <div className="mt-2 text-sm font-medium text-slate-300">{label}</div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Sticky Controls */}
-                <div className="controls-bar">
-                    <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 24px" }}>
-                        {/* Row 1: Search + View Toggle */}
-                        <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
-                            <div className="search-wrap" style={{ flex: 1 }}>
-                                <svg className="search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" strokeLinecap="round"/>
-                                </svg>
+                <section className="border-b border-slate-200 bg-white">
+                    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                        <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+                            <div className="relative">
+                                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                                 <input
-                                    className="search-input"
-                                    type="text"
-                                    placeholder="Search courses…"
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
+                                    value={search}
+                                    onChange={(event) => setSearch(event.target.value)}
+                                    type="search"
+                                    placeholder="Search course titles, risk areas, or subject groups"
+                                    className="h-12 w-full rounded-lg border-slate-300 pl-12 pr-12 text-sm shadow-sm focus:border-blue-600 focus:ring-blue-600"
                                 />
-                            </div>
-                            <div className="view-toggle" style={{ display: "flex" }}>
-                                <button className={viewMode === "grid" ? "active" : ""} onClick={() => setViewMode("grid")} title="Grid view">
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                                        <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-                                    </svg>
-                                </button>
-                                <button className={viewMode === "list" ? "active" : ""} onClick={() => setViewMode("list")} title="List view">
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" strokeLinecap="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Row 2: Category Tabs */}
-                        <div className="cat-tabs">
-                            {categories.map(cat => (
-                                <button
-                                    key={cat.id}
-                                    className={`cat-tab ${activeCategory === cat.id ? "active" : ""}`}
-                                    onClick={() => setActiveCategory(cat.id)}
-                                >
-                                    {cat.label}
-                                    <span style={{ marginLeft: 6, opacity: 0.65, fontSize: "0.78rem" }}>({cat.count})</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Row 3: Pathway Filters */}
-                        <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
-                            <span style={{ fontSize: "0.78rem", color: "#9CA3AF", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.07em" }}>Pathway:</span>
-                            {["all", "Foundation", "Specialist", "Leadership"].map(p => (
-                                <button
-                                    key={p}
-                                    className={`pathway-pill ${activePathway === p ? "active" : ""}`}
-                                    onClick={() => setActivePathway(p)}
-                                >
-                                    {p === "all" ? "All Pathways" : p}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content */}
-                <div style={{ maxWidth: 1200, margin: "0 auto", padding: "36px 24px 80px" }}>
-                    <div className="results-bar">
-                        <p className="results-count">
-                            Showing <strong>{filtered.length}</strong> of <strong>62</strong> courses
-                            {searchQuery && <> matching <strong>"{searchQuery}"</strong></>}
-                        </p>
-                        {(searchQuery || activeCategory !== "all" || activePathway !== "all") && (
-                            <button
-                                onClick={() => { setSearchQuery(""); setActiveCategory("all"); setActivePathway("all"); }}
-                                style={{ fontSize: "0.82rem", color: "#EF4444", fontWeight: 500, background: "none", border: "none", cursor: "pointer", fontFamily: "DM Sans, sans-serif" }}
-                            >
-                                Clear filters ×
-                            </button>
-                        )}
-                    </div>
-
-                    {filtered.length === 0 ? (
-                        <div className="empty-state">
-                            <svg width="48" height="48" fill="none" stroke="#D1D5DB" viewBox="0 0 24 24">
-                                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" strokeLinecap="round" strokeWidth="1.5"/>
-                            </svg>
-                            <p style={{ fontSize: "1rem", fontWeight: 500 }}>No courses found</p>
-                            <p style={{ fontSize: "0.88rem", marginTop: 6 }}>Try adjusting your filters or search query.</p>
-                        </div>
-                    ) : viewMode === "grid" ? (
-                        <div className="courses-grid">
-                            {filtered.map(course => {
-                                const meta = catMeta[course.cat];
-                                return (
-                                    <div
-                                        key={course.id}
-                                        className="course-card"
-                                        style={{ "--card-accent": meta.color }}
+                                {search && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearch('')}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-700"
+                                        aria-label="Clear search"
                                     >
-                                        <span className="course-num">{String(course.id).padStart(2, "0")}</span>
-                                        <div
-                                            className="course-cat-badge"
-                                            style={{ background: meta.bg, color: meta.color }}
-                                        >
-                                            <span style={{ width: 6, height: 6, borderRadius: "50%", background: meta.color, display: "inline-block" }}></span>
-                                            {meta.label}
-                                        </div>
-                                        <p className="course-title">{course.title}</p>
-                                        <div className="course-footer">
-                                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                                                {course.pathway.length > 0 ? course.pathway.map(p => (
-                                                    <span
-                                                        key={p}
-                                                        className="pathway-tag"
-                                                        style={{ background: pathwayColors[p].bg, color: pathwayColors[p].text, borderColor: pathwayColors[p].border }}
-                                                    >
-                                                        <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"/>
-                                                        </svg>
-                                                        {p}
-                                                    </span>
-                                                )) : <span style={{ fontSize: "0.75rem", color: "#C9C5BE" }}>Open Enrolment</span>}
-                                            </div>
-                                            <a href="#enrol" className="enrol-btn">
-                                                Enrol
-                                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"/>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+                                Showing {filteredCount} of {allCourses.length} courses
+                            </div>
                         </div>
-                    ) : (
-                        <div className="courses-list">
-                            {filtered.map(course => {
-                                const meta = catMeta[course.cat];
-                                return (
-                                    <div key={course.id} className="list-item">
-                                        <span className="list-num">{String(course.id).padStart(2, "0")}</span>
-                                        <div style={{ width: 10, height: 10, borderRadius: "50%", background: meta.color, flexShrink: 0 }}></div>
-                                        <span className="list-title">{course.title}</span>
-                                        <div className="list-actions">
-                                            {course.pathway.map(p => (
-                                                <span
-                                                    key={p}
-                                                    className="pathway-tag"
-                                                    style={{ background: pathwayColors[p].bg, color: pathwayColors[p].text, borderColor: pathwayColors[p].border }}
-                                                >
-                                                    {p}
+
+                        <div className="mt-5 flex gap-2 overflow-x-auto pb-1">
+                            <button
+                                type="button"
+                                onClick={() => setActiveGroup('all')}
+                                className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                                    activeGroup === 'all'
+                                        ? 'bg-slate-950 text-white'
+                                        : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                                }`}
+                            >
+                                All Courses
+                            </button>
+                            {courseGroups.map((group) => (
+                                <button
+                                    key={group.id}
+                                    type="button"
+                                    onClick={() => setActiveGroup(group.id)}
+                                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                                        activeGroup === group.id
+                                            ? 'bg-slate-950 text-white'
+                                            : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    {group.title}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section id="catalogue" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                    <div className="grid gap-6 lg:grid-cols-3">
+                        {filteredGroups.map((group) => {
+                            const Icon = group.icon;
+                            const classes = accentClasses[group.accent];
+
+                            return (
+                                <article
+                                    key={group.id}
+                                    className={`overflow-hidden rounded-lg border bg-white shadow-sm ${classes.border}`}
+                                >
+                                    <div className={`border-b px-5 py-5 ${classes.bg} ${classes.border}`}>
+                                        <div className="flex items-start gap-4">
+                                            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${classes.icon}`}>
+                                                <Icon className="h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${classes.pill}`}>
+                                                    {group.courses.length} courses
                                                 </span>
-                                            ))}
-                                            <span
-                                                className="course-cat-badge"
-                                                style={{ background: meta.bg, color: meta.color, fontSize: "0.7rem" }}
-                                            >
-                                                {meta.label}
-                                            </span>
-                                            <a href="#enrol" className="enrol-btn" style={{ fontSize: "0.8rem" }}>
-                                                Enrol →
-                                            </a>
+                                                <h2 className="mt-3 text-xl font-bold text-slate-950">{group.title}</h2>
+                                                <p className="mt-2 text-sm leading-6 text-slate-600">{group.summary}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                );
-                            })}
+
+                                    <div className="divide-y divide-slate-100">
+                                        {group.courses.map((course) => (
+                                            <div key={course.number} className="grid grid-cols-[3rem_1fr] gap-3 px-5 py-4">
+                                                <div className="text-sm font-bold text-slate-400">
+                                                    {String(course.number).padStart(2, '0')}
+                                                </div>
+                                                <div className="text-sm font-semibold leading-6 text-slate-800">
+                                                    {course.title}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
+
+                    {filteredGroups.length === 0 && (
+                        <div className="rounded-lg border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+                            <BookOpen className="mx-auto h-10 w-10 text-slate-400" />
+                            <h2 className="mt-4 text-xl font-bold text-slate-950">No matching courses found</h2>
+                            <p className="mt-2 text-slate-600">Try a different keyword or view all subject areas.</p>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSearch('');
+                                    setActiveGroup('all');
+                                }}
+                                className="mt-6 rounded-lg bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                            >
+                                Reset Catalogue
+                            </button>
                         </div>
                     )}
+                </section>
 
-                    {/* Enrolment CTA */}
-                    <div id="enrol" style={{
-                        marginTop: 64,
-                        background: "linear-gradient(135deg, #0B1B3E 0%, #162850 100%)",
-                        borderRadius: 20,
-                        padding: "48px 40px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 32,
-                        flexWrap: "wrap",
-                        position: "relative",
-                        overflow: "hidden"
-                    }}>
-                        <div style={{
-                            position: "absolute", inset: 0,
-                            background: "radial-gradient(circle at 90% 50%, rgba(200,147,58,0.15) 0%, transparent 60%)"
-                        }}/>
-                        <div style={{ position: "relative" }}>
-                            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.6rem", color: "#fff", fontWeight: 700, margin: "0 0 8px" }}>
-                                Ready to Enrol?
-                            </p>
-                            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.95rem", margin: 0, maxWidth: 440 }}>
-                                Contact our training team to register for a course, discuss corporate training packages, or explore partnership opportunities.
+                <section className="bg-white py-14">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-3xl">
+                            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">Learning Pathways</p>
+                            <h2 className="mt-3 text-3xl font-bold text-slate-950">Choose a pathway that matches your career stage</h2>
+                            <p className="mt-3 leading-7 text-slate-600">
+                                Each pathway gives learners a practical route through the catalogue, from foundational capability to specialist depth and senior leadership readiness.
                             </p>
                         </div>
-                        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", position: "relative" }}>
-                            <a
-                                href="mailto:training@igrcfp.org"
-                                style={{
-                                    background: "#C8933A", color: "#fff",
-                                    padding: "12px 28px", borderRadius: 10,
-                                    fontWeight: 600, fontSize: "0.92rem",
-                                    textDecoration: "none", display: "inline-flex",
-                                    alignItems: "center", gap: 8,
-                                    fontFamily: "'DM Sans', sans-serif",
-                                    transition: "background 0.2s"
-                                }}
-                            >
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8"/>
-                                </svg>
-                                training@igrcfp.org
-                            </a>
-                            <a
-                                href="https://www.igrcfp.org"
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                    background: "rgba(255,255,255,0.1)", color: "#fff",
-                                    padding: "12px 28px", borderRadius: 10,
-                                    fontWeight: 600, fontSize: "0.92rem",
-                                    textDecoration: "none", display: "inline-flex",
-                                    alignItems: "center", gap: 8,
-                                    border: "1px solid rgba(255,255,255,0.2)",
-                                    fontFamily: "'DM Sans', sans-serif"
-                                }}
-                            >
-                                Visit Website →
-                            </a>
+
+                        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+                            {pathways.map((pathway) => {
+                                const Icon = pathway.icon;
+
+                                return (
+                                    <article key={pathway.title} className="rounded-lg border border-slate-200 bg-slate-50 p-6">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-900 text-white">
+                                            <Icon className="h-6 w-6" />
+                                        </div>
+                                        <h3 className="mt-5 text-xl font-bold text-slate-950">{pathway.title}</h3>
+                                        <p className="mt-3 text-sm leading-6 text-slate-600">{pathway.audience}</p>
+
+                                        <div className="mt-5 space-y-3">
+                                            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Recommended courses</p>
+                                            {pathway.recommended.map((course) => (
+                                                <div key={course} className="flex gap-3 text-sm leading-6 text-slate-700">
+                                                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                                                    <span>{course}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </article>
+                                );
+                            })}
                         </div>
                     </div>
-                </div>
-            </div>
-        </>
+                </section>
+
+                <section className="mx-auto grid max-w-7xl gap-6 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
+                    <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-700 text-white">
+                                <CheckCircle2 className="h-6 w-6" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-950">Why Study with IGRCFP?</h2>
+                        </div>
+                        <div className="mt-6 grid gap-3">
+                            {studyReasons.map((reason) => (
+                                <div key={reason} className="flex gap-3 rounded-lg bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+                                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+                                    {reason}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-cyan-700 text-white">
+                                <MonitorPlay className="h-6 w-6" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-950">Delivery Options</h2>
+                        </div>
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                            {deliveryOptions.map((option) => (
+                                <div key={option} className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+                                    {option}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="bg-slate-950 py-14 text-white">
+                    <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:items-center">
+                        <div>
+                            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-slate-950">
+                                <Award className="h-6 w-6" />
+                            </div>
+                            <h2 className="mt-5 text-3xl font-bold">Certification</h2>
+                            <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                                Participants who successfully complete the course requirements will receive an IGRCFP Professional Certificate in the relevant subject area.
+                            </p>
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-3">
+                            {[
+                                ['Professional', 'Focused on practical professional capability'],
+                                ['Relevant', 'Built for regulated and complex environments'],
+                                ['Recognised', 'Issued by IGRCFP on successful completion'],
+                            ].map(([title, text]) => (
+                                <div key={title} className="rounded-lg border border-white/10 bg-white/10 p-5">
+                                    <h3 className="font-bold text-white">{title}</h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-300">{text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+                    <div className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                        <div className="grid lg:grid-cols-[1fr_1.2fr]">
+                            <div className="bg-blue-900 p-8 text-white">
+                                <Building2 className="h-9 w-9" />
+                                <h2 className="mt-5 text-3xl font-bold">Enrolment and Partnerships</h2>
+                                <p className="mt-4 leading-7 text-blue-100">
+                                    Register for a course or discuss corporate training, in-house delivery, and partnership opportunities with IGRCFP.
+                                </p>
+                                <Link
+                                    href="/contact"
+                                    className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-blue-950 transition hover:bg-blue-50"
+                                >
+                                    Contact IGRCFP
+                                    <ArrowRight className="h-4 w-4" />
+                                </Link>
+                            </div>
+
+                            <div className="grid gap-4 p-8 sm:grid-cols-3">
+                                <a
+                                    href="https://www.igrcfp.org"
+                                    className="rounded-lg border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-200 hover:bg-blue-50"
+                                >
+                                    <BookOpen className="h-6 w-6 text-blue-900" />
+                                    <div className="mt-4 text-sm font-bold text-slate-950">Website</div>
+                                    <div className="mt-1 text-sm text-slate-600">www.igrcfp.org</div>
+                                </a>
+
+                                <a
+                                    href="mailto:training@igrcfp.org"
+                                    className="rounded-lg border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-200 hover:bg-blue-50"
+                                >
+                                    <Mail className="h-6 w-6 text-blue-900" />
+                                    <div className="mt-4 text-sm font-bold text-slate-950">Training Enquiries</div>
+                                    <div className="mt-1 text-sm text-slate-600">training@igrcfp.org</div>
+                                </a>
+
+                                <a
+                                    href="mailto:partnerships@igrcfp.org"
+                                    className="rounded-lg border border-slate-200 bg-slate-50 p-5 transition hover:border-blue-200 hover:bg-blue-50"
+                                >
+                                    <Users className="h-6 w-6 text-blue-900" />
+                                    <div className="mt-4 text-sm font-bold text-slate-950">Partnerships</div>
+                                    <div className="mt-1 text-sm text-slate-600">partnerships@igrcfp.org</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </GuestLayout>
     );
 }

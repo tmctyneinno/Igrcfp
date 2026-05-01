@@ -98,12 +98,12 @@ export default function NavBar({ auth }) {
                             
                             {/* Programme List */}
                             <div className="max-h-[480px] overflow-y-auto">
-                             {/* Course Catalog */}
+                                {/* Course Catalogue */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
                                     <Link href={route('course.catalog.index')}>
                                         <div className="flex items-center">
                                             <div className="w-2 h-2 bg-slate-600 rounded-full mr-3"></div>
-                                            <h4 className="font-semibold text-gray-800">Course Catalog</h4>
+                                            <h4 className="font-semibold text-gray-800">Course Catalogue</h4>
                                         </div>
                                     </Link>
                                 </div>
@@ -161,10 +161,10 @@ export default function NavBar({ auth }) {
                             {/* Footer */}
                             <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
                                 <Link 
-                                    href={route('igrcfp.certificates.index')}
+                                    href={route('course.catalog.index')}
                                     className="text-sm font-medium text-blue-900 hover:text-blue-700 flex items-center justify-between"
                                 >
-                                    View All Programmes
+                                    Browse Course Catalogue
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                     </svg>
@@ -414,6 +414,20 @@ export default function NavBar({ auth }) {
                                     <div className="text-xs uppercase text-blue-900 font-semibold tracking-wide py-2">
                                         Core Programme Pathways
                                     </div>
+
+                                    <Link
+                                        href={route('course.catalog.index')}
+                                        className="block text-gray-600 hover:text-blue-900 py-2 px-3 hover:bg-gray-50 rounded transition duration-200"
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            setOpenDropdown(null);
+                                        }}
+                                    >
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-slate-600 rounded-full mr-3"></div>
+                                            Course Catalogue
+                                        </div>
+                                    </Link>
                                     
                                     <Link 
                                         href="/programmes/grc" 
@@ -487,14 +501,14 @@ export default function NavBar({ auth }) {
                                     
                                     <div className="border-t border-gray-200 my-2 pt-2">
                                         <Link 
-                                            href="/programmes/all-courses" 
+                                            href={route('course.catalog.index')}
                                             className="block text-blue-900 font-medium py-2 px-3 hover:bg-blue-50 rounded transition duration-200"
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);
                                                 setOpenDropdown(null);
                                             }}
                                         >
-                                            View All Programmes
+                                            Browse Course Catalogue
                                         </Link>
                                     </div>
                                 </div>
