@@ -285,7 +285,7 @@
                                                     
                                                         class="btn btn-sm btn-outline-primary">
                                                         Edit
-                                                    </a>
+                                                    </a> 
                                                     
                                                     <!-- Delete Module -->
                                                     <form action="{{ route('admin.courses.modules.destroy', [
