@@ -298,7 +298,7 @@
                                                         <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                                 onclick="return confirm('Are you sure you want to delete this module? This action cannot be undone.')">
                                                             Delete
-                                                        </button>
+                                                        </button> 
                                                     </form>
                                                 </div>
                                             </div>
