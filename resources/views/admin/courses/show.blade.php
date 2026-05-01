@@ -252,9 +252,9 @@
                                                 
                                                 <div class="d-flex gap-2">
                                                     <!-- Toggle Active Status -->
-                                                    <form ction="{{ route('admin.courses.modules.toggle-active', [
-                                                        'course' => $course,
-                                                        'module' => $module
+                                                    <form action="{{ route('admin.courses.modules.toggle-active', [
+                                                        'course' => $course->slug,
+                                                        'module' => $module->id
                                                     ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -266,8 +266,8 @@
                                                     <!-- Duplicate Module -->
                                                     <form 
                                                         action="{{ route('admin.courses.modules.duplicate', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -279,8 +279,8 @@
                                                     
                                                     <!-- Edit Module -->
                                                     <a href="{{ route('admin.courses.modules.edit', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}" 
                                                     
                                                         class="btn btn-sm btn-outline-primary">
@@ -289,8 +289,8 @@
                                                     
                                                     <!-- Delete Module -->
                                                     <form action="{{ route('admin.courses.modules.destroy', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf

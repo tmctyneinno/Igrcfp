@@ -135,7 +135,7 @@ class ModuleController extends Controller
         try {
             $module->delete();
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Module deleted successfully!');
 
         } catch (\Exception $e) {
