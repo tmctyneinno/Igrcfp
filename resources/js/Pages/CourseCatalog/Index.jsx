@@ -223,7 +223,7 @@ export default function CourseCatalog({ auth }) {
                 </div>
             </section>
 
-            <section className="bg-white py-10">
+            <section className="bg-white py-16">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-blue-50 p-6 md:p-8 shadow-sm space-y-5 text-lg leading-8 text-gray-700">
                         <p>
@@ -237,7 +237,7 @@ export default function CourseCatalog({ auth }) {
             </section>
 
             <section className="bg-gray-50 py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-9">
                     <div className="grid gap-8 lg:grid-cols-2">
                         {courseSections.map((section, index) => (
                             <CourseTable key={section.title} section={section} index={index} />
