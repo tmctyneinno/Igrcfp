@@ -81,13 +81,6 @@ export default function NavBar({ auth }) {
                         Membership
                     </Link>
 
-                    <Link
-                        href={route('course.catalog.index')}
-                        className="text-gray-700 hover:text-blue-900 font-medium transition duration-300"
-                    >
-                        Course Catalog
-                    </Link>
-
                     {/* Programmes & Courses Dropdown - UPDATED WITH DETAILED CONTENT */}
                     <div className="relative group">
                         <button className="text-gray-700 hover:text-blue-900 font-medium flex items-center focus:outline-none transition duration-300 relative z-10">
@@ -105,6 +98,15 @@ export default function NavBar({ auth }) {
                             
                             {/* Programme List */}
                             <div className="max-h-[480px] overflow-y-auto">
+                             {/* Course Catalog */}
+                                <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
+                                    <Link href={route('course.catalog.index')}>
+                                        <div className="flex items-center">
+                                            <div className="w-2 h-2 bg-slate-600 rounded-full mr-3"></div>
+                                            <h4 className="font-semibold text-gray-800">Course Catalog</h4>
+                                        </div>
+                                    </Link>
+                                </div>
                                 {/* IGRCFP Certificates */}
                                 <div className="px-4 py-3 hover:bg-blue-50 transition duration-200">
                                     <Link href={route('igrcfp.certificates.index')}>
@@ -394,14 +396,6 @@ export default function NavBar({ auth }) {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Membership
-                        </Link>
-
-                        <Link
-                            href={route('course.catalog.index')}
-                            className="text-gray-700 hover:text-blue-900 font-medium py-3 px-4 hover:bg-gray-50 rounded-lg transition duration-200"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            Course Catalog
                         </Link>
                         
                         {/* Programmes & Courses Dropdown for Mobile */}

@@ -41,7 +41,7 @@ Route::prefix('news')->name('news.')->group(function () {
     Route::get('/{slug}/show', [NewsController::class, 'showNews'])->name('show');
 }); 
 
-
+ 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/course-catalog', [CourseCatalogController::class, 'index'])->name('course.catalog.index');
