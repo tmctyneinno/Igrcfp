@@ -106,7 +106,7 @@
                                     <option value="IGRCFP Fellowship"                         {{ old('igrcfp_category') == 'IGRCFP Fellowship'                         ? 'selected' : '' }}>IGRCFP Fellowship</option>
                                 </select>
                                 <p class="text-sm mt-1 mb-0 text-muted">Separate from the standard course category.</p>
-                            </div>
+                            </div> 
 
                             {{-- Short description: plain textarea, NO rich-editor class --}}
                             <div class="col-12">
@@ -412,11 +412,10 @@
                             </ul>
                         </div>
 
-                        <div class="mb-3">
+                       <div class="mb-3">
                             <label class="form-label">Paste Module Content <span class="text-danger">*</span></label>
-                            {{-- NO rich-editor class — this must remain a plain textarea --}}
                             <textarea name="bulk_modules"
-                                class="form-control plain-textarea @error('bulk_modules') is-invalid @enderror"
+                                class="form-control rich-editor @error('bulk_modules') is-invalid @enderror"
                                 rows="20"
                                 placeholder="Module 1: Introduction to GRC&#10;This module provides an overview of Governance, Risk, and Compliance...&#10;&#10;Module 2: Risk Management Framework&#10;Learn about risk assessment methodologies and frameworks...">{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')<div class="invalid-feedback">{{ $message }}</div>@enderror
