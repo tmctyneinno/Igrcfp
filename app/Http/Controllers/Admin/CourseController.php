@@ -166,7 +166,7 @@ class CourseController extends Controller
             'short_title'          => 'required|string|max:100',
             'short_description'    => 'required|string',
             'category_id'          => 'nullable|exists:course_categories,id',
-            'igrcfp_category'      => 'nullable|in:IGRCFP Certificates,IGRCFP Diploma,IGRCFP Advanced Diploma,Certified GRC & Financial Crime Specialist,IGRCFP Fellowship',
+            'igrcfp_category'      => 'nullable|in:IGRCFP Certificates,IGRCFP Diploma,IGRCFP Advanced Diploma,Certified GRC & Financial Crime Specialist,Postgraduate Diploma, IGRCFP Fellowship',
             'full_description'     => 'required|string',
             'image'                => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'banner_image'         => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',

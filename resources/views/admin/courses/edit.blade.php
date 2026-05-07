@@ -110,8 +110,8 @@
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Advanced Diploma' ? 'selected' : '' }}>IGRCFP Advanced Diploma</option>
                                     <option value="Certified GRC &amp; Financial Crime Specialist"
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
-                                    <option value="Certified GRC &amp; Financial Crime Specialist"
-                                        {{ old('igrcfp_category', $course->igrcfp_category) == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
+                                    <option value="Postgraduate Diploma"
+                                        {{ old('igrcfp_category', $course->igrcfp_category) == 'Postgraduate Diploma' ? 'selected' : '' }}>Postgraduate Diploma</option>
                                     
                                     <option value="IGRCFP Fellowship"
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Fellowship' ? 'selected' : '' }}>IGRCFP Fellowship</option>
