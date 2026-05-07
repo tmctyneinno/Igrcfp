@@ -162,7 +162,6 @@ class HomeController extends Controller
     }
 
     public function cgfcsSpecialist(){
-        \Log::info('CGFCS Specialist route accessed');
     
         return Inertia::render('Certifications/CGFCSSpecialist', [
             'title' => 'CGFCS Specialist',
@@ -304,8 +303,6 @@ class HomeController extends Controller
     public function privacyPreferenceCenter(){
         return Inertia::render('PrivacyPreferenceCenter/Index');
     }
-
-
   
     public function showIgrcfpProgramme(Request $request, string $programme)
     {
@@ -349,6 +346,7 @@ class HomeController extends Controller
         $query = Course::published()
             ->where('igrcfp_category', $currentProgramme['category'])
             ->withCount('modules');
+        \Log::info('query:', ['query' => $query]);
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
