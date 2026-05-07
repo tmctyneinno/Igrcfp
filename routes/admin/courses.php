@@ -25,7 +25,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::post('/courses/{course}/materials/upload/', [CourseController::class, 'materialsUpload'])->name('courses.materials.upload');
     Route::post('/courses/bulk-action', [CourseController::class, 'bulkAction'])->name('courses.bulk-action');
     
-    // Edit Course
+    // Edit Course 
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
         ->name('courses.edit'); 
     
