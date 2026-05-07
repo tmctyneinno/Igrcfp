@@ -128,7 +128,7 @@ export default function NavBar({ auth }) {
                                     <div 
                                         className="fixed left-1/2 -translate-x-1/2 mt-2 w-[95vw] max-w-[1200px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
                                         style={{ 
-                                            top: '64px', // Adjust based on your navbar height
+                                            // top: '64px', // Adjust based on your navbar height
                                             maxHeight: 'calc(100vh - 90px)',
                                         }}
                                     >
