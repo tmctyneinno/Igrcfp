@@ -184,8 +184,8 @@
                             <div class="col-md-6">
                                 <label class="form-label">Format <span class="text-danger">*</span></label>
                                 <select name="format" class="form-select @error('format') is-invalid @enderror" required>
-                                    <option value="self_paced"     {{ old('format') == 'self_paced'     ? 'selected' : '' }}>Self-Paced</option>
-                                    <option value="instructor_led" {{ old('format') == 'instructor_led' ? 'selected' : '' }}>Instructor-Led</option>
+                                    <option value="online"     {{ old('format') == 'online'     ? 'selected' : '' }}>Online</option>
+                                    <option value="live" {{ old('format') == 'live' ? 'selected' : '' }}>Live</option>
                                     <option value="hybrid"         {{ old('format') == 'hybrid'         ? 'selected' : '' }}>Hybrid</option>
                                 </select>
                                 @error('format')<div class="invalid-feedback">{{ $message }}</div>@enderror
