@@ -174,7 +174,7 @@ class CourseController extends Controller
             'video'                => 'nullable|file|mimes:mp4,mov,avi,wmv,mkv|max:20480',
             'video_url'            => 'nullable|url|max:500',
             'level'                => 'required|in:beginner,intermediate,advanced,expert',
-            'format'               => 'required|in:self_paced,instructor_led,hybrid',
+            'format'               => 'required|in:online,live,hybrid',
             'duration'             => 'required|string|max:100',
             'total_modules'        => 'required|integer|min:1',
             'total_hours'          => 'required|integer|min:1',

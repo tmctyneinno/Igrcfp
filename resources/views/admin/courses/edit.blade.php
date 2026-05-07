@@ -110,6 +110,9 @@
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Advanced Diploma' ? 'selected' : '' }}>IGRCFP Advanced Diploma</option>
                                     <option value="Certified GRC &amp; Financial Crime Specialist"
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
+                                    <option value="Certified GRC &amp; Financial Crime Specialist"
+                                        {{ old('igrcfp_category', $course->igrcfp_category) == 'Certified GRC & Financial Crime Specialist' ? 'selected' : '' }}>Certified GRC &amp; Financial Crime Specialist</option>
+                                    
                                     <option value="IGRCFP Fellowship"
                                         {{ old('igrcfp_category', $course->igrcfp_category) == 'IGRCFP Fellowship' ? 'selected' : '' }}>IGRCFP Fellowship</option>
                                 </select>
@@ -198,8 +201,8 @@
                             <div class="col-md-6">
                                 <label class="form-label">Format <span class="text-danger">*</span></label>
                                 <select name="format" class="form-select @error('format') is-invalid @enderror" required>
-                                    <option value="self_paced"     {{ old('format', $course->format) == 'self_paced'     ? 'selected' : '' }}>Self-Paced</option>
-                                    <option value="instructor_led" {{ old('format', $course->format) == 'instructor_led' ? 'selected' : '' }}>Instructor-Led</option>
+                                    <option value="online"     {{ old('format', $course->format) == 'online'     ? 'selected' : '' }}>Online</option>
+                                    <option value="live" {{ old('format', $course->format) == 'live' ? 'selected' : '' }}>Live</option>
                                     <option value="hybrid"         {{ old('format', $course->format) == 'hybrid'         ? 'selected' : '' }}>Hybrid</option>
                                 </select>
                                 @error('format')<div class="invalid-feedback">{{ $message }}</div>@enderror
