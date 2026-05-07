@@ -552,94 +552,79 @@ class CourseController extends Controller
     //  Materials upload
     // -------------------------------------------------------------------------
 
-    public function uploadMaterials(Request $request, Course $course)
-    {
-        $request->validate([
-            'materials.*'   => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,zip,rar|max:10240',
-            'material_type' => 'required|in:manual,presentation,worksheet,template,reference',
-            'module_id'     => 'nullable|exists:course_modules,id',
-        ]);
+        public function uploadMaterials(Request $request, Course $course)
+        {
+            $request->validate([
+                'materials.*'   => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,zip,rar|max:10240',
+                'material_type' => 'required|in:manual,presentation,worksheet,template,reference',
+                'module_id'     => 'nullable|exists:course_modules,id',
+            ]);
 
-        try {
-            $uploaded = [];
+            try {
+                $uploaded = [];
 
-            foreach ($request->file('materials') as $file) {
-                $path = $file->store('courses/materials', 'public');
+                foreach ($request->file('materials') as $file) {
+                    $path = $file->store('courses/materials', 'public');
 
-                $material = $course->materials()->create([
-                    'module_id'     => $request->module_id,
-                    'title'         => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
-                    'file_name'     => $file->getClientOriginalName(),
-                    'file_path'     => $path,
-                    'file_type'     => $file->getClientOriginalExtension(),
-                    'file_size'     => $file->getSize(),
-                    'material_type' => $request->material_type,
-                    'is_downloadable' => $request->has('is_downloadable'),
-                ]);
+                    $material = $course->materials()->create([
+                        'module_id'     => $request->module_id,
+                        'title'         => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                        'file_name'     => $file->getClientOriginalName(),
+                        'file_path'     => $path,
+                        'file_type'     => $file->getClientOriginalExtension(),
+                        'file_size'     => $file->getSize(),
+                        'material_type' => $request->material_type,
+                        'is_downloadable' => $request->has('is_downloadable'),
+                    ]);
 
-                $uploaded[] = $material;
+                    $uploaded[] = $material;
+                }
+
+                return back()->with('success', count($uploaded) . ' materials uploaded successfully!');
+
+            } catch (\Exception $e) {
+                return back()->with('error', 'Error uploading materials: ' . $e->getMessage());
             }
-
-            return back()->with('success', count($uploaded) . ' materials uploaded successfully!');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error uploading materials: ' . $e->getMessage());
         }
-    }
 
-    public function materialsUpload(Request $request, $courseIdentifier)
+   public function materialsUpload(Request $request, $courseIdentifier)
     {
         $course = Course::where('id', $courseIdentifier)
             ->orWhere('slug', $courseIdentifier)
             ->firstOrFail();
 
         $request->validate([
-            'materials.*'    => 'required|file|max:20480',
-            'material_type'  => 'required|string|in:manual,presentation,worksheet,template,reference,video,audio,image,other',
-            'module_id'      => 'nullable|exists:modules,id',
-            'is_downloadable'=> 'boolean',
-            'description'    => 'nullable|string|max:500',
+            'materials.*'   => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,txt,zip,rar|max:10240',
+            'material_type' => 'required|in:manual,presentation,worksheet,template,reference',
+            'module_id'     => 'nullable|exists:course_modules,id',  // ← fixed table name
         ]);
 
-        $results = ['success' => [], 'failed' => []];
-
-        DB::beginTransaction();
-
         try {
-            foreach ($request->file('materials') as $index => $file) {
-                try {
-                    $material          = $this->processMaterialUpload($file, $course, $request, $index);
-                    $results['success'][] = [
-                        'name' => $material->original_filename,
-                        'id'   => $material->id,
-                        'url'  => Storage::url($material->file_path),
-                    ];
-                } catch (\Exception $e) {
-                    $results['failed'][] = [
-                        'name'  => $file->getClientOriginalName(),
-                        'error' => $e->getMessage(),
-                    ];
-                }
+            $uploaded = 0;
+
+            foreach ($request->file('materials') as $file) {
+                $path = $file->store('courses/materials', 'public');
+
+                $course->materials()->create([
+                    'module_id'       => $request->module_id,
+                    'title'           => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                    'file_name'       => $file->getClientOriginalName(),
+                    'file_path'       => $path,
+                    'file_type'       => $file->getClientOriginalExtension(),
+                    'file_size'       => $file->getSize(),
+                    'material_type'   => $request->material_type,
+                    'is_downloadable' => $request->has('is_downloadable'),
+                ]);
+
+                $uploaded++;
             }
 
-            DB::commit();
-
-            ActivityLog::create([
-                'user_id'     => auth()->id(),
-                'action'      => 'upload_materials',
-                'description' => 'Uploaded ' . count($results['success']) . ' materials to course: ' . $course->title,
-                'details'     => json_encode([
-                    'course_id'      => $course->id,
-                    'materials_count'=> count($results['success']),
-                    'material_ids'   => array_column($results['success'], 'id'),
-                ]),
-            ]);
-
-            return $this->handleUploadResponse($request, $results, $course);
+            return redirect()
+                ->route('admin.courses.show', $course->slug)
+                ->with('success', $uploaded . ' material(s) uploaded successfully!');
 
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Upload failed: ' . $e->getMessage());
+            return back()->with('error', 'Error uploading materials: ' . $e->getMessage());
         }
     }
 
