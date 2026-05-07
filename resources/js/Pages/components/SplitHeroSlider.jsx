@@ -5,7 +5,7 @@ export default function SplitHeroSlider({ auth }) {
     const [activeSlide, setActiveSlide] = useState(0);
     const slideInterval = useRef(null);
 
-    const slides = [
+    const slides = [ 
         {
             id: 1,
             title: "Empower Professionals, Strengthening Governance, Preventing Financial Crime",

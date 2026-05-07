@@ -188,7 +188,7 @@ export default function Footer() {
                                 "About Us",
                                 "Welcome to IGRCFP",
                                 "Our Structure",
-                                'Course Catalogue',
+                                'Course Catalogue', 
                                 'Course'
                             ].map((item, index) => (
                                 <li key={index}>

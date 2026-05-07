@@ -186,110 +186,58 @@ export default function QualificationPartnershipPack({ auth }) {
             
             {/* Hero Section */}
             {/* Hero Section */}
-<section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-24 lg:py-32">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
-                    <GlobeAltIcon className="w-4 h-4 mr-2" />
-                    Internationally Aligned Framework
-                </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-gray-900">
-                    Global Qualification & Partnership Framework
-                </h1>
-                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                    A comprehensive professional development ecosystem from Certificate to Executive 
-                    Leadership, aligned with international standards and university progression pathways.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                    <Link
-                        href="#qualification-framework"
-                        className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-xl hover:bg-blue-800 transition shadow-lg hover:shadow-xl"
-                    >
-                        Explore Framework
-                        <ArrowRightIcon className="w-5 h-5 ml-2" />
-                    </Link>
-                    <Link
-                        href="#partnerships"
-                        className="inline-flex items-center px-6 py-3 border-2 border-blue-900 text-blue-900 font-semibold rounded-xl hover:bg-blue-50 transition"
-                    >
-                        Partnership Models
-                    </Link>
-                </div>
-            </div>
-            <div className="hidden lg:block">
-                <div className="bg-white rounded-2xl p-8 border border-blue-100 shadow-xl">
-                    <h3 className="text-sm font-bold text-blue-900 uppercase tracking-wider mb-4">
-                        Qualification Pathway
-                    </h3>
-                    <div className="space-y-4">
-                        {qualificationLevels.map((q, idx) => (
-                            <div key={idx} className="flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${
-                                    idx === 0 ? 'bg-blue-100 text-blue-700' :
-                                    idx === 1 ? 'bg-green-100 text-green-700' :
-                                    idx === 2 ? 'bg-indigo-100 text-indigo-700' :
-                                    'bg-rose-100 text-rose-700'
-                                }`}>
-                                    L{idx + 1}
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900">{q.qualification}</p>
-                                    <p className="text-sm text-gray-500">{q.positioning}</p>
-                                </div>
-                                <ChevronRightIcon className="w-5 h-5 ml-auto text-gray-300" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-24 lg:py-32">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        <div className="text-white">
-                            <div className="inline-flex items-center px-3 py-1 bg-white/10 backdrop-blur rounded-full text-sm mb-6">
+                        <div>
+                            <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
                                 <GlobeAltIcon className="w-4 h-4 mr-2" />
                                 Internationally Aligned Framework
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-gray-900">
                                 Global Qualification & Partnership Framework
                             </h1>
-                            <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+                            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                                 A comprehensive professional development ecosystem from Certificate to Executive 
                                 Leadership, aligned with international standards and university progression pathways.
                             </p>
                             <div className="flex flex-wrap gap-4">
                                 <Link
                                     href="#qualification-framework"
-                                    className="inline-flex items-center px-6 py-3 bg-white text-blue-900 font-semibold rounded-xl hover:bg-blue-50 transition"
+                                    className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-xl hover:bg-blue-800 transition shadow-lg hover:shadow-xl"
                                 >
                                     Explore Framework
                                     <ArrowRightIcon className="w-5 h-5 ml-2" />
                                 </Link>
                                 <Link
                                     href="#partnerships"
-                                    className="inline-flex items-center px-6 py-3 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 transition"
+                                    className="inline-flex items-center px-6 py-3 border-2 border-blue-900 text-blue-900 font-semibold rounded-xl hover:bg-blue-50 transition"
                                 >
                                     Partnership Models
                                 </Link>
                             </div>
                         </div>
                         <div className="hidden lg:block">
-                            <div className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10">
+                            <div className="bg-white rounded-2xl p-8 border border-blue-100 shadow-xl">
+                                <h3 className="text-sm font-bold text-blue-900 uppercase tracking-wider mb-4">
+                                    Qualification Pathway
+                                </h3>
                                 <div className="space-y-4">
                                     {qualificationLevels.map((q, idx) => (
-                                        <div key={idx} className="flex items-center gap-4 text-white">
-                                            <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center font-bold text-sm">
+                                        <div key={idx} className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${
+                                                idx === 0 ? 'bg-blue-100 text-blue-700' :
+                                                idx === 1 ? 'bg-green-100 text-green-700' :
+                                                idx === 2 ? 'bg-indigo-100 text-indigo-700' :
+                                                'bg-rose-100 text-rose-700'
+                                            }`}>
                                                 L{idx + 1}
                                             </div>
                                             <div>
-                                                <p className="font-semibold">{q.qualification}</p>
-                                                <p className="text-sm text-blue-200">{q.positioning}</p>
+                                                <p className="font-semibold text-gray-900">{q.qualification}</p>
+                                                <p className="text-sm text-gray-500">{q.positioning}</p>
                                             </div>
-                                            <ChevronRightIcon className="w-5 h-5 ml-auto text-blue-300" />
+                                            <ChevronRightIcon className="w-5 h-5 ml-auto text-gray-300" />
                                         </div>
                                     ))}
                                 </div>
