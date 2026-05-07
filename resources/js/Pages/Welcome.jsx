@@ -19,7 +19,53 @@ export default function Welcome({ auth, courses }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-   
+
+    // Course catalogue preview data - MOVED INSIDE THE COMPONENT
+    const courseCategories = [
+        {
+            name: "Core GRC & Governance",
+            icon: "🏛️",
+            count: 10,
+            color: "blue",
+            sampleCourse: "Certificate in Governance, Risk & Compliance (GRC)"
+        },
+        {
+            name: "Financial Crime & AML",
+            icon: "🔍",
+            count: 12,
+            color: "red",
+            sampleCourse: "Certificate in Anti-Money Laundering (AML & CFT)"
+        },
+        {
+            name: "Cybersecurity & Digital Risk",
+            icon: "🛡️",
+            count: 10,
+            color: "purple",
+            sampleCourse: "Certificate in Cybersecurity & Digital Risk"
+        },
+        {
+            name: "Data, Privacy & Technology",
+            icon: "🔐",
+            count: 8,
+            color: "green",
+            sampleCourse: "Certificate in Data Protection & Privacy (GDPR)"
+        },
+        {
+            name: "Audit, Control & Assurance",
+            icon: "📊",
+            count: 8,
+            color: "indigo",
+            sampleCourse: "Certificate in Internal Audit & Assurance"
+        },
+        {
+            name: "ESG, Ethics & Sustainability",
+            icon: "🌱",
+            count: 6,
+            color: "teal",
+            sampleCourse: "Certificate in ESG (Environmental, Social & Governance)"
+        }
+    ];
+
 
     return (
         <GuestLayout auth={auth}> 
@@ -116,67 +162,7 @@ export default function Welcome({ auth, courses }) {
                         </div>
                     </div>
 
-                    {/* Learning Pathways Preview */}
-                    <div className="mb-12" data-aos="fade-up" data-aos-duration="1000">
-                        <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">Learning Pathways</h3>
-                        <p className="text-gray-600 text-center mb-8">Structured routes to build expertise based on your career stage</p>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {learningPathways.map((pathway, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-white rounded-xl p-6 border-l-4 border-blue-600 shadow-md hover:shadow-lg transition-all duration-300"
-                                    data-aos="fade-up"
-                                    data-aos-delay={index * 100}
-                                    data-aos-duration="800"
-                                >
-                                    <h4 className="text-lg font-bold text-gray-900 mb-2">{pathway.name}</h4>
-                                    <p className="text-sm text-gray-600 mb-4">{pathway.description}</p>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm font-medium text-blue-600">{pathway.courses} recommended courses</span>
-                                        <Link
-                                            href={route('course.catalog.index')}
-                                            className="text-blue-600 hover:text-blue-800"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Bottom CTA */}
-                    <div className="text-center" data-aos="fade-up" data-aos-duration="1000">
-                        <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-2xl p-8 md:p-12 text-white">
-                            <h3 className="text-2xl md:text-3xl font-bold mb-4">Ready to advance your career?</h3>
-                            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-                                Explore our full catalogue of 62+ professional certificate programmes and find the right path for your career goals.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link
-                                    href={route('course.catalog.index')}
-                                    className="inline-flex items-center justify-center bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300"
-                                >
-                                    Browse Full Catalogue
-                                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </Link>
-                                <Link
-                                    href={route('contact')}
-                                    className="inline-flex items-center justify-center bg-transparent text-white px-8 py-3 rounded-lg font-semibold border-2 border-white hover:bg-white hover:text-blue-900 transition duration-300"
-                                >
-                                    Request Information
-                                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </section>
            
