@@ -41,7 +41,7 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             featured: false
         }
     ];
-
+ 
     const specialistAreas = [
         {
             title: 'Financial Crime & Regulatory Compliance',
@@ -78,6 +78,7 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             <Head title="Professional Certifications | IGRCFP" />
             
             {/* Hero Section */}
+            
              <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4"> IGRCFP Certifications</h1>

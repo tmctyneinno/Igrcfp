@@ -318,22 +318,27 @@ class HomeController extends Controller
             'diploma' => [
                 'category' => 'IGRCFP Diploma',
                 'title' => 'IGRCFP Diploma',
-                'description' => 'Browse courses in the IGRCFP Diploma pathway.',
+                'description' => 'Browse courses in the IGRCFP Diploma programmes.',
             ],
             'advanced-diploma' => [
                 'category' => 'IGRCFP Advanced Diploma',
                 'title' => 'IGRCFP Advanced Diploma',
-                'description' => 'Browse courses in the IGRCFP Advanced Diploma pathway.',
+                'description' => 'Browse courses in the IGRCFP Advanced Diploma programmes.',
             ],
             'certified-grc-financial-crime-specialist' => [
                 'category' => 'Certified GRC & Financial Crime Specialist',
                 'title' => 'Certified GRC & Financial Crime Specialist',
-                'description' => 'Browse courses for the Certified GRC & Financial Crime Specialist pathway.',
+                'description' => 'Browse courses for the Certified GRC & Financial Crime Specialist programmes.',
+            ],
+            'postgraduate-diploma' => [
+                'category' => 'Postgraduate Diploma',
+                'title' => 'Postgraduate Diploma',
+                'description' => 'Browse courses for the Postgraduate Diploma programmes.',
             ],
             'fellowship' => [
                 'category' => 'IGRCFP Fellowship',
                 'title' => 'IGRCFP Fellowship',
-                'description' => 'Browse courses in the IGRCFP Fellowship pathway.',
+                'description' => 'Browse courses in the IGRCFP Fellowship programmes.',
             ],
         ];
 
@@ -518,6 +523,15 @@ class HomeController extends Controller
                 ]
             ]
         ]);
+    }
+
+
+    public function qualificationsPack(){
+        return Inertia::render('QualificationsPack/Index');
+    }
+    
+    public function courseEquivalency(){
+        return Inertia::render('CourseEquivalency/Index');
     }
 
 

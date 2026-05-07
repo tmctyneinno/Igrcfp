@@ -92,6 +92,18 @@ Route::get('/igrcfp-advanced-diploma', [HomeController::class, 'showIgrcfpProgra
 Route::get('/igrcfp-certified-grc-financial-crime-specialist', [HomeController::class, 'showIgrcfpProgramme'])
     ->defaults('programme', 'certified-grc-financial-crime-specialist')
     ->name('igrcfp.certified-grc-financial-crime-specialist.index');
+Route::get('/igrcfp-postgraduate-diploma', [HomeController::class, 'showIgrcfpProgramme'])
+    ->defaults('programme', 'postgraduate-diploma')
+    ->name('igrcfp.postgraduate-diploma.index');
 Route::get('/igrcfp-fellowship', [HomeController::class, 'showIgrcfpProgramme'])
     ->defaults('programme', 'fellowship')
     ->name('igrcfp.fellowship.index');
+
+Route::get('/qualifications-pack', [HomeController::class, 'qualificationsPack'])
+    ->name('qualifications.pack');
+
+Route::get('/course-equivalency', [HomeController::class, 'courseEquivalency'])
+    ->name('course-equivalency.index');
+
+Route::get('/partnerships', [HomeController::class, 'partnerships'])
+    ->name('partnerships.index');
