@@ -177,6 +177,25 @@ class CheckoutController extends Controller
                     'status' => 'enrolled',
                     'payment_method' => 'free',
                 ]);
+
+                Transaction::updateOrCreate(
+                    ['enrollment_id' => $enrollment->id],
+                    [
+                        'user_id' => $enrollment->user_id,
+                        'transaction_id' => 'FREE-' . $enrollment->id,
+                        'payment_method' => 'free',
+                        'amount' => 0,
+                        'currency' => 'gbp',
+                        'status' => 'completed',
+                        'payment_details' => [
+                            'checkout_type' => 'free_course',
+                            'cart_id' => $cart->id,
+                        ],
+                        'reference' => 'FREE-' . $enrollment->id,
+                        'paid_at' => now(),
+                    ]
+                );
+
                 \Log::info('Updated enrollment status', [
                     'enrollment_id' => $enrollment->id,
                     'update_result' => $updateResult,
@@ -197,7 +216,11 @@ class CheckoutController extends Controller
                 'enrollment_ids' => $enrollmentIds,
             ]);
             
-            return redirect()->route('checkout.success')->with('success', 'Enrollment successful! You can now start learning.');
+            $firstEnrollmentId = !empty($enrollmentIds) ? $enrollmentIds[0] : null;
+
+            return redirect()
+                ->route('checkout.success', $firstEnrollmentId ? ['enrollment' => $firstEnrollmentId] : [])
+                ->with('success', 'Enrollment successful! You can now start learning.');
         }
 
         // For paid courses, proceed to Stripe
@@ -491,7 +514,9 @@ class CheckoutController extends Controller
                 return [
                     'id' => $enrollment->id,
                     'course_title' => $enrollment->course->title ?? 'Unknown Course',
+                    'course_slug' => $enrollment->course->slug ?? null,
                     'amount' => $enrollment->amount,
+                    'payment_method' => $enrollment->payment_method,
                     'enrollment_date' => $enrollment->enrollment_date->format('Y-m-d'),
                 ];
             }),
@@ -500,6 +525,7 @@ class CheckoutController extends Controller
                 'course_title' => $specificEnrollment->course->title ?? 'Unknown Course',
                 'course_slug' => $specificEnrollment->course->slug ?? null,
                 'amount' => $specificEnrollment->amount,
+                'payment_method' => $specificEnrollment->payment_method,
                 'enrollment_date' => $specificEnrollment->enrollment_date->format('Y-m-d'),
             ] : null,
         ]);

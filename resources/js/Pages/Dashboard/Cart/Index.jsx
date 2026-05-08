@@ -32,7 +32,8 @@ export default function CartIndex({ cart }) {
     useEffect(() => {
         
         if (props.flash?.info) {
-            toast.info(props.flash.info, {
+            toast(props.flash.info, {
+                icon: 'i',
                 duration: 4000,
                 position: 'top-right',
             });

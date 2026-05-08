@@ -26,15 +26,13 @@ export default function MyLearning({ enrolledCourses = [] }) {
         return formatMap[format] || 'bg-gray-100 text-gray-800';
     };
 
-    // Calculate progress percentage
+    // Calculate progress percentage from backend module reading completion so
+    // the badge stays aligned with the enrollment gate.
     const calculateProgress = (course) => {
-        if (course.progress !== undefined) {
-            return course.progress;
+        if (course.completed_modules !== undefined && course.modules_count > 0) {
+            return Math.min(100, Math.max(0, Math.round((course.completed_modules / course.modules_count) * 100)));
         }
-        if (course.completed_modules && course.modules_count) {
-            return Math.round((course.completed_modules / course.modules_count) * 100);
-        }
-        return 0;
+        return Math.min(100, Math.max(0, course.progress ?? 0));
     };
 
     // Get clean description
@@ -86,7 +84,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {enrolledCourses.map((course, index) => {
                         const progress = calculateProgress(course);
-                        
+
                         return (
                             <motion.div
                                 key={course.id}

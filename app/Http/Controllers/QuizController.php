@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Assessment;
+use App\Models\CourseModuleUser;
 use App\Models\Enrollment;
 use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
@@ -31,12 +32,14 @@ class QuizController extends Controller
             ->where('course_id', $course->id)
             ->whereIn('status', ['enrolled', 'active', 'completed'])
             ->firstOrFail();
+
+        if (!$this->allModulesRead($course, $enrollment)) {
+            return redirect()->route('dashboard.courses.show', $course->slug)
+                ->with('error', 'Please read all module content before taking the quiz.');
+        }
         
         // Get or create attempt for THIS assessment
         $attempt = $this->getOrCreateAttempt($user->id, $assessment->id, $enrollment->id);
-        
-        // Get all modules with their questions for sidebar
-        $modules = $this->getModulesWithQuestions($course, $assessment);
         
         // Get ALL questions for this assessment
         $allQuestions = $assessment->questions()
@@ -74,7 +77,7 @@ class QuizController extends Controller
                 'status' => $attempt->status,
                 'answers' => json_decode($attempt->answers, true) ?? [],
             ],
-            'modules' => $modules,
+            'modules' => [],
             'questions' => $allQuestions,
             'timeRemaining' => $timeRemaining,
             'timeLimit' => $timeLimit,
@@ -128,6 +131,10 @@ class QuizController extends Controller
         
         if (!$enrollment) {
             return response()->json(['error' => 'Enrollment not found'], 404);
+        }
+
+        if (!$this->allModulesRead($course, $enrollment)) {
+            return response()->json(['error' => 'Please read all module content before submitting the quiz.'], 403);
         }
         
         // Find or create attempt
@@ -770,5 +777,26 @@ class QuizController extends Controller
         }
         
         return Assessment::find($assessmentId);
+    }
+
+    private function allModulesRead(Course $course, Enrollment $enrollment): bool
+    {
+        $modules = $course->modules()->get(['id']);
+
+        if ($modules->isEmpty()) {
+            return true;
+        }
+
+        $readModuleIds = CourseModuleUser::where('enrollment_id', $enrollment->id)
+            ->where('user_id', $enrollment->user_id)
+            ->where('read', true)
+            ->pluck('course_module_id')
+            ->all();
+
+        $readModuleIds = array_flip($readModuleIds);
+
+        return $modules->every(function ($module) use ($readModuleIds) {
+            return isset($readModuleIds[$module->id]);
+        });
     }
 }

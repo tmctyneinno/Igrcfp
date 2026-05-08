@@ -13,7 +13,8 @@ import {
     CalendarIcon,
     ExclamationTriangleIcon,
     PencilSquareIcon,
-    EyeIcon,TrophyIcon
+    EyeIcon,
+    TrophyIcon
 } from '@heroicons/react/24/outline';
 
 export default function ProjectSubmit({ 
@@ -26,6 +27,7 @@ export default function ProjectSubmit({
     const [notes, setNotes] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSubmissionForm, setShowSubmissionForm] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
     
     const hasSubmitted = existingSubmission && existingSubmission.status !== 'draft';
     const isOverdue = assessment.due_date && new Date(assessment.due_date) < new Date();
@@ -68,6 +70,12 @@ export default function ProjectSubmit({
             return;
         }
         
+        // Show confirmation modal instead of submitting directly
+        setShowConfirmModal(true);
+    };
+    
+    const handleConfirmSubmit = () => {
+        setShowConfirmModal(false);
         setIsSubmitting(true);
         
         const formData = new FormData();
@@ -107,7 +115,7 @@ export default function ProjectSubmit({
                         >
                             ← Back to Course
                         </Link>
-                        <h1 className="text-2xl font-bold text-gray-900 mt-2">{assessment.title}</h1>
+                        <h1 className="text-2xl font-bold text-gray-900 mt-2">Project Assessment</h1>
                         <p className="text-gray-600">Final Project Assessment</p>
                     </div>
                     
@@ -163,6 +171,16 @@ export default function ProjectSubmit({
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Left - Project Brief & Details */}
                         <div className="lg:col-span-2 space-y-6">
+                            {/* Project Topics */}
+                            {assessment.settings?.project_topics && (
+                                <div className="bg-white rounded-xl shadow-sm p-6">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Project Topics</h3>
+                                    <div className="prose max-w-none text-gray-600">
+                                        <div dangerouslySetInnerHTML={{ __html: assessment.settings.project_topics }} />
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Project Overview */}
                             <div className="bg-white rounded-xl shadow-sm p-6">
                                 <div className="flex items-center justify-between mb-4">
@@ -259,7 +277,6 @@ export default function ProjectSubmit({
                                             <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition cursor-pointer">
                                                 <ArrowUpTrayIcon className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                                                 
-                                                {/* ✅ Better file name display with break-words */}
                                                 <div className="mb-2">
                                                     {file ? (
                                                         <div className="flex items-center justify-center gap-2">
@@ -275,7 +292,6 @@ export default function ProjectSubmit({
                                                     )}
                                                 </div>
                                                 
-                                                {/* File size display when file is selected */}
                                                 {file && (
                                                     <p className="text-xs text-gray-500 mb-1">
                                                         {(file.size / (1024 * 1024)).toFixed(2)} MB
@@ -297,13 +313,11 @@ export default function ProjectSubmit({
                                                     accept=".pdf,.doc,.docx,.zip,.ppt,.pptx"
                                                 />
                                                 
-                                                {/* Change file button when file is selected */}
                                                 {file && (
                                                     <button
                                                         type="button"
                                                         onClick={() => {
                                                             setFile(null);
-                                                            // Reset the file input
                                                             const input = document.querySelector('input[type="file"]');
                                                             if (input) input.value = '';
                                                         }}
@@ -358,7 +372,7 @@ export default function ProjectSubmit({
                                                 ) : (
                                                     'Submit Project'
                                                 )}
-                                            </button> 
+                                            </button>
                                         </div>
                                     </form>
                                 ) : (
@@ -442,6 +456,87 @@ export default function ProjectSubmit({
                     </div>
                 </div>
             </div>
+            
+            {/* Confirmation Modal */}
+            {showConfirmModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        {/* Background overlay */}
+                        <div 
+                            className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+                            onClick={() => setShowConfirmModal(false)}
+                        ></div>
+
+                        {/* Modal panel */}
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                        <ExclamationTriangleIcon className="h-6 w-6 text-blue-600" />
+                                    </div>
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                            Confirm Submission
+                                        </h3>
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-500">
+                                                Please review your submission details before proceeding:
+                                            </p>
+                                            <ul className="mt-3 space-y-2 text-sm text-gray-600">
+                                                <li className="flex items-start gap-2">
+                                                    <DocumentTextIcon className="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0" />
+                                                    <span>
+                                                        <strong>File:</strong> {file?.name || 'No file selected'}
+                                                        {file && <span className="text-gray-400 ml-1">({(file.size / (1024 * 1024)).toFixed(2)} MB)</span>}
+                                                    </span>
+                                                </li>
+                                                {notes && (
+                                                    <li className="flex items-start gap-2">
+                                                        <PencilSquareIcon className="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0" />
+                                                        <span>
+                                                            <strong>Notes:</strong> {notes}
+                                                        </span>
+                                                    </li>
+                                                )}
+                                                {isOverdue && (
+                                                    <li className="flex items-start gap-2">
+                                                        <ClockIcon className="w-4 h-4 mt-0.5 text-red-400 flex-shrink-0" />
+                                                        <span className="text-red-600">
+                                                            ⚠️ This is a late submission (deadline has passed)
+                                                        </span>
+                                                    </li>
+                                                )}
+                                                <li className="flex items-start gap-2">
+                                                    <CheckCircleIcon className="w-4 h-4 mt-0.5 text-green-400 flex-shrink-0" />
+                                                    <span>
+                                                        By submitting, you confirm this is your own work
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                                <button
+                                    type="button"
+                                    onClick={handleConfirmSubmit}
+                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                >
+                                    Confirm & Submit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmModal(false)}
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                                >
+                                    Go Back
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

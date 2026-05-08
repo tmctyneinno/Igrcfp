@@ -65,7 +65,7 @@ export default function Footer() {
 
                                 {/* Twitter Icon */}
                                 <motion.a
-                                    href="#"
+                                    href="https://x.com/igrcfpofficial"
                                     variants={scaleIn}
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
@@ -93,7 +93,7 @@ export default function Footer() {
 
                                 {/* Instagram Icon */}
                                 <motion.a
-                                    href="#"
+                                    href="https://www.instagram.com/igrcfpofficial?igsh=MTlhdXJ0N2doYmJ3Mg=="
                                     variants={scaleIn}
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
@@ -107,7 +107,7 @@ export default function Footer() {
 
                                 {/* YouTube Icon */}
                                 <motion.a
-                                    href="#"
+                                    href="https://youtube.com/@igrcfp?si=l1AFzMpxU8Kf9P89"
                                     variants={scaleIn}
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}

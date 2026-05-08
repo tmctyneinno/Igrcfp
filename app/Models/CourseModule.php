@@ -45,7 +45,7 @@ class CourseModule extends Model
 
     public function materials()
     {
-        return $this->hasMany(CourseMaterial::class)->orderBy('sort_order');
+        return $this->hasMany(CourseMaterial::class, 'module_id')->orderBy('sort_order');
     }
 
     /**
@@ -102,6 +102,11 @@ class CourseModule extends Model
     public function lessons()
     {
         return $this->hasMany(Lesson::class, 'module_id');
+    }
+
+    public function readingProgress()
+    {
+        return $this->hasMany(CourseModuleUser::class, 'course_module_id');
     }
     
 }

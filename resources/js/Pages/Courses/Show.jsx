@@ -553,7 +553,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   </div>
                   <div className="flex justify-between items-center">
                     <label className="text-sm text-gray-500">Format</label>
-                    <p className="font-medium">{course.format || 'Self-Paced Online'}</p>
+                    <p className="font-medium">{ 'Online, Live, Hybrid'}</p>
                   </div>
                   <div className="flex justify-between items-center">
                     <label className="text-sm text-gray-500">Duration</label>
