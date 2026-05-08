@@ -11,7 +11,7 @@ export default function Certification({ courses }) { // Remove default value fro
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
         const numPrice = parseFloat(price);
-        return isNaN(numPrice) ? null : `€${numPrice.toFixed(2)}`;
+        return isNaN(numPrice) ? null : `£${numPrice.toFixed(2)}`;
     }; 
 
     // Check if course has discount
@@ -135,10 +135,10 @@ export default function Certification({ courses }) { // Remove default value fro
                                                 {hasDisc ? (
                                                     <>
                                                         <span className="text-lg font-bold text-gray-900">
-                                                            €{discountPrice.toFixed(0)}
+                                                            £{discountPrice.toFixed(0)}
                                                         </span>
                                                         <span className="text-sm text-gray-500 line-through ml-2">
-                                                            €{price.toFixed(0)}
+                                                            £{price.toFixed(0)}
                                                         </span>
                                                         <span className="text-xs font-semibold text-red-600 ml-2">
                                                             -{discountPercentage}%
@@ -146,7 +146,7 @@ export default function Certification({ courses }) { // Remove default value fro
                                                     </>
                                                 ) : (
                                                     <span className="text-lg font-bold text-gray-900">
-                                                        €{price.toFixed(2)}
+                                                        £{price.toFixed(2)}
                                                     </span>
                                                 )}
                                             </div>
