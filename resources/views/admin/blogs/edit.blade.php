@@ -54,8 +54,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Blog Content <span class="text-danger">*</span></label>
-                                <textarea name="content" class="form-control @error('content') is-invalid @enderror" 
-                                          rows="12" placeholder="Write your blog content here..." required>{{ old('content', $blog->content) }}</textarea>
+                                <textarea name="content" class="form-control rich-editor @error('content') is-invalid @enderror" 
+                                          rows="12" placeholder="Write your blog content here...">{{ old('content', $blog->content) }}</textarea>
                                 @error('content')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -228,6 +228,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const noImagePlaceholder = document.getElementById('noImagePlaceholder');
     const currentImage = document.getElementById('currentImage');
     const removeImageCheckbox = document.getElementById('removeImage');
+    const ckEditorInstances = new Map();
+
+    function initializeCKEditors() {
+        if (typeof ClassicEditor === 'undefined') {
+            console.warn('CKEditor not loaded yet, retrying...');
+            setTimeout(initializeCKEditors, 300);
+            return;
+        }
+
+        document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])').forEach(function(textarea) {
+            ClassicEditor.create(textarea, {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'alignment', '|',
+                        'link', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                height: '300px'
+            })
+            .then(function(editor) {
+                textarea.setAttribute('data-ck-initialized', 'true');
+                ckEditorInstances.set(textarea.name, editor);
+            })
+            .catch(function(error) {
+                console.error('CKEditor error for', textarea.name, error);
+                textarea.style.display = 'block';
+            });
+        });
+    }
+
+    setTimeout(initializeCKEditors, 100);
 
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
@@ -270,6 +305,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 characterCount.style.color = '#ffc107';
             } else {
                 characterCount.style.color = '#6c757d';
+            }
+        });
+    }
+
+    const form = document.querySelector('form');
+    const statusSelect = document.querySelector('select[name="status"]');
+
+    if (form && statusSelect) {
+        form.addEventListener('submit', function(e) {
+            const title = document.querySelector('input[name="title"]').value;
+            const contentTextarea = document.querySelector('textarea[name="content"]');
+
+            ckEditorInstances.forEach(function(editor, name) {
+                const textarea = form.querySelector('textarea[name="' + name + '"]');
+                if (textarea) {
+                    textarea.value = editor.getData();
+                }
+            });
+
+            const content = contentTextarea ? contentTextarea.value : '';
+            const plainContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+
+            if (!title.trim()) {
+                e.preventDefault();
+                alert('Please enter a blog title.');
+                return false;
+            }
+
+            if (!plainContent) {
+                e.preventDefault();
+                alert('Please write some blog content.');
+                return false;
+            }
+
+            if (statusSelect.value === 'published') {
+                if (!confirm('Are you sure you want to publish this blog? It will be visible to the public.')) {
+                    e.preventDefault();
+                    return false;
+                }
             }
         });
     }

@@ -112,11 +112,11 @@
                                 </td>
                                 <td>
                                     <div class="featured-image-container">
-                                        <img src="{{ asset('storage/' . $blog->image) }}" style="max-height: 20px;" alt="{{ $blog->title }}" 
+                                        <img src="{{ $blog->image_url }}" style="max-height: 20px;" alt="{{ $blog->title }}" 
                                              class="featured-image rounded-8"  
-                                             onerror="this.src='{{ asset('images/default-blog.jpg') }}'">
+                                             onerror="this.src='{{ asset('assets/images/innerpage/blog/blog-grid1.jpg') }}'">
                                     </div>
-                                </td>
+                                </td> 
                                 <td>
                                     <div class="d-flex flex-column">
                                         <span class="text-md fw-medium text-secondary-light mb-1">{{ Str::limit($blog->title, 50) }}</span>

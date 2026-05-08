@@ -40,7 +40,7 @@ class Blog extends Model
     public function getImageUrlAttribute()
     {
         if (!$this->image) {
-            return asset('images/default-blog.jpg');
+            return asset('assets/images/innerpage/blog/blog-grid1.jpg');
         }
         
         // Check if it's already a full URL
@@ -53,7 +53,7 @@ class Blog extends Model
             return asset('storage/' . $this->image);
         }
         
-        return asset('images/default-blog.jpg');
+        return asset('assets/images/innerpage/blog/blog-grid1.jpg');
     }
 
     public function getReadingTimeAttribute()
