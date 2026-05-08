@@ -662,12 +662,6 @@ textarea.plain-textarea { font-family: 'Courier New', monospace; font-size: 0.9r
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ------------------------------------------------------------------
-    // CKEditor initialisation
-    // Only textareas with class "rich-editor" get CKEditor.
-    // bulk_modules, short_description, meta_description, meta_keywords
-    // deliberately do NOT have that class and stay as plain textareas.
-    // ------------------------------------------------------------------
     const ckEditorInstances = new Map(); // textarea name → editor instance
 
     function initializeCKEditors() {

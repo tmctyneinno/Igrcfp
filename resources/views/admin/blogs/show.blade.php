@@ -37,9 +37,9 @@
                     
                     @if($blog->image)
                     <div class="featured-image mb-4">
-                        <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}" 
+                        <img src="{{ $blog->image_url }}" alt="{{ $blog->title }}" 
                              class="img-fluid rounded-12 w-100" style="max-height: 400px; object-fit: cover;"
-                             onerror="this.src='{{ asset('images/default-blog.jpg') }}'">
+                             onerror="this.src='{{ asset('assets/images/innerpage/blog/blog-grid1.jpg') }}'">
                     </div>
                     @endif
 

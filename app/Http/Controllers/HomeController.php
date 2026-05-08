@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\CourseCategory;
+use App\Models\Blog;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -264,9 +265,29 @@ class HomeController extends Controller
     }
 
     public function blog(){
+        $blogs = Blog::with('user')
+            ->where('status', 'published')
+            ->latest()
+            ->paginate(9)
+            ->through(function ($blog) {
+                return [
+                    'id' => $blog->id,
+                    'title' => $blog->title,
+                    'slug' => $blog->slug,
+                    'content' => $blog->content,
+                    'excerpt' => $blog->excerpt,
+                    'image' => $blog->image_url,
+                    'author' => $blog->user->name ?? 'IGRCFP',
+                    'reading_time' => $blog->reading_time,
+                    'created_at' => $blog->created_at?->toDateString(),
+                    'published_at' => $blog->created_at?->toDateString(),
+                ];
+            });
+
         return Inertia::render('Blog/Index', [
             'title' => 'Blog',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+            'blogs' => $blogs,
         ]);
     }
 

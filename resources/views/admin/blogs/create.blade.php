@@ -53,12 +53,12 @@
 
                             <div class="col-12">
                                 <label class="form-label">Blog Content <span class="text-danger">*</span></label>
-                                <textarea name="content" class="form-control @error('content') is-invalid @enderror" 
-                                          rows="12" placeholder="Write your blog content here..." required>{{ old('content') }}</textarea>
+                                <textarea name="content" class="form-control rich-editor @error('content') is-invalid @enderror" 
+                                          rows="12" placeholder="Write your blog content here...">{{ old('content') }}</textarea>
                                 @error('content')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> 
 
                             <div class="col-12">
                                 <label class="form-label">Featured Image</label>
@@ -216,7 +216,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('imagePreview');
     const previewImage = document.getElementById('previewImage');
     const noImagePlaceholder = document.getElementById('noImagePlaceholder');
+    const ckEditorInstances = new Map();
 
+    // Initialize CKEditor only when library is loaded
+    function initializeCKEditors() {
+        if (typeof ClassicEditor === 'undefined') {
+            console.warn('CKEditor not loaded yet, retrying...');
+            setTimeout(initializeCKEditors, 300);
+            return;
+        }
+
+        console.log('CKEditor loaded, initializing...');
+
+        document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])').forEach(function(textarea) {
+            // Don't initialize twice
+            if (textarea.hasAttribute('data-ck-initialized')) {
+                return;
+            }
+            
+            ClassicEditor.create(textarea, {
+                // Simple toolbar configuration
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'alignment', '|',
+                        'link', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                // Minimal height
+                height: '300px'
+            })
+            .then(function(editor) {
+                textarea.setAttribute('data-ck-initialized', 'true');
+                ckEditorInstances.set(textarea.name, editor);
+                console.log('CKEditor initialized for:', textarea.name);
+            })
+            .catch(function(error) {
+                console.error('CKEditor error for', textarea.name, error);
+                // Fall back to regular textarea
+                textarea.style.display = 'block';
+            });
+        });
+    }
+
+    // Start initialization after a short delay
+    setTimeout(initializeCKEditors, 100);
+    
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -252,33 +300,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 characterCount.style.color = '#6c757d';
             }
         });
-
-        // Initialize count on page load
         metaDescription.dispatchEvent(new Event('input'));
     }
 
-    // Auto-generate slug from title
-    const titleInput = document.querySelector('input[name="title"]');
-    
-    if (titleInput) {
-        titleInput.addEventListener('blur', function() {
-            // You can add auto-slug generation here if needed
-            // This is where you'd make an AJAX call to check slug availability
-        });
-    }
-
-    // Form submission confirmation for draft
+    // Form submission validation
     const form = document.querySelector('form');
     const statusSelect = document.querySelector('select[name="status"]');
 
     if (form && statusSelect) {
         form.addEventListener('submit', function(e) {
             const title = document.querySelector('input[name="title"]').value;
-            const content = document.querySelector('textarea[name="content"]').value;
+            const ckEditorTextarea = document.querySelector('textarea[name="content"]');
+
+            ckEditorInstances.forEach(function(editor, name) {
+                const textarea = form.querySelector('textarea[name="' + name + '"]');
+                if (textarea) {
+                    textarea.value = editor.getData();
+                }
+            });
+
+            const content = ckEditorTextarea ? ckEditorTextarea.value : '';
+            const plainContent = content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
             
-            if (!title.trim() || !content.trim()) {
+            if (!title.trim()) {
                 e.preventDefault();
-                alert('Please fill in all required fields (Title and Content).');
+                alert('Please enter a blog title.');
+                return false;
+            }
+            
+            if (!plainContent) {
+                e.preventDefault();
+                alert('Please write some blog content.');
                 return false;
             }
 
