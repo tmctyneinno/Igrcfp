@@ -359,7 +359,7 @@ class AssessmentController extends Controller
         $courses = Course::orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
         
-        return view('admin.courses.assessments.edit', compact('assessment', 'courses', 'modules'));
+        return view('admin.courses.assessments.projects.edit', compact('assessment', 'courses', 'modules'));
     }
 
     /**

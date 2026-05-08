@@ -18,7 +18,7 @@
             <li>-</li>
             <li class="fw-medium">Create Project Assessment</li>
         </ul>
-    </div>
+    </div> 
 
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -49,10 +49,10 @@
                     <div class="card-body">
                         <div class="row gy-3">
                             <div class="col-12">
-                                <label class="form-label">Project Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
-                                       value="{{ old('title') }}" placeholder="e.g., Final Diploma Project" required>
-                                @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <label class="form-label">Project Topics <span class="text-danger">*</span></label>
+                                <textarea name="settings[project_topics]" id="projectTopics" class="form-control rich-editor @error('settings.project_topics') is-invalid @enderror"
+                                          rows="8" placeholder="Add multiple project topics for learners to choose from..." required>{{ old('settings.project_topics') }}</textarea>
+                                @error('settings.project_topics') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
@@ -352,7 +352,7 @@ function initializeCKEditors() {
 // ✅ Custom validation for CKEditor fields
 function validateCKEditors() {
     let isValid = true;
-    const requiredEditors = ['projectBrief', 'deliverables', 'instruction'];
+    const requiredEditors = ['projectTopics', 'projectBrief'];
     
     requiredEditors.forEach(id => {
         const editor = editors[id];
@@ -362,7 +362,7 @@ function validateCKEditors() {
             const content = editor.getData().trim();
             
             // Check if field is required and empty
-            if (id === 'projectBrief' && content === '') {
+            if ((id === 'projectTopics' || id === 'projectBrief') && content === '') {
                 isValid = false;
                 // Highlight the editor
                 const editorElement = document.querySelector(`#${id}`).nextElementSibling;
@@ -372,7 +372,7 @@ function validateCKEditors() {
                         editorElement.style.border = '';
                     }, 3000);
                 }
-                alert('Project Overview is required.');
+                alert(id === 'projectTopics' ? 'Project Topics are required.' : 'Project Overview is required.');
             }
         }
     });
@@ -447,6 +447,16 @@ document.getElementById('projectForm')?.addEventListener('submit', function(e) {
     });
     
     // ✅ Validate required CKEditor fields
+    const projectTopics = document.getElementById('projectTopics');
+    if (projectTopics) {
+        const content = editors['projectTopics']?.getData().trim() || projectTopics.value.trim();
+        if (!content) {
+            e.preventDefault();
+            alert('Project Topics are required.');
+            return false;
+        }
+    }
+
     const projectBrief = document.getElementById('projectBrief');
     if (projectBrief) {
         const content = editors['projectBrief']?.getData().trim() || projectBrief.value.trim();

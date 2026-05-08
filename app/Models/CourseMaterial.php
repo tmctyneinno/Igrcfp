@@ -37,7 +37,7 @@ class CourseMaterial extends Model
 
     public function module()
     {
-        return $this->belongsTo(CourseModule::class);
+        return $this->belongsTo(CourseModule::class, 'module_id');
     }
 
     /**

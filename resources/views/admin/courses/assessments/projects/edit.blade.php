@@ -10,7 +10,7 @@
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
                 </a>
-            </li>
+            </li> 
             <li>-</li> 
             <li class="fw-medium">
                 <a href="{{ route('admin.projects.index') }}" class="hover-text-primary">Projects</a>
@@ -50,10 +50,11 @@
                     <div class="card-body">
                         <div class="row gy-3">
                             <div class="col-12">
-                                <label class="form-label">Project Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
-                                       value="{{ old('title', $assessment->title) }}" placeholder="e.g., Final Diploma Project" required>
-                                @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <label class="form-label">Project Topics <span class="text-danger">*</span></label>
+                                <input type="hidden" name="title" value="{{ old('title', $assessment->title) }}">
+                                <textarea name="settings[project_topics]" id="projectTopics" class="form-control rich-editor @error('settings.project_topics') is-invalid @enderror"
+                                          rows="8" placeholder="Add multiple project topics for learners to choose from..." required>{{ old('settings.project_topics', $assessment->settings['project_topics'] ?? '') }}</textarea>
+                                @error('settings.project_topics') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
@@ -451,6 +452,16 @@ document.getElementById('projectForm')?.addEventListener('submit', function(e) {
             textarea.value = editor.getData();
         }
     });
+
+    const projectTopics = document.getElementById('projectTopics');
+    if (projectTopics) {
+        const content = editors['projectTopics']?.getData().trim() || projectTopics.value.trim();
+        if (!content) {
+            e.preventDefault();
+            alert('Project Topics are required.');
+            return false;
+        }
+    }
     
     const projectBrief = document.getElementById('projectBrief');
     if (projectBrief) {

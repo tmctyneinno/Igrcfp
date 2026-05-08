@@ -111,6 +111,11 @@ class Enrollment extends Model
         return $this->hasMany(LessonUser::class);
     }
 
+    public function moduleReadingProgress()
+    {
+        return $this->hasMany(CourseModuleUser::class);
+    }
+
     public function completedLessons()
     {
         return $this->belongsToMany(Lesson::class, 'lesson_user')

@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import MaterialList from './MaterialList';
 import LessonList from './LessonList';
+import ModuleReadingContent from './ModuleReadingContent';
 
 export default function ModuleItem({ 
     module, 
@@ -22,18 +23,16 @@ export default function ModuleItem({
     lockReason = null,
     previousModuleTitle = null,
     previousModuleProgress = 0,
-    isPreviousCompleted = true
+    isPreviousCompleted = true,
+    isModuleRead = false,
+    moduleReadingProgress = 0,
+    markModuleRead,
+    updateModuleReadingProgress
 }) { 
-    const calculateModuleProgress = (module) => {
-        if (!module.lessons || module.lessons.length === 0) return 0;
-        const completed = module.lessons.filter(l => l.completed).length;
-        return Math.round((completed / module.lessons.length) * 100);
-    };
-
-    const moduleProgress = calculateModuleProgress(module);
     const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
     const totalLessons = module.lessons?.length || 0;
-    const isCompleted = moduleProgress === 100;
+    const isCompleted = isModuleRead;
+    const hasReadingContent = Boolean(module.reading_content || module.full_content);
 
     const handleModuleClick = () => {
         if (isAccessible) {
@@ -55,7 +54,7 @@ export default function ModuleItem({
             {/* Module Status Banner */}
             {isCompleted && (
                 <div className="bg-green-500 text-white text-xs font-medium px-4 py-1 text-center">
-                    ✓ Module Completed
+                    ✓ Module Read
                 </div>
             )}
 
@@ -86,7 +85,7 @@ export default function ModuleItem({
                             {isCompleted && (
                                 <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full">
                                     <CheckCircleIcon className="w-3 h-3" />
-                                    Completed
+                                    Read
                                 </span>
                             )}
                             
@@ -118,14 +117,14 @@ export default function ModuleItem({
                                 {/* Module Progress */}
                                 <div className="w-20">
                                     <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                        <span>{moduleProgress}%</span>
+                                        <span>{isModuleRead ? 100 : moduleReadingProgress}%</span>
                                     </div>
                                     <div className="h-1.5 w-full bg-gray-200 rounded-full">
                                         <div 
                                             className={`h-1.5 rounded-full transition-all duration-300 ${
                                                 isCompleted ? 'bg-green-500' : 'bg-blue-600'
                                             }`}
-                                            style={{ width: `${moduleProgress}%` }}
+                                            style={{ width: `${isModuleRead ? 100 : moduleReadingProgress}%` }}
                                         />
                                     </div>
                                 </div>
@@ -154,7 +153,7 @@ export default function ModuleItem({
                                 Module Locked
                             </h4>
                             <p className="text-gray-600 text-sm mb-3">
-                                {lockReason || `You need to complete "${previousModuleTitle}" first to unlock this module.`}
+                                {lockReason || `You need to read "${previousModuleTitle}" first to unlock this module.`}
                             </p> 
                             
                             {/* Progress toward unlocking */}
@@ -215,15 +214,20 @@ export default function ModuleItem({
                             )}
 
                             {/* Full Content - Main Module Content */}
-                            {module.full_content && (
-                                <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                    <h4 className="text-md font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                        📖 Module Content
-                                    </h4>
-                                    <div 
-                                        className="prose prose-sm max-w-none text-gray-700"
-                                        dangerouslySetInnerHTML={{ __html: module.full_content }}
-                                    />
+                            {hasReadingContent ? (
+                                <ModuleReadingContent
+                                    module={module}
+                                    isRead={isModuleRead}
+                                    readingProgress={moduleReadingProgress}
+                                    onProgressChange={updateModuleReadingProgress}
+                                    onRead={markModuleRead}
+                                />
+                            ) : (
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 className="font-semibold text-yellow-900 mb-1">Module content unavailable</h4>
+                                    <p className="text-sm text-yellow-800">
+                                        This module cannot be marked as read until content is added by an administrator.
+                                    </p>
                                 </div>
                             )}
 
@@ -244,7 +248,7 @@ export default function ModuleItem({
                                 <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
                                     <CheckCircleIcon className="w-8 h-8 text-green-500 mx-auto mb-2" />
                                     <h4 className="font-semibold text-green-800 mb-1">
-                                        Module Completed! 🎉
+                                        Module Read!
                                     </h4>
                                     <p className="text-sm text-green-600">
                                         Great job! You can now proceed to Module {module.module_number + 1}.

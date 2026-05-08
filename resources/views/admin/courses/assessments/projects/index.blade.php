@@ -15,7 +15,7 @@
             <li class="fw-medium">Projects</li>
         </ul>
     </div>
-
+ 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
     @endif

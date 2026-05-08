@@ -9,6 +9,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Assessment;
+use App\Models\CourseMaterial;
+use App\Models\CourseModuleUser;
 use App\Models\Enrollment;
 use App\Models\EventRegistration;
 use Illuminate\Support\Facades\Validator;
@@ -98,7 +100,10 @@ class DashboardController extends Controller
                     }
                     
                     $course = $enrollment->course;
+                    $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
+
                     return [
+                        'enrollment_id' => $enrollment->id,
                         'id' => $course->id,
                         'title' => $course->title,
                         'slug' => $course->slug,
@@ -107,9 +112,10 @@ class DashboardController extends Controller
                         'image_url' => $course->image_url,
                         'level' => $course->level,
                         'duration' => $course->duration,
-                        'progress' => $enrollment->progress ?? 0,
-                        'modules_count' => $course->modules_count ?? 0,
-                        'completed_modules' => $enrollment->completed_modules ?? 0,
+                        'progress' => $moduleProgress['progress'],
+                        'modules_count' => $moduleProgress['total_modules'],
+                        'completed_modules' => $moduleProgress['completed_modules'],
+                        'module_ids' => $moduleProgress['module_ids'],
                         'format' => $course->format,
                         'status' => $enrollment->status ?? 'enrolled',
                         'category' => $course->category ? [
@@ -396,7 +402,10 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($enrollment) {
                 $course = $enrollment->course;
+                $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
+
                 return [
+                    'enrollment_id' => $enrollment->id,
                     'id' => $course->id,
                     'title' => $course->title,
                     'slug' => $course->slug,
@@ -405,9 +414,10 @@ class DashboardController extends Controller
                     'image_url' => $course->image_url, 
                     'level' => $course->level,
                     'duration' => $course->duration,
-                    'progress' => $enrollment->progress, // Assuming you have progress tracking
-                    'modules_count' => $course->modules_count,
-                    'completed_modules' => $enrollment->completed_modules ?? 0,
+                    'progress' => $moduleProgress['progress'],
+                    'modules_count' => $moduleProgress['total_modules'],
+                    'completed_modules' => $moduleProgress['completed_modules'],
+                    'module_ids' => $moduleProgress['module_ids'],
                     'format' => $course->format,
                 ];
             });
@@ -445,6 +455,51 @@ class DashboardController extends Controller
             'enrolledCourses' => $enrolledCourses,
         ]);
     } 
+
+    private function calculateEnrollmentModuleProgress(Enrollment $enrollment): array
+    {
+        $course = $enrollment->course;
+
+        if (!$course) {
+            return [
+                'completed_modules' => 0,
+                'total_modules' => 0,
+                'module_ids' => [],
+                'progress' => 0,
+            ];
+        }
+
+        $modules = $course->modules()->get(['id']);
+        $totalModules = $modules->count();
+
+        if ($totalModules === 0) {
+            return [
+                'completed_modules' => 0,
+                'total_modules' => 0,
+                'module_ids' => [],
+                'progress' => $enrollment->progress ?? 0,
+            ];
+        }
+
+        $readModuleIds = CourseModuleUser::where('enrollment_id', $enrollment->id)
+            ->where('user_id', $enrollment->user_id)
+            ->where('read', true)
+            ->pluck('course_module_id')
+            ->all();
+
+        $readModuleIds = array_flip($readModuleIds);
+
+        $completedModules = $modules->filter(function ($module) use ($readModuleIds) {
+            return isset($readModuleIds[$module->id]);
+        })->count();
+
+        return [
+            'completed_modules' => $completedModules,
+            'total_modules' => $totalModules,
+            'module_ids' => $modules->pluck('id')->values()->all(),
+            'progress' => (int) round(($completedModules / $totalModules) * 100),
+        ];
+    }
  
     public function showCourse($slug)
 {
@@ -536,7 +591,7 @@ class DashboardController extends Controller
     }
 
     $diplomaAssessment = Assessment::where('course_id', $course->id)
-        ->where('assessment_level', 'diploma')
+        ->whereIn('assessment_level', ['diploma', 'project'])
         ->with(['submissions' => function($query) {
             $query->where('user_id', auth()->id());
         }])
@@ -554,6 +609,7 @@ class DashboardController extends Controller
             'status' => $submission ? $submission->status : 'not_started',
             'score' => $submission ? $submission->score : null,
             'passed' => $submission ? $submission->passed : null,
+            'graded_at' => $submission && $submission->graded_at ? $submission->graded_at->format('Y-m-d H:i:s') : null,
             'due_date' => $diplomaAssessment->due_date,
             'requires_identity_verification' => $diplomaAssessment->requires_identity_verification,
             'needs_manual_marking' => $diplomaAssessment->needs_manual_marking,
@@ -562,12 +618,45 @@ class DashboardController extends Controller
         $diplomaAssessment = null;
     }
 
+    $quizPassed = $combinedQuiz ? (bool) ($quizzes[0]['passed'] ?? false) : true;
+    $moduleAssessmentsPassed = $moduleAssessments->isEmpty()
+        ? true
+        : $moduleAssessments->every(fn ($assessment) => (bool) ($assessment['passed'] ?? false));
+    $finalExamPassed = $finalExam ? (bool) ($finalExam['passed'] ?? false) : true;
+    $projectAssessmentPassed = $diplomaAssessment
+        ? (($diplomaAssessment['status'] ?? null) === 'graded' && (bool) ($diplomaAssessment['passed'] ?? false))
+        : false;
+    $diplomaPassed = $projectAssessmentPassed;
+    $assessmentsPassed = $moduleAssessmentsPassed && $finalExamPassed && $diplomaPassed;
+
     $examResults = [
-        'all_passed' => $this->checkAllAssessmentsPassed($course->id),
-        'final_exam_passed' => $finalExam ? ($finalExam['passed'] ?? false) : null,
-        'diploma_passed' => $diplomaAssessment ? ($diplomaAssessment['passed'] ?? false) : null,
+        'quiz_passed' => $quizPassed,
+        'module_assessments_passed' => $moduleAssessmentsPassed,
+        'final_exam_passed' => $finalExamPassed,
+        'diploma_passed' => $diplomaPassed,
+        'assessments_passed' => $assessmentsPassed,
+        'all_passed' => $quizPassed && $assessmentsPassed,
+        'certificate_eligible' => $quizPassed && $assessmentsPassed,
+        'project_assessment_required' => (bool) $diplomaAssessment,
+        'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
+        'project_assessment_passed' => $projectAssessmentPassed,
+    ];
+
+    $certification = [
+        'can_display_card' => $projectAssessmentPassed && (($quizPassed && $assessmentsPassed) || (bool) $enrollment?->certificate_generated),
+        'project_assessment_required' => (bool) $diplomaAssessment,
+        'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
+        'project_assessment_passed' => $projectAssessmentPassed,
+        'certificate_eligible' => $quizPassed && $assessmentsPassed,
     ];
    
+    $moduleReadingStatuses = $enrollment
+        ? CourseModuleUser::where('enrollment_id', $enrollment->id)
+            ->where('user_id', auth()->id())
+            ->get()
+            ->keyBy('course_module_id')
+        : collect();
+
     $modules = $course->modules()
         ->with(['lessons' => function($query) use ($enrollment) {
             if ($enrollment) {
@@ -576,14 +665,22 @@ class DashboardController extends Controller
         }])
         ->orderBy('module_number')
         ->get()
-        ->map(function ($module) {
+        ->map(function ($module) use ($moduleReadingStatuses) {
+            $readingStatus = $moduleReadingStatuses->get($module->id);
+            $isRead = (bool) ($readingStatus?->read ?? false);
+
             return [
                 'id' => $module->id,
                 'title' => $module->title,
                 'module_number' => $module->module_number,
+                'course_outline' => $module->course_outline,
                 'learning_objectives' => $module->learning_objectives,
                 'full_content' => $module->full_content,
+                'reading_content' => filled($module->full_content) ? $module->full_content : $module->course_outline,
                 'estimated_hours' => $module->estimated_hours,
+                'reading_progress' => $isRead ? 100 : (int) ($readingStatus?->reading_progress ?? 0),
+                'read' => $isRead,
+                'read_at' => optional($readingStatus?->read_at)->toIso8601String(),
                 'lessons' => $module->lessons->map(function ($lesson) {
                     return [
                         'id' => $lesson->id,
@@ -598,6 +695,12 @@ class DashboardController extends Controller
             ];
         });
 
+    $courseMaterials = $course->materials()
+        ->orderBy('sort_order')
+        ->get()
+        ->map(fn ($material) => $this->formatCourseMaterial($material))
+        ->toArray();
+
     if (!$enrollment) {
         return Inertia::render('Dashboard/Courses/Show', [
             'course' => $course,
@@ -608,6 +711,7 @@ class DashboardController extends Controller
             'finalExam' => $finalExam,
             'diplomaAssessment' => $diplomaAssessment,
             'examResults' => $examResults,
+            'certification' => $certification,
             'auth' => ['user' => auth()->user()]
         ]); 
     }
@@ -616,6 +720,7 @@ class DashboardController extends Controller
         'course' => $course,
         'enrollment' => $enrollment,
         'modules' => $modules, 
+        'courseMaterials' => $courseMaterials,
         'quizzes' => $quizzes,
         'moduleAssessments' => $moduleAssessments,
         'finalExam' => $finalExam,
@@ -624,30 +729,65 @@ class DashboardController extends Controller
             'certificate_id' => $enrollment->certificate_number ?? auth()->user()->candidate_id,
         ],
         'examResults' => $examResults,
+        'certification' => $certification,
     ]);
+}
+
+public function downloadCourseMaterial(CourseMaterial $material)
+{
+    $enrolled = Enrollment::where('user_id', auth()->id())
+        ->where('course_id', $material->course_id)
+        ->whereIn('status', ['enrolled', 'active', 'completed'])
+        ->exists();
+
+    abort_unless($enrolled, 403);
+    abort_unless($material->is_downloadable, 403);
+    abort_unless(Storage::disk('public')->exists($material->file_path), 404);
+
+    $material->incrementDownloadCount();
+
+    return Storage::disk('public')->download(
+        $material->file_path,
+        $material->file_name ?: basename($material->file_path)
+    );
+}
+
+private function formatCourseMaterial(CourseMaterial $material): array
+{
+    return [
+        'id' => $material->id,
+        'title' => $material->title,
+        'file_name' => $material->file_name,
+        'file_type' => $material->file_type,
+        'file_size' => $material->formatted_size,
+        'file_url' => $material->file_url,
+        'download_url' => route('dashboard.course-materials.download', $material),
+        'is_downloadable' => $material->is_downloadable,
+    ];
 }
 
 
 private function isCourseQuizUnlocked($course, $enrollment)
 {
     if (!$enrollment) return false;
-    
-    $modules = $course->modules()
-        ->with(['lessons' => function($query) use ($enrollment) {
-            $query->withCompletionStatus($enrollment->user_id, $enrollment->id);
-        }])
-        ->get();
-    
-    foreach ($modules as $module) {
-        $totalLessons = $module->lessons->count();
-        $completedLessons = $module->lessons->filter(fn($l) => $l->completed)->count();
-        
-        if ($totalLessons > 0 && $completedLessons < $totalLessons) {
-            return false;
-        }
+
+    $modules = $course->modules()->get(['id']);
+
+    if ($modules->isEmpty()) {
+        return true;
     }
-    
-    return true;
+
+    $readModuleIds = CourseModuleUser::where('enrollment_id', $enrollment->id)
+        ->where('user_id', $enrollment->user_id)
+        ->where('read', true)
+        ->pluck('course_module_id')
+        ->all();
+
+    $readModuleIds = array_flip($readModuleIds);
+
+    return $modules->every(function ($module) use ($readModuleIds) {
+        return isset($readModuleIds[$module->id]);
+    });
 }
 
     private function getModuleQuizStatus($moduleQuizzes)

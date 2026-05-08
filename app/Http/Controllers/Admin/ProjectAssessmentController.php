@@ -71,8 +71,15 @@ class ProjectAssessmentController extends Controller
         \Log::info('Project assessment store called', $request->all());
         
         try {
+            $projectTopics = $request->input('settings.project_topics', '');
+            $derivedTitle = Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($projectTopics))), 120, '');
+
+            $request->merge([
+                'title' => $request->input('title') ?: ($derivedTitle ?: 'Project Assessment'),
+            ]);
+
             $validated = $request->validate([
-                'title' => 'required|string|max:255',
+                'title' => 'nullable|string|max:255',
                 'description' => 'nullable|string',
                 'course_id' => 'required|exists:courses,id',
                 'module_id' => 'nullable|exists:course_modules,id',
@@ -90,6 +97,7 @@ class ProjectAssessmentController extends Controller
                 'requires_identity_verification' => 'nullable',
                 'assessment_file' => 'nullable|file|mimes:pdf,doc,docx,pptx,xlsx,zip|max:51200',
                 'settings' => 'nullable|array',
+                'settings.project_topics' => 'required|string',
                 'action' => 'nullable|string',
             ]);
 
@@ -182,6 +190,13 @@ class ProjectAssessmentController extends Controller
      */
     public function update(Request $request, Assessment $assessment)
     {
+        $projectTopics = $request->input('settings.project_topics', '');
+        $derivedTitle = Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($projectTopics))), 120, '');
+
+        $request->merge([
+            'title' => $derivedTitle ?: $request->input('title', $assessment->title),
+        ]);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -201,6 +216,7 @@ class ProjectAssessmentController extends Controller
             'requires_identity_verification' => 'boolean',
             'assessment_file' => 'nullable|file|mimes:pdf,doc,docx,pptx,xlsx|max:51200',
             'settings' => 'nullable|array',
+            'settings.project_topics' => 'required|string',
         ]);
 
         $validated['allow_late_submissions'] = $request->has('allow_late_submissions');

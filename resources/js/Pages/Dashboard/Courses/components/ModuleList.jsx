@@ -1,6 +1,6 @@
 import React from 'react';
 import ModuleItem from './ModuleItem';
-import { BookOpenIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon } from '@heroicons/react/24/outline';
 
 export default function ModuleList({ 
     modules, 
@@ -8,10 +8,15 @@ export default function ModuleList({
     toggleModule, 
     completingLesson, 
     markLessonComplete, 
-    markLessonIncomplete 
-}) {
+    markLessonIncomplete,
+    readModules = {},
+    moduleReadingProgress = {},
+    markModuleRead,
+    updateModuleReadingProgress
+}) { 
     if (!modules || modules.length === 0) {
         return (
+          
             <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-1">No modules yet</h3>
@@ -25,21 +30,15 @@ export default function ModuleList({
         if (moduleIndex === 0) return { accessible: true, reason: null };
         
         const previousModule = modules[moduleIndex - 1];
-        const previousModuleProgress = calculateModuleProgress(previousModule);
-        const isPreviousCompleted = previousModuleProgress === 100;
+        const previousModuleProgress = readModules[previousModule.id] ? 100 : (moduleReadingProgress[previousModule.id] || 0);
+        const isPreviousCompleted = readModules[previousModule.id] === true;
         
         return {
             accessible: isPreviousCompleted,
-            reason: isPreviousCompleted ? null : `Complete Module ${previousModule.module_number} first`,
+            reason: isPreviousCompleted ? null : `Read Module ${previousModule.module_number} content first`,
             previousModuleTitle: previousModule.title,
             previousModuleProgress
         };
-    };
-
-    const calculateModuleProgress = (module) => {
-        if (!module.lessons || module.lessons.length === 0) return 0;
-        const completed = module.lessons.filter(l => l.completed).length;
-        return Math.round((completed / module.lessons.length) * 100);
     };
 
     return (
@@ -47,8 +46,7 @@ export default function ModuleList({
             {modules.map((module, moduleIndex) => {
                 const { accessible, reason, previousModuleTitle, previousModuleProgress } = 
                     getModuleAccessibility(moduleIndex);
-                const moduleProgress = calculateModuleProgress(module);
-                const isPreviousCompleted = moduleIndex === 0 || calculateModuleProgress(modules[moduleIndex - 1]) === 100;
+                const isPreviousCompleted = moduleIndex === 0 || readModules[modules[moduleIndex - 1].id] === true;
                 
                 return (
                     <ModuleItem
@@ -65,6 +63,10 @@ export default function ModuleList({
                         previousModuleTitle={previousModuleTitle}
                         previousModuleProgress={previousModuleProgress}
                         isPreviousCompleted={isPreviousCompleted}
+                        isModuleRead={readModules[module.id] === true}
+                        moduleReadingProgress={moduleReadingProgress[module.id] || 0}
+                        markModuleRead={markModuleRead}
+                        updateModuleReadingProgress={updateModuleReadingProgress}
                     />
                 );
             })}

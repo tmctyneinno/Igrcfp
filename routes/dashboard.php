@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonCompletionController;
+use App\Http\Controllers\ModuleReadingProgressController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
 use App\Http\Controllers\QuizProjectAssessmentController;
@@ -26,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
     Route::get('dashboard/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
+    Route::get('dashboard/course-materials/{material}/download', [DashboardController::class, 'downloadCourseMaterial'])
+        ->name('dashboard.course-materials.download');
     Route::get('dashboard/courses/{slug}', [DashboardController::class, 'courseSlug'])->name('dashboard.courses.show');
     Route::get('/dashboard/category/{slug}', [DashboardController::class, 'byCategory'])->name('dashboard.courses.by-category');
     // Cart routes
@@ -71,6 +74,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->where('lesson', '[0-9]+'); 
     Route::delete('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markIncomplete'])
         ->name('lessons.incomplete');
+    Route::post('dashboard/modules/{module}/reading-progress', [ModuleReadingProgressController::class, 'store'])
+        ->name('modules.reading-progress')
+        ->where('module', '[0-9]+');
 
 });
 

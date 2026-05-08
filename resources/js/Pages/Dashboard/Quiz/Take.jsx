@@ -26,6 +26,7 @@ export default function QuizTake({
     enrollment, 
     attempt, 
     modules = [],
+    questions: courseQuestions = [],
     timeRemaining: initialTimeRemaining,
     timeLimit 
 }) {
@@ -44,51 +45,22 @@ export default function QuizTake({
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [finalScore, setFinalScore] = useState(null);
     
-    // ==================== HELPER FUNCTIONS ====================
-    
-    const areModuleLessonsCompleted = useCallback((module) => {
-        const totalLessons = module.lessons?.length || 0;
-        const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
-        return totalLessons === 0 || completedLessons === totalLessons;
-    }, []);
-    
-    const isModuleUnlocked = useCallback((moduleId, modulesList, completedSet) => {
-        const moduleIndex = modulesList.findIndex(m => m.id === moduleId);
-        if (moduleIndex === 0) return true;
-        
-        for (let i = 0; i < moduleIndex; i++) {
-            const prevModule = modulesList[i];
-            const prevModuleQuizzes = prevModule.quizzes || [];
-            
-            if (prevModuleQuizzes.length > 0) {
-                const hasCompletedQuiz = prevModuleQuizzes.some(q => completedSet.has(q.id));
-                if (!hasCompletedQuiz) return false;
-            }
-        }
-        return true;
-    }, []);
-    
     // ==================== MEMOIZED DATA ====================
     
     const allQuizzes = useMemo(() => {
-        return modules.flatMap(module => 
-            (module.quizzes || []).map(quiz => ({
-                ...quiz,
-                moduleId: module.id,
-                moduleTitle: module.title,
-                moduleNumber: module.module_number,
-                lessonsCompleted: areModuleLessonsCompleted(module),
-                attempt: quiz.attempt || null
-            }))
-        );
-    }, [modules, areModuleLessonsCompleted]);
+        return [{
+            ...assessment,
+            questions: courseQuestions,
+            questions_count: courseQuestions.length,
+            moduleUnlocked: true,
+            lessonsCompleted: true,
+            attempt: assessment?.attempt || null,
+        }];
+    }, [assessment, courseQuestions]);
     
     const allQuizzesWithStatus = useMemo(() => {
-        return allQuizzes.map(quiz => ({
-            ...quiz,
-            moduleUnlocked: isModuleUnlocked(quiz.moduleId, modules, completedQuizzes)
-        }));
-    }, [allQuizzes, modules, completedQuizzes, isModuleUnlocked]);
+        return allQuizzes;
+    }, [allQuizzes]);
     
     const currentQuiz = allQuizzesWithStatus[currentQuizIndex];
     const questions = currentQuiz?.questions || [];
@@ -97,10 +69,7 @@ export default function QuizTake({
         ? Math.round(((currentQuestionIndex + 1) / questions.length) * 100) 
         : 0;
     
-    const isQuizUnlocked = useCallback((quiz) => {
-        if (!quiz.moduleUnlocked) return false;
-        return quiz.lessonsCompleted;
-    }, []);
+    const isQuizUnlocked = useCallback(() => true, []);
     
     const isLastQuiz = currentQuizIndex === allQuizzesWithStatus.length - 1;
     const isOnlyQuiz = allQuizzesWithStatus.length === 1;
@@ -162,24 +131,12 @@ export default function QuizTake({
     // ==================== EFFECTS ====================
     
     useEffect(() => {
-        if (currentQuiz) {
-            setExpandedModules(prev => ({ ...prev, [currentQuiz.moduleId]: true }));
-        }
-    }, [currentQuiz]);
-    
-    useEffect(() => {
         if (allQuizzesWithStatus.length > 0 && !selectedQuiz) {
-            const firstUnlockedIndex = allQuizzesWithStatus.findIndex(q => {
-                return q.moduleUnlocked && q.lessonsCompleted && !completedQuizzes.has(q.id);
-            });
+            const firstUnlockedIndex = allQuizzesWithStatus.findIndex(q => !completedQuizzes.has(q.id));
             
             if (firstUnlockedIndex !== -1) {
                 setCurrentQuizIndex(firstUnlockedIndex);
                 setSelectedQuiz(allQuizzesWithStatus[firstUnlockedIndex]);
-                setExpandedModules(prev => ({ 
-                    ...prev, 
-                    [allQuizzesWithStatus[firstUnlockedIndex].moduleId]: true 
-                }));
             } else if (allQuizzesWithStatus.length > 0) {
                 setCurrentQuizIndex(0);
                 setSelectedQuiz(allQuizzesWithStatus[0]);
@@ -212,10 +169,6 @@ export default function QuizTake({
     }, [currentQuiz?.id, isLastQuiz, isOnlyQuiz, isCurrentQuizCompleted]);
     
     // ==================== EVENT HANDLERS ====================
-    
-    const toggleModule = useCallback((moduleId) => {
-        setExpandedModules(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
-    }, []);
     
     const handleAnswer = useCallback((questionId, answer) => {
         if (isCurrentQuizCompleted) return;
@@ -263,15 +216,6 @@ export default function QuizTake({
             toast('You can retake this quiz to improve your score.', { icon: '📝' });
         }
         
-        if (!isQuizUnlocked(quiz)) {
-            if (!quiz.moduleUnlocked) {
-                toast.error('Complete the previous module first');
-            } else {
-                toast.error('Complete all lessons in this module first');
-            }
-            return;
-        }
-        
         if (hasUnsavedChanges) {
             autoSaveProgress();
         }
@@ -282,7 +226,7 @@ export default function QuizTake({
         setAnswers({});
         setFlaggedQuestions(new Set());
         setHasUnsavedChanges(false);
-    }, [allQuizzesWithStatus, isQuizUnlocked, completedQuizzes, hasUnsavedChanges, autoSaveProgress]);
+    }, [allQuizzesWithStatus, completedQuizzes, hasUnsavedChanges, autoSaveProgress]);
 
     const handleNextQuiz = useCallback(() => {
         for (let i = currentQuizIndex + 1; i < allQuizzesWithStatus.length; i++) {
@@ -379,7 +323,7 @@ export default function QuizTake({
                 setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
                 setHasUnsavedChanges(false);
                 
-                toast.success(`✅ Module ${currentQuiz.moduleNumber} completed!`, {
+                toast.success('✅ Quiz section completed!', {
                     icon: '🎯',
                     duration: 2000,
                 });
@@ -471,22 +415,9 @@ export default function QuizTake({
         
         if (hasPassed) return 'passed';
         if (completedQuizzes.has(quiz.id)) return 'completed-failed';
-        if (!quiz.moduleUnlocked) return 'locked-module';
-        if (!isQuizUnlocked(quiz)) return 'locked-lessons';
         if (currentQuiz?.id === quiz.id) return 'active';
         return 'available';
-    }, [completedQuizzes, isQuizUnlocked, currentQuiz?.id]);
-    
-    const moduleQuizzesMap = useMemo(() => {
-        const map = {};
-        allQuizzesWithStatus.forEach(quiz => {
-            if (!map[quiz.moduleId]) {
-                map[quiz.moduleId] = [];
-            }
-            map[quiz.moduleId].push(quiz);
-        });
-        return map;
-    }, [allQuizzesWithStatus]);
+    }, [completedQuizzes, currentQuiz?.id]);
     
     // ==================== RENDER ====================
     
@@ -554,10 +485,7 @@ export default function QuizTake({
                                     {currentQuiz?.title || 'Course Quiz'}
                                 </h1>
                                 <p className="text-sm text-gray-500">
-                                    {currentQuiz?.moduleTitle} 
-                                    {allQuizzesWithStatus.length > 1 && (
-                                        <> • Quiz {currentQuizIndex + 1} of {allQuizzesWithStatus.length}</>
-                                    )}
+                                    {course.title} • {questions.length} question{questions.length === 1 ? '' : 's'}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
@@ -666,164 +594,99 @@ export default function QuizTake({
                 
                 {/* Main Content */}
                 <div className="flex max-w-[1600px] mx-auto">
-                    {/* Left Sidebar - Modules & Quizzes */}
+                    {/* Left Sidebar - Course Question Navigator */}
                     <div className="w-80 bg-white border-r border-gray-200 min-h-[calc(100vh-120px)] sticky top-[120px] overflow-y-auto">
                         <div className="p-4">
                             <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <BookOpenIcon className="w-4 h-4" />
-                                Course Modules
+                                Course Quiz
                             </h3>
-                            
-                            <div className="space-y-2">
-                                {modules.map((module, idx) => {
-                                    const isExpanded = expandedModules[module.id] === true;
-                                    const moduleQuizzes = moduleQuizzesMap[module.id] || [];
-                                    const moduleUnlocked = isModuleUnlocked(module.id, modules, completedQuizzes);
-                                    const moduleCompleted = moduleQuizzes.length > 0 && moduleQuizzes.every(q => completedQuizzes.has(q.id));
-                                    
-                                    if (moduleQuizzes.length === 0) return null;
-                                    
+
+                            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 mb-4">
+                                <p className="text-sm font-medium text-gray-900">{assessment.title || 'Course Quiz'}</p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Answer all questions for this course in one continuous quiz.
+                                </p>
+                                <div className="grid grid-cols-2 gap-3 mt-4 text-center">
+                                    <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                        <p className="text-lg font-bold text-gray-900">{questions.length}</p>
+                                        <p className="text-xs text-gray-500">Questions</p>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-3 border border-gray-100">
+                                        <p className="text-lg font-bold text-gray-900">{assessment.passing_score}%</p>
+                                        <p className="text-xs text-gray-500">Passing</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-3 flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-700">Question Navigator</span>
+                                <span className="text-xs text-gray-500">
+                                    {Object.keys(answers).length}/{questions.length} answered
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-5 gap-2">
+                                {questions.map((question, index) => {
+                                    const isActive = index === currentQuestionIndex;
+                                    const isAnswered = Boolean(answers[question.id]);
+                                    const isFlagged = flaggedQuestions.has(question.id);
+
                                     return (
-                                        <div key={module.id} className={`border rounded-lg overflow-hidden ${
-                                            !moduleUnlocked ? 'border-gray-200 bg-gray-50 opacity-75' : 
-                                            currentQuiz?.moduleId === module.id ? 'border-blue-300 bg-blue-50/50' : 
-                                            'border-gray-200 bg-white'
-                                        }`}>
-                                            <button onClick={() => toggleModule(module.id)} className="w-full px-4 py-3 text-left hover:bg-gray-50">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                                                                Module {module.module_number || idx + 1}
-                                                            </span>
-                                                            {!moduleUnlocked ? (
-                                                                <LockClosedIcon className="w-3 h-3 text-gray-400" />
-                                                            ) : moduleCompleted ? (
-                                                                <CheckCircleIcon className="w-3 h-3 text-green-500" />
-                                                            ) : null}
-                                                            <span className="text-xs text-gray-500">
-                                                                {moduleQuizzes.length} Quiz{moduleQuizzes.length !== 1 ? 'zes' : ''}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-sm font-medium text-gray-900">{module.title}</p>
-                                                    </div>
-                                                    {isExpanded ? 
-                                                        <ChevronLeftIcon className="w-4 h-4 text-gray-400 rotate-90" /> : 
-                                                        <ChevronRightIcon className="w-4 h-4 text-gray-400" />
-                                                    }
-                                                </div>
-                                            </button>
-                                            
-                                            {isExpanded && moduleQuizzes.length > 0 && (
-                                                <div className="border-t border-gray-100 bg-gray-50">
-                                                    {moduleQuizzes.map((quiz) => {
-                                                        const status = getQuizStatus(quiz);
-                                                        const quizAttempt = quiz.attempt;
-                                                        const hasPassed = quizAttempt?.passed === true;
-                                                        const isCompleted = completedQuizzes.has(quiz.id);
-                                                        const isActive = currentQuiz?.id === quiz.id;
-                                                        
-                                                        return (
-                                                            <button
-                                                                key={quiz.id}
-                                                                onClick={() => handleSelectQuiz(quiz)}
-                                                                disabled={status === 'locked-module' || status === 'locked-lessons' || hasPassed}
-                                                                className={`w-full px-4 py-3 text-left border-b border-gray-100 last:border-b-0 transition ${
-                                                                    status === 'locked-module' || status === 'locked-lessons' || hasPassed
-                                                                        ? 'opacity-60 cursor-not-allowed' 
-                                                                        : 'hover:bg-gray-100 cursor-pointer'
-                                                                } ${isActive ? 'bg-blue-100 border-l-4 border-l-blue-600' : ''}`}
-                                                            >
-                                                                <div className="flex items-center justify-between">
-                                                                    <div className="flex items-center gap-2">
-                                                                        {status === 'locked-module' ? (
-                                                                            <LockClosedIcon className="w-4 h-4 text-gray-500" />
-                                                                        ) : status === 'locked-lessons' ? (
-                                                                            <LockClosedIcon className="w-4 h-4 text-orange-500" />
-                                                                        ) : hasPassed ? (
-                                                                            <TrophyIcon className="w-4 h-4 text-yellow-500" />
-                                                                        ) : isCompleted ? (
-                                                                            <CheckCircleIcon className="w-4 h-4 text-orange-500" />
-                                                                        ) : isActive ? (
-                                                                            <PlayCircleIcon className="w-4 h-4 text-blue-600 animate-pulse" />
-                                                                        ) : (
-                                                                            <PlayCircleIcon className="w-4 h-4 text-blue-600" />
-                                                                        )}
-                                                                        <span className={`text-sm font-medium ${hasPassed ? 'text-yellow-700' : isCompleted ? 'text-gray-500' : 'text-gray-800'}`}>
-                                                                            {quiz.title}
-                                                                        </span>
-                                                                    </div>
-                                                                    <span className="text-xs text-gray-500">
-                                                                        {quiz.questions_count} Qs
-                                                                    </span>
-                                                                </div>
-                                                                {status === 'locked-module' && (
-                                                                    <p className="text-xs text-gray-500 mt-1">
-                                                                        Complete previous module first
-                                                                    </p>
-                                                                )}
-                                                                {status === 'locked-lessons' && (
-                                                                    <p className="text-xs text-orange-600 mt-1">
-                                                                        Complete module lessons first
-                                                                    </p>
-                                                                )}
-                                                                {hasPassed && (
-                                                                    <p className="text-xs text-yellow-600 mt-1 flex items-center gap-1">
-                                                                        <TrophyIcon className="w-3 h-3" />
-                                                                        Passed with {quizAttempt?.score}%
-                                                                    </p>
-                                                                )}
-                                                                {isCompleted && !hasPassed && (
-                                                                    <p className="text-xs text-orange-600 mt-1">
-                                                                        Failed - Click to retake
-                                                                    </p>
-                                                                )}
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
+                                        <button
+                                            key={question.id}
+                                            type="button"
+                                            onClick={() => setCurrentQuestionIndex(index)}
+                                            className={`relative h-10 rounded-lg text-sm font-semibold border transition ${
+                                                isActive
+                                                    ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                    : isAnswered
+                                                        ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+                                                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                                            }`}
+                                            title={`Question ${index + 1}`}
+                                        >
+                                            {index + 1}
+                                            {isFlagged && (
+                                                <span className={`absolute -top-1 -right-1 h-3 w-3 rounded-full ${
+                                                    isActive ? 'bg-amber-300' : 'bg-amber-500'
+                                                }`} />
                                             )}
-                                        </div>
+                                        </button>
                                     );
                                 })}
                             </div>
-                            
-                            {allQuizzesWithStatus.length > 1 && (
-                                <div className="flex gap-2 mt-4">
-                                    <button
-                                        onClick={handlePreviousQuiz}
-                                        disabled={currentQuizIndex === 0}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <ArrowLeftIcon className="w-4 h-4" />
-                                        Previous
-                                    </button>
-                                    <button
-                                        onClick={handleNextQuiz}
-                                        disabled={allQuizzesCompleted}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Next
-                                        <ArrowRightIcon className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            )}
-                            
-                            {/* Overall Progress Indicator */}
-                            {allQuizzesWithStatus.length > 1 && (
-                                <div className="mt-4 pt-4 border-t border-gray-200">
-                                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                        <span>Overall Progress</span>
-                                        <span>{completedQuizzes.size}/{allQuizzesWithStatus.length} Quizzes</span>
+
+                            <div className="mt-4 pt-4 border-t border-gray-200">
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <span className="h-3 w-3 rounded bg-green-50 border border-green-200" />
+                                        Answered
                                     </div>
-                                    <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-green-500 rounded-full transition-all duration-500"
-                                            style={{ width: `${(completedQuizzes.size / allQuizzesWithStatus.length) * 100}%` }}
-                                        />
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <span className="h-3 w-3 rounded bg-white border border-gray-200" />
+                                        Unanswered
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <span className="h-3 w-3 rounded bg-blue-600" />
+                                        Current
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <span className="h-3 w-3 rounded-full bg-amber-500" />
+                                        Flagged
                                     </div>
                                 </div>
-                            )}
+                                <div className="flex justify-between text-xs text-gray-500 mt-4 mb-1">
+                                    <span>Overall Progress</span>
+                                    <span>{progress}%</span>
+                                </div>
+                                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-green-500 rounded-full transition-all duration-500"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

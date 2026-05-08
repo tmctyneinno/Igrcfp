@@ -635,7 +635,7 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Format</dt>
-                    <dd className="font-medium text-gray-900">{course.format || 'Self-Paced'}</dd>
+                    <dd className="font-medium text-gray-900">{'Online, Live, Hybrid'}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Duration</dt>
