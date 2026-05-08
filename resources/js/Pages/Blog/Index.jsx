@@ -62,7 +62,7 @@ export default function Blog({ auth, title, description, blogs }) {
                 <section className="bg-white py-12">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h2 className="text-3xl font-semibold text-gray-900 text-center mb-8">Featured Insights</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             {featuredBlogs.map((blog) => (
                                 <BlogCard key={blog.id} blog={blog} />
                             ))}
@@ -70,7 +70,7 @@ export default function Blog({ auth, title, description, blogs }) {
                     </div>
                 </section>
             )}
-
+ 
             <section className="bg-gray-50 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-semibold text-gray-900 text-center mb-8">Latest Insights</h2>
@@ -80,7 +80,7 @@ export default function Blog({ auth, title, description, blogs }) {
                             <p className="text-gray-600">No blog posts found.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                             {(latestBlogs.length > 0 ? latestBlogs : filteredBlogs).map((blog) => (
                                 <BlogCard key={blog.id} blog={blog} />
                             ))}
@@ -151,6 +151,12 @@ function BlogCard({ blog }) {
                 <p className="text-gray-600 line-clamp-3 flex-1">
                     {blog.excerpt || truncate(stripHtml(blog.content), 160)}
                 </p>
+                <Link
+                    href={`/blog/${blog.slug}`}
+                    className="mt-5 inline-flex font-semibold text-blue-600 hover:text-blue-800"
+                >
+                    Read More
+                </Link>
             </div>
         </article>
     );

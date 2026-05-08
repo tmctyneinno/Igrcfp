@@ -9,7 +9,7 @@ import {
   TagIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  EyeIcon,
+  EyeIcon, 
   ClockIcon
 } from '@heroicons/react/24/outline';
 

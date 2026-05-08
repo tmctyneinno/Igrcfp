@@ -291,6 +291,54 @@ class HomeController extends Controller
         ]);
     }
 
+    public function blogShow(string $slug)
+    {
+        $blog = Blog::with('user')
+            ->where('status', 'published')
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $relatedBlogs = Blog::with('user')
+            ->where('status', 'published')
+            ->whereKeyNot($blog->id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($relatedBlog) {
+                return [
+                    'id' => $relatedBlog->id,
+                    'title' => $relatedBlog->title,
+                    'slug' => $relatedBlog->slug,
+                    'excerpt' => $relatedBlog->excerpt,
+                    'image' => $relatedBlog->image_url,
+                    'author' => $relatedBlog->user->name ?? 'IGRCFP',
+                    'reading_time' => $relatedBlog->reading_time,
+                    'published_at' => $relatedBlog->created_at?->toDateString(),
+                ];
+            });
+
+        return Inertia::render('Blog/Show', [
+            'title' => $blog->title,
+            'description' => $blog->meta_description ?: $blog->excerpt,
+            'blog' => [
+                'id' => $blog->id,
+                'title' => $blog->title,
+                'slug' => $blog->slug,
+                'content' => $blog->content,
+                'excerpt' => $blog->excerpt,
+                'image' => $blog->image_url,
+                'author' => $blog->user->name ?? 'IGRCFP',
+                'reading_time' => $blog->reading_time,
+                'meta_description' => $blog->meta_description,
+                'meta_keywords' => $blog->meta_keywords,
+                'published_at' => $blog->created_at?->toDateString(),
+                'updated_at' => $blog->updated_at?->toDateString(),
+            ],
+            'relatedBlogs' => $relatedBlogs,
+            'canonicalUrl' => route('blog.show', $blog->slug),
+        ]);
+    }
+
     public function contact(){
         return Inertia::render('Contact/Index', [
             'title' => 'Contact Us',
