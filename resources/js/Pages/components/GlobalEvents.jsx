@@ -5,114 +5,116 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 export default function GlobalEvents() {
     return (
-        <div className="max-w-7xl mx-auto px-6">
-            {/* HEADER */}
-            
-            <div
-                className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
-                data-aos="fade-up"
-            >
-                <div>
-                    {/* <div className="relative inline-flex items-center mb-3">
-                        <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
-                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
-                            Events & Summits
-                        </span>
-                    </div> */}
-                    <div className="relative inline-flex items-center mb-3">
-                        <motion.span
-                            initial={{ width: 0 }}
-                            whileInView={{ width: 64 }}
-                            transition={{ duration: 0.5, ease: "easeOut" }}
-                            viewport={{ once: true }}
-                            className="absolute left-0 top-1/2 h-px bg-gray-300"
-                        />
-                        <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
-                            Events & Summits
-                        </span>
-                    </div>
+        <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+            <div className="max-w-7xl mx-auto px-6">
+                {/* HEADER */}
+                
+                <div
+                    className=" flex-col md:flex-row md:justify-between md:items-center mb-12"
+                    data-aos="fade-up"
+                >
+                    <div>
+                        {/* <div className="relative inline-flex items-center mb-3">
+                            <span className="absolute left-0 top-1/2 w-16 h-px bg-gray-300 -z-10"></span>
+                            <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                                Events & Summits
+                            </span>
+                        </div> */}
+                        <div className="relative inline-flex items-center mb-3">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 64 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="absolute left-0 top-1/2 h-px bg-gray-300"
+                            />
+                            <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                                Events & Summits
+                            </span>
+                        </div>
 
-                    <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
-                        Our Global Events & Summits
-                    </h2>
+                        <h2 className="text-3xl xl:text-5xl font-bold text-slate-900 mb-6">
+                            Our Global Events & Summits
+                        </h2>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+                    {/* LEFT – IMAGE */}
+                    <motion.div
+                        variants={scaleIn}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="relative"
+                    >
+                        <div className="rounded-2xl overflow-hidden border-4 border-white">
+                            <img
+                                src="assets/images/home-three/gallery/events-image.png"
+                                alt="Global Events & Summits"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    </motion.div>
+
+                    {/* RIGHT – CONTENT */}
+                    <motion.div
+                        variants={fadeLeft}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="flex flex-col"
+                    >
+                        
+
+                        <p className="text-gray-600 mb-6 leading-relaxed">
+                            At IGRCFP, our events connect professionals, regulators,
+                            and industry leaders worldwide. From global summits to
+                            focused workshops, we provide platforms for learning,
+                            networking, and shaping the future of governance,
+                            compliance, and financial crime prevention.
+                        </p>
+
+                        <div className="mb-8">
+                            <h4 className="font-semibold text-slate-900 mb-4">
+                                Our Key Events:
+                            </h4>
+
+                            <ul className="space-y-3 text-gray-600 list-disc list-inside">
+                                <li>
+                                    <strong>Global Summits</strong> – Annual gatherings in
+                                    Africa and Europe with keynotes, panels, and networking.
+                                </li>
+                                <li>
+                                    <strong>Annual Awards</strong> – Recognising excellence
+                                    in compliance and governance.
+                                </li>
+                                <li>
+                                    <strong>Women in GRC & FCC Forums</strong> – Empowering
+                                    women leaders in the industry.
+                                </li>
+                                <li>
+                                    <strong>Workshops & Webinars</strong> – Practical,
+                                    hands-on learning across regions.
+                                </li>
+                                <li>
+                                    <strong>Speaker Series</strong> – Fireside chats with
+                                    regulators and global experts.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <Link
+                            href="/events"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition w-fit"
+                        >
+                            View Upcoming Events
+                            <span aria-hidden>→</span>
+                        </Link>
+                    </motion.div>
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-
-                {/* LEFT – IMAGE */}
-                <motion.div
-                    variants={scaleIn}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="relative"
-                >
-                    <div className="rounded-2xl overflow-hidden border-4 border-white">
-                        <img
-                            src="assets/images/home-three/gallery/events-image.png"
-                            alt="Global Events & Summits"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                </motion.div>
-
-                {/* RIGHT – CONTENT */}
-                <motion.div
-                    variants={fadeLeft}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="flex flex-col"
-                >
-                    
-
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                        At IGRCFP, our events connect professionals, regulators,
-                        and industry leaders worldwide. From global summits to
-                        focused workshops, we provide platforms for learning,
-                        networking, and shaping the future of governance,
-                        compliance, and financial crime prevention.
-                    </p>
-
-                    <div className="mb-8">
-                        <h4 className="font-semibold text-slate-900 mb-4">
-                            Our Key Events:
-                        </h4>
-
-                        <ul className="space-y-3 text-gray-600 list-disc list-inside">
-                            <li>
-                                <strong>Global Summits</strong> – Annual gatherings in
-                                Africa and Europe with keynotes, panels, and networking.
-                            </li>
-                            <li>
-                                <strong>Annual Awards</strong> – Recognising excellence
-                                in compliance and governance.
-                            </li>
-                            <li>
-                                <strong>Women in GRC & FCC Forums</strong> – Empowering
-                                women leaders in the industry.
-                            </li>
-                            <li>
-                                <strong>Workshops & Webinars</strong> – Practical,
-                                hands-on learning across regions.
-                            </li>
-                            <li>
-                                <strong>Speaker Series</strong> – Fireside chats with
-                                regulators and global experts.
-                            </li>
-                        </ul>
-                    </div>
-
-                    <Link
-                        href="/events"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition w-fit"
-                    >
-                        View Upcoming Events
-                        <span aria-hidden>→</span>
-                    </Link>
-                </motion.div>
-            </div>
-        </div>
+        </section>
     );
 }
