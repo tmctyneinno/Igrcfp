@@ -90,7 +90,7 @@ export default function Welcome({ auth, courses,  latestArticles = [], featuredA
                             </div>
                         </div>
                         <Link
-                            href="/scholarship/igrcfp-emerging-professionals-scholarship-programme-2026"
+                            href="/scholarship/igrcfp-emerging-professionals-scholarship-programme-2026?show=full"
                             className="bg-white text-yellow-700 px-8 py-3 rounded-lg font-bold hover:bg-yellow-50 transition whitespace-nowrap shadow-lg"
                         >
                             Apply Now →
