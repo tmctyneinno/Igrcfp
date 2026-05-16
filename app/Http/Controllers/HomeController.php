@@ -55,10 +55,51 @@ class HomeController extends Controller
                 ];
             });
 
+        // Get latest articles
+        $latestArticles = Article::where('status', 'published')
+            ->latest('published_at')
+            ->take(3)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'image' => $article->image_path ? asset('storage/' . $article->image_path) : null,
+                    'category' => $article->category->name ?? 'News',
+                    'published_at' => $article->published_at,
+                    'read_time' => $article->read_time,
+                    'is_featured' => $article->is_featured,
+                ];
+            });
+
+        $featuredArticles = Article::where('status', 'published')
+            ->where('is_featured', true)
+            ->latest('published_at')
+            ->take(1)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'image' => $article->image_path ? asset('storage/' . $article->image_path) : null,
+                    'category' => $article->category->name ?? 'News',
+                    'published_at' => $article->published_at,
+                    'read_time' => $article->read_time,
+                    'is_featured' => $article->is_featured,
+                ];
+            });
+
+
         return Inertia::render('Welcome', [
             'canLogin' => \Route::has('login'),
             'canRegister' => \Route::has('register'),
             'courses' => $courses,
+            'latestArticles' => $latestArticles,
+            'featuredArticles' => $featuredArticles,
         ]);
     }
 
