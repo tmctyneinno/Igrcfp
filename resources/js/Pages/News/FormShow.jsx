@@ -1,11 +1,11 @@
 // resources/js/Pages/News/FormShow.jsx
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-export default function FormShow({ post, programmes = [] }) {
+export default function FormShow({ post, programmes = [], showContent = true }) {
     const { recaptchaSiteKey } = usePage().props;
     const recaptchaRef = useRef(null);
     
@@ -55,7 +55,6 @@ export default function FormShow({ post, programmes = [] }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Validate reCAPTCHA
         if (!data['g-recaptcha-response']) {
             setRecaptchaError('Please complete the reCAPTCHA verification.');
             return;
@@ -79,7 +78,6 @@ export default function FormShow({ post, programmes = [] }) {
         });
     };
 
-    // Default programmes if none provided
     const programmeList = programmes.length > 0 ? programmes : [
         'Certificate in Governance, Risk & Compliance',
         'Certificate in Financial Crime Prevention',
@@ -106,72 +104,102 @@ export default function FormShow({ post, programmes = [] }) {
                 </div>
             )}
 
-            {/* Article Content */}
-            <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Header */}
-                <div className="mb-8">
-                    {post.article_category && (
-                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
-                            {post.article_category.name}
-                        </span>
+            {/* Article Content - Only show if showContent is true */}
+            {showContent && (
+                <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    {/* Header */}
+                    <div className="mb-8">
+                        {post.article_category && (
+                            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
+                                {post.article_category.name}
+                            </span>
+                        )}
+                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                            {post.title}
+                        </h1>
+                        
+                        <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
+                            {post.author && (
+                                <div className="flex items-center gap-2">
+                                    {post.author.avatar && (
+                                        <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full" />
+                                    )}
+                                    <span>{post.author.name}</span>
+                                </div>
+                            )}
+                            <span>•</span>
+                            <span>{new Date(post.published_at).toLocaleDateString('en-US', { 
+                                year: 'numeric', month: 'long', day: 'numeric' 
+                            })}</span>
+                            <span>•</span>
+                            <span>{post.read_time} min read</span>
+                            {post.views > 0 && (
+                                <>
+                                    <span>•</span>
+                                    <span>{post.views} views</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Featured Image */}
+                    {post.image_path && (
+                        <img 
+                            src={`/storage/${post.image_path}`} 
+                            alt={post.title}
+                            className="w-full rounded-xl mb-8 shadow-lg"
+                        />
                     )}
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                        {post.title}
-                    </h1>
-                    
-                    {/* Meta */}
-                    <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
-                        {post.author && (
-                            <div className="flex items-center gap-2">
-                                {post.author.avatar && (
-                                    <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full" />
-                                )}
-                                <span>{post.author.name}</span>
-                            </div>
-                        )}
-                        <span>•</span>
-                        <span>{new Date(post.published_at).toLocaleDateString('en-US', { 
-                            year: 'numeric', month: 'long', day: 'numeric' 
-                        })}</span>
-                        <span>•</span>
-                        <span>{post.read_time} min read</span>
-                        {post.views > 0 && (
-                            <>
-                                <span>•</span>
-                                <span>{post.views} views</span>
-                            </>
-                        )}
+
+                    {/* Rich Content */}
+                    <div 
+                        className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-img:rounded-xl"
+                        dangerouslySetInnerHTML={{ __html: post.content }}
+                    />
+                </article>
+            )}
+
+            {/* If no content shown, show a simple header */}
+            {!showContent && (
+                <div className="bg-gradient-to-r from-blue-900 to-blue-800 py-16">
+                    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                        <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                            Scholarship Application Form
+                        </h1>
+                        <p className="text-blue-100 text-lg">
+                            {post.title}
+                        </p>
                     </div>
                 </div>
-
-                {/* Featured Image */}
-                {post.image_path && (
-                    <img 
-                        src={`/storage/${post.image_path}`} 
-                        alt={post.title}
-                        className="w-full rounded-xl mb-8 shadow-lg"
-                    />
-                )}
-
-                {/* Rich Content */}
-                <div 
-                    className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-img:rounded-xl"
-                    dangerouslySetInnerHTML={{ __html: post.content }}
-                />
-            </article>
+            )}
 
             {/* Application Form Section */}
-            <section className="bg-gray-50 py-16" id="apply-form">
+            <section className={`${showContent ? 'bg-gray-50' : 'bg-white'} py-16`} id="apply-form">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                                📄 Scholarship Application Form
-                            </h2>
-                            <p className="text-gray-600">
-                                Fill in the form below to apply for this scholarship programme.
-                            </p>
-                        </div>
+                        {/* Only show title if content is shown (to avoid duplicate titles) */}
+                        {showContent && (
+                            <div className="text-center mb-8">
+                                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                                    📄 Scholarship Application Form
+                                </h2>
+                                <p className="text-gray-600">
+                                    Fill in the form below to apply for this scholarship programme.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* If no content, show a smaller heading */}
+                        {!showContent && (
+                            <div className="text-center mb-8">
+                                <p className="text-gray-500 text-sm">
+                                    Complete the form below to submit your application for:
+                                </p>
+                                <p className="text-gray-900 font-semibold mt-1">
+                                    {post.title}
+                                </p>
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {/* Applicant Information */}
