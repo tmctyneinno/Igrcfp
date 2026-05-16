@@ -3,7 +3,7 @@ import { Link } from "@inertiajs/react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 import React from "react";
 
-export default function CourseCatalogue() {
+export default function CourseCatalogue({courseCategories}) {
     return ( 
         <div>
             <section className="bg-gray-50 py-20 overflow-hidden" data-aos="fade-up" data-aos-duration="1000">

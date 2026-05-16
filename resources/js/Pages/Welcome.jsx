@@ -85,20 +85,13 @@ export default function Welcome({ auth, courses }) {
             <WhatWeOffer auth={auth} />
 
             {/* Course Catalogue Preview Section */}
-            <CourseCatalogue/>
+            <CourseCatalogue courseCategories={courseCategories}/>
             
+            <Certification courses={courses} />
            
-            <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
-               <Certification courses={courses} />
-            </section>  
-
-            <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <GlobalEvents />
-            </section>
+            <GlobalEvents />
   
-            <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <BecomeMember /> 
-            </section> 
+            <BecomeMember /> 
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <MembershipOptions />
