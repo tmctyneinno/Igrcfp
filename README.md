@@ -135,4 +135,7 @@ Dimension:1536 × 1024
 training@igrcfp.org
 }u_^naWj}]Ti
 
+scholarships@igrcfp.org
+}u_^naWj}]Ti
+
 7042043220

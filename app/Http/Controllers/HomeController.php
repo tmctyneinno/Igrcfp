@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
+use App\Models\Article;
  
 class HomeController extends Controller
 {
@@ -602,6 +603,25 @@ class HomeController extends Controller
     }
 
 
- 
+    public function showNews($slug)
+    {
+        $post = Article::where('slug', $slug)
+            ->firstOrFail();
+
+        $programmes = [];
+        $showForm = false;
+        
+        if ($post->post_type === 'scholarship' && $post->has_form) {
+            $showForm = true;
+            $programmes = $post->meta_data['programmes'] ?? [];
+        }
+        return Inertia::render('News/FormShow', [
+            'post' => $post,
+            'formType' => $post->form_type,
+            'programmes' => $programmes,
+            'title' => $post->meta_title ?? $post->title,
+            'description' => $post->meta_description ?? $post->excerpt,
+        ]);
+    }
    
 }
