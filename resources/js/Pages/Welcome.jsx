@@ -10,13 +10,14 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import Articles from "@/Pages/components/Articles";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
 import CourseCatalogue from "@/Pages/components/CourseCatalogue";
  
    
  
-export default function Welcome({ auth, courses }) {
+export default function Welcome({ auth, courses,  latestArticles = [], featuredArticles = [] }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
@@ -76,6 +77,8 @@ export default function Welcome({ auth, courses }) {
             <div className="pt-0">
                 <SplitHeroSlider auth={auth} />
             </div>
+
+            <Articles latestArticles = {latestArticles}  featuredArticles = {featuredArticles} />
  
             <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
