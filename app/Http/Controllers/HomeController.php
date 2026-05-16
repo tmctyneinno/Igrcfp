@@ -644,22 +644,19 @@ class HomeController extends Controller
     }
 
 
-    public function showNews($slug)
+   public function showNews($slug)
     {
-        $post = Article::where('slug', $slug)
-            ->firstOrFail();
+        $post = Article::where('slug', $slug)->firstOrFail();
 
-        $programmes = [];
-        $showForm = false;
+        $programmes = $post->meta_data['programmes'] ?? [];
         
-        if ($post->post_type === 'scholarship' && $post->has_form) {
-            $showForm = true;
-            $programmes = $post->meta_data['programmes'] ?? [];
-        }
+        // Check if request wants form only (from article link)
+        $showContent = request()->get('show') === 'full';
+
         return Inertia::render('News/FormShow', [
             'post' => $post,
-            'formType' => $post->form_type,
             'programmes' => $programmes,
+            'showContent' => $showContent,
             'title' => $post->meta_title ?? $post->title,
             'description' => $post->meta_description ?? $post->excerpt,
         ]);
