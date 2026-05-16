@@ -25,7 +25,6 @@
                     <a href="{{ route('admin.admins.index') }}">
                         <iconify-icon icon="ic:baseline-admin-panel-settings" class="menu-icon"></iconify-icon>
                         <span>Admin Users</span>
-                        <span>{{auth()->guard('admin')->user()->isAdmin()}}</span>
                     </a>
                 </li>
             @endif
@@ -102,12 +101,6 @@
                                 Project Assessment 
                             </a> 
                         </li>
-                        <!-- <li>
-                            <a href="{{ route('admin.assessments.create.final') }}">
-                                <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
-                                Final Exam
-                            </a>
-                        </li> -->
                     @endif
                 </ul>
             </li>
@@ -164,6 +157,51 @@
                     </a>
                 </li>
             @endif
+
+            {{-- Scholarship Applications - NEW --}}
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="ph:student-fill" class="menu-icon"></iconify-icon>
+                    <span>Scholarships</span>
+                    <span class="badge bg-warning ms-2">{{ \App\Models\ScholarshipApplication::where('status', 'pending')->count() }}</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.scholarships.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> 
+                            All Applications
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'pending']) }}">
+                            <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> 
+                            Pending
+                            <span class="badge bg-warning ms-1">{{ \App\Models\ScholarshipApplication::where('status', 'pending')->count() }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'under_review']) }}">
+                            <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> 
+                            Under Review
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'accepted']) }}">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                            Accepted
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'rejected']) }}">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> 
+                            Rejected
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <!-- Blogs Management - All admins -->
             <li class="dropdown">

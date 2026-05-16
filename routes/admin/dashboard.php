@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\ScholarshipController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Dashboard Routes (Protected)
@@ -106,5 +107,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::delete('/{lesson}', [LessonController::class, 'destroy'])->name('destroy');
         Route::post('/reorder', [LessonController::class, 'reorder'])->name('reorder');
     }); 
+
+    // Scholarship Applications
+    Route::get('/scholarships', [ScholarshipController::class, 'index'])->name('scholarships.index');
+    Route::get('/scholarships/{application}', [ScholarshipController::class, 'show'])->name('scholarships.show');
+    Route::post('/scholarships/{application}/status', [ScholarshipController::class, 'updateStatus'])->name('scholarships.update-status');
+    Route::delete('/scholarships/{application}', [ScholarshipController::class, 'destroy'])->name('scholarships.destroy');
   
 });
