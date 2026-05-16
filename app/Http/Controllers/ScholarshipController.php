@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ScholarshipApplication;
 use Illuminate\Http\Request;
+use Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
