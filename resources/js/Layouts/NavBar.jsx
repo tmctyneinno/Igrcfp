@@ -7,7 +7,7 @@ export default function NavBar({ auth }) {
     const [openMegaMenu, setOpenMegaMenu] = useState(false);
     const mobileMenuRef = useRef(null);
     const megaMenuRef = useRef(null);
-    
+     
     // Close mobile menu when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
