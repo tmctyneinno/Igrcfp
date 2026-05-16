@@ -258,7 +258,6 @@
                                 <div class="border-top pt-3 mt-3">
                                     <div class="d-flex gap-2">
                                         <button type="submit" class="btn btn-primary flex-grow-1">
-                                            <iconify-icon icon="mdi:content-save" class="icon"></iconify-icon>
                                             Update Article
                                         </button>
                                         <a href="{{ route('admin.articles.index') }}" class="btn btn-outline-secondary">
@@ -287,12 +286,10 @@
                                          class="img-fluid rounded-8 border" style="max-height: 200px;">
                                 @endif
                                 <button type="button" class="btn btn-sm btn-danger mt-2" id="removeImage">
-                                    <iconify-icon icon="mdi:trash-can-outline"></iconify-icon>
                                     Remove
                                 </button>
                             </div>
                             <div id="noImagePlaceholder" class="text-muted py-4" style="{{ $article->image_path ? 'display: none;' : 'display: block;' }}">
-                                <iconify-icon icon="mdi:newspaper-variant-outline" class="icon-3x mb-2"></iconify-icon>
                                 <p class="mb-0">No image selected</p>
                                 <small class="text-muted">Preview will appear here</small>
                             </div>
@@ -335,11 +332,9 @@
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <a href="{{ route('admin.articles.show', $article->id) }}" class="btn btn-outline-info">
-                                <iconify-icon icon="mdi:eye-outline"></iconify-icon>
                                 Preview Article
                             </a>
                             <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                <iconify-icon icon="mdi:trash-can-outline"></iconify-icon>
                                 Delete Article
                             </button>
                         </div>
