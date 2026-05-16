@@ -78,7 +78,27 @@ export default function Welcome({ auth, courses,  latestArticles = [], featuredA
                 <SplitHeroSlider auth={auth} />
             </div>
 
-            <Articles latestArticles = {latestArticles}  featuredArticles = {featuredArticles} />
+            {/* Scholarship Banner - Add this right after the hero */}
+            <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <span className="text-4xl">🎓</span>
+                            <div className="text-white">
+                                <h3 className="text-xl font-bold">Emerging Professionals Scholarship 2026</h3>
+                                <p className="text-yellow-100">25 slots available globally. Apply from 1st to June 30, 2026.</p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/scholarship/igrcfp-emerging-professionals-scholarship-programme-2026"
+                            className="bg-white text-yellow-700 px-8 py-3 rounded-lg font-bold hover:bg-yellow-50 transition whitespace-nowrap shadow-lg"
+                        >
+                            Apply Now →
+                        </Link>
+                    </div>
+                </div>
+            </section>
+ 
  
             <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
@@ -89,6 +109,8 @@ export default function Welcome({ auth, courses,  latestArticles = [], featuredA
 
             {/* Course Catalogue Preview Section */}
             <CourseCatalogue courseCategories={courseCategories}/>
+
+            <Articles latestArticles = {latestArticles}  featuredArticles = {featuredArticles} />
             
             <Certification courses={courses} />
            

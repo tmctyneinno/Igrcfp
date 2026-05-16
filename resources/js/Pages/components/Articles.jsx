@@ -4,6 +4,15 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 import React from "react";
 
 export default function Articles({latestArticles, featuredArticles}) {
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
     return ( 
         <div>
            {/* Latest News Section */}
@@ -35,57 +44,8 @@ export default function Articles({latestArticles, featuredArticles}) {
                             </Link>
                         </div>
 
-                        {/* Featured Article (First one large) */}
-                        {featuredArticles.length > 0 && (
-                            <div className="mb-10">
-                                {featuredArticles.slice(0, 1).map(article => (
-                                    <Link 
-                                        key={article.id}
-                                        href={`/news/${article.slug}/show`}
-                                        className="group block bg-gray-50 rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
-                                    >
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                                            <div className="h-64 lg:h-full">
-                                                <img 
-                                                    src={article.image || '/images/article-placeholder.jpg'} 
-                                                    alt={article.title}
-                                                    className="w-full h-full object-cover"
-                                                    onError={(e) => {
-                                                        e.target.src = '/images/article-placeholder.jpg';
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="p-8 lg:p-10 flex flex-col justify-center">
-                                                <div className="flex items-center gap-3 mb-4">
-                                                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                                                        {article.category || 'News'}
-                                                    </span>
-                                                    {article.is_featured && (
-                                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
-                                                            Featured
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition">
-                                                    {article.title}
-                                                </h3>
-                                                <p className="text-gray-600 mb-4 line-clamp-3">
-                                                    {article.excerpt}
-                                                </p>
-                                                <div className="flex items-center text-sm text-gray-500">
-                                                    <span>{formatDate(article.published_at)}</span>
-                                                    <span className="mx-2">•</span>
-                                                    <span>{article.read_time} min read</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-
                         {/* Article Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {latestArticles.slice(0, 3).map(article => (
                                 <Link 
                                     key={article.id}
@@ -102,7 +62,7 @@ export default function Articles({latestArticles, featuredArticles}) {
                                             }}
                                         />
                                     </div>
-                                    <div className="p-5">
+                                    <div className="p-3">
                                         <div className="flex items-center gap-2 mb-3">
                                             <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
                                                 {article.category || 'News'}
