@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
                 ? $request->session()->get('errors')->getBag('default')->getMessages()
                 : (object) [],
             'cart_count' => $cartCount,
+            'recaptchaSiteKey' => env('VITE_RECAPTCHA_SITE_KEY'),
         ]);
     }
 }
