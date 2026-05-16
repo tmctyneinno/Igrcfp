@@ -1,10 +1,14 @@
 // resources/js/Pages/News/FormShow.jsx
 
-import React, { useState } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import React, { useState, useRef } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function FormShow({ post, programmes = [] }) {
+    const { recaptchaSiteKey } = usePage().props;
+    const recaptchaRef = useRef(null);
+    
     const { data, setData, post: submitForm, processing, errors, reset } = useForm({
         full_name: '',
         nationality: '',
@@ -21,9 +25,11 @@ export default function FormShow({ post, programmes = [] }) {
         personal_statement: '',
         declaration: false,
         post_id: post.id,
+        'g-recaptcha-response': '',
     });
 
     const [submitted, setSubmitted] = useState(false);
+    const [recaptchaError, setRecaptchaError] = useState('');
 
     const handleProgrammeChange = (programme) => {
         const current = [...data.preferred_programmes];
@@ -36,13 +42,39 @@ export default function FormShow({ post, programmes = [] }) {
         }
     };
 
+    const handleRecaptchaChange = (value) => {
+        setData('g-recaptcha-response', value);
+        setRecaptchaError('');
+    };
+
+    const handleRecaptchaExpired = () => {
+        setData('g-recaptcha-response', '');
+        setRecaptchaError('reCAPTCHA expired. Please verify again.');
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Validate reCAPTCHA
+        if (!data['g-recaptcha-response']) {
+            setRecaptchaError('Please complete the reCAPTCHA verification.');
+            return;
+        }
+
         submitForm(route('scholarship.apply'), {
             onSuccess: () => {
                 setSubmitted(true);
                 reset();
+                if (recaptchaRef.current) {
+                    recaptchaRef.current.reset();
+                }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+            onError: () => {
+                if (recaptchaRef.current) {
+                    recaptchaRef.current.reset();
+                }
+                setData('g-recaptcha-response', '');
             },
         });
     };
@@ -74,9 +106,61 @@ export default function FormShow({ post, programmes = [] }) {
                 </div>
             )}
 
+            {/* Article Content */}
+            <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Header */}
+                <div className="mb-8">
+                    {post.article_category && (
+                        <span className="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full mb-4">
+                            {post.article_category.name}
+                        </span>
+                    )}
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                        {post.title}
+                    </h1>
+                    
+                    {/* Meta */}
+                    <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
+                        {post.author && (
+                            <div className="flex items-center gap-2">
+                                {post.author.avatar && (
+                                    <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full" />
+                                )}
+                                <span>{post.author.name}</span>
+                            </div>
+                        )}
+                        <span>•</span>
+                        <span>{new Date(post.published_at).toLocaleDateString('en-US', { 
+                            year: 'numeric', month: 'long', day: 'numeric' 
+                        })}</span>
+                        <span>•</span>
+                        <span>{post.read_time} min read</span>
+                        {post.views > 0 && (
+                            <>
+                                <span>•</span>
+                                <span>{post.views} views</span>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Featured Image */}
+                {post.image_path && (
+                    <img 
+                        src={`/storage/${post.image_path}`} 
+                        alt={post.title}
+                        className="w-full rounded-xl mb-8 shadow-lg"
+                    />
+                )}
+
+                {/* Rich Content */}
+                <div 
+                    className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600 prose-img:rounded-xl"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+            </article>
 
             {/* Application Form Section */}
-        
             <section className="bg-gray-50 py-16" id="apply-form">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
@@ -351,6 +435,24 @@ export default function FormShow({ post, programmes = [] }) {
                                 )}
                             </div>
 
+                            {/* reCAPTCHA */}
+                            <div>
+                                <div className="flex justify-center">
+                                    <ReCAPTCHA
+                                        ref={recaptchaRef}
+                                        sitekey={recaptchaSiteKey}
+                                        onChange={handleRecaptchaChange}
+                                        onExpired={handleRecaptchaExpired}
+                                    />
+                                </div>
+                                {recaptchaError && (
+                                    <p className="text-red-500 text-sm text-center mt-2">{recaptchaError}</p>
+                                )}
+                                {errors['g-recaptcha-response'] && (
+                                    <p className="text-red-500 text-sm text-center mt-2">{errors['g-recaptcha-response']}</p>
+                                )}
+                            </div>
+
                             {/* Submit Button */}
                             <div className="pt-4">
                                 <button
@@ -375,7 +477,6 @@ export default function FormShow({ post, programmes = [] }) {
                     </div>
                 </div>
             </section>
-           
         </GuestLayout>
     );
 }

@@ -11,6 +11,16 @@ class ScholarshipController extends Controller
 {
     public function store(Request $request)
     {
+        // Verify reCAPTCHA
+        $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
+            'response' => $request->input('g-recaptcha-response'),
+        ]);
+        $recaptchaData = $recaptchaResponse->json();
+        if (!$recaptchaData['success']) {
+            return back()->withErrors(['g-recaptcha-response' => 'reCAPTCHA verification failed. Please try again.'])->withInput();
+        }
+
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string|max:255',
             'nationality' => 'required|string|max:100',
