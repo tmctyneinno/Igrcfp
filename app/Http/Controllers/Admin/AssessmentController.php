@@ -392,35 +392,53 @@ class AssessmentController extends Controller
      */
     public function update(Request $request, Assessment $assessment)
     {
+        // Guard: restore if somehow soft-deleted
+        if ($assessment->trashed()) {
+            $assessment->restore();
+        }
+
         $rules = $this->getValidationRules($assessment->assessment_level);
+        
+        // Use assessment_level from the existing record, not the request
         $validated = $request->validate($rules);
 
         DB::beginTransaction();
-        
+
         try {
-            // Handle file upload
+            // Explicitly prevent deleted_at from being set
+            unset($validated['deleted_at']);
+
             if ($request->hasFile('assessment_file')) {
-                // Delete old file
                 if ($assessment->file_path) {
                     Storage::disk('public')->delete($assessment->file_path);
                 }
-                
-                $file = $request->file('assessment_file');
+                $file     = $request->file('assessment_file');
                 $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
-                
-                $validated['file_path'] = $path;
-                $validated['file_name'] = $file->getClientOriginalName();
-                $validated['file_size'] = $file->getSize();
+                $path     = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
+
+                $validated['file_path']      = $path;
+                $validated['file_name']      = $file->getClientOriginalName();
+                $validated['file_size']      = $file->getSize();
                 $validated['file_extension'] = $file->getClientOriginalExtension();
             }
 
-            // Update assessment
+            // Handle remove file checkbox
+            if ($request->boolean('remove_file') && $assessment->file_path) {
+                Storage::disk('public')->delete($assessment->file_path);
+                $validated['file_path']      = null;
+                $validated['file_name']      = null;
+                $validated['file_size']      = null;
+                $validated['file_extension'] = null;
+            }
+
             $assessment->update($validated);
 
-            // Update questions if provided
+            // Immediately restore if somehow deleted during update
+            if ($assessment->trashed()) {
+                $assessment->restore();
+            }
+
             if ($request->has('questions')) {
-                // Delete old questions
                 $assessment->questions()->delete();
                 $this->saveQuestions($assessment, $request->questions);
                 $assessment->question_count = count($request->questions);
@@ -430,10 +448,11 @@ class AssessmentController extends Controller
             DB::commit();
 
             return redirect()->route('admin.assessments.show', $assessment->id)
-                ->with('success', 'Assessment updated successfully!');
+                ->with('success', 'Quiz updated successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Assessment update failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Error updating assessment: ' . $e->getMessage());
         }
     }
