@@ -89,7 +89,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // Store route (same for all types)
     Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
-    
+     
     // Other routes
     Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
