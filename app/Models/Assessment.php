@@ -73,11 +73,7 @@ class Assessment extends Model
     /**
      * Relationships
      */
-    public function modules()
-    {
-        return $this->belongsToMany(CourseModule::class, 'assessment_modules_pivot');
-    }
-
+    
     public function course()
     {
         return $this->belongsTo(Course::class);

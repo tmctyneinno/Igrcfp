@@ -392,22 +392,24 @@ class AssessmentController extends Controller
      */
     public function update(Request $request, Assessment $assessment)
     {
-        // Guard: restore if somehow soft-deleted
-        if ($assessment->trashed()) {
-            $assessment->restore();
-        }
-
-        $rules = $this->getValidationRules($assessment->assessment_level);
-        
-        // Use assessment_level from the existing record, not the request
+        $rules    = $this->getValidationRules($assessment->assessment_level);
         $validated = $request->validate($rules);
 
         DB::beginTransaction();
 
         try {
-            // Explicitly prevent deleted_at from being set
-            unset($validated['deleted_at']);
+            // Only update exactly these fields — nothing else touches the model
+            $assessment->title          = $validated['title'];
+            $assessment->description    = $validated['description'] ?? $assessment->description;
+            $assessment->course_id      = $validated['course_id'];
+            $assessment->module_id      = $validated['module_id'] ?? null;
+            $assessment->status         = $validated['status'];
+            $assessment->duration       = $validated['duration'];
+            $assessment->total_marks    = $validated['total_marks']   ?? $assessment->total_marks;
+            $assessment->passing_score  = $validated['passing_score'] ?? $assessment->passing_score;
+            $assessment->weight         = $validated['weight']        ?? $assessment->weight;
 
+            // File handling
             if ($request->hasFile('assessment_file')) {
                 if ($assessment->file_path) {
                     Storage::disk('public')->delete($assessment->file_path);
@@ -416,33 +418,33 @@ class AssessmentController extends Controller
                 $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
                 $path     = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
 
-                $validated['file_path']      = $path;
-                $validated['file_name']      = $file->getClientOriginalName();
-                $validated['file_size']      = $file->getSize();
-                $validated['file_extension'] = $file->getClientOriginalExtension();
+                $assessment->file_path      = $path;
+                $assessment->file_name      = $file->getClientOriginalName();
+                $assessment->file_size      = $file->getSize();
+                $assessment->file_extension = $file->getClientOriginalExtension();
             }
 
-            // Handle remove file checkbox
             if ($request->boolean('remove_file') && $assessment->file_path) {
                 Storage::disk('public')->delete($assessment->file_path);
-                $validated['file_path']      = null;
-                $validated['file_name']      = null;
-                $validated['file_size']      = null;
-                $validated['file_extension'] = null;
+                $assessment->file_path      = null;
+                $assessment->file_name      = null;
+                $assessment->file_size      = null;
+                $assessment->file_extension = null;
             }
 
-            $assessment->update($validated);
+            // Save without triggering anything unexpected
+            $assessment->saveQuietly(); // ← bypasses all observers/events
 
-            // Immediately restore if somehow deleted during update
-            if ($assessment->trashed()) {
-                $assessment->restore();
-            }
-
+            // Update questions
             if ($request->has('questions')) {
-                $assessment->questions()->delete();
+                // Use forceDelete if AssessmentQuestion uses SoftDeletes
+                $assessment->questions()->forceDelete();
                 $this->saveQuestions($assessment, $request->questions);
-                $assessment->question_count = count($request->questions);
-                $assessment->save();
+                
+                // Update count directly without firing events
+                DB::table('assessments')
+                    ->where('id', $assessment->id)
+                    ->update(['question_count' => count($request->questions)]);
             }
 
             DB::commit();
@@ -452,8 +454,8 @@ class AssessmentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Assessment update failed: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Error updating assessment: ' . $e->getMessage());
+            \Log::error('Assessment update failed: ' . $e->getMessage() . ' | ' . $e->getTraceAsString());
+            return back()->withInput()->with('error', 'Error updating: ' . $e->getMessage());
         }
     }
 
