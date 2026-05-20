@@ -515,7 +515,7 @@ function addQuestion(existingData) {
         if (textArea) textArea.value = existingData.text || '';
 
         const pointsInput = questionEl.querySelector('.question-points');
-        if (pointsInput) pointsInput.value = existingData.points || 1;
+        if (pointsInput) pointsInput.value = parseInt(existingData.points) || 1; // ← fix here
 
         const diffSelect = questionEl.querySelector(
             `select[name="questions[${questionCount}][difficulty]"]`
