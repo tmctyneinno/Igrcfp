@@ -1,14 +1,18 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// ← REMOVED: use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssessmentQuestion extends Model
 {
-    // ← REMOVED: use SoftDeletes;
+    // NO SoftDeletes — questions are replaced on every update,
+    // soft-deleting them serves no purpose and was the root cause
+    // of the deleted_at pollution on the parent assessment.
 
     protected $table = 'assessment_questions';
+
+    // Prevent saving questions from touching parent assessment timestamps
     protected $touches = [];
 
     protected $fillable = [
@@ -37,6 +41,8 @@ class AssessmentQuestion extends Model
         'points'          => 'decimal:2',
     ];
 
+    // ── Relationships ─────────────────────────────────────────────────────────
+
     public function assessment()
     {
         return $this->belongsTo(Assessment::class);
@@ -47,22 +53,29 @@ class AssessmentQuestion extends Model
         return $this->belongsTo(CourseModule::class, 'module_id');
     }
 
+    // ── Accessors / Mutators ──────────────────────────────────────────────────
+
     public function getOptionsAttribute($value): array
     {
-        if (is_null($value)) return [];
-        if (is_array($value)) return $value;
+        if (is_null($value))   return [];
+        if (is_array($value))  return $value;
         $decoded = json_decode($value, true);
         return is_array($decoded) ? $decoded : [];
     }
 
     public function setOptionsAttribute($value): void
     {
-        $this->attributes['options'] = is_array($value) ? json_encode($value) : $value;
+        $this->attributes['options'] = is_array($value)
+            ? json_encode($value)
+            : $value;
     }
+
+    // ── Answer checking ───────────────────────────────────────────────────────
 
     public function isAnswerCorrect($answer): ?bool
     {
         switch ($this->question_type) {
+
             case 'multiple_choice':
             case 'true_false':
             case 'short_answer':
@@ -70,31 +83,40 @@ class AssessmentQuestion extends Model
                     === strtolower(trim((string) $this->correct_answer));
 
             case 'multiple_answer':
-                $correct   = is_array($this->correct_answers)
+                $correct = is_array($this->correct_answers)
                     ? $this->correct_answers
                     : json_decode($this->correct_answers, true);
+
                 $submitted = is_array($answer)
                     ? $answer
                     : json_decode($answer, true);
+
                 if (!is_array($correct) || !is_array($submitted)) return false;
+
                 sort($correct);
                 sort($submitted);
                 return $correct === $submitted;
 
             case 'essay':
             case 'case_study':
-                return null;
+                return null; // manual marking required
 
             default:
                 return false;
         }
     }
 
+    // ── Points calculation ────────────────────────────────────────────────────
+
     public function calculatePoints($answer): ?float
     {
         $isCorrect = $this->isAnswerCorrect($answer);
-        return $isCorrect === null ? null : ($isCorrect ? (float) $this->points : 0.0);
+        return $isCorrect === null
+            ? null
+            : ($isCorrect ? (float) $this->points : 0.0);
     }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     public function getShuffledOptionsAttribute(): array
     {
