@@ -9,7 +9,8 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ScholarshipController;
-use Illuminate\Support\Facades\Route;
+
+use Illuminate\Support\Facades\Route; 
 
 // Admin Dashboard Routes (Protected)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {

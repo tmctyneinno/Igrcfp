@@ -71,8 +71,10 @@ chmod -R 775 storage/
 chmod -R 775 bootstrap/cache/
 
 Admin
+
 moderator@igrcfp.org
 12345678
+
 superadmin@igrcfp.org
 12345678
  
@@ -131,6 +133,9 @@ Morgans888
 
 £
 Dimension:1536 × 1024
+
+enquired@igrcfp.org
+}u_^naWj}]Ti
 
 training@igrcfp.org
 }u_^naWj}]Ti
