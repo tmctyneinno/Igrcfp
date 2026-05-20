@@ -310,6 +310,52 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function activeMemberships()
+    {
+        return $this->memberships()->active();
+    }
+
+    public function activeMembership()
+    {
+        return $this->activeMemberships()->latest('approved_at')->first();
+    }
+
+    public function hasActiveMembership(): bool
+    {
+        return (bool) $this->activeMembership();
+    }
+
+    public function hasMentorMembership(): bool
+    {
+        $membership = $this->activeMembership();
+        return $membership && (int) $membership->membership_plan_id === 3;
+    }
+
+    public function mentorProfile()
+    {
+        return $this->hasOne(MentorProfile::class);
+    }
+
+    public function mentorApplications()
+    {
+        return $this->hasMany(MentorApplication::class);
+    }
+
+    public function mentorshipApplications()
+    {
+        return $this->hasMany(MentorshipApplication::class, 'mentee_id');
+    }
+
+    public function mentorshipsAsMentee()
+    {
+        return $this->hasMany(Mentorship::class, 'mentee_id');
+    }
+
     /**
      * Get profile picture URL attribute
      */
