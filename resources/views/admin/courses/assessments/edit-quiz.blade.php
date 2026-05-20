@@ -1,23 +1,29 @@
-{{-- resources/views/admin/courses/assessments/create-quiz.blade.php --}}
+{{-- resources/views/admin/courses/assessments/edit-quiz.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('content')
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
-        <h6 class="fw-semibold mb-0">Create New Quiz</h6>
+        <h6 class="fw-semibold mb-0">Edit Quiz</h6>
         <ul class="d-flex align-items-center gap-2">
             <li class="fw-medium">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
                 </a>
-            </li> 
+            </li>
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
-            </li> 
+            </li>
             <li>-</li>
-            <li class="fw-medium">Create Quiz</li>
+            <li class="fw-medium">
+                <a href="{{ route('admin.assessments.show', $assessment->id) }}" class="hover-text-primary">
+                    {{ Str::limit($assessment->title, 30) }}
+                </a>
+            </li>
+            <li>-</li>
+            <li class="fw-medium">Edit Quiz</li>
         </ul>
     </div>
 
@@ -40,8 +46,9 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.assessments.store') }}" method="POST" enctype="multipart/form-data" id="quizForm">
+    <form action="{{ route('admin.assessments.update', $assessment->id) }}" method="POST" enctype="multipart/form-data" id="quizForm">
         @csrf
+        @method('PUT')
         <input type="hidden" name="assessment_level" value="quiz">
         <input type="hidden" name="type" value="quiz">
 
@@ -57,20 +64,23 @@
                         <div class="row gy-3">
                             <div class="col-12">
                                 <label class="form-label">Quiz Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
-                                       value="{{ old('title') }}" placeholder="e.g., Module 1 Review Quiz" required>
+                                <input type="text" name="title"
+                                       class="form-control @error('title') is-invalid @enderror"
+                                       value="{{ old('title', $assessment->title) }}"
+                                       placeholder="e.g., Module 1 Review Quiz" required>
                                 @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div> 
+                            </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Course <span class="text-danger">*</span></label>
                                 <select name="course_id" id="course_id" class="form-select @error('course_id') is-invalid @enderror" required>
                                     <option value="">Select Course</option>
                                     @foreach($courses as $course)
-                                        <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
+                                        <option value="{{ $course->id }}"
+                                            {{ old('course_id', $assessment->course_id) == $course->id ? 'selected' : '' }}>
                                             {{ $course->title }}
                                         </option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                                 @error('course_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
@@ -79,6 +89,7 @@
                                 <label class="form-label">Module (Optional)</label>
                                 <select name="module_id" id="module_id" class="form-select @error('module_id') is-invalid @enderror">
                                     <option value="">-- First select a course --</option>
+                                    {{-- Populated by JS on load --}}
                                 </select>
                                 @error('module_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 <small class="text-muted">Select a course first to see available modules</small>
@@ -86,8 +97,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" 
-                                          rows="3" placeholder="Brief description of the quiz">{{ old('description') }}</textarea>
+                                <textarea name="description" class="form-control @error('description') is-invalid @enderror"
+                                          rows="3" placeholder="Brief description of the quiz">{{ old('description', $assessment->description) }}</textarea>
                                 @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
                         </div>
@@ -99,7 +110,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="card-title mb-0">Quiz Questions</h6>
-                            <p class="text-sm text-secondary-light mt-1">Add 1-5 questions for your quiz</p>
+                            <p class="text-sm text-secondary-light mt-1">Edit or add questions for your quiz</p>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="addQuestion()">
                             Add Question
@@ -107,9 +118,9 @@
                     </div>
                     <div class="card-body">
                         <div id="questions-container">
-                            <!-- Questions will be added here dynamically -->
+                            {{-- Existing questions rendered by JS from the data below --}}
                         </div>
-                        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message" style="display: block;">
+                        <div class="text-center py-5 bg-light rounded-8" id="no-questions-message" style="display: none;">
                             <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
                             <h6 class="text-muted mb-2">No questions added yet</h6>
                             <p class="text-muted mb-3">Click the button below to add your first question.</p>
@@ -123,7 +134,7 @@
 
             <!-- Right Column - Settings -->
             <div class="col-lg-4">
-                <!-- Status Card -->
+                <!-- Settings Card -->
                 <div class="card">
                     <div class="card-header">
                         <h6 class="card-title mb-0">Quiz Settings</h6>
@@ -133,7 +144,7 @@
                             <label class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
                             <input type="number" name="duration"
                                    class="form-control @error('duration') is-invalid @enderror"
-                                   value="{{ old('duration') }}"
+                                   value="{{ old('duration', $assessment->duration) }}"
                                    placeholder="e.g. 30"
                                    min="1" max="180" required>
                             <small class="text-muted">How long students have to complete the quiz (1–180 mins)</small>
@@ -143,24 +154,28 @@
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
-                                <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="active"  {{ old('status', $assessment->status) == 'active'   ? 'selected' : '' }}>Active</option>
+                                <option value="draft"   {{ old('status', $assessment->status) == 'draft'    ? 'selected' : '' }}>Draft</option>
+                                <option value="archived"{{ old('status', $assessment->status) == 'archived' ? 'selected' : '' }}>Archived</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Total Marks</label>
-                            <input type="number" name="total_marks" class="form-control" value="{{ old('total_marks', 100) }}" min="1">
+                            <input type="number" name="total_marks" class="form-control"
+                                   value="{{ old('total_marks', $assessment->total_marks ?? 100) }}" min="1">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Passing Score (%)</label>
-                            <input type="number" name="passing_score" class="form-control" value="{{ old('passing_score', 70) }}" min="1" max="100">
+                            <input type="number" name="passing_score" class="form-control"
+                                   value="{{ old('passing_score', $assessment->passing_score ?? 70) }}" min="1" max="100">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Weight (% of final grade)</label>
-                            <input type="number" name="weight" class="form-control" value="{{ old('weight', 10) }}" min="1" max="100">
+                            <input type="number" name="weight" class="form-control"
+                                   value="{{ old('weight', $assessment->weight ?? 10) }}" min="1" max="100">
                         </div>
                     </div>
                 </div>
@@ -171,11 +186,47 @@
                         <h6 class="card-title mb-0">Additional Resources</h6>
                     </div>
                     <div class="card-body">
+                        @if($assessment->file_path)
+                            <div class="mb-3 p-3 bg-light rounded-8 d-flex align-items-center gap-3">
+                                <iconify-icon icon="solar:file-text-outline" class="text-primary-600 text-xl"></iconify-icon>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <p class="fw-semibold text-sm mb-0 text-truncate">{{ $assessment->file_name }}</p>
+                                    <p class="text-muted text-xs mb-0">{{ $assessment->formatted_file_size }}</p>
+                                </div>
+                                <a href="{{ Storage::url($assessment->file_path) }}" target="_blank"
+                                   class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="remove_file" id="removeFile" value="1">
+                                <label class="form-check-label text-danger" for="removeFile">Remove current file</label>
+                            </div>
+                        @endif
                         <div class="mb-3">
-                            <label class="form-label">Upload File (Optional)</label>
+                            <label class="form-label">{{ $assessment->file_path ? 'Replace File (Optional)' : 'Upload File (Optional)' }}</label>
                             <input type="file" name="assessment_file" class="form-control" accept=".pdf,.doc,.docx">
                             <p class="text-sm mt-1 text-muted">Supporting materials for the quiz</p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="card mt-24 border border-danger-subtle">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0 text-danger-600">Danger Zone</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm text-secondary-light mb-3">
+                            Deleting this quiz will permanently remove all questions and student submissions.
+                        </p>
+                        <form action="{{ route('admin.assessments.destroy', $assessment->id) }}" method="POST"
+                              onsubmit="return confirm('Delete this quiz and ALL its data? This cannot be undone.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <iconify-icon icon="fluent:delete-24-regular" class="me-1"></iconify-icon>
+                                Delete Quiz
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -185,8 +236,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex gap-3 justify-content-end">
-                            <a href="{{ route('admin.assessments.all') }}" class="btn btn-outline-secondary px-4">Cancel</a>
-                            <button type="submit" class="btn btn-primary px-5" id="submitBtn">Create Quiz</button>
+                            <a href="{{ route('admin.assessments.show', $assessment->id) }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-5" id="submitBtn">Save Changes</button>
                         </div>
                     </div>
                 </div>
@@ -195,7 +246,7 @@
     </form>
 </div>
 
-<!-- Question Template — UI identical to original -->
+{{-- Question Template (same as create) --}}
 <template id="question-template">
     <div class="question-item card mb-4" data-question-idx="{idx}">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
@@ -210,7 +261,7 @@
                     <label class="form-label fw-semibold">Question Text</label>
                     <textarea name="questions[{idx}][text]" class="form-control question-text" rows="2" required></textarea>
                 </div>
-                
+
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-semibold">Type</label>
                     <select name="questions[{idx}][type]" class="form-select question-type" onchange="handleQuestionTypeChange(this)">
@@ -219,12 +270,12 @@
                         <option value="short_answer">Short Answer</option>
                     </select>
                 </div>
-                
+
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-semibold">Points</label>
                     <input type="number" name="questions[{idx}][points]" class="form-control question-points" value="1" min="1" required>
                 </div>
-                
+
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-semibold">Difficulty</label>
                     <select name="questions[{idx}][difficulty]" class="form-select">
@@ -234,22 +285,14 @@
                     </select>
                 </div>
 
-                <!-- Options Container (for multiple choice) — UI unchanged -->
                 <div class="col-12 mb-3 options-container" style="display: block;">
                     <label class="form-label fw-semibold">Answer Options</label>
-                    <div class="options-list">
-                        <!-- Options will be added here -->
-                    </div>
+                    <div class="options-list"></div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
                         Add Option
                     </button>
                 </div>
 
-                {{--
-                    FIX 1: True/False radio values changed from lowercase "true"/"false"
-                    to "True"/"False" so PHP receives the correctly-cased string directly.
-                    No UI change — labels still say "True" and "False".
-                --}}
                 <div class="col-12 mb-3 true-false-container" style="display: none;">
                     <label class="form-label fw-semibold">Select Correct Answer</label>
                     <div class="d-flex gap-4">
@@ -264,7 +307,6 @@
                     </div>
                 </div>
 
-                <!-- Short Answer Container — unchanged -->
                 <div class="col-12 mb-3 short-answer-container" style="display: none;">
                     <label class="form-label fw-semibold">Correct Answer</label>
                     <input type="text" name="questions[{idx}][correct_answer]" class="form-control" placeholder="Enter the correct answer">
@@ -274,12 +316,6 @@
     </div>
 </template>
 
-{{--
-    FIX 2: Option radio value changed from "{option-value}" (which produced "option1","option2"...)
-    to "{option-index}" (which produces 0, 1, 2...).
-    The controller reads this as a 0-based index and looks up the actual option text from the options array.
-    UI is completely unchanged — same layout, same delete button.
---}}
 <template id="option-template">
     <div class="option-item d-flex align-items-center gap-2 mb-2">
         <input type="text" class="form-control" name="questions[{idx}][options][]" placeholder="Enter option" required>
@@ -291,6 +327,14 @@
         </button>
     </div>
 </template>
+
+{{-- Pass existing questions to JS --}}
+<script id="existing-questions-data" type="application/json">
+    {!! $questionsData->toJson() !!}
+</script>
+
+{{-- Pass existing module_id for pre-selection --}}
+<script id="existing-module-id" type="application/json">{{ json_encode($assessment->module_id) }}</script>
 
 @endsection
 
@@ -311,11 +355,6 @@
     .option-item:hover {
         background: #e9ecef;
     }
-    .loading-modules {
-        text-align: center;
-        padding: 10px;
-        color: #6c757d;
-    }
 </style>
 @endpush
 
@@ -323,143 +362,217 @@
 <script>
 let questionCount = 0;
 
-// Dynamic module loading — unchanged
-document.addEventListener('DOMContentLoaded', function() {
-    const courseSelect = document.getElementById('course_id');
-    const moduleSelect = document.getElementById('module_id');
-    
+// ─── Module loader ────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    const courseSelect  = document.getElementById('course_id');
+    const existingModuleId = JSON.parse(document.getElementById('existing-module-id').textContent);
+
     if (courseSelect && courseSelect.value) {
-        loadModules(courseSelect.value);
+        loadModules(courseSelect.value, existingModuleId);
     }
-    
-    if (courseSelect) {
-        courseSelect.addEventListener('change', function() {
-            const courseId = this.value;
-            if (courseId) {
-                loadModules(courseId);
-            } else {
-                moduleSelect.innerHTML = '<option value="">-- First select a course --</option>';
-            }
+
+    courseSelect?.addEventListener('change', function () {
+        if (this.value) {
+            loadModules(this.value, null);
+        } else {
+            document.getElementById('module_id').innerHTML = '<option value="">-- First select a course --</option>';
+        }
+    });
+
+    // Parse questions with error handling
+    let existingQuestions = [];
+    try {
+        const raw = document.getElementById('existing-questions-data').textContent.trim();
+        console.log('Raw questions JSON:', raw); // check browser console
+        existingQuestions = JSON.parse(raw);
+        console.log('Parsed questions:', existingQuestions);
+    } catch(err) {
+        console.error('Failed to parse questions JSON:', err);
+    }
+
+    if (existingQuestions.length > 0) {
+        document.getElementById('no-questions-message').style.display = 'none';
+        existingQuestions.forEach(function(q) {
+            addQuestion(q);
         });
+    } else {
+        document.getElementById('no-questions-message').style.display = 'block';
     }
 });
 
-function loadModules(courseId) {
+function loadModules(courseId, preSelectId) {
     const moduleSelect = document.getElementById('module_id');
     moduleSelect.innerHTML = '<option value="">Loading modules...</option>';
-    moduleSelect.disabled = true;
-    
+    moduleSelect.disabled  = true;
+
     fetch(`{{ route('admin.assessments.get-modules', '') }}/${courseId}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
+        .then(r => { if (!r.ok) throw new Error('Network error'); return r.json(); })
         .then(modules => {
             moduleSelect.innerHTML = '<option value="">-- Select Module (Optional) --</option>';
             if (modules && modules.length > 0) {
                 modules.forEach(module => {
-                    const option = document.createElement('option');
-                    option.value = module.id;
-                    option.textContent = `Module ${module.module_number}: ${module.title}`;
-                    moduleSelect.appendChild(option);
+                    const opt       = document.createElement('option');
+                    opt.value       = module.id;
+                    opt.textContent = `Module ${module.module_number}: ${module.title}`;
+                    if (preSelectId && module.id == preSelectId) opt.selected = true;
+                    moduleSelect.appendChild(opt);
                 });
                 moduleSelect.disabled = false;
             } else {
                 moduleSelect.innerHTML = '<option value="">No modules available for this course</option>';
-                moduleSelect.disabled = true;
             }
         })
-        .catch(error => {
-            console.error('Error loading modules:', error);
+        .catch(() => {
             moduleSelect.innerHTML = '<option value="">Error loading modules. Please try again.</option>';
-            moduleSelect.disabled = true;
         });
 }
 
-// addQuestion — unchanged
-function addQuestion() {
-    const container = document.getElementById('questions-container');
-    const noQuestionsMsg = document.getElementById('no-questions-message');
-    const template = document.getElementById('question-template');
-    
+// ─── Add question ─────────────────────────────────────────────────────────────
+// `existingData` is optional — passed when hydrating saved questions on page load
+function addQuestion(existingData) {
+    const container        = document.getElementById('questions-container');
+    const noQuestionsMsg   = document.getElementById('no-questions-message');
+    const template         = document.getElementById('question-template');
+
     if (!template) { console.error('Question template not found!'); return; }
     if (noQuestionsMsg) noQuestionsMsg.style.display = 'none';
-    
-    let questionHtml = template.innerHTML;
-    questionHtml = questionHtml.replace(/{idx}/g, questionCount);
-    
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = questionHtml.trim();
-    const questionElement = tempDiv.firstElementChild;
-    
-    if (!questionElement) { console.error('Failed to create question element'); return; }
-    
-    questionElement.dataset.questionIdx = questionCount;
-    
-    const numberSpan = questionElement.querySelector('.question-number');
+
+    let html = template.innerHTML.replace(/{idx}/g, questionCount);
+
+    const tempDiv        = document.createElement('div');
+    tempDiv.innerHTML    = html.trim();
+    const questionEl     = tempDiv.firstElementChild;
+    if (!questionEl) return;
+
+    questionEl.dataset.questionIdx = questionCount;
+
+    const numberSpan = questionEl.querySelector('.question-number');
     if (numberSpan) numberSpan.textContent = container.children.length + 1;
-    
-    container.appendChild(questionElement);
-    
-    const typeSelect = questionElement.querySelector('.question-type');
-    if (typeSelect) handleQuestionTypeChange(typeSelect);
-    
-    const optionsContainer = questionElement.querySelector('.options-container');
-    if (optionsContainer) {
-        const addBtn = optionsContainer.querySelector('.btn');
+
+    container.appendChild(questionEl);
+
+    // ── Populate fields if editing an existing question ──
+    if (existingData) {
+        // Question text
+        const textArea = questionEl.querySelector('.question-text');
+        if (textArea) textArea.value = existingData.text || '';
+
+        // Points
+        const pointsInput = questionEl.querySelector('.question-points');
+        if (pointsInput) pointsInput.value = existingData.points || 1;
+
+        // Difficulty
+        const diffSelect = questionEl.querySelector(`select[name="questions[${questionCount}][difficulty]"]`);
+        if (diffSelect) diffSelect.value = existingData.difficulty || 'medium';
+
+        // Question type — set dropdown first so handleQuestionTypeChange shows right container
+        const typeSelect = questionEl.querySelector('.question-type');
+        if (typeSelect) {
+            typeSelect.value = existingData.type || 'multiple_choice';
+            handleQuestionTypeChange(typeSelect);
+        }
+
+        // ── Type-specific population ──
+        switch (existingData.type) {
+            case 'multiple_choice': {
+                const optionsContainer = questionEl.querySelector('.options-container');
+                const addBtn           = optionsContainer?.querySelector('.btn');
+                const options          = existingData.options || [];
+
+                // Find which option text matches correct_answer
+                const correctIndex = options.indexOf(existingData.correct_answer);
+
+                options.forEach((optText, i) => {
+                    if (addBtn) addOption(addBtn);  // creates the row
+
+                    // After addOption, grab the last option-item added
+                    const optionsList = optionsContainer.querySelector('.options-list');
+                    const rows        = optionsList.querySelectorAll('.option-item');
+                    const lastRow     = rows[rows.length - 1];
+                    if (!lastRow) return;
+
+                    // Fill text
+                    const textInput = lastRow.querySelector('input[type="text"]');
+                    if (textInput) textInput.value = optText;
+
+                    // Check the correct radio
+                    const radio = lastRow.querySelector('input[type="radio"]');
+                    if (radio && i === correctIndex) radio.checked = true;
+                });
+                break;
+            }
+
+            case 'true_false': {
+                const tfContainer = questionEl.querySelector('.true-false-container');
+                if (tfContainer && existingData.correct_answer) {
+                    const normalised = existingData.correct_answer.charAt(0).toUpperCase()
+                                     + existingData.correct_answer.slice(1).toLowerCase(); // "True"|"False"
+                    const radio = tfContainer.querySelector(`input[value="${normalised}"]`);
+                    if (radio) radio.checked = true;
+                }
+                break;
+            }
+
+            case 'short_answer': {
+                const saContainer = questionEl.querySelector('.short-answer-container');
+                const input = saContainer?.querySelector('input[type="text"]');
+                if (input) input.value = existingData.correct_answer || '';
+                break;
+            }
+        }
+
+    } else {
+        // New blank question — show multiple choice by default with 4 empty options
+        const typeSelect = questionEl.querySelector('.question-type');
+        if (typeSelect) handleQuestionTypeChange(typeSelect);
+
+        const optionsContainer = questionEl.querySelector('.options-container');
+        const addBtn           = optionsContainer?.querySelector('.btn');
         if (addBtn) {
             for (let i = 0; i < 4; i++) addOption(addBtn);
         }
     }
-    
+
     questionCount++;
     updateQuestionNumbers();
 }
 
-// removeQuestion — unchanged
+// ─── Remove question ──────────────────────────────────────────────────────────
 function removeQuestion(button) {
     const questionItem = button.closest('.question-item');
     if (questionItem) {
         questionItem.remove();
         if (document.querySelectorAll('.question-item').length === 0) {
-            const noQuestionsMsg = document.getElementById('no-questions-message');
-            if (noQuestionsMsg) noQuestionsMsg.style.display = 'block';
+            document.getElementById('no-questions-message').style.display = 'block';
         }
         updateQuestionNumbers();
     }
 }
 
-// updateQuestionNumbers — unchanged
 function updateQuestionNumbers() {
-    document.querySelectorAll('.question-item').forEach((question, index) => {
-        const numberSpan = question.querySelector('.question-number');
-        if (numberSpan) numberSpan.textContent = index + 1;
+    document.querySelectorAll('.question-item').forEach((q, i) => {
+        const span = q.querySelector('.question-number');
+        if (span) span.textContent = i + 1;
     });
 }
 
-// handleQuestionTypeChange — unchanged
+// ─── Question type toggle ─────────────────────────────────────────────────────
 function handleQuestionTypeChange(select) {
-    const questionItem = select.closest('.question-item');
+    const questionItem        = select.closest('.question-item');
     if (!questionItem) return;
-    
-    const optionsContainer    = questionItem.querySelector('.options-container');
-    const trueFalseContainer  = questionItem.querySelector('.true-false-container');
+
+    const optionsContainer     = questionItem.querySelector('.options-container');
+    const trueFalseContainer   = questionItem.querySelector('.true-false-container');
     const shortAnswerContainer = questionItem.querySelector('.short-answer-container');
-    
-    if (optionsContainer) {
-        optionsContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
-        optionsContainer.style.display = 'none';
-    }
-    if (trueFalseContainer) {
-        trueFalseContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
-        trueFalseContainer.style.display = 'none';
-    }
-    if (shortAnswerContainer) {
-        shortAnswerContainer.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
-        shortAnswerContainer.style.display = 'none';
-    }
-    
-    switch(select.value) {
+
+    [optionsContainer, trueFalseContainer, shortAnswerContainer].forEach(c => {
+        if (c) {
+            c.querySelectorAll('input[required]').forEach(i => i.removeAttribute('required'));
+            c.style.display = 'none';
+        }
+    });
+
+    switch (select.value) {
         case 'multiple_choice':
             if (optionsContainer) {
                 optionsContainer.style.display = 'block';
@@ -470,71 +583,71 @@ function handleQuestionTypeChange(select) {
             if (trueFalseContainer) {
                 trueFalseContainer.style.display = 'block';
                 const radios = trueFalseContainer.querySelectorAll('input[type="radio"]');
-                if (radios.length > 0) radios[0].setAttribute('required', 'required');
+                if (radios.length) radios[0].setAttribute('required', 'required');
             }
             break;
         case 'short_answer':
             if (shortAnswerContainer) {
                 shortAnswerContainer.style.display = 'block';
-                const answerInput = shortAnswerContainer.querySelector('input[type="text"]');
-                if (answerInput) answerInput.setAttribute('required', 'required');
+                const inp = shortAnswerContainer.querySelector('input[type="text"]');
+                if (inp) inp.setAttribute('required', 'required');
             }
             break;
     }
 }
 
-// addOption — FIX 2: uses 0-based index as radio value instead of "option1","option2"...
+// ─── Add option ───────────────────────────────────────────────────────────────
 function addOption(button) {
     const optionsContainer = button.closest('.options-container');
     if (!optionsContainer) return;
-    
+
     const optionsList  = optionsContainer.querySelector('.options-list');
     const template     = document.getElementById('option-template');
     const questionItem = button.closest('.question-item');
-    
+
     if (!template || !questionItem || !optionsList) return;
-    
+
     const idx         = questionItem.dataset.questionIdx;
-    const optionIndex = optionsList.children.length; // 0-based: 0, 1, 2, 3 ...
-    
-    let optionHtml = template.innerHTML;
-    optionHtml = optionHtml.replace(/{idx}/g, idx);
-    optionHtml = optionHtml.replace(/{option-index}/g, optionIndex); // ← was {option-value} → "option1"
-    
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = optionHtml.trim();
-    const optionElement = tempDiv.firstElementChild;
-    
-    if (optionElement) {
-        const textInput = optionElement.querySelector('input[type="text"]');
+    const optionIndex = optionsList.children.length;
+
+    let html = template.innerHTML
+        .replace(/{idx}/g, idx)
+        .replace(/{option-index}/g, optionIndex);
+
+    const tempDiv     = document.createElement('div');
+    tempDiv.innerHTML = html.trim();
+    const optionEl    = tempDiv.firstElementChild;
+
+    if (optionEl) {
+        const textInput = optionEl.querySelector('input[type="text"]');
         if (textInput) textInput.setAttribute('required', 'required');
-        optionsList.appendChild(optionElement);
+        optionsList.appendChild(optionEl);
     }
 }
 
-// removeOption — unchanged
+// ─── Remove option ────────────────────────────────────────────────────────────
 function removeOption(button) {
     const optionItem = button.closest('.option-item');
     if (optionItem) optionItem.remove();
 }
 
-// Form submit — original validation kept + FIX 3 added at the end
-document.getElementById('quizForm')?.addEventListener('submit', function(e) {
+// ─── Form submit ──────────────────────────────────────────────────────────────
+document.getElementById('quizForm')?.addEventListener('submit', function (e) {
     const questions = document.querySelectorAll('.question-item');
-    
+
     if (questions.length === 0) {
         e.preventDefault();
         alert('❌ Please add at least one question.');
         return false;
     }
-    
+
     for (let i = 0; i < questions.length; i++) {
-        const question    = questions[i];
+        const question     = questions[i];
         const questionText = question.querySelector('.question-text')?.value;
-        const points      = question.querySelector('.question-points')?.value;
-        const typeSelect  = question.querySelector('.question-type');
-        
-        if (!questionText || !questionText.trim()) {
+        const points       = question.querySelector('.question-points')?.value;
+        const typeSelect   = question.querySelector('.question-type');
+
+        if (!questionText?.trim()) {
             e.preventDefault();
             alert(`❌ Question ${i + 1}: Question text is required.`);
             return false;
@@ -545,56 +658,49 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             return false;
         }
         if (!typeSelect) continue;
-        
-        const questionType = typeSelect.value;
-        
-        switch(questionType) {
-            case 'multiple_choice':
+
+        switch (typeSelect.value) {
+            case 'multiple_choice': {
                 const options = question.querySelectorAll('.option-item input[type="text"]');
                 if (options.length < 2) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: Multiple choice questions need at least 2 options.`);
                     return false;
                 }
-                let hasEmptyOption = false;
-                options.forEach(opt => { if (!opt.value.trim()) hasEmptyOption = true; });
-                if (hasEmptyOption) {
+                let hasEmpty = false;
+                options.forEach(o => { if (!o.value.trim()) hasEmpty = true; });
+                if (hasEmpty) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: All options must have text.`);
                     return false;
                 }
-                // Validate a correct answer is selected
-                const checkedMC = question.querySelector('.options-container input[type="radio"]:checked');
-                if (!checkedMC) {
+                if (!question.querySelector('.options-container input[type="radio"]:checked')) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: Please select the correct answer.`);
                     return false;
                 }
                 break;
-                
+            }
             case 'true_false':
-                const checkedTF = question.querySelector('.true-false-container input[type="radio"]:checked');
-                if (!checkedTF) {
+                if (!question.querySelector('.true-false-container input[type="radio"]:checked')) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: Please select True or False as the correct answer.`);
                     return false;
                 }
                 break;
-                
-            case 'short_answer':
-                const shortAnswer = question.querySelector('.short-answer-container input[type="text"]')?.value;
-                if (!shortAnswer || !shortAnswer.trim()) {
+            case 'short_answer': {
+                const val = question.querySelector('.short-answer-container input[type="text"]')?.value;
+                if (!val?.trim()) {
                     e.preventDefault();
                     alert(`❌ Question ${i + 1}: Correct answer is required for short answer questions.`);
                     return false;
                 }
                 break;
+            }
         }
     }
 
-    // FIX 3: Disable inputs in hidden containers before submit so they send nothing to PHP.
-    // This is the core fix for the NULL bug — hidden inputs were submitting empty/wrong values
-    // that overwrote the actual correct_answer from the visible container.
+    // Disable hidden container inputs so they don't submit stale/empty values
     document.querySelectorAll('.question-item').forEach(question => {
         const type = question.querySelector('.question-type')?.value;
         if (!type) return;
@@ -612,13 +718,13 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             });
         });
     });
-    
+
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Quiz...';
+        submitBtn.disabled  = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving Changes...';
     }
-    
+
     return true;
 });
 </script>

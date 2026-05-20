@@ -358,8 +358,33 @@ class AssessmentController extends Controller
     {
         $courses = Course::orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
-        
-        return view('admin.courses.assessments.projects.edit', compact('assessment', 'courses', 'modules'));
+
+        $questionsData = $assessment->questions->map(function($q) {
+            return [
+                'text'           => $q->question_text,
+                'type'           => $q->question_type,
+                'points'         => $q->points,
+                'difficulty'     => $q->difficulty_level ?? 'medium',
+                'options'        => $q->options ?? [],
+                'correct_answer' => $q->correct_answer,
+            ];
+        });
+
+        if ($assessment->assessment_level === 'quiz') {
+            return view('admin.courses.assessments.edit-quiz', [
+                'assessment'    => $assessment,
+                'courses'       => $courses,
+                'modules'       => $modules,
+                'questionsData' => $questionsData,
+            ]);
+        }
+
+        return view('admin.courses.assessments.projects.edit', [
+            'assessment'    => $assessment,
+            'courses'       => $courses,
+            'modules'       => $modules,
+            'questionsData' => $questionsData,
+        ]);
     }
 
     /**
