@@ -67,12 +67,17 @@ class Assessment extends Model
         'highest_score' => 'decimal:2',
         'lowest_score' => 'decimal:2',
         'allowed_file_types' => 'array',
-    'max_file_size' => 'integer',
+        'max_file_size' => 'integer',
     ];
 
     /**
      * Relationships
      */
+    public function modules()
+    {
+        return $this->belongsToMany(CourseModule::class, 'assessment_modules_pivot');
+    }
+
     public function course()
     {
         return $this->belongsTo(Course::class);
