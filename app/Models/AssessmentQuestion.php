@@ -1,15 +1,15 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// ← REMOVED: use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssessmentQuestion extends Model
 {
-    use SoftDeletes;
+    // ← REMOVED: use SoftDeletes;
 
     protected $table = 'assessment_questions';
+    protected $touches = [];
 
     protected $fillable = [
         'assessment_id',
@@ -30,49 +30,39 @@ class AssessmentQuestion extends Model
     ];
 
     protected $casts = [
-        'options'          => 'array',
-        'correct_answers'  => 'array',
-        'is_required'      => 'boolean',
-        'tags'             => 'array',
-        'points'           => 'decimal:2',
+        'options'         => 'array',
+        'correct_answers' => 'array',
+        'is_required'     => 'boolean',
+        'tags'            => 'array',
+        'points'          => 'decimal:2',
     ];
 
-    // ✅ ADD THIS RELATIONSHIP
     public function assessment()
     {
         return $this->belongsTo(Assessment::class);
     }
 
-    // ✅ ADD THIS RELATIONSHIP
     public function module()
     {
         return $this->belongsTo(CourseModule::class, 'module_id');
     }
 
-    // ── Accessor: always return options as array ──────────────────────────────
-
     public function getOptionsAttribute($value): array
     {
         if (is_null($value)) return [];
         if (is_array($value)) return $value;
-
         $decoded = json_decode($value, true);
         return is_array($decoded) ? $decoded : [];
     }
-
-    // ── Mutator: always store options as JSON ─────────────────────────────────
 
     public function setOptionsAttribute($value): void
     {
         $this->attributes['options'] = is_array($value) ? json_encode($value) : $value;
     }
 
-    // ── Answer checking ───────────────────────────────────────────────────────
-
     public function isAnswerCorrect($answer): ?bool
     {
         switch ($this->question_type) {
-
             case 'multiple_choice':
             case 'true_false':
             case 'short_answer':
@@ -86,9 +76,7 @@ class AssessmentQuestion extends Model
                 $submitted = is_array($answer)
                     ? $answer
                     : json_decode($answer, true);
-
                 if (!is_array($correct) || !is_array($submitted)) return false;
-
                 sort($correct);
                 sort($submitted);
                 return $correct === $submitted;
@@ -102,21 +90,16 @@ class AssessmentQuestion extends Model
         }
     }
 
-    // ── Points calculation ────────────────────────────────────────────────────
-
     public function calculatePoints($answer): ?float
     {
         $isCorrect = $this->isAnswerCorrect($answer);
         return $isCorrect === null ? null : ($isCorrect ? (float) $this->points : 0.0);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     public function getShuffledOptionsAttribute(): array
     {
         $options = $this->options;
         if (!is_array($options) || empty($options)) return [];
-
         $shuffled = $options;
         shuffle($shuffled);
         return $shuffled;
