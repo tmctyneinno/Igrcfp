@@ -12,7 +12,7 @@ export default function AdminLayout({ children, title = 'Admin Dashboard', admin
             <main className="dashboard-main">
                 <NavBar adminName={adminName} /> 
                 {children}
-                <Footer /> 
+                <Footer />  
             </main>
         </>
     );
