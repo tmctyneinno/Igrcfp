@@ -37,35 +37,32 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
+        // 1. Validate reCAPTCHA
         try {
-            // 1. Validate reCAPTCHA first with custom messages
-            $validated = $request->validate([
+            $request->validate([
                 'g-recaptcha-response' => 'required|captcha'
             ], [
                 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
                 'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
             ]);
-            
-            // 2. Log successful validation (optional)
+
             \Log::info('reCAPTCHA validation passed', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ]);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log validation failures with context
             \Log::warning('Login attempt failed reCAPTCHA validation', [
                 'ip' => $request->ip(),
                 'errors' => $e->errors()
             ]);
-            
-            // Redirect back with input except the reCAPTCHA field
+
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('g-recaptcha-response'));
         }
-        
-        // 3. Attempt authentication
+
+        // 2. Attempt authentication
         try {
             $request->authenticate();
         } catch (\Exception $e) {
@@ -73,117 +70,119 @@ class AuthenticatedSessionController extends Controller
                 'email' => $request->email,
                 'ip' => $request->ip()
             ]);
-            
+
             return redirect()->back()
                 ->withErrors(['email' => 'Invalid credentials.'])
                 ->withInput($request->except('password', 'g-recaptcha-response'));
         }
-        
-        // 4. Generate and send OTP
-        $user = Auth::user();
-        $otp = $user->generateOTP();
-        
-        // try {
-        //     Mail::to($user->email)->send(new OTPMail($otp));
-        //     \Log::info('OTP sent successfully for email', ['user_id' => $user->id]);
-        // } catch (\Exception $e) {
-        //     \Log::error('Failed to send OTP: ' . $e->getMessage(), [
-        //         'user_id' => $user->id,
-        //         'email' => $user->email
-        //     ]);
-            
-        //     // Optional: Still allow login but inform user about OTP delay
-        //     session()->flash('warning', 'OTP email may be delayed. Please check your inbox.');
-        // }
 
-         // ── Send via SMS if phone number exists ─────────────
-        // if ($user->phone) {
+        // 3. Generate and send OTP
+        $user = Auth::user();
+        $otp = $user->generateOTP(); // ✅ Generated once and saved to DB
+
+        // ✅ Send via email
+        try {
+            Mail::to($user->email)->send(new OTPMail($otp));
+            \Log::info('OTP email sent successfully', ['user_id' => $user->id]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP email: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ]);
+            session()->flash('warning', 'OTP email may be delayed. Please check your inbox.');
+        }
+
+        // ✅ Optionally send via SMS if phone number exists
+        // if ($user->phone_number) {
         //     try {
-        //         $this->sms->sendOtp($user->phone, $otp);
-        //         \Log::info('OTP sent successfully OTP', ['user_id' => $user->id]);
+        //         $this->sms->sendOtp($user->phone_number, $otp);
+        //         \Log::info('OTP SMS sent successfully', ['user_id' => $user->id]);
         //     } catch (\Exception $e) {
         //         \Log::error('OTP SMS failed: ' . $e->getMessage());
         //     }
         // }
-        
-        // 5. Logout and store OTP session
+
+        // 4. Logout and store session
         Auth::logout();
-        
+
         session([
-            'otp_user_id' => $user->id,
+            'otp_user_id'    => $user->id,
             'otp_user_email' => $user->email,
             'otp_created_at' => now(),
-            'login_ip' => $request->ip()  // Additional security context
+            'login_ip'       => $request->ip()
         ]);
-        
+
         return redirect()->route('verify-otp')
             ->with('success', 'Verification code sent to ' . $user->email);
     }
 
     public function register(Request $request): RedirectResponse
     {
-        // ✅ Validate reCAPTCHA first
+        // 1. Validate reCAPTCHA
         try {
-            // 1. Validate reCAPTCHA first with custom messages
-            $validated = $request->validate([
+            $request->validate([
                 'g-recaptcha-response' => 'required|captcha'
             ], [
                 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
                 'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
             ]);
-            
-            // 2. Log successful validation (optional)
+
             \Log::info('reCAPTCHA validation passed', [
                 'ip' => $request->ip(),
                 'user_agent' => $request->userAgent()
             ]);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Log validation failures with context
-            \Log::warning('Login attempt failed reCAPTCHA validation', [
+            \Log::warning('Register attempt failed reCAPTCHA validation', [
                 'ip' => $request->ip(),
                 'errors' => $e->errors()
             ]);
-            
-            // Redirect back with input except the reCAPTCHA field
+
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('g-recaptcha-response'));
         }
-        
-        // 3. Attempt authentication
-        try {
-            $request->authenticate();
-        } catch (\Exception $e) {
-            \Log::error('Authentication failed after reCAPTCHA', [
-                'email' => $request->email,
-                'ip' => $request->ip()
-            ]);
-            
-            return redirect()->back()
-                ->withErrors(['email' => 'Invalid credentials.'])
-                ->withInput($request->except('password', 'g-recaptcha-response'));
-        }
+
+        // 2. Validate registration fields
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'phone' => 'nullable|string|max:20|unique:'.User::class,
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|lowercase|email|max:255|unique:' . User::class,
+            'phone'    => 'nullable|string|max:20|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // 3. Create user
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'         => $request->name,
+            'email'        => $request->email,
             'phone_number' => $request->phone,
-            'password' => Hash::make($request->password),
+            'password'     => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
-        
-        Auth::logout();
-        
-        // Redirect to OTP verification page
-        return redirect()->route('verify-otp');
+
+        // 4. Generate and send OTP
+        $otp = $user->generateOTP(); // ✅ Generated once and saved to DB
+
+        try {
+            Mail::to($user->email)->send(new OTPMail($otp));
+            \Log::info('OTP email sent after registration', ['user_id' => $user->id]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP after registration: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'email'   => $user->email
+            ]);
+        }
+
+        // 5. Store session and redirect to OTP verification
+        session([
+            'otp_user_id'    => $user->id,
+            'otp_user_email' => $user->email,
+            'otp_created_at' => now(),
+        ]);
+
+        return redirect()->route('verify-otp')
+            ->with('success', 'Verification code sent to ' . $user->email);
     }
 
     public function logout(Request $request): RedirectResponse
@@ -192,5 +191,5 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
-    } 
+    }
 }

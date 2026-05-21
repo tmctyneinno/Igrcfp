@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
-
+ 
 class OTPVerificationController extends Controller
 {
     public function showVerificationForm()
-    {
+    { 
         $userId = session('otp_user_id');
         
         if (!$userId) {

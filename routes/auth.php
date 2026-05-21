@@ -22,7 +22,7 @@ Route::middleware('guest')->group(function () {
  
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login'); 
-
+ 
     Route::post('login', [AuthenticatedSessionController::class, 'login']);  
     Route::post('/verify-otp/verify', [OTPVerificationController::class, 'verifyOTP']);
     Route::post('/verify-otp/resend', [OTPVerificationController::class, 'resendOTP']);
