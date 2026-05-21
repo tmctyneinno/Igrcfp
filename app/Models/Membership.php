@@ -9,7 +9,7 @@ use Illuminate\Support\Carbon;
 class Membership extends Model
 {
     use HasFactory;
-
+ 
     protected $fillable = [
         'user_id',
         'membership_plan_id',

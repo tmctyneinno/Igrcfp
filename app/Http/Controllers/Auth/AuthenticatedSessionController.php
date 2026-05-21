@@ -43,66 +43,82 @@ class AuthenticatedSessionController extends Controller
                 'g-recaptcha-response' => 'required|captcha'
             ], [
                 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
-                'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.'
+                'g-recaptcha-response.captcha'  => 'Security verification failed. Please try again.'
             ]);
-
-            \Log::info('reCAPTCHA validation passed', [
-                'ip' => $request->ip(),
-                'user_agent' => $request->userAgent()
-            ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::warning('Login attempt failed reCAPTCHA validation', [
-                'ip' => $request->ip(),
-                'errors' => $e->errors()
-            ]);
-
+            \Log::warning('Login failed reCAPTCHA', ['ip' => $request->ip()]);
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('g-recaptcha-response'));
         }
 
-        // 2. Attempt authentication
+        // 2. Find user and check if account is locked BEFORE authenticating
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && $user->isLocked()) {
+            $minutesLeft = (int) now()->diffInMinutes($user->locked_until, false);
+            return redirect()->back()
+                ->withErrors([
+                    'email' => "Your account is locked due to too many failed attempts. Try again in {$minutesLeft} minute(s)."
+                ])
+                ->withInput($request->except('password', 'g-recaptcha-response'));
+        }
+
+        // 3. Attempt authentication
         try {
             $request->authenticate();
         } catch (\Exception $e) {
-            \Log::error('Authentication failed after reCAPTCHA', [
-                'email' => $request->email,
-                'ip' => $request->ip()
-            ]);
+            // Increment failed attempts if user exists
+            if ($user) {
+                $user->incrementFailedAttempts();
+
+                // Account just got locked — send email
+                if ($user->isLocked()) {
+                    try {
+                        Mail::to($user->email)->send(new AccountLockedMail($user));
+                        \Log::info('Account locked email sent', ['user_id' => $user->id]);
+                    } catch (\Exception $mailException) {
+                        \Log::error('Failed to send account locked email: ' . $mailException->getMessage());
+                    }
+
+                    return redirect()->back()
+                        ->withErrors([
+                            'email' => 'Your account has been locked after 5 failed attempts. Please check your email or reset your password.'
+                        ])
+                        ->withInput($request->except('password', 'g-recaptcha-response'));
+                }
+
+                $attemptsLeft = 2 - $user->failed_login_attempts;
+                return redirect()->back()
+                    ->withErrors([
+                        'email' => "Invalid credentials. {$attemptsLeft} attempt(s) remaining before your account is locked."
+                    ])
+                    ->withInput($request->except('password', 'g-recaptcha-response'));
+            }
 
             return redirect()->back()
                 ->withErrors(['email' => 'Invalid credentials.'])
                 ->withInput($request->except('password', 'g-recaptcha-response'));
         }
 
-        // 3. Generate and send OTP
+        // 4. Successful login — reset failed attempts
         $user = Auth::user();
-        $otp = $user->generateOTP(); // ✅ Generated once and saved to DB
+        $user->resetFailedAttempts();
 
-        // ✅ Send via email
+        // 5. Generate OTP and send email
+        $otp = $user->generateOTP();
+
         try {
             Mail::to($user->email)->send(new OTPMail($otp));
             \Log::info('OTP email sent successfully', ['user_id' => $user->id]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send OTP email: ' . $e->getMessage(), [
-                'user_id' => $user->id,
-                'email' => $user->email
+            \Log::error('Failed to send OTP: ' . $e->getMessage(), [
+                'user_id' => $user->id
             ]);
             session()->flash('warning', 'OTP email may be delayed. Please check your inbox.');
         }
 
-        // ✅ Optionally send via SMS if phone number exists
-        // if ($user->phone_number) {
-        //     try {
-        //         $this->sms->sendOtp($user->phone_number, $otp);
-        //         \Log::info('OTP SMS sent successfully', ['user_id' => $user->id]);
-        //     } catch (\Exception $e) {
-        //         \Log::error('OTP SMS failed: ' . $e->getMessage());
-        //     }
-        // }
-
-        // 4. Logout and store session
+        // 6. Logout and store OTP session
         Auth::logout();
 
         session([

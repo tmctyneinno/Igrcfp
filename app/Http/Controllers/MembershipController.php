@@ -126,7 +126,7 @@ public function index(Request $request)
         }
 
     public function addToCart(Request $request, MembershipPlan $plan)
-    {
+    { 
         if (!$plan->is_active) {
             return redirect()
                 ->route('dashboard.memberships.index')
