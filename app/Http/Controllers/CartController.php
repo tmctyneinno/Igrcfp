@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Course;
+use App\Models\MembershipPlan;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,21 +13,41 @@ class CartController extends Controller
     public function index(Request $request)
     { 
         $cart = $request->user()->carts()
-            ->with(['items.course'])
+            ->with(['items.course', 'items.membershipPlan']) // ADD THIS
             ->where('status', 'active')
             ->latest()
             ->first();
-
+      
         return Inertia::render('Dashboard/Cart/Index', [
             'cart' => $cart ? [
                 'id' => $cart->id,
                 'item_count' => $cart->item_count,
                 'total_amount' => $cart->total_amount,
                 'items' => $cart->items->map(function ($item) {
+                    // For membership items
+                    if ($item->item_type === 'membership' || $item->membership_plan_id) {
+                        return [
+                            'id' => $item->id,
+                            'price' => $item->price,
+                            'quantity' => $item->quantity,
+                            'item_type' => 'membership',
+                            'course' => null,
+                            'membership_plan' => $item->membershipPlan ? [
+                                'id' => $item->membershipPlan->id,
+                                'name' => $item->membershipPlan->name,
+                                'duration_months' => $item->membershipPlan->duration_months,
+                                'tier_id' => $item->membershipPlan->tier_id,
+                                'benefits' => $item->membershipPlan->benefits,
+                            ] : null
+                        ];
+                    }
+                    
+                    // For course items
                     return [
                         'id' => $item->id,
                         'price' => $item->price,
                         'quantity' => $item->quantity,
+                        'item_type' => 'course',
                         'course' => $item->course ? [
                             'id' => $item->course->id,
                             'title' => $item->course->title,
@@ -34,7 +55,8 @@ class CartController extends Controller
                             'image_url' => $item->course->image_url,
                             'level' => $item->course->level,
                             'duration' => $item->course->duration,
-                        ] : null
+                        ] : null,
+                        'membership_plan' => null
                     ];
                 })
             ] : null
@@ -44,16 +66,16 @@ class CartController extends Controller
     public function add(Request $request, Course $course)
     {
         // Debug - check if user is authenticated
-            if (!$request->user()) {
-                \Log::error('Cart add - User not authenticated');
-                return response()->json(['error' => 'Not authenticated'], 401);
-            }
-            
-            \Log::info('Cart add - User authenticated', [
-                'user_id' => $request->user()->id,
-                'course_id' => $course->id,
-                'url' => $request->url()
-            ]);
+        if (!$request->user()) {
+            \Log::error('Cart add - User not authenticated');
+            return response()->json(['error' => 'Not authenticated'], 401);
+        }
+        
+        \Log::info('Cart add - User authenticated', [
+            'user_id' => $request->user()->id,
+            'course_id' => $course->id,
+            'url' => $request->url()
+        ]);
         
         if (!$course->status) {
             return redirect()->back()->with('error', 'Course not available.');
@@ -70,8 +92,10 @@ class CartController extends Controller
         }
 
         $cart->items()->create([
+            'item_type' => 'course', // Set the type
             'course_id' => $course->id,
             'price' => $course->discount_price ?? $course->price,
+            'quantity' => 1,
         ]);
 
         $cart->updateTotals();
@@ -83,7 +107,40 @@ class CartController extends Controller
             'success' => 'Course added to cart.',
             'cart_count' => $cartCount
         ]); 
-    } 
+    }
+
+    // Add method to add membership plan to cart
+    public function addMembership(Request $request, MembershipPlan $membershipPlan)
+    {
+        if (!$request->user()) {
+            return response()->json(['error' => 'Not authenticated'], 401);
+        }
+        
+        if (!$membershipPlan->is_active) {
+            return redirect()->back()->with('error', 'Membership plan not available.');
+        }
+
+        $cart = $request->user()->carts()->firstOrCreate(
+            ['status' => 'active'],
+            ['session_id' => session()->getId()]
+        );
+
+        // Check if membership already in cart
+        if ($cart->items()->where('membership_plan_id', $membershipPlan->id)->exists()) {
+            return redirect()->route('dashboard.cart.index')->with('info', 'Membership plan already in cart.');
+        }
+
+        $cart->items()->create([
+            'item_type' => 'membership',
+            'membership_plan_id' => $membershipPlan->id,
+            'price' => $membershipPlan->price,
+            'quantity' => 1,
+        ]);
+
+        $cart->updateTotals();
+
+        return redirect()->route('dashboard.cart.index')->with('success', 'Membership plan added to cart.');
+    }
 
     public function remove(Request $request, $itemId)
     { 
@@ -94,9 +151,7 @@ class CartController extends Controller
             $cart->updateTotals();
         } 
 
-        return redirect()->route('dashboard.cart.index')->with([
-            'success' => 'Item removed from cart.'
-        ]);
+        return redirect()->route('dashboard.cart.index')->with('success', 'Item removed from cart.');
     }
 
     public function clear(Request $request)
@@ -108,5 +163,5 @@ class CartController extends Controller
         }
 
         return redirect()->back()->with('success', 'Cart cleared.');
-    } 
+    }
 }

@@ -75,38 +75,83 @@ export default function CartIndex({ cart }) {
                                     </div>
                                     
                                     <div className="space-y-4">
-                                        {cart.items.map((item) => (
-                                            <div key={item.id} className="flex items-center space-x-4 py-4 border-b last:border-0">
-                                                <img 
-                                                    src={item.course?.image_url || '/images/fallback-course.jpg'}
-                                                    alt={item.course?.title}
-                                                    className="w-20 h-20 object-cover rounded-lg"
-                                                />
-                                                
-                                                <div className="flex-1">
-                                                    <Link href={`/courses/${item.course?.slug}`}>
-                                                        <h3 className="font-semibold text-gray-900 hover:text-blue-700">
-                                                            {item.course?.title}
-                                                        </h3>
-                                                    </Link>
-                                                    <p className="text-sm text-gray-600 mt-1">
-                                                        Level: {item.course?.level} | Duration: {item.course?.duration}
-                                                    </p>
-                                                </div>
-                                                
-                                                <div className="text-right">
-                                                    <p className="text-lg font-bold text-gray-900">
-                                                        <span>€{Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                                    </p>
-                                                    <button 
-                                                        onClick={() => handleRemove(item)}
-                                                        className="text-sm text-red-600 hover:text-red-800 mt-1 font-medium"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
+                                      
+                                        {cart.items.map((item) => {
+                                            // Display membership plan
+                                            if (item.item_type === 'membership' && item.membership_plan) {
+                                                return (
+                                                    <div key={item.id} className="flex items-center space-x-4 py-4 border-b last:border-0">
+                                                        <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                                            </svg>
+                                                        </div>
+                                                        
+                                                        <div className="flex-1">
+                                                            <h3 className="font-semibold text-gray-900">
+                                                                {item.membership_plan.name}
+                                                            </h3>
+                                                            <div className="text-sm text-gray-600 mt-1">
+                                                                <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded mr-2">
+                                                                    Membership Plan
+                                                                </span>
+                                                                <span>Duration: {item.membership_plan.duration_months} months</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div className="text-right">
+                                                            <p className="text-lg font-bold text-gray-900">
+                                                                £{Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                                            </p>
+                                                            <button 
+                                                                onClick={() => handleRemove(item)}
+                                                                className="text-sm text-red-600 hover:text-red-800 mt-1 font-medium"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            // Display course (existing code)
+                                            if (item.item_type === 'course' && item.course) {
+                                                return (
+                                                    <div key={item.id} className="flex items-center space-x-4 py-4 border-b last:border-0">
+                                                        <img 
+                                                            src={item.course.image_url || '/images/fallback-course.jpg'}
+                                                            alt={item.course.title}
+                                                            className="w-20 h-20 object-cover rounded-lg"
+                                                        />
+                                                        
+                                                        <div className="flex-1">
+                                                            <Link href={`/courses/${item.course.slug}`}>
+                                                                <h3 className="font-semibold text-gray-900 hover:text-blue-700">
+                                                                    {item.course.title}
+                                                                </h3>
+                                                            </Link>
+                                                            <p className="text-sm text-gray-600 mt-1">
+                                                                Level: {item.course.level} | Duration: {item.course.duration}
+                                                            </p>
+                                                        </div>
+                                                        
+                                                        <div className="text-right">
+                                                            <p className="text-lg font-bold text-gray-900">
+                                                                £{Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                                            </p>
+                                                            <button 
+                                                                onClick={() => handleRemove(item)}
+                                                                className="text-sm text-red-600 hover:text-red-800 mt-1 font-medium"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                            
+                                            return null;
+                                        })}
                                     </div>
                                 </div>
                             </div>
@@ -120,15 +165,15 @@ export default function CartIndex({ cart }) {
                                 <div className="space-y-3 mb-4">
                                     <div className="flex justify-between text-gray-600">
                                         <span>Subtotal ({cart.item_count} items)</span>
-                                        <span>€{(calculateTotal() || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        <span>£{(calculateTotal() || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                     <div className="flex justify-between text-gray-600">
                                         <span>Tax</span>
-                                        <span>€0.00</span>
+                                        <span>£0.00</span>
                                     </div>
                                     <div className="border-t pt-3 flex justify-between font-bold text-gray-900">
                                         <span>Total</span>
-                                        <span>€{calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                        <span>£{calculateTotal().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                 </div>
                                 
@@ -136,7 +181,7 @@ export default function CartIndex({ cart }) {
                                     href={route('checkout.index')}
                                     className="block w-full text-center py-3 px-4 bg-gradient-to-r from-blue-900 to-indigo-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
                                 >
-                                    Complete Enrollment
+                                    Checkout
                                 </Link>
                                 
                                 <Link

@@ -19,7 +19,7 @@ export default function MembershipCheckout({ auth, cart, membershipItems, user }
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const currency = membershipItems[0]?.plan?.currency ?? 'EUR';
+    const currency = membershipItems[0]?.plan?.currency ?? '£';
     const totalAmount = cart?.total_amount ?? 0;
 
     const handleChange = (e) => {
@@ -85,7 +85,7 @@ export default function MembershipCheckout({ auth, cart, membershipItems, user }
                                     />
                                     {errors.name && (
                                         <p className="text-sm text-rose-600 mt-1">{errors.name}</p>
-                                    )}
+                                    )} 
                                 </div>
 
                                 {/* Email */}
