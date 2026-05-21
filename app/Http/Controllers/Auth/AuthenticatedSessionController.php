@@ -88,7 +88,7 @@ class AuthenticatedSessionController extends Controller
                         ->withInput($request->except('password', 'g-recaptcha-response'));
                 }
 
-                $attemptsLeft = 2 - $user->failed_login_attempts;
+                $attemptsLeft = 3 - $user->failed_login_attempts;
                 return redirect()->back()
                     ->withErrors([
                         'email' => "Invalid credentials. {$attemptsLeft} attempt(s) remaining before your account is locked."
