@@ -72,11 +72,10 @@ class AuthenticatedSessionController extends Controller
             if ($user) {
                 $user->incrementFailedAttempts();
 
-                // Account just got locked — send email
+                // Account just got locked
                 if ($user->isLocked()) {
                     try {
                         Mail::to($user->email)->send(new AccountLockedMail($user));
-                        \Log::info('Account locked email sent', ['user_id' => $user->id]);
                     } catch (\Exception $mailException) {
                         \Log::error('Failed to send account locked email: ' . $mailException->getMessage());
                     }
@@ -88,7 +87,9 @@ class AuthenticatedSessionController extends Controller
                         ->withInput($request->except('password', 'g-recaptcha-response'));
                 }
 
-                $attemptsLeft = 3 - $user->failed_login_attempts;
+                // ✅ Correct remaining attempts (5 max - current count)
+                $attemptsLeft = max(0, 5 - $user->failed_login_attempts);
+
                 return redirect()->back()
                     ->withErrors([
                         'email' => "Invalid credentials. {$attemptsLeft} attempt(s) remaining before your account is locked."

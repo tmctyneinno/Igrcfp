@@ -103,6 +103,8 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
         'otp_expires_at' => 'datetime',
         'is_verified' => 'boolean',
+        'failed_login_attempts' => 'integer',
+        'locked_until'          => 'datetime',
     ];
 
     public function generateOTP(): string
@@ -118,6 +120,7 @@ class User extends Authenticatable
     {
         $this->failed_login_attempts = ($this->failed_login_attempts ?? 0) + 1;
 
+        // ✅ Lock exactly at 5
         if ($this->failed_login_attempts >= 5) {
             $this->locked_until = now()->addMinutes(30);
         }
