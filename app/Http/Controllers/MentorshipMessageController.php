@@ -6,7 +6,7 @@ use App\Models\Mentorship;
 use App\Models\MentorshipMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-
+ 
 class MentorshipMessageController extends Controller
 {
     public function index(Request $request, Mentorship $mentorship)

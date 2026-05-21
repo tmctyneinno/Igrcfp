@@ -150,3 +150,13 @@ acbm
 
 
 <!--  Igrcfp % npm run serve -->
+
+Memebership Plan 
+User Profile
+Lock user account after 5 attempts
+Seesion if user can not user the same account for a different broswer
+Certification Verification link 
+Activity Audit log for User and Admin
+
+
+

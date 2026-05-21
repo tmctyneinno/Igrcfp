@@ -64,6 +64,8 @@ class User extends Authenticatable
         'tutor_agreement_accepted_at',
         'is_verified',
         'deleted_at',
+        'failed_login_attempts',
+        'locked_until',
     ]; 
 
     /**
@@ -76,8 +78,8 @@ class User extends Authenticatable
         'remember_token',
         'phone',
         'is_verified',
-        'otp_code', // Add this if you want to allow mass assignment
-        'otp_expires_at', // Add this if you want to allow mass assignment
+        'otp_code', 
+        'otp_expires_at', 
     ];
 
     /**
@@ -103,13 +105,36 @@ class User extends Authenticatable
         'is_verified' => 'boolean',
     ];
 
-    public function generateOTP()
+    public function generateOTP(): string
     {
-        $this->otp_code = rand(100000, 999999);
+        $otp = (string) rand(100000, 999999);
+        $this->otp_code       = $otp;
         $this->otp_expires_at = now()->addMinutes(10);
         $this->save();
-        
-        return $this->otp_code;
+        return $otp;
+    }
+
+    public function incrementFailedAttempts(): void
+    {
+        $this->failed_login_attempts = ($this->failed_login_attempts ?? 0) + 1;
+
+        if ($this->failed_login_attempts >= 5) {
+            $this->locked_until = now()->addMinutes(30);
+        }
+
+        $this->save();
+    }
+
+    public function resetFailedAttempts(): void
+    {
+        $this->failed_login_attempts = 0;
+        $this->locked_until          = null;
+        $this->save();
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->locked_until && $this->locked_until->isFuture();
     }
 
     public function verifyOTP($code)
