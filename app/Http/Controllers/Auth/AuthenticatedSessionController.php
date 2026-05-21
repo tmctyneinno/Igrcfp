@@ -56,7 +56,7 @@ class AuthenticatedSessionController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if ($user && $user->isLocked()) {
-            $minutesLeft = (int) now()->diffInMinutes($user->locked_until, false);
+            $minutesLeft = (int) ceil(now()->diffInSeconds($user->locked_until) / 60);
             return redirect()->back()
                 ->withErrors([
                     'email' => "Your account is locked due to too many failed attempts. Try again in {$minutesLeft} minute(s)."
