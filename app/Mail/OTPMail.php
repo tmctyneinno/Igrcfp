@@ -10,7 +10,7 @@ class OTPMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $otp;
+    public $otp; 
  
     public function __construct($otp)
     {

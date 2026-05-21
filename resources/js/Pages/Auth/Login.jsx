@@ -8,7 +8,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
-
+ 
 export default function Login({ status, canResetPassword }) {
     const { auth } = usePage().props;
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -69,7 +69,7 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-
+ 
         post(route('login'), {
             onFinish: () => {
                 reset('password');
@@ -172,7 +172,7 @@ export default function Login({ status, canResetPassword }) {
                                         name="email"
                                         value={data.email}
                                         className="pl-10 w-full"
-                                        placeholder="email@example.com"
+                                        placeholder="Email"
                                         autoComplete="email"
                                         isFocused={true}
                                         onChange={(e) => setData('email', e.target.value)}
@@ -206,7 +206,7 @@ export default function Login({ status, canResetPassword }) {
                                         name="password"
                                         value={data.password}
                                         className="pl-10 pr-10 w-full"
-                                        placeholder="••••••••"
+                                        placeholder="Password"
                                         autoComplete="current-password"
                                         onChange={(e) => setData('password', e.target.value)}
                                     />

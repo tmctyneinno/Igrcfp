@@ -345,7 +345,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(MentorApplication::class);
     }
-
+ 
     public function mentorshipApplications()
     {
         return $this->hasMany(MentorshipApplication::class, 'mentee_id');
