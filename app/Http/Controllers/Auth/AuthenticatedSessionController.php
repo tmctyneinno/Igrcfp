@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
+use App\Mail\AccountLockedMail;
 use Inertia\Inertia;
 use Inertia\Response;
 
