@@ -37,32 +37,41 @@ class OTPVerificationController extends Controller
         $request->validate([
             'otp_code' => 'required|string|size:6',
         ]);
-        
+
         $userId = session('otp_user_id');
-        
         if (!$userId) {
             return response()->json(['error' => 'Session expired. Please login again.'], 401);
         }
-        
+
         $user = User::find($userId);
-        
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        
-        if ($user->verifyOTP($request->otp_code)) {
-            // Log the user in
-            Auth::login($user);
-            
-            // Clear the OTP session
-            session()->forget('otp_user_id');
-            
+
+        // ✅ Block if another browser has taken over the session
+        $sessionToken = session('session_token');
+        if (!$sessionToken || $sessionToken !== $user->active_session_token) {
             return response()->json([
-                'success' => true,
+                'error' => 'Your account has been logged in from another browser. Please login again.'
+            ], 401);
+        }
+
+        if ($user->verifyOTP($request->otp_code)) {
+            Auth::login($user);
+
+            // ✅ Persist session token after login so middleware can validate it
+            session([
+                'session_token' => $user->active_session_token,
+            ]);
+
+            session()->forget('otp_user_id');
+
+            return response()->json([
+                'success'  => true,
                 'redirect' => route('dashboard.index')
             ]);
         }
-        
+
         return response()->json([
             'error' => 'Invalid or expired OTP code'
         ], 422);

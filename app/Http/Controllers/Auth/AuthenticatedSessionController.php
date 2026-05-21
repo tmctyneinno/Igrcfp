@@ -122,12 +122,15 @@ class AuthenticatedSessionController extends Controller
 
         // 6. Logout and store OTP session
         Auth::logout();
+        // ✅ Assign FIRST before using in session()
+        $sessionToken = $user->generateSessionToken();
 
         session([
             'otp_user_id'    => $user->id,
             'otp_user_email' => $user->email,
             'otp_created_at' => now(),
-            'login_ip'       => $request->ip()
+            'login_ip'       => $request->ip(),
+            'session_token'  => $sessionToken,
         ]);
 
         return redirect()->route('verify-otp')
