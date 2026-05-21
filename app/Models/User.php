@@ -66,6 +66,7 @@ class User extends Authenticatable
         'deleted_at',
         'failed_login_attempts',
         'locked_until',
+        'active_session_token',
     ]; 
 
     /**
@@ -106,6 +107,14 @@ class User extends Authenticatable
         'failed_login_attempts' => 'integer',
         'locked_until'          => 'datetime',
     ];
+
+    public function generateSessionToken(): string
+    {
+        $token = \Illuminate\Support\Str::random(60);
+        $this->active_session_token = $token;
+        $this->save();
+        return $token;
+    }
 
     public function generateOTP(): string
     {

@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest.admin' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'enrollment.redirect' => \App\Http\Middleware\HandleEnrollmentRedirect::class,
+            'validate.session' => \App\Http\Middleware\ValidateSessionToken::class,
         ]);
         
         // Admin middleware group
