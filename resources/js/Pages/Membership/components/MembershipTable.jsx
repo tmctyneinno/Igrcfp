@@ -14,7 +14,7 @@ export default function MembershipTable() {
         annualFee: "£150",
         benefits: "Full access to resources, participation in events, and certification discounts.",
     },
-    {
+    { 
         category: "Professional Member",
         annualFee: "£250",
         benefits: "Full access to resources, participation in events, and certification discounts.",
