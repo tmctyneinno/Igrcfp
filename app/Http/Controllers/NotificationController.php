@@ -64,6 +64,11 @@ class NotificationController extends Controller
                 ['value' => Notification::TYPE_QUIZ_PASSED, 'label' => 'Quiz Results'],
                 ['value' => Notification::TYPE_PROJECT_GRADED, 'label' => 'Project Grades'],
                 ['value' => Notification::TYPE_COURSE_COMPLETED, 'label' => 'Course Completions'],
+                ['value' => Notification::TYPE_MEMBERSHIP_APPROVED, 'label' => 'Memberships'],
+                ['value' => Notification::TYPE_MEMBERSHIP_DECLINED, 'label' => 'Memberships'],
+                ['value' => Notification::TYPE_MENTOR_APPLICATION_APPROVED, 'label' => 'Mentor Applications'],
+                ['value' => Notification::TYPE_MENTOR_APPLICATION_DECLINED, 'label' => 'Mentor Applications'],
+                ['value' => Notification::TYPE_MENTORSHIP_MESSAGE, 'label' => 'Mentorship Messages'],
             ],
         ]);
     }

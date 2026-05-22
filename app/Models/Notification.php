@@ -35,6 +35,11 @@ class Notification extends Model
     public const TYPE_MODULE_COMPLETED = 'module_completed';
     public const TYPE_ASSESSMENT_DUE = 'assessment_due';
     public const TYPE_ENROLLMENT_CONFIRMED = 'enrollment_confirmed';
+    public const TYPE_MEMBERSHIP_APPROVED = 'membership_approved';
+    public const TYPE_MEMBERSHIP_DECLINED = 'membership_declined';
+    public const TYPE_MENTOR_APPLICATION_APPROVED = 'mentor_application_approved';
+    public const TYPE_MENTOR_APPLICATION_DECLINED = 'mentor_application_declined';
+    public const TYPE_MENTORSHIP_MESSAGE = 'mentorship_message';
 
     /**
      * Relationship with User
@@ -127,6 +132,11 @@ class Notification extends Model
             self::TYPE_MODULE_COMPLETED => '📚',
             self::TYPE_ASSESSMENT_DUE => '⏰',
             self::TYPE_ENROLLMENT_CONFIRMED => '🎉',
+            self::TYPE_MEMBERSHIP_APPROVED => '✅',
+            self::TYPE_MEMBERSHIP_DECLINED => '❌',
+            self::TYPE_MENTOR_APPLICATION_APPROVED => '🌟',
+            self::TYPE_MENTOR_APPLICATION_DECLINED => '⚠️',
+            self::TYPE_MENTORSHIP_MESSAGE => '💬',
             default => '📌',
         };
     }
@@ -146,6 +156,11 @@ class Notification extends Model
             self::TYPE_MODULE_COMPLETED => 'teal',
             self::TYPE_ASSESSMENT_DUE => 'orange',
             self::TYPE_ENROLLMENT_CONFIRMED => 'pink',
+            self::TYPE_MEMBERSHIP_APPROVED => 'green',
+            self::TYPE_MEMBERSHIP_DECLINED => 'red',
+            self::TYPE_MENTOR_APPLICATION_APPROVED => 'indigo',
+            self::TYPE_MENTOR_APPLICATION_DECLINED => 'red',
+            self::TYPE_MENTORSHIP_MESSAGE => 'blue',
             default => 'gray',
         };
     }
@@ -167,6 +182,11 @@ class Notification extends Model
                 'course' => $data['course_slug'] ?? null
             ]),
             self::TYPE_COURSE_COMPLETED => route('dashboard.courses.show', $data['course_slug'] ?? null),
+            self::TYPE_MEMBERSHIP_APPROVED => route('dashboard.memberships.status'),
+            self::TYPE_MEMBERSHIP_DECLINED => route('dashboard.memberships.status'),
+            self::TYPE_MENTOR_APPLICATION_APPROVED => route('dashboard.mentorships.index'),
+            self::TYPE_MENTOR_APPLICATION_DECLINED => route('dashboard.mentorships.index'),
+            self::TYPE_MENTORSHIP_MESSAGE => route('dashboard.mentorships.show', $data['mentorship_id'] ?? null),
             default => null,
         };
     }

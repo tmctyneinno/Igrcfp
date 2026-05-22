@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MentorApplication;
 use App\Models\MentorProfile;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class MentorApplicationController extends Controller
@@ -45,6 +46,14 @@ class MentorApplicationController extends Controller
             ]
         );
 
+        Notification::create([
+            'user_id' => $application->user_id,
+            'type' => Notification::TYPE_MENTOR_APPLICATION_APPROVED,
+            'title' => 'Mentor Application Approved',
+            'message' => 'Your mentor application has been approved. You can now offer mentorship on the platform.',
+            'data' => ['application_id' => $application->id],
+        ]);
+
         return redirect()
             ->route('admin.mentor-applications.index')
             ->with('success', 'Mentor application approved.');
@@ -57,6 +66,14 @@ class MentorApplicationController extends Controller
             'admin_feedback' => $request->input('admin_feedback'),
             'processed_by_admin_id' => $request->user('admin')?->id,
             'processed_at' => now(),
+        ]);
+
+        Notification::create([
+            'user_id' => $application->user_id,
+            'type' => Notification::TYPE_MENTOR_APPLICATION_DECLINED,
+            'title' => 'Mentor Application Declined',
+            'message' => 'Your mentor application has been declined. Please review the feedback and try again later.',
+            'data' => ['application_id' => $application->id],
         ]);
 
         return redirect()

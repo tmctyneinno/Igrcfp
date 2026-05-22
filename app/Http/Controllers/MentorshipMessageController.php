@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mentorship;
 use App\Models\MentorshipMessage;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
  
@@ -66,6 +67,23 @@ class MentorshipMessageController extends Controller
             'user_id' => $user->id,
             'message' => $request->string('message')->toString(),
         ]);
+
+        $recipientId = $mentorship->mentorProfile?->user_id === $user->id
+            ? $mentorship->mentee_id
+            : $mentorship->mentorProfile?->user_id;
+
+        if ($recipientId && $recipientId !== $user->id) {
+            Notification::create([
+                'user_id' => $recipientId,
+                'type' => Notification::TYPE_MENTORSHIP_MESSAGE,
+                'title' => 'New Mentorship Message',
+                'message' => "{$user->name} sent you a mentorship message.",
+                'data' => [
+                    'mentorship_id' => $mentorship->id,
+                    'message_id' => $message->id,
+                ],
+            ]);
+        }
 
         $payload = [
             'id' => $message->id,
