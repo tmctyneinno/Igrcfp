@@ -267,21 +267,37 @@
                                            data-bs-toggle="tooltip">
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
-                                        @if(!$enrollment->certificate_generated)
-                                            <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
-                                               class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
-                                           
-                                               title="Generate Certificate" data-bs-toggle="tooltip">
-                                                <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                            </a>
-                                        @else
-                                            <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
-                                                class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
-                                           
-                                                title="Edit Certificate" data-bs-toggle="tooltip">
-                                                <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                            </a>
-                                        @endif
+                                     
+                                        {{-- Certificate Actions --}}
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                {{-- View Details - Info/Blue --}}
+                                                <a href="{{ route('admin.certificates.show', $enrollment) }}" 
+                                                class="bg-info-focus text-info-600 bg-hover-info-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
+                                                title="View Certificate Details" data-bs-toggle="tooltip">
+                                                    <iconify-icon icon="lucide:eye" class="menu-icon"></iconify-icon>
+                                                </a>
+
+                                                @if(!$enrollment->certificate_generated)
+                                                    {{-- Generate Certificate - Green with sparkle icon --}}
+                                                    <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
+                                                    class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none position-relative" 
+                                                    title="Generate New Certificate" data-bs-toggle="tooltip">
+                                                        <iconify-icon icon="lucide:sparkles" class="menu-icon"></iconify-icon>
+                                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger rounded-circle" style="width: 8px; height: 8px;">
+                                                            <span class="visually-hidden">New</span>
+                                                        </span>
+                                                    </a>
+                                                @else
+                                                    {{-- Edit Certificate - Purple with edit icon --}}
+                                                    <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
+                                                    class="bg-purple-focus text-purple-600 bg-hover-purple-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
+                                                    title="Manage Certificate" data-bs-toggle="tooltip">
+                                                        <iconify-icon icon="lucide:pen-tool" class="menu-icon"></iconify-icon>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
                                     </div>
                                 </td>
                             </tr>

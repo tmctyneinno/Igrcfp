@@ -269,7 +269,7 @@ export default function EnrollmentIndex({
                         </div>
 
                         <div className="space-y-6">
-                            <IdentityVerificationCard enrollment={enrollment} isIdentityVerified={isIdentityVerified} />
+                            {/* <IdentityVerificationCard enrollment={enrollment} isIdentityVerified={isIdentityVerified} /> */}
                              
                             {/* Quiz buttons in sidebar - NOT inside modules */}
                             {quizzesWithUnlockStatus.map((quiz) => (

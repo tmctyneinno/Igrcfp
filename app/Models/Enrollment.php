@@ -365,21 +365,10 @@ class Enrollment extends Model
      */
     public function getVerificationUrlAttribute(): string
     {
-        return route('certificate.verify.public.show', $this->certificate_number);
+        return route('certificate.verify.show', $this->certificate_number);
     }
 
-    /**
-     * Get certificate download URL
-     */
-    public function getCertificateDownloadUrlAttribute(): ?string
-    {
-        if (!$this->hasCertificate()) {
-            return null;
-        }
-        
-        return route('dashboard.certificate.download', $this);
-    }
-
+   
     /**
      * Get all available certificate statuses
      */

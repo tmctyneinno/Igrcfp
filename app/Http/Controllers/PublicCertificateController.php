@@ -67,7 +67,7 @@ class PublicCertificateController extends Controller
                     'completion_date' => $enrollment->completed_at?->format('F d, Y'),
                     'issuing_body' => 'IGRCFP',
                     'issuing_body_full' => 'Institute of Governance, Risk, Compliance & Financial Crime Prevention',
-                    'verification_url' => route('certificate.verify.public.index', ['number' => $enrollment->certificate_number]),
+                    'verification_url' => route('certificate.verify.index', ['number' => $enrollment->certificate_number]),
                     'badge_url' => asset('images/badges/verified-badge.png'),
                 ]
             ]);
