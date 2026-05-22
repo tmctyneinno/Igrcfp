@@ -365,7 +365,7 @@ class Enrollment extends Model
      */
     public function getVerificationUrlAttribute(): string
     {
-        return route('certificate.verify.show', $this->certificate_number);
+        return route('certificate.verify.public.show', $this->certificate_number);
     }
 
    
