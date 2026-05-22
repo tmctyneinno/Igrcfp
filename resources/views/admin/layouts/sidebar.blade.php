@@ -127,6 +127,54 @@
                 </ul>
             </li>
 
+            {{-- Certificate Management - NEW --}}
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
+            </li>
+            <li class="dropdown {{ request()->routeIs('admin.certificates.*') ? 'active' : '' }}">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="solar:diploma-bold-duotone" class="menu-icon"></iconify-icon>
+                    <span>Certificates</span>
+                    @php
+                        $pendingCerts = \App\Models\Enrollment::where('status', 'completed')
+                            ->where('certificate_generated', false)
+                            ->count();
+                    @endphp
+                    @if($pendingCerts > 0)
+                        <span class="badge bg-warning ms-2">{{ $pendingCerts }}</span>
+                    @endif
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.certificates.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> 
+                            All Certificates
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.certificates.index', ['status' => 'completed']) }}">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                            Generated
+                        </a>
+                    </li>
+                    @if($pendingCerts > 0)
+                        <li>
+                            <a href="{{ route('admin.certificates.index', ['certificate_generated' => '0', 'status' => 'completed']) }}">
+                                <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> 
+                                Pending Generation
+                                <span class="badge bg-warning ms-1">{{ $pendingCerts }}</span>
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="{{ route('admin.certificates.index', ['certificate_status' => 'revoked']) }}">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> 
+                            Revoked
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- Transactions & Reports - Only for admins -->
             @if(auth()->guard('admin')->user()->isAdmin())
                 <li class="dropdown">
@@ -170,7 +218,7 @@
                     </a>
                 </li>
             @endif
-
+ 
             <!-- Memberships & Mentors -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
