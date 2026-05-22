@@ -1,14 +1,19 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssessmentQuestion extends Model
 {
-    use SoftDeletes;
+    // NO SoftDeletes — questions are replaced on every update,
+    // soft-deleting them serves no purpose and was the root cause
+    // of the deleted_at pollution on the parent assessment.
 
     protected $table = 'assessment_questions';
+
+    // Prevent saving questions from touching parent assessment timestamps
+    protected $touches = [];
 
     protected $fillable = [
         'assessment_id',
@@ -16,8 +21,8 @@ class AssessmentQuestion extends Model
         'question_text',
         'question_type',
         'options',
-        'correct_answer',   // singular  — used by: multiple_choice, true_false, short_answer
-        'correct_answers',  // plural    — used by: multiple_answer ONLY
+        'correct_answer',
+        'correct_answers',
         'points',
         'is_required',
         'image_url',
@@ -29,29 +34,40 @@ class AssessmentQuestion extends Model
     ];
 
     protected $casts = [
-        'options'          => 'array',
-        'correct_answers'  => 'array',
-        'is_required'      => 'boolean',
-        'tags'             => 'array',
-        'points'           => 'decimal:2',
+        'options'         => 'array',
+        'correct_answers' => 'array',
+        'is_required'     => 'boolean',
+        'tags'            => 'array',
+        'points'          => 'decimal:2',
     ];
 
-    // ── Accessor: always return options as array ──────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────────
+
+    public function assessment()
+    {
+        return $this->belongsTo(Assessment::class);
+    }
+
+    public function module()
+    {
+        return $this->belongsTo(CourseModule::class, 'module_id');
+    }
+
+    // ── Accessors / Mutators ──────────────────────────────────────────────────
 
     public function getOptionsAttribute($value): array
     {
-        if (is_null($value)) return [];
-        if (is_array($value)) return $value;
-
+        if (is_null($value))   return [];
+        if (is_array($value))  return $value;
         $decoded = json_decode($value, true);
         return is_array($decoded) ? $decoded : [];
     }
 
-    // ── Mutator: always store options as JSON ─────────────────────────────────
-
     public function setOptionsAttribute($value): void
     {
-        $this->attributes['options'] = is_array($value) ? json_encode($value) : $value;
+        $this->attributes['options'] = is_array($value)
+            ? json_encode($value)
+            : $value;
     }
 
     // ── Answer checking ───────────────────────────────────────────────────────
@@ -63,15 +79,14 @@ class AssessmentQuestion extends Model
             case 'multiple_choice':
             case 'true_false':
             case 'short_answer':
-                // All three use correct_answer (singular), case-insensitive
                 return strtolower(trim((string) $answer))
                     === strtolower(trim((string) $this->correct_answer));
 
             case 'multiple_answer':
-                // Uses correct_answers (plural JSON array)
-                $correct   = is_array($this->correct_answers)
+                $correct = is_array($this->correct_answers)
                     ? $this->correct_answers
                     : json_decode($this->correct_answers, true);
+
                 $submitted = is_array($answer)
                     ? $answer
                     : json_decode($answer, true);
@@ -84,7 +99,7 @@ class AssessmentQuestion extends Model
 
             case 'essay':
             case 'case_study':
-                return null; // manual marking
+                return null; // manual marking required
 
             default:
                 return false;
@@ -96,8 +111,9 @@ class AssessmentQuestion extends Model
     public function calculatePoints($answer): ?float
     {
         $isCorrect = $this->isAnswerCorrect($answer);
-
-        return $isCorrect === null ? null : ($isCorrect ? (float) $this->points : 0.0);
+        return $isCorrect === null
+            ? null
+            : ($isCorrect ? (float) $this->points : 0.0);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -106,7 +122,6 @@ class AssessmentQuestion extends Model
     {
         $options = $this->options;
         if (!is_array($options) || empty($options)) return [];
-
         $shuffled = $options;
         shuffle($shuffled);
         return $shuffled;

@@ -15,7 +15,7 @@
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
             </li>
-            <li>-</li>
+            <li>-</li> 
             <li class="fw-medium">{{ Str::limit($assessment->title, 30) }}</li>
         </ul>
     </div>

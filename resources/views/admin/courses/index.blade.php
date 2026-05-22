@@ -105,6 +105,7 @@
                                 <th scope="col">Course Image</th>
                                 <th scope="col">Course Title</th>
                                 <th scope="col">Category</th> 
+                                <th scope="col">IGRCFP Category</th>
                                 <th scope="col">Short Title</th>
                                 <th scope="col">Level</th>
                                 <th scope="col" class="text-center">Modules</th>
@@ -148,14 +149,19 @@
                                         </div>
                                     </div>
                                 </td>
-                                 <td> <!-- New category column -->
-                                   
+                                <td>
                                     @if($course->category)
                                         <span class="badge bg-info">{{ $course->category->name }}</span>
                                     @else
                                         <span class="badge bg-secondary">Uncategorized</span>
                                     @endif
                                 </td>
+                                <td>
+                                    @if($course->igrcfp_category)
+                                        <span class="badge bg-warning text-dark">{{ $course->igrcfp_category }}</span>
+                                    @else
+                                        <span class="badge bg-light text-dark">Not set</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <span class="badge bg-primary">{{ $course->short_title }}</span>
@@ -259,7 +265,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="11" class="text-center py-4">
+                                <td colspan="12" class="text-center py-4">
                                     <div class="text-muted py-4">
                                         <iconify-icon icon="mdi:book-education-outline" class="icon-3x mb-3"></iconify-icon>
                                         <h6 class="mb-2">No courses found</h6>

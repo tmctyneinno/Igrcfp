@@ -2,93 +2,144 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MentorshipMessage;
+use App\Models\Notification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
+    /**
+     * Display all notifications for the user
+     */
     public function index(Request $request)
     {
-        $user = $request->user();
-
-        $recentNotifications = MentorshipMessage::query()
-            ->with(['user:id,name', 'mentorship.mentorProfile.user:id,name', 'mentorship.mentee:id,name'])
-            ->where('user_id', '!=', $user->id)
-            ->where(function ($query) use ($user) {
-                $query->whereHas('mentorship', function ($mentorshipQuery) use ($user) {
-                    $mentorshipQuery->where('mentee_id', $user->id)
-                        ->orWhereHas('mentorProfile', function ($mentorQuery) use ($user) {
-                            $mentorQuery->where('user_id', $user->id);
-                        });
-                });
-            })
-            ->latest()
-            ->take(20)
-            ->get()
-            ->map(function (MentorshipMessage $message) use ($user) {
-                $otherParty = $message->mentorship?->mentee_id === $user->id
-                    ? $message->mentorship?->mentorProfile?->user?->name
-                    : $message->mentorship?->mentee?->name;
-
-                return [
-                    'id' => $message->id,
-                    'mentorship_id' => $message->mentorship_id,
-                    'sender_name' => $message->user?->name ?? 'Unknown',
-                    'counterparty_name' => $otherParty ?? 'Mentorship contact',
-                    'preview' => Str::limit($message->message, 120),
-                    'created_at' => $message->created_at?->format('M d, Y H:i'),
-                    'is_unread' => is_null($message->read_at),
-                ];
-            })->values();
-
+        $user = auth()->user();
+        
+        $query = $user->notifications();
+        
+        // Filter by type
+        if ($request->has('type') && $request->type) {
+            $query->ofType($request->type);
+        }
+        
+        // Filter by read status
+        if ($request->has('status')) {
+            if ($request->status === 'read') {
+                $query->read();
+            } elseif ($request->status === 'unread') {
+                $query->unread();
+            }
+        }
+        
+        $notifications = $query->paginate(20);
+        
+        // Get unread count for badge
+        $unreadCount = $user->unread_notifications_count;
+        
+        // Mark all as seen when viewing the page (optional)
+        if ($request->has('mark_seen')) {
+            $user->unreadNotifications()
+                ->update(['read_at' => now()]);
+            $unreadCount = 0;
+        }
+        
         return Inertia::render('Dashboard/Notifications/Index', [
-            'settings' => [
-                'email_notifications' => (bool) $user->email_notifications,
-                'sms_notifications' => (bool) $user->sms_notifications,
-                'newsletter_subscription' => (bool) $user->newsletter_subscription,
-                'marketing_emails' => (bool) $user->marketing_emails,
+            'notifications' => $notifications->through(fn($n) => [
+                'id' => $n->id,
+                'type' => $n->type,
+                'title' => $n->title,
+                'message' => $n->message,
+                'icon' => $n->icon,
+                'color' => $n->color,
+                'link' => $n->link,
+                'is_read' => $n->isRead(),
+                'time_ago' => $n->time_ago,
+                'created_at' => $n->created_at->format('M d, Y H:i'),
+            ]),
+            'unread_count' => $unreadCount,
+            'filters' => $request->only(['type', 'status']),
+            'types' => [
+                ['value' => '', 'label' => 'All Types'],
+                ['value' => Notification::TYPE_CERTIFICATE_GENERATED, 'label' => 'Certificates'],
+                ['value' => Notification::TYPE_QUIZ_PASSED, 'label' => 'Quiz Results'],
+                ['value' => Notification::TYPE_PROJECT_GRADED, 'label' => 'Project Grades'],
+                ['value' => Notification::TYPE_COURSE_COMPLETED, 'label' => 'Course Completions'],
             ],
-            'unreadCount' => $this->getUnreadCount($user->id),
-            'recentNotifications' => $recentNotifications,
         ]);
     }
 
-    public function updateSettings(Request $request)
+    /**
+     * Mark a single notification as read
+     */
+    public function markAsRead(Notification $notification)
     {
-        $validated = $request->validate([
-            'email_notifications' => ['required', 'boolean'],
-            'sms_notifications' => ['required', 'boolean'],
-            'newsletter_subscription' => ['required', 'boolean'],
-            'marketing_emails' => ['required', 'boolean'],
-        ]);
-
-        $request->user()->update($validated);
-
-        return back()->with('success', 'Notification settings updated successfully.');
+        if ($notification->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        $notification->markAsRead();
+        
+        return response()->json(['success' => true]);
     }
 
-    public function count(Request $request)
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllAsRead()
+    {
+        auth()->user()->unreadNotifications()->update(['read_at' => now()]);
+        
+        return back()->with('success', 'All notifications marked as read.');
+    }
+
+    /**
+     * Delete a notification
+     */
+    public function destroy(Notification $notification)
+    {
+        if ($notification->user_id !== auth()->id()) {
+            abort(403);
+        }
+        
+        $notification->delete();
+        
+        return back()->with('success', 'Notification deleted.');
+    }
+
+    /**
+     * Get unread count (for header badge)
+     */
+    public function unreadCount()
     {
         return response()->json([
-            'unread_count' => $this->getUnreadCount($request->user()->id),
+            'count' => auth()->user()->unread_notifications_count
         ]);
     }
 
-    private function getUnreadCount(int $userId): int
+    /**
+     * Get recent notifications (for dropdown)
+     */
+    public function recent()
     {
-        return MentorshipMessage::query()
-            ->where('user_id', '!=', $userId)
-            ->whereNull('read_at')
-            ->where(function ($query) use ($userId) {
-                $query->whereHas('mentorship', function ($mentorshipQuery) use ($userId) {
-                    $mentorshipQuery->where('mentee_id', $userId)
-                        ->orWhereHas('mentorProfile', function ($mentorQuery) use ($userId) {
-                            $mentorQuery->where('user_id', $userId);
-                        });
-                });
-            })
-            ->count();
+        $user = auth()->user();
+        
+        $notifications = $user->notifications()
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn($n) => [
+                'id' => $n->id,
+                'title' => $n->title,
+                'message' => $n->message,
+                'icon' => $n->icon,
+                'link' => $n->link,
+                'is_read' => $n->isRead(),
+                'time_ago' => $n->time_ago,
+            ]);
+        
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $user->unread_notifications_count,
+        ]);
     }
 }

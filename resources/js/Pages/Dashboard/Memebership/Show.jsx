@@ -10,7 +10,7 @@ export default function MembershipsIndex({ auth, tiers, activeMembership }) {
     const addToCart = (planId) => {
         router.post(route('dashboard.memberships.add-to-cart', planId));
     };
-
+ 
     return (
         <AuthenticatedLayout auth={auth}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

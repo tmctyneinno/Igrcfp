@@ -11,6 +11,16 @@ use Illuminate\Support\Str;
 
 class ModuleController extends Controller
 {
+    public function index(Course $course)
+    {
+        $modules = $course->modules()
+            ->orderBy('module_number')
+            ->orderBy('sort_order')
+            ->get();
+        
+        return view('admin.courses.modules.index', compact('course', 'modules'));
+    }
+    
     /**
      * Show the form for creating a new module.
      */
@@ -125,7 +135,7 @@ class ModuleController extends Controller
         try {
             $module->delete();
 
-            return redirect()->route('admin.courses.show', $course->id)
+            return redirect()->route('admin.courses.show', $course->slug)
                 ->with('success', 'Module deleted successfully!');
 
         } catch (\Exception $e) {

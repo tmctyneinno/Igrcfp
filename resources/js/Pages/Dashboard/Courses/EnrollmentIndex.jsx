@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
-import { BookOpenIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, ClipboardDocumentCheckIcon } from '@heroicons/react/24/outline';
 import Breadcrumb from './components/Breadcrumb';
 import CandidateBanner from './components/CandidateBanner';
 import CourseHeader from './components/CourseHeader';
@@ -10,6 +10,7 @@ import ModuleList from './components/ModuleList';
 import AssessmentList from './components/AssessmentList';
 import IdentityVerificationCard from './components/IdentityVerificationCard';
 import CertificationCard from './components/CertificationCard';
+import MaterialList from './components/MaterialList';
 
 export default function EnrollmentIndex({ 
     course, 
@@ -20,7 +21,9 @@ export default function EnrollmentIndex({
     moduleAssessments = [], 
     finalExam = null, 
     diplomaAssessment = null,
-    examResults = {} 
+    examResults = {},
+    certification = {},
+    courseMaterials = []
 }) {
     const [expandedModules, setExpandedModules] = useState({});
     const [completingLesson, setCompletingLesson] = useState(null);
@@ -28,44 +31,53 @@ export default function EnrollmentIndex({
     const [moduleCompletionStatus, setModuleCompletionStatus] = useState({});
     const [localModules, setLocalModules] = useState(initialModules);
     const [quizUnlockVersion, setQuizUnlockVersion] = useState(0);
+    const [enrollmentProgress, setEnrollmentProgress] = useState(enrollment?.progress || 0);
+    const [readModules, setReadModules] = useState(() => initialModules.reduce((status, module) => ({
+        ...status,
+        [module.id]: module.read === true,
+    }), {}));
+    const [moduleReadingProgress, setModuleReadingProgress] = useState(() => initialModules.reduce((progressByModule, module) => ({
+        ...progressByModule,
+        [module.id]: module.read === true ? 100 : (module.reading_progress || 0),
+    }), {}));
+    const [markingReadModule, setMarkingReadModule] = useState(null);
 
     useEffect(() => {
         setLocalModules(initialModules);
+        setReadModules(initialModules.reduce((status, module) => ({
+            ...status,
+            [module.id]: module.read === true,
+        }), {}));
+        setModuleReadingProgress(initialModules.reduce((progressByModule, module) => ({
+            ...progressByModule,
+            [module.id]: module.read === true ? 100 : (module.reading_progress || 0),
+        }), {}));
     }, [initialModules]);
 
-    const progress = enrollment?.progress || 0;
+    useEffect(() => {
+        setEnrollmentProgress(enrollment?.progress || 0);
+    }, [enrollment?.progress]);
+
+    const progress = enrollmentProgress;
     const hasCertificate = enrollment?.certificate_generated;
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     const isIdentityVerified = enrollment?.identity_verified || false;
+    const canShowCertificationCard = certification?.can_display_card === true;
+    const completedReadModules = localModules.filter(module => readModules[module.id]).length;
+    const allModulesRead = localModules.length === 0 || completedReadModules === localModules.length;
 
     const getQuizUnlockStatus = useCallback((quiz) => {
-        const quizModuleId = typeof quiz.module_id === 'string' 
-            ? parseInt(quiz.module_id, 10) 
-            : quiz.module_id;
-        
-        const module = localModules.find(m => {
-            const moduleId = typeof m.id === 'string' ? parseInt(m.id, 10) : m.id;
-            return moduleId === quizModuleId;
-        });
-        
-        if (!module) {
-            return { unlocked: true, reason: null, progress: 100 };
-        }
-        
-        const totalLessons = module.lessons?.length || 0;
-        const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
-        const allLessonsComplete = totalLessons > 0 && completedLessons === totalLessons;
-        
         return {
-            unlocked: allLessonsComplete,
-            reason: allLessonsComplete ? null : `Complete all lessons in "${module.title}" first (${completedLessons}/${totalLessons})`,
-            progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
+            unlocked: allModulesRead,
+            reason: allModulesRead ? null : `Read all module content first (${completedReadModules}/${localModules.length})`,
+            progress: localModules.length > 0 ? Math.round((completedReadModules / localModules.length) * 100) : 0
         };
-    }, [localModules, quizUnlockVersion]);
+    }, [allModulesRead, completedReadModules, localModules.length]);
 
     const quizzesWithUnlockStatus = useMemo(() => {
         return quizzes.map(quiz => ({ ...quiz, ...getQuizUnlockStatus(quiz) }));
     }, [quizzes, getQuizUnlockStatus, quizUnlockVersion]);
+    const hasPassedQuiz = quizzesWithUnlockStatus.some(quiz => quiz.passed === true || quiz.passed === 1);
 
     const checkModuleCompletion = useCallback((moduleId) => {
         const module = localModules.find(m => m.id === moduleId);
@@ -171,6 +183,45 @@ export default function EnrollmentIndex({
         setExpandedModules(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
     }, []);
 
+    const markModuleRead = useCallback(async (moduleId) => {
+        if (readModules[moduleId] || markingReadModule === moduleId) return;
+
+        setMarkingReadModule(moduleId);
+
+        try {
+            const response = await window.axios.post(route('modules.reading-progress', moduleId), {
+                reading_progress: 100,
+                read: true,
+            });
+
+            setReadModules(prev => ({ ...prev, [moduleId]: true }));
+            setModuleReadingProgress(prev => ({ ...prev, [moduleId]: 100 }));
+            setLocalModules(prevModules => prevModules.map(module => (
+                module.id === moduleId
+                    ? { ...module, read: true, reading_progress: 100, read_at: response.data?.module?.read_at }
+                    : module
+            )));
+
+            if (response.data?.enrollment?.progress !== undefined) {
+                setEnrollmentProgress(response.data.enrollment.progress);
+            }
+
+            setQuizUnlockVersion(version => version + 1);
+            toast.success('Module marked as read.');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Unable to save module reading progress.');
+        } finally {
+            setMarkingReadModule(null);
+        }
+    }, [markingReadModule, readModules]);
+
+    const updateModuleReadingProgress = useCallback((moduleId, progress) => {
+        setModuleReadingProgress(prev => ({
+            ...prev,
+            [moduleId]: Math.max(prev[moduleId] || 0, progress),
+        }));
+    }, []);
+
     // Start quiz - passes the module_id to the quiz page
     const handleStartQuiz = useCallback((quiz) => {
         if (!quiz.unlocked) {
@@ -182,7 +233,7 @@ export default function EnrollmentIndex({
         window.location.href = route('dashboard.quiz.take', { 
             course: course.slug, 
             assessment: actualQuizId,
-            module: quiz.module_id  // Pass module ID
+            
         });
     }, [course?.slug]);
 
@@ -209,21 +260,29 @@ export default function EnrollmentIndex({
                                     completingLesson={completingLesson}
                                     markLessonComplete={markLessonComplete}
                                     markLessonIncomplete={markLessonIncomplete}
+                                    readModules={readModules}
+                                    moduleReadingProgress={moduleReadingProgress}
+                                    markModuleRead={markModuleRead}
+                                    updateModuleReadingProgress={updateModuleReadingProgress}
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-6">
                             <IdentityVerificationCard enrollment={enrollment} isIdentityVerified={isIdentityVerified} />
-                            
+                             
                             {/* Quiz buttons in sidebar - NOT inside modules */}
                             {quizzesWithUnlockStatus.map((quiz) => (
                                 <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
-                                    <h3 className="font-semibold text-gray-900 mb-3">{quiz.title}</h3>
+                                    {/* <h3 className="font-semibold text-gray-900 mb-3">{quiz.title}</h3> */}
+                                    <h3 className="font-semibold text-gray-900 mb-3">Take Quiz</h3>
                                     {!quiz.unlocked ? (
-                                        <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg">
-                                            🔒 {quiz.reason}
-                                        </button>
+                                        <div>
+                                            <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed">
+                                                🔒 Take Quiz
+                                            </button>
+                                            <p className="mt-2 text-xs text-gray-500 text-center">{quiz.reason}</p>
+                                        </div>
                                     ) : (
                                         <button onClick={() => handleStartQuiz(quiz)} className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                             📝 Take Quiz
@@ -232,7 +291,37 @@ export default function EnrollmentIndex({
                                 </div> 
                             ))}
 
-                            <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} progress={progress} />
+                            {hasPassedQuiz && (
+                                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                        <ClipboardDocumentCheckIcon className="w-5 h-5 text-indigo-600" />
+                                        Project Assessment
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mb-4">
+                                        Your quiz is passed. You can now access the project assessment.
+                                    </p>
+                                    <Link
+                                        href={route('dashboard.quiz.project-assessment', { course: course.slug })}
+                                        className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                                    >
+                                        Open Project Assessment
+                                    </Link>
+                                </div>
+                            )}
+
+                            {canShowCertificationCard && (
+                                <CertificationCard
+                                    enrollment={enrollment}
+                                    hasCertificate={hasCertificate}
+                                    certificateNumber={certificateNumber}
+                                    isIdentityVerified={isIdentityVerified}
+                                    examResults={examResults}
+                                    certification={certification}
+                                    progress={progress}
+                                />
+                            )}
+                            <MaterialList materials={courseMaterials} title="Course Materials" />
+                                
                         </div>
                     </div>
                 </div>

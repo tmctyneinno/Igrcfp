@@ -15,9 +15,9 @@
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-1 hover-text-primary">
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
-                </a>
-            </li>
-            <li>-</li>
+                </a> 
+            </li> 
+            <li>-</li> 
             <li class="fw-medium">Assessments</li>
             @if(isset($course))
                 <li>-</li>
@@ -335,7 +335,7 @@
                                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                            title="Edit">
                                             <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                        </a>
+                                        </a> 
                                         <a href="{{ route('admin.assessments.submissions', $assessment->id) }}"
                                            class="bg-primary-focus text-primary-600 bg-hover-primary-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
                                            title="Submissions">

@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class CartItem extends Model
 {
     use HasFactory;
-
+ 
     protected $fillable = [
         'cart_id',
-        'item_type',
         'course_id',
         'membership_plan_id',
         'price',
-        'quantity'
+        'quantity',
+        'item_type', 
     ];
 
     protected $casts = [
@@ -34,6 +34,7 @@ class CartItem extends Model
         return $this->belongsTo(Course::class);
     }
 
+    // ADD THIS RELATIONSHIP IF NOT EXISTS
     public function membershipPlan()
     {
         return $this->belongsTo(MembershipPlan::class, 'membership_plan_id');

@@ -1,16 +1,18 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function CheckoutSuccess({ enrollments }) {
+export default function CheckoutSuccess({ enrollments, specificEnrollment }) {
+    const confirmedEnrollment = specificEnrollment || enrollments?.[0];
+    const isFreeEnrollment = confirmedEnrollment?.payment_method === 'free' || Number(confirmedEnrollment?.amount) === 0;
+
     return (
         <AuthenticatedLayout>
-            <Head title="Checkout Successful" />
+            <Head title={isFreeEnrollment ? 'Enrollment Confirmed' : 'Checkout Successful'} />
             
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden text-center">
-                    <div className="bg-green-500 p-6">
+                    <div className={`${isFreeEnrollment ? 'bg-blue-900' : 'bg-green-500'} p-6`}>
                         <svg className="w-16 h-16 text-white mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -18,29 +20,45 @@ export default function CheckoutSuccess({ enrollments }) {
                      
                     <div className="p-8">
                         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                            Payment Successful!
+                            {isFreeEnrollment ? 'Enrollment Confirmed!' : 'Payment Successful!'}
                         </h1>
                         <p className="text-gray-600 mb-6">
-                            Thank you for your enrollment. You have been successfully enrolled in your courses.
+                            {isFreeEnrollment
+                                ? 'Your free course access is active. You can start learning from your dashboard now.'
+                                : 'Thank you for your enrollment. You have been successfully enrolled in your courses.'}
                         </p>
 
                         <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
                             <h3 className="font-semibold text-gray-900 mb-2">Enrollment Details</h3>
-                            {enrollments && enrollments.length > 0 ? (
-                                enrollments.map((enrollment, index) => (
-                                    <p key={index} className="text-sm text-gray-600">
-                                        Course {index + 1}: Enrollment #{enrollment.id}
+                            {confirmedEnrollment ? (
+                                <div className="space-y-2 text-sm text-gray-600">
+                                    <p>
+                                        <span className="font-medium text-gray-800">Course:</span> {confirmedEnrollment.course_title}
                                     </p>
-                                ))
+                                    <p>
+                                        <span className="font-medium text-gray-800">Enrollment:</span> #{confirmedEnrollment.id}
+                                    </p>
+                                    <p>
+                                        <span className="font-medium text-gray-800">Access:</span> {isFreeEnrollment ? 'Free course' : 'Paid course'}
+                                    </p>
+                                </div>
                             ) : (
                                 <p className="text-sm text-gray-600">Your enrollment has been confirmed.</p>
                             )}
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            {confirmedEnrollment?.course_slug && (
+                                <Link
+                                    href={route('dashboard.courses.show', confirmedEnrollment.course_slug)}
+                                    className="px-6 py-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700"
+                                >
+                                    Start Course
+                                </Link>
+                            )}
                             <Link
                                 href={route('dashboard.my-courses')}
-                                className="px-6 py-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700"
+                                className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
                             >
                                 My Courses
                             </Link>

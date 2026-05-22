@@ -25,7 +25,6 @@
                     <a href="{{ route('admin.admins.index') }}">
                         <iconify-icon icon="ic:baseline-admin-panel-settings" class="menu-icon"></iconify-icon>
                         <span>Admin Users</span>
-                        <span>{{auth()->guard('admin')->user()->isAdmin()}}</span>
                     </a>
                 </li>
             @endif
@@ -97,16 +96,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.assessments.create.module') }}">
+                            <a href="{{ route('admin.assessments.create.project') }}">
                                 <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
-                                Module Assessment
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('admin.assessments.create.final') }}">
-                                <i class="ri-circle-fill circle-icon text-red-600 w-auto"></i>
-                                Final Exam
-                            </a>
+                                Project Assessment 
+                            </a> 
                         </li>
                     @endif
                 </ul>
@@ -134,36 +127,50 @@
                 </ul>
             </li>
 
-            <!-- Memberships & Mentors -->
-            <li class="dropdown">
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="mdi:account-badge-outline" class="menu-icon"></iconify-icon>
-                    <span>Memberships</span>
-                </a>
-                <ul class="sidebar-submenu">
-                    <li>
-                        <a href="{{ route('admin.membership-tiers.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Tiers</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.membership-plans.index') }}"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> Plans</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.membership-approvals.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Approvals</a>
-                    </li>
-                </ul>
+            {{-- Certificate Management - NEW --}}
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
             </li>
-
-            <li class="dropdown">
+            <li class="dropdown {{ request()->routeIs('admin.certificates.*') ? 'active' : '' }}">
                 <a href="javascript:void(0)">
-                    <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
-                    <span>Mentors</span>
+                    <iconify-icon icon="solar:diploma-bold-duotone" class="menu-icon"></iconify-icon>
+                    <span>Certificates</span>
+                    @php
+                        $pendingCerts = \App\Models\Enrollment::where('status', 'completed')
+                            ->where('certificate_generated', false)
+                            ->count();
+                    @endphp
+                    @if($pendingCerts > 0)
+                        <span class="badge bg-warning ms-2">{{ $pendingCerts }}</span>
+                    @endif
                 </a>
                 <ul class="sidebar-submenu">
                     <li>
-                        <a href="{{ route('admin.mentors.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Mentor List</a>
+                        <a href="{{ route('admin.certificates.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> 
+                            All Certificates
+                        </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.mentor-applications.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Applications</a>
+                        <a href="{{ route('admin.certificates.index', ['status' => 'completed']) }}">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                            Generated
+                        </a>
+                    </li>
+                    @if($pendingCerts > 0)
+                        <li>
+                            <a href="{{ route('admin.certificates.index', ['certificate_generated' => '0', 'status' => 'completed']) }}">
+                                <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> 
+                                Pending Generation
+                                <span class="badge bg-warning ms-1">{{ $pendingCerts }}</span>
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="{{ route('admin.certificates.index', ['certificate_status' => 'revoked']) }}">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> 
+                            Revoked
+                        </a>
                     </li>
                 </ul>
             </li>
@@ -199,6 +206,97 @@
                 </li>
             @endif
 
+            {{-- Add to your admin sidebar/navigation --}}
+            @if(auth()->guard('admin')->user()->isAdmin())
+                <li class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.activity-logs.index') }}">
+                        <iconify-icon icon="solar:history-bold-duotone" class="icon text-xl"></iconify-icon>
+                        <span>Activity Logs</span>
+                        @if($unreadAlerts ?? 0 > 0)
+                            <span class="badge bg-danger ms-auto">{{ $unreadAlerts }}</span>
+                        @endif
+                    </a>
+                </li>
+            @endif
+ 
+            <!-- Memberships & Mentors -->
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:account-badge-outline" class="menu-icon"></iconify-icon>
+                    <span>Memberships</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.membership-tiers.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Tiers</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.membership-plans.index') }}"><i class="ri-circle-fill circle-icon text-info-600 w-auto"></i> Plans</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.membership-approvals.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Approvals</a>
+                    </li>
+                </ul>
+            </li>
+             <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:account-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Mentors</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.mentors.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Mentor List</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.mentor-applications.index') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Applications</a>
+                    </li>
+                </ul>
+            </li>
+            
+            {{-- Scholarship Applications - NEW --}}
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="ph:student-fill" class="menu-icon"></iconify-icon>
+                    <span>Scholarships</span>
+                    <span class="badge bg-warning ms-2">{{ \App\Models\ScholarshipApplication::where('status', 'pending')->count() }}</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.scholarships.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> 
+                            All Applications
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'pending']) }}">
+                            <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> 
+                            Pending
+                            <span class="badge bg-warning ms-1">{{ \App\Models\ScholarshipApplication::where('status', 'pending')->count() }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'under_review']) }}">
+                            <i class="ri-circle-fill circle-icon text-info-main w-auto"></i> 
+                            Under Review
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'accepted']) }}">
+                            <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
+                            Accepted
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.scholarships.index', ['status' => 'rejected']) }}">
+                            <i class="ri-circle-fill circle-icon text-danger-main w-auto"></i> 
+                            Rejected
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- Blogs Management - All admins -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
@@ -216,6 +314,7 @@
                     @endif
                 </ul>
             </li>
+            
 
             <!-- Events Management - All admins -->
             <li class="dropdown">

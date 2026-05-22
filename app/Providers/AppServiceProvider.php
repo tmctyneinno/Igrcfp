@@ -35,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
                 'error'   => session('error'),
             ],
         ]);
+        Inertia::share([
+            'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY'),
+        ]);
         View::composer('admin.*', function ($view) {
             if (Auth::guard('admin')->check()) {
                 $admin = Auth::guard('admin')->user();

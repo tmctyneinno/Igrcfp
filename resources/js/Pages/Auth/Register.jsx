@@ -225,7 +225,7 @@ export default function Register() {
                                         <h3 className="text-xl font-semibold text-gray-900">Select Your Role</h3>
                                         <p className="text-gray-600 mt-2">Choose how you want to use our platform</p>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                                         <div
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'learner' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'learner')}
@@ -241,7 +241,7 @@ export default function Register() {
                                                 <p className="text-sm text-gray-600">Learn new skills, take courses, and track your progress</p>
                                             </div>
                                         </div>
-                                        <div
+                                       {/* <div
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'tutor' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
                                             onClick={() => setData('role', 'tutor')}
                                         >
@@ -254,7 +254,7 @@ export default function Register() {
                                                 <h4 className="font-semibold text-lg mb-2">Tutor</h4>
                                                 <p className="text-sm text-gray-600">Create and sell courses, mentor students, and share knowledge</p>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <InputError message={errors.role} className="mt-2 text-center" />
                                     <div className="flex justify-end pt-4">

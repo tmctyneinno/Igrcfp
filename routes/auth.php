@@ -22,7 +22,7 @@ Route::middleware('guest')->group(function () {
  
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login'); 
-
+ 
     Route::post('login', [AuthenticatedSessionController::class, 'login']);  
     Route::post('/verify-otp/verify', [OTPVerificationController::class, 'verifyOTP']);
     Route::post('/verify-otp/resend', [OTPVerificationController::class, 'resendOTP']);
@@ -44,7 +44,7 @@ Route::middleware('guest')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'logout'])
             ->name('logout');
     
-Route::middleware(['auth', 'verified'])->group(function () {        
+    Route::middleware(['auth', 'verified'])->group(function () {        
     
     // Your protected routes
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

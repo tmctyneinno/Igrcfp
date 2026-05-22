@@ -12,6 +12,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::get('/users/{user}', [UserManagementController::class, 'show'])
         ->name('users.show')
         ->whereNumber('user');
+    Route::get('/users/{user}/enrollments', [UserManagementController::class, 'enrollments'])->name('users.enrollments');
     
     // Create User (modal or page)
     Route::get('/users/create', [UserManagementController::class, 'create'])

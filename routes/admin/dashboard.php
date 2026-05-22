@@ -8,7 +8,9 @@ use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ScholarshipController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use Illuminate\Support\Facades\Route; 
 
 // Admin Dashboard Routes (Protected)
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
@@ -95,6 +97,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
     });
+    // Activity Logs - FIXED
+    Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/export', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
+    });
 
     // Lesson routes (nested under modules)
     Route::prefix('courses/{course}/modules/{module}/lessons')->name('courses.modules.lessons.')->group(function () {
@@ -106,5 +114,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
         Route::delete('/{lesson}', [LessonController::class, 'destroy'])->name('destroy');
         Route::post('/reorder', [LessonController::class, 'reorder'])->name('reorder');
     }); 
+
+    // Scholarship Applications
+    Route::get('/scholarships', [ScholarshipController::class, 'index'])->name('scholarships.index');
+    Route::get('/scholarships/{application}', [ScholarshipController::class, 'show'])->name('scholarships.show');
+    Route::post('/scholarships/{application}/status', [ScholarshipController::class, 'updateStatus'])->name('scholarships.update-status');
+    Route::delete('/scholarships/{application}', [ScholarshipController::class, 'destroy'])->name('scholarships.destroy');
   
 });

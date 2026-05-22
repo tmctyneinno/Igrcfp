@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Enrollment;
+use App\Models\Enrollment; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use App\Models\Certificate;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CertificateGeneratedMail;
 
 class CertificateController extends Controller
 {
+    
     public function generate(Enrollment $enrollment)
     {
         // Check if user is authorized
         if ($enrollment->user_id !== auth()->id()) {
             abort(403);
-        }
-
-        // Check if course is completed
-        if ($enrollment->progress < 100) {
-            return back()->with('error', 'You need to complete the course first.');
         }
 
         // Generate certificate number if not exists
@@ -26,29 +26,46 @@ class CertificateController extends Controller
         }
 
         // Mark certificate as generated
-        $enrollment->certificate_generated = true;
-        $enrollment->certificate_generated_date = now();
-        $enrollment->save();
+        if (!$enrollment->certificate_generated) {
+            $enrollment->certificate_generated = true;
+            $enrollment->certificate_generated_date = now();
+            $enrollment->save();
+        } 
 
-        // Prepare data for the view - MAKE SURE ALL VARIABLES ARE INCLUDED
+        // ✅ Send notification (email/in-app)
+        $this->sendCertificateNotification($enrollment);
+        // ✅ Send email notification
+        try {
+            Mail::to($enrollment->user->email)->send(new CertificateGeneratedMail($enrollment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send certificate email: ' . $e->getMessage());
+            // Don't block certificate generation if email fails
+        }
+        
+
         // Prepare data for the view
         $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
-            'completion_date' => now()->format('F d, Y'),
+            'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('F d, Y'),
             'certificate_number' => $enrollment->certificate_number,
-            'organization_name' => config('app.name'), // or your organization name
-            'organization_tagline' => 'Excellence in Education', // customize this
-            'organization_logo' => public_path('images/logo.png'), // path to your logo
             'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
-            'verification_url' => route('certificates.verify', $enrollment->certificate_number)
+            'verification_url' => route('dashboard.certificate.verify', $enrollment->certificate_number)
         ];
 
-        // Generate PDF
         $pdf = PDF::loadView('certificates.template', $data);
-
-        return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
+        
+        // ✅ Set paper size and orientation
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOptions([
+            'dpi' => 100,
+            'defaultFont' => 'sans-serif',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+             'isPhpEnabled' => true,
+        ]);
+        return $pdf->download('certificate-' . $enrollment->course->slug . '.pdf');
     }
 
     public function preview(Enrollment $enrollment)
@@ -57,15 +74,28 @@ class CertificateController extends Controller
             abort(403);
         }
 
-        return view('certificates.preview', [
-            'enrollment' => $enrollment,
+        if (!$enrollment->certificate_number) {
+            $enrollment->certificate_number = $this->generateCertificateNumber($enrollment);
+            $enrollment->save();
+        }
+
+        $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
-            'completion_date' => $enrollment->certificate_generated_date 
-                ? $enrollment->certificate_generated_date->format('F d, Y')
-                : now()->format('F d, Y'),
-            'certificate_number' => $enrollment->certificate_number ?? 'Pending' // ADD THIS
-        ]);
+            'enrollment' => $enrollment,
+            'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('F d, Y'),
+            'certificate_number' => $enrollment->certificate_number,
+            'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
+            'verification_url' => route('dashboard.certificate.verify', $enrollment->certificate_number)
+        ];
+
+        $pdf = PDF::loadView('certificates.template', $data);
+        $pdf->setPaper('A4', 'landscape');
+
+        // ✅ Return as inline PDF (view in browser)
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="certificate-' . $enrollment->course->slug . '.pdf"');
     }
 
     public function download(Enrollment $enrollment)
@@ -78,19 +108,26 @@ class CertificateController extends Controller
             return back()->with('error', 'Certificate not found. Please generate it first.');
         }
 
-        // Prepare data for the view - MAKE SURE ALL VARIABLES ARE INCLUDED
         $data = [
             'student' => auth()->user(),
             'course' => $enrollment->course,
             'enrollment' => $enrollment,
             'completion_date' => $enrollment->certificate_generated_date->format('F d, Y'),
-            'certificate_number' => $enrollment->certificate_number // THIS IS CRITICAL
+            'certificate_number' => $enrollment->certificate_number,
+            'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
+            'verification_url' => route('dashboard.certificate.verify', $enrollment->certificate_number)
         ];
 
         $pdf = PDF::loadView('certificates.template', $data);
-        
-        return $pdf->download('certificate-'.$enrollment->course->slug.'.pdf');
+        $pdf->setPaper('A4', 'landscape');
+
+        // ✅ Return as download with proper headers
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="certificate-' . $enrollment->course->slug . '.pdf"')
+            ->header('Cache-Control', 'private, no-cache, must-revalidate');
     }
+
 
     private function generateCertificateNumber($enrollment)
     {
@@ -108,7 +145,7 @@ class CertificateController extends Controller
             'id' => $enrollment->certificate?->certificate_number,
             'name' => $enrollment->course->title . ' Badge',
             'image' => asset('images/badges/' . strtolower(str_replace(' ', '-', $enrollment->course->title)) . '.png'),
-            'criteria' => route('certificate.verify', $enrollment->certificate?->certificate_number),
+            'criteria' => route('dashboard.certificate.verify', $enrollment->certificate?->certificate_number),
             'issuer' => [
                 'name' => 'IGRCFP',
                 'url' => config('app.url')
@@ -195,8 +232,8 @@ class CertificateController extends Controller
             'status' => 'active',
             'grade' => $this->calculateGrade($enrollment),
             'metadata' => [
-                'generated_by' => 'system',
-                'verification_url' => route('certificate.verify', $certificateNumber)
+                'generated_by' => 'system', 
+                'verification_url' => route('dashboard.certificate.verify', $certificateNumber)
             ]
         ]);
     }
@@ -220,4 +257,36 @@ class CertificateController extends Controller
         
         return 'Pass';
     }
+
+    /**
+     * Send notification when certificate is generated
+     */
+    private function sendCertificateNotification(Enrollment $enrollment)
+    {
+        $user = $enrollment->user;
+        $course = $enrollment->course;
+
+        // Create in-app notification
+        \App\Models\Notification::create([
+            'user_id' => $user->id,
+            'type' => 'certificate_generated',
+            'title' => 'Certificate Generated! 🎓',
+            'message' => "Congratulations! Your certificate for '{$course->title}' has been generated.",
+            'data' => [
+                'enrollment_id' => $enrollment->id,
+                'course_slug' => $course->slug,
+                'certificate_number' => $enrollment->certificate_number,
+            ],
+            'read_at' => null,
+        ]);
+
+        // ✅ Send email notification
+        try {
+            Mail::to($enrollment->user->email)->send(new CertificateGeneratedMail($enrollment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send certificate email: ' . $e->getMessage());
+            // Don't block certificate generation if email fails
+        }
+    }
+
 }

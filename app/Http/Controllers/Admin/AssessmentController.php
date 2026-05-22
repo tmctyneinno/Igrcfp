@@ -1,12 +1,11 @@
 <?php
-// app/Http/Controllers/Admin/AssessmentController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Course;
-use App\Models\CourseModule; 
+use App\Models\CourseModule;
 use App\Models\AssessmentQuestion;
 use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
@@ -16,54 +15,26 @@ use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends Controller
 {
-    /**
-     * Display all assessments
-     */
     public function index(Request $request)
     {
         $query = Assessment::with(['course', 'module'])
             ->orderBy('created_at', 'desc');
 
-        // Filter by assessment level
-        if ($request->has('level') && $request->level != '') {
-            $query->where('assessment_level', $request->level);
-        }
-
-        // Filter by course
-        if ($request->has('course_id') && $request->course_id != '') {
-            $query->where('course_id', $request->course_id);
-        } 
-
-        // Filter by status
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-
-        // Search
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('level'))     $query->where('assessment_level', $request->level);
+        if ($request->filled('course_id')) $query->where('course_id', $request->course_id);
+        if ($request->filled('status'))    $query->where('status', $request->status);
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
-            });
+            $query->where(fn($q) => $q->where('title', 'LIKE', "%{$search}%")
+                                      ->orWhere('description', 'LIKE', "%{$search}%"));
         }
 
         $assessments = $query->paginate(15);
-        $courses = Course::orderBy('title')->get();
-         
-        // Statistics
-         $statistics = [
-            'total' => Assessment::count(),
-            'quizzes' => Assessment::quizzes()->count(),
-            'module_assessments' => Assessment::moduleAssessments()->count(),
-            'final_exams' => Assessment::finalExams()->count(),
-            'diploma' => Assessment::diplomaAssessments()->count(),
-            'active' => Assessment::where('status', 'active')->count(),
-            'submissions' => AssessmentSubmission::count(),
-            'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
-        ];
+        $courses     = Course::orderBy('title')->get();
+        $statistics  = $this->getStatistics();
 
-        return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
+        return view('admin.courses.assessments.index',
+            compact('assessments', 'courses', 'statistics'));
     }
 
     public function all(Request $request)
@@ -71,66 +42,55 @@ class AssessmentController extends Controller
         $query = Assessment::with(['course', 'module'])
             ->orderBy('created_at', 'desc');
 
-        // Filter by assessment level
-        if ($request->has('level') && $request->level != '') {
-            $query->where('assessment_level', $request->level);
-        }
-
-        // Filter by course
-        if ($request->has('course_id') && $request->course_id != '') {
-            $query->where('course_id', $request->course_id);
-        }
-
-        // Filter by status
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
-
-        // Search
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('level'))     $query->where('assessment_level', $request->level);
+        if ($request->filled('course_id')) $query->where('course_id', $request->course_id);
+        if ($request->filled('status'))    $query->where('status', $request->status);
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
-            });
+            $query->where(fn($q) => $q->where('title', 'LIKE', "%{$search}%")
+                                      ->orWhere('description', 'LIKE', "%{$search}%"));
         }
 
         $assessments = $query->paginate(15);
-        $courses = Course::orderBy('title')->get();
-        
-        // Statistics
-        $statistics = [
-            'total' => Assessment::count(),
-            'quizzes' => Assessment::quizzes()->count(),
-            'module_assessments' => Assessment::moduleAssessments()->count(),
-            'final_exams' => Assessment::finalExams()->count(),
-            'diploma' => Assessment::diplomaAssessments()->count(),
-            'active' => Assessment::where('status', 'active')->count(),
-            'submissions' => AssessmentSubmission::count(),
-            'pending_grading' => AssessmentSubmission::where('status', 'submitted')->count(),
-        ];
+        $courses     = Course::orderBy('title')->get();
+        $statistics  = $this->getStatistics();
 
-        return view('admin.courses.assessments.index', compact('assessments', 'courses', 'statistics'));
+        return view('admin.courses.assessments.index',
+            compact('assessments', 'courses', 'statistics'));
+    }
+
+    private function getStatistics($courseId = null): array
+    {
+        $base = $courseId ? Assessment::where('course_id', $courseId) : new Assessment;
+
+        return [
+            'total'              => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->count(),
+            'quizzes'            => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->quizzes()->count(),
+            'module_assessments' => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->moduleAssessments()->count(),
+            'final_exams'        => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->finalExams()->count(),
+            'diploma'            => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->diplomaAssessments()->count(),
+            'active'             => Assessment::when($courseId, fn($q) => $q->where('course_id', $courseId))->where('status', 'active')->count(),
+            'submissions'        => $courseId
+                ? AssessmentSubmission::whereHas('assessment', fn($q) => $q->where('course_id', $courseId))->count()
+                : AssessmentSubmission::count(),
+            'pending_grading'    => AssessmentSubmission::where('status', 'submitted')->count(),
+        ];
     }
 
     public function createQuiz()
     {
         $courses = Course::orderBy('title')->get();
         $modules = collect();
-        $type = 'quiz';
-        
-        return view('admin.courses.assessments.create-quiz', compact('courses', 'modules', 'type'));
+        $type    = 'quiz';
+        return view('admin.courses.assessments.create-quiz',
+            compact('courses', 'modules', 'type'));
     }
 
-    /**
-     * Get modules for a specific course (AJAX endpoint)
-     */
     public function getModulesByCourse($courseId)
     {
         $modules = CourseModule::where('course_id', $courseId)
             ->orderBy('module_number')
             ->get(['id', 'module_number', 'title']);
-        
         return response()->json($modules);
     }
 
@@ -138,32 +98,29 @@ class AssessmentController extends Controller
     {
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
-        $type = 'module_assessment';
-        
-        return view('admin.courses.assessments.create-module', compact('courses', 'modules', 'type'));
+        $type    = 'module_assessment';
+        return view('admin.courses.assessments.create-module',
+            compact('courses', 'modules', 'type'));
     }
 
     public function createFinalExam()
     {
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
-        $type = 'final_exam';
-        
-        return view('admin.courses.assessments.create-final', compact('courses', 'modules', 'type'));
+        $type    = 'final_exam';
+        return view('admin.courses.assessments.create-final',
+            compact('courses', 'modules', 'type'));
     }
 
     public function createDiploma()
     {
         $courses = Course::where('status', 'published')->orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
-        $type = 'diploma';
-        
-        return view('admin.courses.assessments.create-diploma', compact('courses', 'modules', 'type'));
+        $type    = 'diploma';
+        return view('admin.courses.assessments.create-diploma',
+            compact('courses', 'modules', 'type'));
     }
 
-    /**
-     * Show assessments for a specific course
-     */
     public function course(Course $course, Request $request)
     {
         $query = Assessment::where('course_id', $course->id)
@@ -171,232 +128,131 @@ class AssessmentController extends Controller
             ->orderBy('assessment_level')
             ->orderBy('created_at', 'desc');
 
-        if ($request->has('level') && $request->level != '') {
-            $query->where('assessment_level', $request->level);
-        }
+        if ($request->filled('level')) $query->where('assessment_level', $request->level);
 
         $assessments = $query->paginate(15);
-        $courses = Course::orderBy('title')->get();
-        
-        $statistics = [
-            'total' => Assessment::where('course_id', $course->id)->count(),
-            'quizzes' => Assessment::where('course_id', $course->id)->quizzes()->count(),
-            'module_assessments' => Assessment::where('course_id', $course->id)->moduleAssessments()->count(),
-            'final_exams' => Assessment::where('course_id', $course->id)->finalExams()->count(),
-            'diploma' => Assessment::where('course_id', $course->id)->diplomaAssessments()->count(),
-            'active' => Assessment::where('course_id', $course->id)->where('status', 'active')->count(),
-            'submissions' => AssessmentSubmission::whereHas('assessment', fn($q) => $q->where('course_id', $course->id))->count(),
-        ];
+        $courses     = Course::orderBy('title')->get();
+        $statistics  = $this->getStatistics($course->id);
 
-        return view('admin.courses.assessments.index', compact('assessments', 'course', 'courses', 'statistics'));
+        return view('admin.courses.assessments.index',
+            compact('assessments', 'course', 'courses', 'statistics'));
     }
 
     public function store(Request $request)
     {
-         \Log::info('Quiz request data: ', $request->all());
-         \Log::info('Quiz request details:', [
-            'duration' => $request->duration,
-        ]);
-        // Check if the request is hitting this method at all
-        if (!$request->isMethod('post')) {
-            \Log::error('Not a POST request!');
-            return back()->with('error', 'Invalid request method');
-        }
-
-        // Check CSRF token
-        if (!$request->has('_token')) {
-            \Log::error('No CSRF token found!');
-            return back()->with('error', 'CSRF token missing');
-        }
-
-        $rules = $this->getValidationRules($request->assessment_level);
+        $rules     = $this->getValidationRules($request->assessment_level);
         $validated = $request->validate($rules);
-        
+
         try {
-            // Set type-specific defaults
             $validated = $this->setTypeDefaults($validated, $request);
 
-            // Handle file upload
             if ($request->hasFile('assessment_file')) {
-                $file = $request->file('assessment_file');
+                $file     = $request->file('assessment_file');
                 $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
-                
-                $validated['file_path'] = $path;
-                $validated['file_name'] = $file->getClientOriginalName();
-                $validated['file_size'] = $file->getSize();
+                $path     = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
+                $validated['file_path']      = $path;
+                $validated['file_name']      = $file->getClientOriginalName();
+                $validated['file_size']      = $file->getSize();
                 $validated['file_extension'] = $file->getClientOriginalExtension();
             }
 
-            // Handle project brief for diploma
-            if ($request->has('project_brief')) {
-                $validated['project_brief'] = $request->project_brief;
-            }
+            if ($request->has('project_brief')) $validated['project_brief'] = $request->project_brief;
+            if ($request->has('rubric'))        $validated['rubric'] = json_decode($request->rubric, true);
 
-
-            // Handle rubric for manual marking
-            if ($request->has('rubric')) {
-                $validated['rubric'] = json_decode($request->rubric, true);
-            }
-
-            // Create assessment
             $assessment = Assessment::create($validated);
-            
 
-            // Save questions for quiz/exam types
-            if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam']) 
+            if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam'])
                 && $request->has('questions')) {
                 $this->saveQuestions($assessment, $request->questions);
                 $assessment->question_count = count($request->questions);
                 $assessment->save();
             }
 
-            \Log::info('Assessment level:', ['level' => $request->assessment_level]);
-
-       
-
-            // $message =  $request->assessment_level.'created successfully!';
             return redirect()->route('admin.assessments.all')
-                ->with('success','Created successfully');
+                ->with('success', 'Created successfully');
 
         } catch (\Exception $e) {
-           
             \Log::error('Assessment creation failed: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Error creating assessment: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Error creating assessment: ' . $e->getMessage());
         }
     }
 
-    private function getValidationRules($type)
-    {
-        $baseRules = [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'course_id' => 'required|exists:courses,id',
-            'module_id' => 'nullable|exists:course_modules,id',
-            'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
-            'type' => 'required|in:exam,assignment,quiz,project',
-            'status' => 'required|in:draft,active,archived',
-           
-        ];
-
-        switch ($type) {
-            case 'quiz':
-                return array_merge($baseRules, [
-                    'duration'      => 'required|integer|min:1|max:180',
-                    'total_marks' => 'nullable|integer|min:1|max:100',
-                    'passing_score' => 'nullable|integer|min:1|max:100',
-                    'questions' => 'nullable|array',
-                    'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
-                    'questions.*.points' => 'required_with:questions|integer|min:1',
-                    'questions.*.options' => 'nullable|array', // Changed to nullable
-                    'questions.*.correct_answer' => 'nullable|string', // Changed to nullable
-                ]);
-
-            case 'module_assessment':
-                return array_merge($baseRules, [
-                    'duration' => 'nullable|integer|min:15|max:120',
-                    'total_marks' => 'nullable|integer|min:20|max:100',
-                    'passing_score' => 'nullable|integer|min:50|max:100',
-                    'is_timed' => 'sometimes|boolean',
-                    'requires_identity_verification' => 'sometimes|boolean',
-                    'questions' => 'nullable|array',
-                    'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,essay',
-                    'questions.*.points' => 'required_with:questions|integer|min:1',
-                    'questions.*.options' => 'nullable|array',
-                    'questions.*.correct_answer' => 'nullable|string',
-                ]);
-
-            case 'final_exam':
-                return array_merge($baseRules, [
-                    'duration' => 'required|integer|min:60|max:180',
-                    'total_marks' => 'nullable|integer|min:50|max:200',
-                    'passing_score' => 'nullable|integer|min:60|max:100',
-                    'is_timed' => 'sometimes|boolean',
-                    'requires_identity_verification' => 'sometimes|boolean',
-                    'questions' => 'nullable|array',
-                    'questions.*.text' => 'required_with:questions|string',
-                    'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,essay,case_study',
-                    'questions.*.points' => 'required_with:questions|integer|min:1',
-                    'questions.*.options' => 'nullable|array',
-                    'questions.*.correct_answer' => 'nullable|string',
-                ]);
-
-            case 'diploma':
-                return array_merge($baseRules, [
-                    'project_brief' => 'required|string',
-                    'total_marks' => 'nullable|integer|min:50|max:200',
-                    'passing_score' => 'nullable|integer|min:60|max:100',
-                    'needs_manual_marking' => 'sometimes|boolean',
-                    'requires_identity_verification' => 'sometimes|boolean',
-                    'due_date' => 'nullable|date',
-                    'rubric' => 'nullable|json',
-                ]);
-
-            default:
-                return $baseRules;
-        }
-    }
-
-    /**
-     * Show assessment details
-     */
     public function show(Assessment $assessment)
     {
-        $assessment->load(['course', 'module', 'questions', 'submissions.user' => function($q) {
-            $q->latest();
-        }]);
-
+        $assessment->load(['course', 'module', 'questions', 'submissions.user' => fn($q) => $q->latest()]);
         return view('admin.courses.assessments.show', compact('assessment'));
     }
 
-    /**
-     * Show edit form
-     */
     public function edit(Assessment $assessment)
     {
         $courses = Course::orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
-        
-        return view('admin.courses.assessments.edit', compact('assessment', 'courses', 'modules'));
+
+        $questionsData = $assessment->questions->map(fn($q) => [
+            'text'           => $q->question_text,
+            'type'           => $q->question_type,
+            'points'         => $q->points,
+            'difficulty'     => $q->difficulty_level ?? 'medium',
+            'options'        => $q->options ?? [],
+            'correct_answer' => $q->correct_answer,
+        ]);
+
+        if ($assessment->assessment_level === 'quiz') {
+            return view('admin.courses.assessments.edit-quiz',
+                compact('assessment', 'courses', 'modules', 'questionsData'));
+        }
+
+        return view('admin.courses.assessments.projects.edit',
+            compact('assessment', 'courses', 'modules', 'questionsData'));
     }
 
-    /**
-     * Update assessment
-     */
     public function update(Request $request, Assessment $assessment)
     {
-        $rules = $this->getValidationRules($assessment->assessment_level);
+        $rules     = $this->getValidationRules($assessment->assessment_level);
         $validated = $request->validate($rules);
 
         DB::beginTransaction();
-        
+
         try {
-            // Handle file upload
+            $assessment->title         = $validated['title'];
+            $assessment->description   = $validated['description']   ?? $assessment->description;
+            $assessment->course_id     = $validated['course_id'];
+            $assessment->module_id     = $validated['module_id']     ?? null;
+            $assessment->status        = $validated['status'];
+            $assessment->duration      = $validated['duration']      ?? $assessment->duration;
+            $assessment->total_marks   = $validated['total_marks']   ?? $assessment->total_marks;
+            $assessment->passing_score = $validated['passing_score'] ?? $assessment->passing_score;
+            $assessment->weight        = $validated['weight']        ?? $assessment->weight;
+
             if ($request->hasFile('assessment_file')) {
-                // Delete old file
                 if ($assessment->file_path) {
                     Storage::disk('public')->delete($assessment->file_path);
                 }
-                
-                $file = $request->file('assessment_file');
+                $file     = $request->file('assessment_file');
                 $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
-                
-                $validated['file_path'] = $path;
-                $validated['file_name'] = $file->getClientOriginalName();
-                $validated['file_size'] = $file->getSize();
-                $validated['file_extension'] = $file->getClientOriginalExtension();
+                $path     = $file->storeAs('assessments/' . $validated['course_id'], $filename, 'public');
+                $assessment->file_path      = $path;
+                $assessment->file_name      = $file->getClientOriginalName();
+                $assessment->file_size      = $file->getSize();
+                $assessment->file_extension = $file->getClientOriginalExtension();
             }
 
-            // Update assessment
-            $assessment->update($validated);
+            if ($request->boolean('remove_file') && $assessment->file_path) {
+                Storage::disk('public')->delete($assessment->file_path);
+                $assessment->file_path      = null;
+                $assessment->file_name      = null;
+                $assessment->file_size      = null;
+                $assessment->file_extension = null;
+            }
 
-            // Update questions if provided
+            $assessment->save();
+
             if ($request->has('questions')) {
-                // Delete old questions
-                $assessment->questions()->delete();
+                DB::table('assessment_questions')
+                    ->where('assessment_id', $assessment->id)
+                    ->delete();
+
                 $this->saveQuestions($assessment, $request->questions);
                 $assessment->question_count = count($request->questions);
                 $assessment->save();
@@ -405,45 +261,29 @@ class AssessmentController extends Controller
             DB::commit();
 
             return redirect()->route('admin.assessments.show', $assessment->id)
-                ->with('success', 'Assessment updated successfully!');
+                ->with('success', 'Quiz updated successfully!');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error updating assessment: ' . $e->getMessage());
+            \Log::error('Assessment update failed: ' . $e->getMessage() . ' | ' . $e->getTraceAsString());
+            return back()->withInput()
+                ->with('error', 'Error updating: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Delete assessment
-     */
-    /**
-     * Delete assessment
-     */
-    /**
- * Delete assessment
- */
     public function destroy(Assessment $assessment)
     {
         DB::beginTransaction();
-        
         try {
-            // Delete file
             if ($assessment->file_path) {
                 Storage::disk('public')->delete($assessment->file_path);
             }
-            
-            // Delete related data
-            $assessment->questions()->delete();
+            DB::table('assessment_questions')->where('assessment_id', $assessment->id)->delete();
             $assessment->submissions()->delete();
-            
             $assessment->delete();
-
             DB::commit();
-
-            // Use a route that definitely exists
             return redirect()->route('admin.assessments.all')
                 ->with('success', 'Assessment deleted successfully!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Assessment deletion failed: ' . $e->getMessage());
@@ -451,285 +291,266 @@ class AssessmentController extends Controller
         }
     }
 
-    /**
-     * Upload assessment from modal
-     */
     public function upload(Request $request, Course $course)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
-            'type' => 'required|in:exam,assignment,quiz,project',
-            'status' => 'required|in:draft,active,archived',
-            'duration' => 'nullable|integer|min:1',
-            'total_marks' => 'nullable|integer|min:1',
-            'passing_score' => 'nullable|integer|min:1|max:100',
-            'due_date' => 'nullable|date',
-            'due_time' => 'nullable',
-            'is_timed' => 'boolean',
+            'title'                          => 'required|string|max:255',
+            'description'                    => 'nullable|string',
+            'assessment_level'               => 'required|in:quiz,module_assessment,final_exam,diploma',
+            'type'                           => 'required|in:exam,assignment,quiz,project',
+            'status'                         => 'required|in:draft,active,archived',
+            'duration'                       => 'nullable|integer|min:1',
+            'total_marks'                    => 'nullable|integer|min:1',
+            'passing_score'                  => 'nullable|integer|min:1|max:100',
+            'due_date'                       => 'nullable|date',
+            'due_time'                       => 'nullable',
+            'is_timed'                       => 'boolean',
             'requires_identity_verification' => 'boolean',
-            'needs_manual_marking' => 'boolean',
-            'assessment_file' => 'nullable|file|mimes:pdf,doc,docx,xlsx,zip|max:51200',
-            'project_brief' => 'required_if:assessment_level,diploma|nullable|string',
+            'needs_manual_marking'           => 'boolean',
+            'assessment_file'                => 'nullable|file|mimes:pdf,doc,docx,xlsx,zip|max:51200',
+            'project_brief'                  => 'required_if:assessment_level,diploma|nullable|string',
         ]);
 
-        // Handle file upload
         $fileData = [];
         if ($request->hasFile('assessment_file')) {
-            $file = $request->file('assessment_file');
+            $file     = $request->file('assessment_file');
             $filename = time() . '_' . Str::slug($validated['title']) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('assessments/' . $course->id, $filename, 'public');
-            
+            $path     = $file->storeAs('assessments/' . $course->id, $filename, 'public');
             $fileData = [
-                'file_path' => $path,
-                'file_name' => $file->getClientOriginalName(),
-                'file_size' => $file->getSize(),
+                'file_path'      => $path,
+                'file_name'      => $file->getClientOriginalName(),
+                'file_size'      => $file->getSize(),
                 'file_extension' => $file->getClientOriginalExtension(),
             ];
         }
 
-        // Combine date and time
         if ($request->filled('due_date')) {
             $dueDateTime = $request->due_date;
-            if ($request->filled('due_time')) {
-                $dueDateTime .= ' ' . $request->due_time;
-            }
+            if ($request->filled('due_time')) $dueDateTime .= ' ' . $request->due_time;
             $validated['due_date'] = date('Y-m-d H:i:s', strtotime($dueDateTime));
         }
 
-        // Set type-specific defaults
         $validated['course_id'] = $course->id;
         $validated = array_merge($validated, $this->setTypeDefaults($validated, $request), $fileData);
-
         Assessment::create($validated);
 
         return redirect()->route('admin.assessments.course', $course->id)
             ->with('success', 'Assessment uploaded successfully!');
     }
 
-    /**
-     * View submissions for an assessment
-     */
     public function submissions(Assessment $assessment)
     {
         $submissions = $assessment->submissions()
             ->with(['user', 'grader'])
             ->orderBy('submitted_at', 'desc')
             ->paginate(20);
-
-        return view('admin.courses.assessments.submissions', compact('assessment', 'submissions'));
+        return view('admin.courses.assessments.submissions',
+            compact('assessment', 'submissions'));
     }
 
-    /**
-     * View single submission
-     */
     public function viewSubmission(AssessmentSubmission $submission)
     {
         $submission->load(['user', 'assessment.course', 'assessment.questions', 'grader']);
-        
         return view('admin.courses.assessments.submission', compact('submission'));
     }
 
-    /**
-     * Grade submission
-     */
     public function gradeSubmission(Request $request, AssessmentSubmission $submission)
     {
         $validated = $request->validate([
-            'score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
+            'score'    => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
             'feedback' => 'nullable|string',
         ]);
 
-        $submission->markAsGraded(
-            $validated['score'],
-            $validated['feedback'],
-            auth()->id()
-        );
+        $submission->markAsGraded($validated['score'], $validated['feedback'], auth()->id());
 
         return redirect()->route('admin.assessments.submissions', $submission->assessment_id)
             ->with('success', 'Submission graded successfully!');
     }
 
-   
-    /**
-     * Set type-specific default values
-     */
-    private function setTypeDefaults($validated, $request)
-    {
-        switch ($request->assessment_level) {
-            case 'quiz':
-                $validated['is_timed'] = false;
-                $validated['requires_identity_verification'] = false;
-                $validated['needs_manual_marking'] = false;
-                // $validated['duration'] = null;
-                break;
-
-            case 'module_assessment':
-                $validated['is_timed'] = $request->has('is_timed');
-                $validated['requires_identity_verification'] = $request->has('requires_identity_verification');
-                $validated['needs_manual_marking'] = false;
-                break;
-
-            case 'final_exam':
-                $validated['is_timed'] = true;
-                $validated['requires_identity_verification'] = true;
-                $validated['needs_manual_marking'] = false;
-                break;
-
-            case 'diploma':
-                $validated['is_timed'] = false;
-                $validated['requires_identity_verification'] = true;
-                $validated['needs_manual_marking'] = true;
-                break;
-        }
-
-        return $validated;
-    }
-
-    /**
-     * Save questions for assessment
-     */
-    
-
-private function saveQuestions(Assessment $assessment, array $questions): void
-{
-    foreach ($questions as $order => $questionData) {
- 
-        // Both answer columns default to null
-        $row = [
-            'assessment_id'    => $assessment->id,
-            'module_id'        => $assessment->module_id ?? $questionData['module_id'] ?? null, // ✅ ADD THIS
-            'question_text'    => $questionData['text'],
-            'question_type'    => $questionData['type'],
-            'points'           => $questionData['points'],
-            'difficulty_level' => $questionData['difficulty'] ?? 'medium',
-            'order'            => $order,
-            'is_required'      => true,
-            'correct_answer'   => null,
-            'correct_answers'  => null,
-        ]; 
- 
-        switch ($questionData['type']) {
- 
-            case 'multiple_choice':
-                // Clean options — remove blank entries, re-index
-                $options = array_values(
-                    array_filter(
-                        $questionData['options'] ?? [],
-                        fn($o) => trim((string) $o) !== ''
-                    )
-                );
- 
-                $row['options'] = $options;
- 
-                // correct_answer from the frontend is a 0-based index (e.g. "0", "1", "2")
-                // Resolve it to the actual option text
-                $indexRaw = $questionData['correct_answer'] ?? null;
- 
-                if ($indexRaw !== null && $indexRaw !== '') {
-                    $index = (int) $indexRaw;
- 
-                    if (isset($options[$index])) {
-                        $row['correct_answer'] = $options[$index]; // store the TEXT
-                    } else {
-                        // Fallback — shouldn't happen if the form is valid
-                        $row['correct_answer'] = $indexRaw;
-                    }
-                }
- 
-                // correct_answers stays NULL for multiple_choice
-                break;
- 
-            case 'true_false':
-                $row['options'] = ['True', 'False'];
- 
-                // The radio sends "True" or "False" directly — just normalise casing
-                $raw = $questionData['correct_answer'] ?? null;
-                $row['correct_answer'] = $raw !== null
-                    ? ucfirst(strtolower(trim($raw)))   // "true" → "True"
-                    : null;
- 
-                // correct_answers stays NULL for true_false
-                break;
- 
-            case 'short_answer':
-                // Plain text input, store as-is
-                $row['correct_answer'] = isset($questionData['correct_answer'])
-                    ? trim($questionData['correct_answer'])
-                    : null;
- 
-                // correct_answers stays NULL for short_answer
-                break;
- 
-            case 'multiple_answer':
-                $raw = $questionData['correct_answers'] ?? [];
-                $row['correct_answers'] = is_array($raw) ? $raw : json_decode($raw, true);
-                $row['options'] = array_values(
-                    array_filter(
-                        $questionData['options'] ?? [],
-                        fn($o) => trim((string) $o) !== ''
-                    )
-                );
-                // correct_answer stays NULL
-                break;
- 
-            case 'essay':
-            case 'case_study':
-                // Both columns stay NULL — manual marking
-                break;
-        }
- 
-        AssessmentQuestion::create($row);
-    }
-}
-
-    /**
-     * Get success message based on assessment type
-     */
-    private function getSuccessMessage($type)
-    {
-        $messages = [
-            'quiz' => 'Quiz created successfully!',
-            'module_assessment' => 'Module assessment created successfully!',
-            'final_exam' => 'Final exam created successfully!',
-            'diploma' => 'Diploma assessment created successfully!',
-        ];
-
-        return $messages[$type] ?? 'Assessment created successfully!';
-    }
-
-    /**
-     * Bulk delete assessments
-     */
     public function bulkDelete(Request $request)
     {
         $request->validate([
-            'assessment_ids' => 'required|array',
-            'assessment_ids.*' => 'exists:assessments,id'
+            'assessment_ids'   => 'required|array',
+            'assessment_ids.*' => 'exists:assessments,id',
         ]);
 
         DB::beginTransaction();
-        
         try {
             foreach ($request->assessment_ids as $id) {
                 $assessment = Assessment::find($id);
                 if ($assessment) {
-                    // Delete file
                     if ($assessment->file_path) {
                         Storage::disk('public')->delete($assessment->file_path);
                     }
                     $assessment->delete();
                 }
             }
-
             DB::commit();
-
-            return redirect()->back()->with('success', count($request->assessment_ids) . ' assessments deleted successfully!');
-
+            return redirect()->back()
+                ->with('success', count($request->assessment_ids) . ' assessments deleted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Error deleting assessments: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Error deleting assessments: ' . $e->getMessage());
+        }
+    }
+
+    private function getValidationRules($type): array
+    {
+        $baseRules = [
+            'title'            => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'course_id'        => 'required|exists:courses,id',
+            'module_id'        => 'nullable|exists:course_modules,id',
+            'assessment_level' => 'required|in:quiz,module_assessment,final_exam,diploma',
+            'type'             => 'required|in:exam,assignment,quiz,project',
+            'status'           => 'required|in:draft,active,archived',
+        ];
+
+        switch ($type) {
+            case 'quiz':
+                return array_merge($baseRules, [
+                    'duration'                   => 'required|integer|min:1|max:180',
+                    'total_marks'                => 'nullable|integer|min:1|max:100',
+                    'passing_score'              => 'nullable|integer|min:1|max:100',
+                    'questions'                  => 'nullable|array',
+                    'questions.*.text'           => 'required_with:questions|string',
+                    'questions.*.type'           => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
+                    'questions.*.points'         => 'required_with:questions|integer|min:1',
+                    'questions.*.options'        => 'nullable|array',
+                    'questions.*.correct_answer' => 'nullable|string',
+                ]);
+
+            case 'module_assessment':
+                return array_merge($baseRules, [
+                    'duration'                       => 'nullable|integer|min:15|max:120',
+                    'total_marks'                    => 'nullable|integer|min:20|max:100',
+                    'passing_score'                  => 'nullable|integer|min:50|max:100',
+                    'is_timed'                       => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'questions'                      => 'nullable|array',
+                    'questions.*.text'               => 'required_with:questions|string',
+                    'questions.*.type'               => 'required_with:questions|string|in:multiple_choice,true_false,essay',
+                    'questions.*.points'             => 'required_with:questions|integer|min:1',
+                    'questions.*.options'            => 'nullable|array',
+                    'questions.*.correct_answer'     => 'nullable|string',
+                ]);
+
+            case 'final_exam':
+                return array_merge($baseRules, [
+                    'duration'                       => 'required|integer|min:60|max:180',
+                    'total_marks'                    => 'nullable|integer|min:50|max:200',
+                    'passing_score'                  => 'nullable|integer|min:60|max:100',
+                    'is_timed'                       => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'questions'                      => 'nullable|array',
+                    'questions.*.text'               => 'required_with:questions|string',
+                    'questions.*.type'               => 'required_with:questions|string|in:multiple_choice,true_false,essay,case_study',
+                    'questions.*.points'             => 'required_with:questions|integer|min:1',
+                    'questions.*.options'            => 'nullable|array',
+                    'questions.*.correct_answer'     => 'nullable|string',
+                ]);
+
+            case 'diploma':
+                return array_merge($baseRules, [
+                    'project_brief'                  => 'required|string',
+                    'total_marks'                    => 'nullable|integer|min:50|max:200',
+                    'passing_score'                  => 'nullable|integer|min:60|max:100',
+                    'needs_manual_marking'           => 'sometimes|boolean',
+                    'requires_identity_verification' => 'sometimes|boolean',
+                    'due_date'                       => 'nullable|date',
+                    'rubric'                         => 'nullable|json',
+                ]);
+
+            default:
+                return $baseRules;
+        }
+    }
+
+    private function setTypeDefaults(array $validated, Request $request): array
+    {
+        switch ($request->assessment_level) {
+            case 'quiz':
+                $validated['is_timed']                       = false;
+                $validated['requires_identity_verification'] = false;
+                $validated['needs_manual_marking']           = false;
+                break;
+            case 'module_assessment':
+                $validated['is_timed']                       = $request->has('is_timed');
+                $validated['requires_identity_verification'] = $request->has('requires_identity_verification');
+                $validated['needs_manual_marking']           = false;
+                break;
+            case 'final_exam':
+                $validated['is_timed']                       = true;
+                $validated['requires_identity_verification'] = true;
+                $validated['needs_manual_marking']           = false;
+                break;
+            case 'diploma':
+                $validated['is_timed']                       = false;
+                $validated['requires_identity_verification'] = true;
+                $validated['needs_manual_marking']           = true;
+                break;
+        }
+        return $validated;
+    }
+
+    private function saveQuestions(Assessment $assessment, array $questions): void
+    {
+        foreach ($questions as $order => $questionData) {
+            $row = [
+                'assessment_id'    => $assessment->id,
+                'module_id'        => $assessment->module_id ?? $questionData['module_id'] ?? null,
+                'question_text'    => $questionData['text'],
+                'question_type'    => $questionData['type'],
+                'points'           => $questionData['points'],
+                'difficulty_level' => $questionData['difficulty'] ?? 'medium',
+                'order'            => $order,
+                'is_required'      => true,
+                'correct_answer'   => null,
+                'correct_answers'  => null,
+            ];
+
+            switch ($questionData['type']) {
+                case 'multiple_choice':
+                    $options = array_values(array_filter(
+                        $questionData['options'] ?? [],
+                        fn($o) => trim((string) $o) !== ''
+                    ));
+                    $row['options'] = $options;
+                    $indexRaw = $questionData['correct_answer'] ?? null;
+                    if ($indexRaw !== null && $indexRaw !== '') {
+                        $index = (int) $indexRaw;
+                        $row['correct_answer'] = $options[$index] ?? $indexRaw;
+                    }
+                    break;
+
+                case 'true_false':
+                    $row['options'] = ['True', 'False'];
+                    $raw = $questionData['correct_answer'] ?? null;
+                    $row['correct_answer'] = $raw !== null
+                        ? ucfirst(strtolower(trim($raw))) : null;
+                    break;
+
+                case 'short_answer':
+                    $row['correct_answer'] = isset($questionData['correct_answer'])
+                        ? trim($questionData['correct_answer']) : null;
+                    break;
+
+                case 'multiple_answer':
+                    $raw = $questionData['correct_answers'] ?? [];
+                    $row['correct_answers'] = is_array($raw) ? $raw : json_decode($raw, true);
+                    $row['options'] = array_values(array_filter(
+                        $questionData['options'] ?? [],
+                        fn($o) => trim((string) $o) !== ''
+                    ));
+                    break;
+
+                case 'essay':
+                case 'case_study':
+                    break;
+            }
+
+            AssessmentQuestion::create($row);
         }
     }
 }

@@ -68,7 +68,8 @@ export function CartProvider({ children, initialCount = 0 }) {
                         });
                         resolve(true);
                     } else if (page.props.flash?.info) {
-                        toast.info(page.props.flash.info, {
+                        toast(page.props.flash.info, {
+                            icon: 'i',
                             duration: 4000,
                             position: 'top-right'
                         });

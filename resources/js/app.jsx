@@ -15,6 +15,26 @@ AOS.init({
     offset: 100,
 });
 
+if (typeof document !== 'undefined') {
+    const preventClipboardActions = (event) => {
+        event.preventDefault();
+    };
+
+    const preventCopyShortcuts = (event) => {
+        const isModifierPressed = event.ctrlKey || event.metaKey;
+        const key = event.key?.toLowerCase();
+
+        if (isModifierPressed && ['c', 'x'].includes(key)) {
+            event.preventDefault();
+        }
+    };
+
+    document.addEventListener('contextmenu', preventClipboardActions);
+    document.addEventListener('copy', preventClipboardActions);
+    document.addEventListener('cut', preventClipboardActions);
+    document.addEventListener('keydown', preventCopyShortcuts);
+}
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

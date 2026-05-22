@@ -252,9 +252,9 @@
                                                 
                                                 <div class="d-flex gap-2">
                                                     <!-- Toggle Active Status -->
-                                                    <form ction="{{ route('admin.courses.modules.toggle-active', [
-                                                        'course' => $course,
-                                                        'module' => $module
+                                                    <form action="{{ route('admin.courses.modules.toggle-active', [
+                                                        'course' => $course->slug,
+                                                        'module' => $module->id
                                                     ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -266,8 +266,8 @@
                                                     <!-- Duplicate Module -->
                                                     <form 
                                                         action="{{ route('admin.courses.modules.duplicate', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -279,18 +279,18 @@
                                                     
                                                     <!-- Edit Module -->
                                                     <a href="{{ route('admin.courses.modules.edit', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}" 
                                                     
                                                         class="btn btn-sm btn-outline-primary">
                                                         Edit
-                                                    </a>
+                                                    </a> 
                                                     
                                                     <!-- Delete Module -->
                                                     <form action="{{ route('admin.courses.modules.destroy', [
-                                                            'course' => $course,
-                                                            'module' => $module
+                                                            'course' => $course->slug,
+                                                            'module' => $module->id
                                                         ]) }}" 
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -298,7 +298,7 @@
                                                         <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                                 onclick="return confirm('Are you sure you want to delete this module? This action cannot be undone.')">
                                                             Delete
-                                                        </button>
+                                                        </button> 
                                                     </form>
                                                 </div>
                                             </div>
@@ -820,23 +820,27 @@
 <div class="modal fade" id="uploadMaterialModal" tabindex="-1" aria-labelledby="uploadMaterialModalLabel" aria-hidden="true">
     <div class="modal-dialog"> 
         <div class="modal-content">
-            <form action="{{ route('admin.courses.materials.upload', $course->slug) }}" method="POST" enctype="multipart/form-data">
-                @csrf
+            <form action="{{ route('admin.courses.materials.upload', $course->slug) }}" method="POST" enctype="multipart/form-data" id="uploadMaterialForm">
+                @csrf 
                 <div class="modal-header">
                     <h5 class="modal-title" id="uploadMaterialModalLabel">Upload Course Materials</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div id="uploadErrors" class="alert alert-danger d-none"></div>
+                    
                     <div class="mb-3">
-                        <label class="form-label">Select Files</label>
+                        <label class="form-label">Select Files <span class="text-danger">*</span></label>
                         <input type="file" name="materials[]" class="form-control" multiple 
                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar" required>
                         <small class="text-muted">You can select multiple files. Max 10MB each.</small>
+                        <div id="selectedFiles" class="mt-2 small text-muted"></div>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Material Type</label>
+                        <label class="form-label">Material Type <span class="text-danger">*</span></label>
                         <select name="material_type" class="form-select" required>
+                            <option value="">-- Select Type --</option>
                             <option value="manual">Course Manual</option>
                             <option value="presentation">Presentation</option>
                             <option value="worksheet">Worksheet</option>
@@ -864,7 +868,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Upload Materials</button>
+                    <button type="submit" class="btn btn-primary" id="uploadSubmitBtn">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Upload Materials
+                    </button>
                 </div>
             </form>
         </div>
@@ -937,6 +944,60 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Show selected file names
+    document.querySelector('input[name="materials[]"]').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        const fileList = document.getElementById('selectedFiles');
+        if (files.length > 0) {
+            fileList.innerHTML = '<strong>Selected files:</strong><br>' + 
+                files.map(f => `• ${f.name} (${(f.size / 1024).toFixed(1)} KB)`).join('<br>');
+        } else {
+            fileList.innerHTML = '';
+        }
+    });
+
+    // Handle form submission with loading state
+    document.getElementById('uploadMaterialForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('uploadSubmitBtn');
+        const spinner = submitBtn.querySelector('.spinner-border');
+        const errorsDiv = document.getElementById('uploadErrors');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        errorsDiv.classList.add('d-none');
+        
+        // Optional: Add client-side validation
+        const fileInput = document.querySelector('input[name="materials[]"]');
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            errorsDiv.textContent = 'Please select at least one file.';
+            errorsDiv.classList.remove('d-none');
+            submitBtn.disabled = false;
+            spinner.classList.add('d-none');
+            return false;
+        }
+        
+        const materialType = document.querySelector('select[name="material_type"]');
+        if (!materialType.value) {
+            e.preventDefault();
+            errorsDiv.textContent = 'Please select a material type.';
+            errorsDiv.classList.remove('d-none');
+            submitBtn.disabled = false;
+            spinner.classList.add('d-none');
+            return false;
+        }
+    });
+
+    document.getElementById('uploadMaterialModal').addEventListener('hidden.bs.modal', function() {
+        document.getElementById('uploadMaterialForm').reset();
+        document.getElementById('selectedFiles').innerHTML = '';
+        document.getElementById('uploadErrors').classList.add('d-none');
+        const submitBtn = document.getElementById('uploadSubmitBtn');
+        submitBtn.disabled = false;
+        submitBtn.querySelector('.spinner-border').classList.add('d-none');
+    });
+
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

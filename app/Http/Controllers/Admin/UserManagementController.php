@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+ 
 class UserManagementController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->get('search');
         $status = $request->get('status');
-        $perPage = $request->get('per_page', 10);
+        $perPage = $request->get('per_page', 20);
 
         $users = User::query()
             ->when($search, function ($query) use ($search) {
@@ -22,9 +22,9 @@ class UserManagementController extends Controller
             })
             ->when($status, function ($query) use ($status) {
                 if ($status === 'active') {
-                    $query->where('is_active', true);
+                    $query->where('status', 'active');
                 } elseif ($status === 'inactive') {
-                    $query->where('is_active', false);
+                    $query->where('status', '!=', 'active');
                 }
             })
             ->latest()
@@ -44,19 +44,17 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
-            'is_admin' => 'boolean',
-            'department' => 'nullable|string|max:255',
-            'designation' => 'nullable|string|max:255',
+            'role' => 'nullable|string|in:admin,learner,tutor',
+            'status' => 'nullable|string|in:active,pending,suspended',
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_admin' => $request->is_admin ?? false,
-            'is_active' => true,
-            'department' => $request->department,
-            'designation' => $request->designation,
+            'role' => $request->role ?? 'learner',
+            'status' => $request->status ?? 'active',
+            'email_verified_at' => now(),
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
@@ -64,7 +62,25 @@ class UserManagementController extends Controller
 
     public function show(User $user)
     {
+        // ✅ Load all relationships needed for the show page
+        $user->load([
+            'enrollments.course',
+            'assessmentSubmissions.assessment.course',
+            'transactions',
+            'completedLessons',
+        ]);
+        
         return view('admin.users.show', compact('user'));
+    }
+
+    public function enrollments(User $user)
+    {
+        $enrollments = $user->enrollments()
+            ->with(['course', 'course.modules'])
+            ->latest()
+            ->paginate(15);
+        
+        return view('admin.users.enrollments', compact('user', 'enrollments'));
     }
 
     public function edit(User $user)
@@ -78,17 +94,23 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:8|confirmed',
-            'is_admin' => 'boolean',
-            'department' => 'nullable|string|max:255',
-            'designation' => 'nullable|string|max:255',
+            'role' => 'nullable|string|in:admin,learner,tutor',
+            'status' => 'nullable|string|in:active,pending,suspended',
+            'phone' => 'nullable|string|max:20',
+            'country' => 'nullable|string|max:100',
+            'city' => 'nullable|string|max:100',
+            'bio' => 'nullable|string',
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'is_admin' => $request->is_admin ?? false,
-            'department' => $request->department,
-            'designation' => $request->designation,
+            'role' => $request->role ?? $user->role,
+            'status' => $request->status ?? $user->status,
+            'phone' => $request->phone,
+            'country' => $request->country,
+            'city' => $request->city,
+            'bio' => $request->bio,
         ];
 
         if ($request->password) {
@@ -108,8 +130,8 @@ class UserManagementController extends Controller
 
     public function toggleStatus(User $user)
     {
-        $user->update(['is_active' => !$user->is_active]);
-        $status = $user->is_active ? 'activated' : 'deactivated';
+        $user->update(['status' => $user->status === 'active' ? 'suspended' : 'active']);
+        $status = $user->status === 'active' ? 'activated' : 'deactivated';
         
         return back()->with('success', "User {$status} successfully.");
     }
@@ -125,11 +147,11 @@ class UserManagementController extends Controller
 
         switch ($action) {
             case 'activate':
-                User::whereIn('id', $userIds)->update(['is_active' => true]);
+                User::whereIn('id', $userIds)->update(['status' => 'active']);
                 $message = 'Selected users activated successfully.';
                 break;
             case 'deactivate':
-                User::whereIn('id', $userIds)->update(['is_active' => false]);
+                User::whereIn('id', $userIds)->update(['status' => 'suspended']);
                 $message = 'Selected users deactivated successfully.';
                 break;
             case 'delete':

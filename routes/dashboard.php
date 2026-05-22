@@ -5,8 +5,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonCompletionController;
+use App\Http\Controllers\ModuleReadingProgressController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\AssessmentAttemptController;
+use App\Http\Controllers\QuizProjectAssessmentController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MentorController;
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::middleware(['auth', 'verified'])->group(function () {        
+Route::middleware(['auth', 'verified', 'validate.session'])->group(function () {        
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -76,8 +78,57 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('active.membership')
         ->name('dashboard.mentorships.complete');
 
+    // Membership (Blade)
+    Route::get('/dashboard/memberships', [MembershipController::class, 'index'])->name('dashboard.memberships.index');
+    Route::get('/dashboard/memberships/status', [MembershipController::class, 'status'])->name('dashboard.memberships.status');
+    Route::post('/dashboard/memberships/{plan}/cart', [MembershipController::class, 'addToCart'])->name('dashboard.memberships.add-to-cart');
+    Route::get('/dashboard/memberships/checkout', [MembershipController::class, 'checkout'])->name('dashboard.memberships.checkout');
+
+    // Mentors & Mentorship (Blade)
+    Route::get('/dashboard/mentors', [MentorController::class, 'index'])->name('dashboard.mentors.index');
+    Route::get('/dashboard/mentors/apply', [MentorApplicationController::class, 'create'])
+        ->middleware('mentor.membership')
+        ->name('dashboard.mentors.apply-to-become');
+    Route::post('/dashboard/mentors/apply', [MentorApplicationController::class, 'store'])
+        ->middleware('mentor.membership')
+        ->name('dashboard.mentors.apply-to-become.store');
+    Route::get('/dashboard/mentors/{mentor}', [MentorController::class, 'show'])->name('dashboard.mentors.show');
+    Route::get('/dashboard/mentors/{mentor}/apply', [MentorshipApplicationController::class, 'create'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentors.apply');
+    Route::post('/dashboard/mentors/{mentor}/apply', [MentorshipApplicationController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentors.apply.store');
+
+    Route::get('/dashboard/mentorships', [MentorshipController::class, 'index'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.index');
+    Route::post('/dashboard/mentorships/applications/{application}/decision', [MentorshipController::class, 'decide'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.decide');
+    Route::get('/dashboard/mentorships/{mentorship}', [MentorshipController::class, 'show'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.show');
+    Route::post('/dashboard/mentorships/{mentorship}/updates', [MentorshipUpdateController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.updates.store');
+    Route::post('/dashboard/mentorships/{mentorship}/messages', [MentorshipMessageController::class, 'store'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.messages.store');
+    Route::get('/dashboard/mentorships/{mentorship}/messages', [MentorshipMessageController::class, 'index'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.messages.index');
+    Route::post('/dashboard/mentorships/{mentorship}/complete', [MentorshipController::class, 'complete'])
+        ->middleware('active.membership')
+        ->name('dashboard.mentorships.complete');
+
+
+
+
     Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
     Route::get('dashboard/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
+    Route::get('dashboard/course-materials/{material}/download', [DashboardController::class, 'downloadCourseMaterial'])
+        ->name('dashboard.course-materials.download');
     Route::get('dashboard/courses/{slug}', [DashboardController::class, 'courseSlug'])->name('dashboard.courses.show');
     Route::get('/dashboard/category/{slug}', [DashboardController::class, 'byCategory'])->name('dashboard.courses.by-category');
     // Cart routes
@@ -105,7 +156,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/certificates/download/{enrollment}', [CertificateController::class, 'download'])->name('dashboard.certificates.download');
     Route::get('dashboard/badge/{enrollment}', [CertificateController::class, 'badge'])->name('dashboard.certificates.badge');
     Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificate.verify');
-    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry');
+    Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry'); 
 
     // Exam Routes
     // Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
@@ -123,6 +174,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->where('lesson', '[0-9]+'); 
     Route::delete('dashboard/lessons/{lesson}/complete', [LessonCompletionController::class, 'markIncomplete'])
         ->name('lessons.incomplete');
+    Route::post('dashboard/modules/{module}/reading-progress', [ModuleReadingProgressController::class, 'store'])
+        ->name('modules.reading-progress')
+        ->where('module', '[0-9]+');
 
 });
 
@@ -209,6 +263,7 @@ Route::prefix('assessment')->name('assessment.')->group(function () {
         ->name('diploma.save');
 
 });
+
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     
     // ✅ POST ROUTES FIRST
@@ -218,14 +273,46 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])
         ->name('quiz.save');
     
-    // ✅ SPECIFIC GET ROUTES NEXT
+    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])
+        ->name('quiz.save-progress');
+    
+    // ✅ ALL SPECIFIC GET ROUTES - MUST COME BEFORE THE GENERAL ONE
+    Route::get('/courses/{course:slug}/quiz/results', [QuizController::class, 'results'])
+        ->name('quiz.results.all'); 
+
     Route::get('/courses/{course:slug}/quiz/{assessment}/results', [QuizController::class, 'results'])
         ->name('quiz.results');
     
     Route::get('/courses/{course:slug}/quiz/{assessment}/continue', [QuizController::class, 'continue'])
         ->name('quiz.continue');
     
-    // ✅ GENERAL GET ROUTE LAST
+    // ✅ GENERAL GET ROUTE - MUST BE LAST
     Route::get('/courses/{course:slug}/quiz/{assessment}', [QuizController::class, 'take'])
         ->name('quiz.take');
+ 
+   
+});
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Project assessment routes
+    Route::get('/courses/{course:slug}/project-assessment', [QuizProjectAssessmentController::class, 'projectAssessment'])
+        ->name('quiz.project-assessment');
+    
+    // ✅ ADD THIS POST ROUTE
+    Route::post('/courses/{course:slug}/project/{assessment}/submit', [QuizProjectAssessmentController::class, 'submitProject'])
+        ->name('quiz.project.submit');
+
+    Route::get('/certificate/verify/{certificateNumber}', [CertificateController::class, 'verify'])
+        ->name('certificate.verify');
+
+});
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Notification routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/recent', [NotificationController::class, 'recent'])->name('notifications.recent');
 });

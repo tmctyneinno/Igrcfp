@@ -1,45 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from '@inertiajs/react';
-
+import img1 from '../../assets/slider1.png';
+import img2 from '../../assets/slider2.png';
+import img3 from '../../assets/slider3.png';
+ 
 export default function SplitHeroSlider({ auth }) {
     const [activeSlide, setActiveSlide] = useState(0);
     const slideInterval = useRef(null);
-
-    const slides = [
+ 
+    const slides = [ 
         {
             id: 1,
             title: "Empower Professionals, Strengthening Governance, Preventing Financial Crime",
-            highlighted: "Tutors",
-            description: "The Institute of GRC & Financial Crime Prevention (IGRCFP) is a global professional  body dedicated to advancing excellence in governance, risk management,  compliance, and financial crime prevention.",
-            image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            highlighted: "",
+            description: "The Institute of GRC & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to advancing excellence in governance, risk management, compliance, and financial crime prevention.",
+            image: img1,
             ctaPrimary: "Join the Institute",
-            ctaSecondary: "Browse Courses"
+            ctaSecondary: "Browse Courses",
+            secondaryRoute: route('igrcfp.certificates.index')
         },
         {
             id: 2,
             title: "Master",
             description: "Get certified in Governance, Risk & Compliance with industry-recognized qualifications from leading professionals.",
-            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: img2,
             ctaPrimary: "Explore Courses",
-            ctaSecondary: "View Certifications"
+            ctaSecondary: "View Certifications",
+            secondaryRoute: route('igrcfp.certificates.index')
         },
         {
             id: 3,
             title: "Advance Your Career in",
             description: "Specialize in AML, KYC, and fraud detection with practical training from real-world scenarios.",
-            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-           
+            image: img3,
             ctaPrimary: "Learn More",
-            ctaSecondary: "Join Now"
+            ctaSecondary: "Join Now",
+            secondaryRoute: route('igrcfp.certificates.index')
         },
         {
             id: 4,
             title: "Become an Expert in",
             highlighted: "Cybersecurity & Data Protection",
             description: "Protect financial institutions from cyber threats with cutting-edge security training and certifications.",
-            image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
             ctaPrimary: "Start Training",
-            ctaSecondary: "Course Details"
+            ctaSecondary: "Course Details",
+            secondaryRoute: route('igrcfp.certificates.index')
         }
     ];
 
@@ -85,10 +91,9 @@ export default function SplitHeroSlider({ auth }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                     
-                    {/* Left Column - Text Slider - SIMPLE FIXED VERSION */}
+                    {/* Left Column - Text Slider */}
                     <div className="relative h-[400px] lg:h-[500px] flex items-center">
                         <div className="w-full">
-                            {/* SIMPLE VERSION - No complex animations */}
                             <div className="space-y-6 lg:space-y-8">
                                 {/* Badge */}
                                 <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-600 font-medium text-sm mb-4">
@@ -99,6 +104,9 @@ export default function SplitHeroSlider({ auth }) {
                                 {/* Title */}
                                 <h3 className="text-3xl md:text-4xl lg:text-4xl font-bold text-gray-900 leading-tight">
                                     {slides[activeSlide].title} 
+                                    {slides[activeSlide].highlighted && (
+                                        <span className="text-blue-600"> {slides[activeSlide].highlighted}</span>
+                                    )}
                                 </h3>
 
                                 {/* Description */}
@@ -110,7 +118,6 @@ export default function SplitHeroSlider({ auth }) {
                                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                     {!auth?.user ? (
                                         <>
-                                           
                                             <Link
                                                 href={route('register')}
                                                 className="group bg-gradient-to-r from-blue-900 to-blue-950 text-white px-7 py-3 rounded-xl font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25 inline-flex items-center justify-center"
@@ -121,7 +128,7 @@ export default function SplitHeroSlider({ auth }) {
                                                 </svg>
                                             </Link>
                                             <Link
-                                                href="/courses"
+                                                href={slides[activeSlide].secondaryRoute}
                                                 className="group bg-white text-blue-900 px-8 py-3 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all duration-300 border-2 border-blue-900 hover:border-blue-700 transform hover:-translate-y-1 hover:scale-[1.02] shadow-md inline-flex items-center justify-center"
                                             >
                                                 {slides[activeSlide].ctaSecondary}
@@ -142,17 +149,11 @@ export default function SplitHeroSlider({ auth }) {
                                         </Link>
                                     )}
                                 </div>
-
-                               
                             </div>
-
-                          
-
-                           
                         </div>
                     </div>
 
-                    {/* Right Column - Image Slider - KEEPING YOUR EXISTING CODE */}
+                    {/* Right Column - Image Slider */}
                     <div className="relative h-[400px] lg:h-[500px]">
                         <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl">
                             {slides.map((slide, index) => (
@@ -171,7 +172,6 @@ export default function SplitHeroSlider({ auth }) {
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                                     </div>
-
                                 </div>
                             ))}
 
@@ -223,8 +223,6 @@ export default function SplitHeroSlider({ auth }) {
                         </div>
                     </div>
                 </div>
-
-                
             </div>
         </section>
     );

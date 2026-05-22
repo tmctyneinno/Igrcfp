@@ -14,7 +14,7 @@ export default function Pathway({ auth, title, description }) {
                         {description || 'Your path from foundational knowledge to senior leadership recognition'}
                     </p>
                 </div>
-            </section>
+            </section> 
 
             {/* Main pathway diagram and explanation */}
             <section className="py-16 bg-white">

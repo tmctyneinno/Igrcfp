@@ -10,7 +10,7 @@ import {
     SparklesIcon,
     ArrowRightIcon,
 } from "@heroicons/react/24/outline";
-
+ 
 export default function MembershipDashboard({
     auth,
     membership,
@@ -28,7 +28,7 @@ export default function MembershipDashboard({
     const hasMentorProfile = Boolean(mentorAccess?.has_mentor_profile);
     const mentorApplicationFeedback = mentorAccess?.application_feedback;
     const mentorApplicationProcessedAt = mentorAccess?.application_processed_at;
-
+ 
     const shouldShowPlans = !hasActiveMembership && !isPendingApproval;
     const shouldShowCommunity = hasActiveMembership;
 

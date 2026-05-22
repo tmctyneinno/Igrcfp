@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\CourseCategory;
+use App\Models\Blog;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
+use App\Models\Article;
  
 class HomeController extends Controller
 {
@@ -52,10 +55,51 @@ class HomeController extends Controller
                 ];
             });
 
+        // Get latest articles
+        $latestArticles = Article::where('status', 'published')
+            ->latest('published_at')
+            ->take(3)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'image' => $article->image_path ? asset('storage/' . $article->image_path) : null,
+                    'category' => $article->category->name ?? 'News',
+                    'published_at' => $article->published_at,
+                    'read_time' => $article->read_time,
+                    'is_featured' => $article->is_featured,
+                ];
+            });
+
+        $featuredArticles = Article::where('status', 'published')
+            ->where('is_featured', true)
+            ->latest('published_at')
+            ->take(1)
+            ->get()
+            ->map(function ($article) {
+                return [
+                    'id' => $article->id,
+                    'title' => $article->title,
+                    'slug' => $article->slug,
+                    'excerpt' => $article->excerpt,
+                    'image' => $article->image_path ? asset('storage/' . $article->image_path) : null,
+                    'category' => $article->category->name ?? 'News',
+                    'published_at' => $article->published_at,
+                    'read_time' => $article->read_time,
+                    'is_featured' => $article->is_featured,
+                ];
+            });
+
+
         return Inertia::render('Welcome', [
             'canLogin' => \Route::has('login'),
             'canRegister' => \Route::has('register'),
             'courses' => $courses,
+            'latestArticles' => $latestArticles,
+            'featuredArticles' => $featuredArticles,
         ]);
     }
 
@@ -144,7 +188,7 @@ class HomeController extends Controller
             'description' => 'Learn about the Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) Professionals body.',
         ]);
     }
-
+ 
     public function certificationsOverview(){
     
         return Inertia::render('Certifications/CertificationsOverview', [
@@ -161,7 +205,6 @@ class HomeController extends Controller
     }
 
     public function cgfcsSpecialist(){
-        \Log::info('CGFCS Specialist route accessed');
     
         return Inertia::render('Certifications/CGFCSSpecialist', [
             'title' => 'CGFCS Specialist',
@@ -264,9 +307,77 @@ class HomeController extends Controller
     }
 
     public function blog(){
+        $blogs = Blog::with('user')
+            ->where('status', 'published')
+            ->latest()
+            ->paginate(9)
+            ->through(function ($blog) {
+                return [
+                    'id' => $blog->id,
+                    'title' => $blog->title,
+                    'slug' => $blog->slug,
+                    'content' => $blog->content,
+                    'excerpt' => $blog->excerpt,
+                    'image' => $blog->image_url,
+                    'author' => $blog->user->name ?? 'IGRCFP',
+                    'reading_time' => $blog->reading_time,
+                    'created_at' => $blog->created_at?->toDateString(),
+                    'published_at' => $blog->created_at?->toDateString(),
+                ];
+            });
+
         return Inertia::render('Blog/Index', [
             'title' => 'Blog',
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+            'blogs' => $blogs,
+        ]);
+    }
+
+    public function blogShow(string $slug)
+    {
+        $blog = Blog::with('user')
+            ->where('status', 'published')
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $relatedBlogs = Blog::with('user')
+            ->where('status', 'published')
+            ->whereKeyNot($blog->id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($relatedBlog) {
+                return [
+                    'id' => $relatedBlog->id,
+                    'title' => $relatedBlog->title,
+                    'slug' => $relatedBlog->slug,
+                    'excerpt' => $relatedBlog->excerpt,
+                    'image' => $relatedBlog->image_url,
+                    'author' => $relatedBlog->user->name ?? 'IGRCFP',
+                    'reading_time' => $relatedBlog->reading_time,
+                    'published_at' => $relatedBlog->created_at?->toDateString(),
+                ];
+            });
+
+        return Inertia::render('Blog/Show', [
+            'title' => $blog->title,
+            'description' => $blog->meta_description ?: $blog->excerpt,
+            'blog' => [
+                'id' => $blog->id,
+                'title' => $blog->title,
+                'slug' => $blog->slug,
+                'content' => $blog->content,
+                'excerpt' => $blog->excerpt,
+                'image' => $blog->image_url,
+                'author' => $blog->user->name ?? 'IGRCFP',
+                'reading_time' => $blog->reading_time,
+                'meta_description' => $blog->meta_description,
+                'meta_keywords' => $blog->meta_keywords,
+                'published_at' => $blog->created_at?->toDateString(),
+                'updated_at' => $blog->updated_at?->toDateString(),
+            ],
+            'relatedBlogs' => $relatedBlogs,
+            'canonicalUrl' => route('blog.show', $blog->slug),
         ]);
     }
 
@@ -303,13 +414,50 @@ class HomeController extends Controller
     public function privacyPreferenceCenter(){
         return Inertia::render('PrivacyPreferenceCenter/Index');
     }
-
-
   
-    public function courses(Request $request)
+    public function showIgrcfpProgramme(Request $request, string $programme)
     {
+        $programmeConfig = [
+            'certificates' => [
+                'category' => 'IGRCFP Certificates',
+                'title' => 'IGRCFP Certificates',
+                'description' => 'Browse IGRCFP certificate courses and specialist programmes.',
+            ],
+            'diploma' => [
+                'category' => 'IGRCFP Diploma',
+                'title' => 'IGRCFP Diploma',
+                'description' => 'Browse courses in the IGRCFP Diploma programmes.',
+            ],
+            'advanced-diploma' => [
+                'category' => 'IGRCFP Advanced Diploma',
+                'title' => 'IGRCFP Advanced Diploma',
+                'description' => 'Browse courses in the IGRCFP Advanced Diploma programmes.',
+            ],
+            'certified-grc-financial-crime-specialist' => [
+                'category' => 'Certified GRC & Financial Crime Specialist',
+                'title' => 'Certified GRC & Financial Crime Specialist',
+                'description' => 'Browse courses for the Certified GRC & Financial Crime Specialist programmes.',
+            ],
+            'postgraduate-diploma' => [
+                'category' => 'Postgraduate Diploma',
+                'title' => 'Postgraduate Diploma',
+                'description' => 'Browse courses for the Postgraduate Diploma programmes.',
+            ],
+            'fellowship' => [
+                'category' => 'IGRCFP Fellowship',
+                'title' => 'IGRCFP Fellowship',
+                'description' => 'Browse courses in the IGRCFP Fellowship programmes.',
+            ],
+        ];
+
+        abort_unless(isset($programmeConfig[$programme]), 404);
+
+        $currentProgramme = $programmeConfig[$programme];
+
         $query = Course::published()
+            ->where('igrcfp_category', $currentProgramme['category'])
             ->withCount('modules');
+        \Log::info('query:', ['query' => $query]);
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
@@ -324,6 +472,11 @@ class HomeController extends Controller
         // Filter by level
         if ($request->has('level') && !empty($request->level)) {
             $query->where('level', $request->level);
+        }
+
+        // Filter by course category
+        if ($request->has('category') && !empty($request->category)) {
+            $query->where('category_id', $request->category);
         }
 
         // Filter by price type
@@ -394,12 +547,22 @@ class HomeController extends Controller
 
         // Get filter options for dropdowns
         $levels = Course::published()->select('level')->distinct()->pluck('level');
+        $categories = CourseCategory::where('is_active', true)
+            ->whereIn('id', Course::published()
+                ->where('igrcfp_category', $currentProgramme['category'])
+                ->whereNotNull('category_id')
+                ->select('category_id')
+                ->distinct()
+            )
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name']);
         
         // Get unique formats if they exist
         $formats = Course::published()->whereNotNull('format')->select('format')->distinct()->pluck('format');
 
         // Paginate results
-        $courses = $query->paginate(12)->withQueryString();
+        $courses = $query->paginate(20)->withQueryString();
 
         // Transform courses for the frontend
         $courses->getCollection()->transform(function ($course) {
@@ -434,9 +597,13 @@ class HomeController extends Controller
         });
  
         return Inertia::render('Courses/Index', [
+            'title' => $currentProgramme['title'],
+            'description' => $currentProgramme['description'],
+            'igrcfpCategory' => $currentProgramme['category'],
             'filters' => [
                 'search' => $request->search ?? '',
                 'level' => $request->level ?? '',
+                'category' => $request->category ?? '',
                 'price_type' => $request->price_type ?? '',
                 'featured' => $request->featured ?? false,
                 'popular' => $request->popular ?? false,
@@ -446,6 +613,7 @@ class HomeController extends Controller
             'courses' => $courses,
             'filterOptions' => [
                 'levels' => $levels,
+                'categories' => $categories,
                 'formats' => $formats,
                 'priceTypes' => [
                     ['value' => '', 'label' => 'All Prices'],
@@ -466,5 +634,32 @@ class HomeController extends Controller
         ]);
     }
 
+
+    public function qualificationsPack(){
+        return Inertia::render('QualificationsPack/Index');
+    }
+    
+    public function courseEquivalency(){
+        return Inertia::render('CourseEquivalency/Index');
+    }
+
+
+   public function showNews($slug)
+    {
+        $post = Article::where('slug', $slug)->firstOrFail();
+
+        $programmes = $post->meta_data['programmes'] ?? [];
+        
+        // Check if request wants form only (from article link)
+        $showContent = request()->get('show') === 'full';
+
+        return Inertia::render('News/FormShow', [
+            'post' => $post,
+            'programmes' => $programmes,
+            'showContent' => $showContent,
+            'title' => $post->meta_title ?? $post->title,
+            'description' => $post->meta_description ?? $post->excerpt,
+        ]);
+    }
    
 }

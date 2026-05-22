@@ -10,16 +10,64 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import Articles from "@/Pages/components/Articles";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
+import CourseCatalogue from "@/Pages/components/CourseCatalogue";
  
-  
+   
  
-export default function Welcome({ auth, courses }) {
+export default function Welcome({ auth, courses,  latestArticles = [], featuredArticles = [] }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
-   
+
+    // Course catalogue preview data - MOVED INSIDE THE COMPONENT
+    const courseCategories = [
+        {
+            name: "Core GRC & Governance",
+            icon: "🏛️",
+            count: 10,
+            color: "blue",
+            sampleCourse: "Certificate in Governance, Risk & Compliance (GRC)"
+        },
+        {
+            name: "Financial Crime & AML",
+            icon: "🔍",
+            count: 12,
+            color: "red",
+            sampleCourse: "Certificate in Anti-Money Laundering (AML & CFT)"
+        },
+        {
+            name: "Cybersecurity & Digital Risk",
+            icon: "🛡️",
+            count: 10,
+            color: "purple",
+            sampleCourse: "Certificate in Cybersecurity & Digital Risk"
+        },
+        {
+            name: "Data, Privacy & Technology",
+            icon: "🔐",
+            count: 8,
+            color: "green",
+            sampleCourse: "Certificate in Data Protection & Privacy (GDPR)"
+        },
+        {
+            name: "Audit, Control & Assurance",
+            icon: "📊",
+            count: 8,
+            color: "indigo",
+            sampleCourse: "Certificate in Internal Audit & Assurance"
+        },
+        {
+            name: "ESG, Ethics & Sustainability",
+            icon: "🌱",
+            count: 6,
+            color: "teal",
+            sampleCourse: "Certificate in ESG (Environmental, Social & Governance)"
+        }
+    ];
+
 
     return (
         <GuestLayout auth={auth}> 
@@ -29,6 +77,28 @@ export default function Welcome({ auth, courses }) {
             <div className="pt-0">
                 <SplitHeroSlider auth={auth} />
             </div>
+
+            {/* Scholarship Banner - Add this right after the hero */}
+            <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                            <span className="text-4xl">🎓</span>
+                            <div className="text-white">
+                                <h3 className="text-xl font-bold">Emerging Professionals Scholarship 2026</h3>
+                                <p className="text-yellow-100">25 slots available globally. Apply from 1st to June 30, 2026.</p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/scholarship/igrcfp-emerging-professionals-scholarship-programme-2026?show=full"
+                            className="bg-white text-yellow-700 px-8 py-3 rounded-lg font-bold hover:bg-yellow-50 transition whitespace-nowrap shadow-lg"
+                        >
+                            Apply Now →
+                        </Link>
+                    </div>
+                </div>
+            </section>
+ 
  
             <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
@@ -36,19 +106,17 @@ export default function Welcome({ auth, courses }) {
 
             
             <WhatWeOffer auth={auth} />
+
+            {/* Course Catalogue Preview Section */}
+            <CourseCatalogue courseCategories={courseCategories}/>
+
+            <Articles latestArticles = {latestArticles}  featuredArticles = {featuredArticles} />
+            
+            <Certification courses={courses} />
            
-
-            <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
-               <Certification courses={courses} />
-            </section>  
-
-            <section className="bg-white py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <GlobalEvents />
-            </section>
+            <GlobalEvents />
   
-            <section className="bg-gray py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <BecomeMember /> 
-            </section> 
+            <BecomeMember /> 
 
             <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <MembershipOptions />

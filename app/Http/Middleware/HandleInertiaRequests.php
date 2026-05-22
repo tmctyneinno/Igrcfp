@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use App\Models\Cart;
-use App\Models\MentorshipMessage;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -19,7 +18,6 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $cartCount = 0;
-        $notificationCount = 0;
         
         if ($request->user()) {
             $cart = Cart::where('user_id', $request->user()->id)
@@ -29,20 +27,6 @@ class HandleInertiaRequests extends Middleware
                 ->first();
             
             $cartCount = $cart ? $cart->items->count() : 0;
-
-            $userId = $request->user()->id;
-            $notificationCount = MentorshipMessage::query()
-                ->where('user_id', '!=', $userId)
-                ->whereNull('read_at')
-                ->where(function ($query) use ($userId) {
-                    $query->whereHas('mentorship', function ($mentorshipQuery) use ($userId) {
-                        $mentorshipQuery->where('mentee_id', $userId)
-                            ->orWhereHas('mentorProfile', function ($mentorQuery) use ($userId) {
-                                $mentorQuery->where('user_id', $userId);
-                            });
-                    });
-                })
-                ->count();
         }
 
         // Get flash data
@@ -70,7 +54,7 @@ class HandleInertiaRequests extends Middleware
                 ? $request->session()->get('errors')->getBag('default')->getMessages()
                 : (object) [],
             'cart_count' => $cartCount,
-            'notification_count' => $notificationCount,
+            'recaptchaSiteKey' => env('VITE_RECAPTCHA_SITE_KEY'),
         ]);
     }
 }

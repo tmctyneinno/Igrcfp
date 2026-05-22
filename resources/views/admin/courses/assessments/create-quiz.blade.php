@@ -11,7 +11,7 @@
                     <iconify-icon icon="solar:home-smile-angle-outline" class="icon text-lg"></iconify-icon>
                     Dashboard
                 </a>
-            </li>
+            </li> 
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
@@ -60,7 +60,7 @@
                                 <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" 
                                        value="{{ old('title') }}" placeholder="e.g., Module 1 Review Quiz" required>
                                 @error('title') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
+                            </div> 
 
                             <div class="col-md-6">
                                 <label class="form-label">Course <span class="text-danger">*</span></label>
@@ -143,8 +143,8 @@
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select">
-                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                             </select>
                         </div>
 

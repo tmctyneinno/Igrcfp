@@ -9,7 +9,7 @@ import {
   TagIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  EyeIcon,
+  EyeIcon, 
   ClockIcon
 } from '@heroicons/react/24/outline';
 
@@ -144,7 +144,9 @@ export default function News({
                       </div>
                       
                       <h3 className="text-2xl font-bold text-gray-900 mb-4 hover:text-blue-600 transition">
-                        <Link href={`/news/${article.slug}`}>
+                        <Link 
+                        href={`/news/${article.slug}/show`}
+                        >
                           {article.title}
                         </Link>
                       </h3>
@@ -167,7 +169,7 @@ export default function News({
                       )}
                       
                       <Link 
-                        href={`/news/${article.slug}`}
+                        href={`/news/${article.slug}/show`}
                         className="inline-flex items-center text-blue-600 font-medium hover:text-blue-800"
                       >
                         Read full analysis

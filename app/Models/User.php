@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\CustomResetPasswordNotification;
-use App\Models\Membership;
-use App\Models\MentorProfile;
-use App\Models\MentorApplication;
-use App\Models\Mentorship;
-use App\Models\MentorshipApplication;
  
 class User extends Authenticatable
 {
@@ -69,6 +64,9 @@ class User extends Authenticatable
         'tutor_agreement_accepted_at',
         'is_verified',
         'deleted_at',
+        'failed_login_attempts',
+        'locked_until',
+        'active_session_token',
     ]; 
 
     /**
@@ -81,8 +79,8 @@ class User extends Authenticatable
         'remember_token',
         'phone',
         'is_verified',
-        'otp_code', // Add this if you want to allow mass assignment
-        'otp_expires_at', // Add this if you want to allow mass assignment
+        'otp_code', 
+        'otp_expires_at', 
     ];
 
     /**
@@ -106,15 +104,49 @@ class User extends Authenticatable
         'phone_verified_at' => 'datetime',
         'otp_expires_at' => 'datetime',
         'is_verified' => 'boolean',
+        'failed_login_attempts' => 'integer',
+        'locked_until'          => 'datetime',
     ];
 
-    public function generateOTP()
+    public function generateSessionToken(): string
     {
-        $this->otp_code = rand(100000, 999999);
+        $token = \Illuminate\Support\Str::random(60);
+        $this->active_session_token = $token;
+        $this->save();
+        return $token;
+    }
+
+    public function generateOTP(): string
+    {
+        $otp = (string) rand(100000, 999999);
+        $this->otp_code       = $otp;
         $this->otp_expires_at = now()->addMinutes(10);
         $this->save();
-        
-        return $this->otp_code;
+        return $otp;
+    }
+
+    public function incrementFailedAttempts(): void
+    {
+        $this->failed_login_attempts = ($this->failed_login_attempts ?? 0) + 1;
+
+        // ✅ Lock exactly at 5
+        if ($this->failed_login_attempts >= 5) {
+            $this->locked_until = now()->addMinutes(30);
+        }
+
+        $this->save();
+    }
+
+    public function resetFailedAttempts(): void
+    {
+        $this->failed_login_attempts = 0;
+        $this->locked_until          = null;
+        $this->save();
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->locked_until && $this->locked_until->isFuture();
     }
 
     public function verifyOTP($code)
@@ -307,12 +339,58 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cart::class);
     }
-
+    
     public function cartCourses()
     {
         return $this->belongsToMany(Course::class, 'carts')
                     ->withPivot('price', 'discount_price', 'created_at')
                     ->withTimestamps();
+    }
+
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function activeMemberships()
+    {
+        return $this->memberships()->active();
+    }
+
+    public function activeMembership()
+    {
+        return $this->activeMemberships()->latest('approved_at')->first();
+    }
+
+    public function hasActiveMembership(): bool
+    {
+        return (bool) $this->activeMembership();
+    }
+
+    public function hasMentorMembership(): bool
+    {
+        $membership = $this->activeMembership();
+        return $membership && (int) $membership->membership_plan_id === 3;
+    }
+
+    public function mentorProfile()
+    {
+        return $this->hasOne(MentorProfile::class);
+    }
+
+    public function mentorApplications()
+    {
+        return $this->hasMany(MentorApplication::class);
+    }
+ 
+    public function mentorshipApplications()
+    {
+        return $this->hasMany(MentorshipApplication::class, 'mentee_id');
+    }
+
+    public function mentorshipsAsMentee()
+    {
+        return $this->hasMany(Mentorship::class, 'mentee_id');
     }
 
     /**
@@ -470,52 +548,6 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cart::class)->where('status', 'active');
     }
-
-    public function memberships()
-    {
-        return $this->hasMany(Membership::class);
-    }
-
-    public function activeMemberships()
-    {
-        return $this->memberships()->active();
-    }
-
-    public function activeMembership()
-    {
-        return $this->activeMemberships()->latest('approved_at')->first();
-    }
-
-    public function hasActiveMembership(): bool
-    {
-        return (bool) $this->activeMembership();
-    }
-
-    public function hasMentorMembership(): bool
-    {
-        $membership = $this->activeMembership();
-        return $membership && (int) $membership->membership_plan_id === 3;
-    }
-
-    public function mentorProfile()
-    {
-        return $this->hasOne(MentorProfile::class);
-    }
-
-    public function mentorApplications()
-    {
-        return $this->hasMany(MentorApplication::class);
-    }
-
-    public function mentorshipApplications()
-    {
-        return $this->hasMany(MentorshipApplication::class, 'mentee_id');
-    }
-
-    public function mentorshipsAsMentee()
-    {
-        return $this->hasMany(Mentorship::class, 'mentee_id');
-    }
     /**
  * Assessment relationships for User model
  */
@@ -563,8 +595,29 @@ public function getCompletedAssessmentsAttribute()
                 'scroll_progress',
                 'attempts',
                 'last_viewed_at',
-                'metadata'
+                 'metadata'
             ])
             ->withTimestamps();
     }
-}
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    // In User model, add this relationship:
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->orderBy('created_at', 'desc');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->hasMany(Notification::class)->whereNull('read_at')->orderBy('created_at', 'desc');
+    }
+
+    public function getUnreadNotificationsCountAttribute()
+    {
+        return $this->unreadNotifications()->count();
+    }
+} 

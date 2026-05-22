@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\AssessmentController;
+use App\Http\Controllers\Admin\ProjectAssessmentController;
 use Illuminate\Support\Facades\Route;
 
 // Course Management Routes (Protected - admin & super_admin)
@@ -24,7 +26,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:ad
     Route::post('/courses/{course}/materials/upload/', [CourseController::class, 'materialsUpload'])->name('courses.materials.upload');
     Route::post('/courses/bulk-action', [CourseController::class, 'bulkAction'])->name('courses.bulk-action');
     
-    // Edit Course
+    // Edit Course 
     Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])
         ->name('courses.edit'); 
     
@@ -68,11 +70,13 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
     Route::post('{module}/toggle-active', [ModuleController::class, 'toggleActive'])->name('toggle-active');
     Route::post('{module}/duplicate', [ModuleController::class, 'duplicate'])->name('duplicate');
     Route::post('reorder', [ModuleController::class, 'reorder'])->name('reorder');
+    Route::get('/', [ModuleController::class, 'index'])->name('index');
+
 }); 
    
 // Admin assessment routes
 
-
+ 
 Route::prefix('admin')->name('admin.')->group(function () {
     // Main assessments page
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
@@ -80,13 +84,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     // Separate create pages for each assessment type
     Route::get('/assessments/create/quiz', [AssessmentController::class, 'createQuiz'])->name('assessments.create.quiz');
-    Route::get('/assessments/create/module-assessment', [AssessmentController::class, 'createModuleAssessment'])->name('assessments.create.module');
+    Route::get('/assessments/create/project-assessment', [ProjectAssessmentController::class, 'index'])->name('assessments.create.project');
     Route::get('/assessments/create/final-exam', [AssessmentController::class, 'createFinalExam'])->name('assessments.create.final');
     Route::get('/assessments/create/diploma', [AssessmentController::class, 'createDiploma'])->name('assessments.create.diploma');
     
     // Store route (same for all types)
     Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
-    
+     
     // Other routes
     Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
@@ -101,3 +105,31 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // AJAX endpoint for getting modules by course
     Route::get('/get-modules/{courseId}', [AssessmentController::class, 'getModulesByCourse'])->name('assessments.get-modules');
 });
+
+// Project Assessment Routes
+Route::prefix('admin/projects')->name('admin.projects.')->group(function () {
+    Route::get('/', [ProjectAssessmentController::class, 'index'])->name('index');
+    Route::get('/create', [ProjectAssessmentController::class, 'create'])->name('create');
+    Route::post('/', [ProjectAssessmentController::class, 'store'])->name('store');
+    Route::get('/{assessment}', [ProjectAssessmentController::class, 'show'])->name('show');
+    Route::get('/{assessment}/edit', [ProjectAssessmentController::class, 'edit'])->name('edit');
+    Route::put('/{assessment}', [ProjectAssessmentController::class, 'update'])->name('update');
+    Route::delete('/{assessment}', [ProjectAssessmentController::class, 'destroy'])->name('destroy');
+    Route::get('/{assessment}/submissions', [ProjectAssessmentController::class, 'submissions'])->name('submissions');
+    Route::get('/get-modules/{courseId}', [ProjectAssessmentController::class, 'getModulesByCourse'])->name('get-modules');
+     Route::get('/submission/{submission}', [ProjectAssessmentController::class, 'viewSubmission'])->name('submission.view');
+    Route::post('/submission/{submission}/grade', [ProjectAssessmentController::class, 'gradeSubmission'])->name('submission.grade');
+});
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Certificate Management
+    Route::prefix('certificates')->name('certificates.')->group(function () {
+        Route::get('/', [AdminCertificateController::class, 'index'])->name('index');
+        Route::get('/{enrollment}', [AdminCertificateController::class, 'show'])->name('show');
+        Route::get('/{enrollment}/edit', [AdminCertificateController::class, 'edit'])->name('edit');
+        Route::post('/{enrollment}/generate', [AdminCertificateController::class, 'generate'])->name('generate');
+        Route::post('/{enrollment}/update-status', [AdminCertificateController::class, 'updateStatus'])->name('update-status');
+        Route::post('/bulk-generate', [AdminCertificateController::class, 'bulkGenerate'])->name('bulk-generate');
+    });
+
+});
+
