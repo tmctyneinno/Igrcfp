@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
@@ -120,7 +122,7 @@ class Course extends Model
      */
     public function instructors()
     {
-        return $this->belongsToMany(User::class, 'course_instructor', 'course_id', 'user_id');
+        return $this->belongsToMany(User::class, $this->resolveInstructorPivotTable(), 'course_id', 'user_id');
     }
 
     /**
@@ -141,9 +143,87 @@ class Course extends Model
         return $query->where('status', 'published');
     }
 
+    public function scopeVisibleForCatalog(Builder $query): Builder
+    {
+        return $query->whereIn('status', ['published', 'active']);
+    }
+
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    public function scopePopularFlag($query)
+    {
+        return $query->where('is_popular', true);
+    }
+
+    public function scopeFilterCategory(Builder $query, int|string|null $categoryId): Builder
+    {
+        if ($categoryId === null || $categoryId === '') {
+            return $query;
+        }
+
+        return $query->where('category_id', $categoryId);
+    }
+
+    public function scopeFilterLevel(Builder $query, ?string $level): Builder
+    {
+        return $level ? $query->where('level', $level) : $query;
+    }
+
+    public function scopeFilterFeatured(Builder $query, ?bool $isFeatured): Builder
+    {
+        return $isFeatured === null ? $query : $query->where('is_featured', $isFeatured);
+    }
+
+    public function scopeFilterPopular(Builder $query, ?bool $isPopular): Builder
+    {
+        return $isPopular === null ? $query : $query->where('is_popular', $isPopular);
+    }
+
+    public function scopeFilterInstructor(Builder $query, int|string|null $instructorId): Builder
+    {
+        if ($instructorId === null || $instructorId === '') {
+            return $query;
+        }
+
+        if (! self::hasInstructorPivotTable()) {
+            return $query;
+        }
+
+        return $query->whereHas('instructors', fn (Builder $builder) => $builder->where('users.id', $instructorId));
+    }
+
+    public function scopeFilterPriceType(Builder $query, ?string $priceType): Builder
+    {
+        if ($priceType === null || $priceType === '') {
+            return $query;
+        }
+
+        return match ($priceType) {
+            'free' => $query->where(function (Builder $builder): void {
+                $builder->whereNull('price')->orWhere('price', '<=', 0);
+            }),
+            'paid' => $query->where('price', '>', 0),
+            default => $query,
+        };
+    }
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        if ($search === null || trim($search) === '') {
+            return $query;
+        }
+
+        $search = trim($search);
+
+        return $query->where(function (Builder $builder) use ($search): void {
+            $builder->where('title', 'like', "%{$search}%")
+                ->orWhere('short_title', 'like', "%{$search}%")
+                ->orWhere('short_description', 'like', "%{$search}%")
+                ->orWhere('full_description', 'like', "%{$search}%");
+        });
     }
     
     public function scopeWithCode($query, $code)
@@ -209,6 +289,19 @@ class Course extends Model
         if ($this->price > 0 && $this->discount_price > 0) {
             return round((($this->price - $this->discount_price) / $this->price) * 100);
         }
+        return 0;
+    }
+
+    public function getEstimatedLearningTimeMinutesAttribute(): int
+    {
+        if (! empty($this->duration) && is_numeric($this->duration)) {
+            return (int) $this->duration;
+        }
+
+        if (! empty($this->total_hours) && is_numeric($this->total_hours)) {
+            return (int) $this->total_hours * 60;
+        }
+
         return 0;
     }
 
@@ -308,5 +401,23 @@ public function diplomaAssessment()
 {
     return $this->hasOne(Assessment::class)->where('assessment_level', 'diploma');
 }
+
+    public static function hasInstructorPivotTable(): bool
+    {
+        return Schema::hasTable('course_instructor') || Schema::hasTable('course_instructors');
+    }
+
+    private function resolveInstructorPivotTable(): string
+    {
+        if (Schema::hasTable('course_instructor')) {
+            return 'course_instructor';
+        }
+
+        if (Schema::hasTable('course_instructors')) {
+            return 'course_instructors';
+        }
+
+        return 'course_instructor';
+    }
    
 }

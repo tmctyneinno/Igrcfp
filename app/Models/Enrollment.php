@@ -13,6 +13,8 @@ class Enrollment extends Model
 
     protected $fillable = [
         'user_id',
+        'external_user_id',
+        'client',
         'course_id',
         'name',
         'email',
@@ -30,6 +32,8 @@ class Enrollment extends Model
         'final_grade',                  // ADD THIS
         'notes',
         'progress',
+        'progress_percentage',
+        'last_activity_at',
     ];
 
     protected $casts = [
@@ -39,12 +43,19 @@ class Enrollment extends Model
         'certificate_generated' => 'boolean',  // ADD THIS
         'certificate_generated_date' => 'datetime',  // ADD THIS
         'amount' => 'decimal:2',
+        'progress_percentage' => 'decimal:2',
+        'last_activity_at' => 'datetime',
     ];
 
     // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function externalUser()
+    {
+        return $this->belongsTo(ExternalUser::class, 'external_user_id', 'external_user_id');
     }
 
     public function course()

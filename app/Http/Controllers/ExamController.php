@@ -17,7 +17,7 @@ class ExamController extends Controller
      */
     public function showVerification(Enrollment $enrollment)
     {
-        $this->authorize('access', $enrollment);
+        $this->authorizeEnrollmentOwnership($enrollment);
 
         return Inertia::render('Exam/Verification', [
             'enrollment' => $enrollment->load('course')
@@ -29,7 +29,7 @@ class ExamController extends Controller
      */
     public function verifyIdentity(Request $request, Enrollment $enrollment)
     {
-        $this->authorize('access', $enrollment);
+        $this->authorizeEnrollmentOwnership($enrollment);
 
         $request->validate([
             'image' => 'required|string'
@@ -58,7 +58,7 @@ class ExamController extends Controller
      */
     public function start(Enrollment $enrollment, Exam $exam)
     {
-        $this->authorize('access', $enrollment);
+        $this->authorizeEnrollmentOwnership($enrollment);
 
         // Check if identity is verified
         if (!$enrollment->identity_verified) {
@@ -120,7 +120,7 @@ class ExamController extends Controller
      */
     public function continue(ExamAttempt $attempt)
     {
-        $this->authorize('access', $attempt->enrollment);
+        $this->authorizeEnrollmentOwnership($attempt->enrollment);
 
         if ($attempt->status !== 'in_progress') {
             return redirect()->route('dashboard.courses.show', $attempt->enrollment)
@@ -167,7 +167,7 @@ class ExamController extends Controller
     /**
      * Authorize that user owns this enrollment
      */
-    private function authorize(string $ability, $enrollment)
+    private function authorizeEnrollmentOwnership(Enrollment $enrollment): void
     {
         if ($enrollment->user_id !== auth()->id()) {
             abort(403, 'Unauthorized access');
