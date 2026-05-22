@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Services\ActivityLoggerService;
 use Illuminate\Support\Arr;
 use App\Models\CourseCategory;
 use DB;
@@ -134,6 +135,8 @@ class CourseController extends Controller
             }
 
             $course = Course::create($courseData);
+             // Log the activity
+            ActivityLoggerService::created($course, 'courses');
 
             if ($request->filled('bulk_modules')) {
                 $this->processBulkModules($course, $request->bulk_modules);
@@ -152,13 +155,6 @@ class CourseController extends Controller
         }
     }
 
-    /**
-     * Centralised validation rules for store and update.
-     *
-     * FIX: removed the `lte:price` rule on discount_price — that rule causes a
-     * validation failure when discount_price == price (both 100). We handle
-     * the business-logic check manually after validation instead.
-     */
     private function validateRequest(Request $request, ?Course $course = null): array
     {
         $rules = [
@@ -240,16 +236,6 @@ class CourseController extends Controller
         return view('admin.courses.edit', compact('course', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * Key fixes applied:
-     *  1. Checkbox normalisation before validation (unchecked = absent from request).
-     *  2. bulk_modules excluded from $courseData going into Course::update().
-     *  3. HTML table parser added so CKEditor-formatted module tables work.
-     *  4. Full exception message surfaced instead of generic error.
-     *  5. Redirect uses $course->fresh()->slug in case the slug changed.
-     */
     public function update(Request $request, $slug)
     {
         $course = is_numeric($slug)
@@ -299,6 +285,10 @@ class CourseController extends Controller
             }
 
             $course->update($courseData);
+            // Log with changes
+            $changes = array_diff_assoc($course->getChanges(), $originalData);
+            ActivityLoggerService::updated($course, $changes, 'courses');
+        
 
             // Safety net: restore if somehow soft-deleted during update
             if ($course->trashed()) {
@@ -353,6 +343,7 @@ class CourseController extends Controller
             }
 
             $course->delete();
+            ActivityLoggerService::deleted($course, 'courses');
 
             return redirect()->route('admin.courses.index')
                 ->with('success', 'Course deleted successfully!');

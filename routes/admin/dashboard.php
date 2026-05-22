@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ScholarshipController;
-
+use App\Http\Controllers\Admin\ActivityLogController;
 use Illuminate\Support\Facades\Route; 
 
 // Admin Dashboard Routes (Protected)
@@ -96,6 +96,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Reports Routes
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
+    });
+    // Activity Logs - FIXED
+    Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
+        Route::get('/', [ActivityLogController::class, 'index'])->name('index');
+        Route::get('/export', [ActivityLogController::class, 'export'])->name('export');
+        Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 
     // Lesson routes (nested under modules)
