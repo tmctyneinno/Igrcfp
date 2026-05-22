@@ -269,13 +269,17 @@
                                         </a>
                                         @if(!$enrollment->certificate_generated)
                                             <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
-                                               class="btn btn-outline-success" title="Generate Certificate" data-bs-toggle="tooltip">
-                                                <i class="fas fa-certificate"></i>
+                                               class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
+                                           
+                                               title="Generate Certificate" data-bs-toggle="tooltip">
+                                                <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                             </a>
                                         @else
                                             <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
-                                               class="btn btn-outline-info" title="Edit Certificate" data-bs-toggle="tooltip">
-                                                <i class="fas fa-edit"></i>
+                                                class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
+                                           
+                                                title="Edit Certificate" data-bs-toggle="tooltip">
+                                                <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
                                             </a>
                                         @endif
                                     </div>
