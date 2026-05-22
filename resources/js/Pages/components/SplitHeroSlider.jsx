@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from '@inertiajs/react';
-
+import img1 from '../../assets/slider1.png';
+import img2 from '../../assets/slider2.png';
+import img3 from '../../assets/slider3.png';
+ 
 export default function SplitHeroSlider({ auth }) {
     const [activeSlide, setActiveSlide] = useState(0);
     const slideInterval = useRef(null);
-
+ 
     const slides = [ 
         {
             id: 1,
             title: "Empower Professionals, Strengthening Governance, Preventing Financial Crime",
             highlighted: "",
             description: "The Institute of GRC & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to advancing excellence in governance, risk management, compliance, and financial crime prevention.",
-            image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: img1,
             ctaPrimary: "Join the Institute",
             ctaSecondary: "Browse Courses",
             secondaryRoute: route('igrcfp.certificates.index')
@@ -20,7 +23,7 @@ export default function SplitHeroSlider({ auth }) {
             id: 2,
             title: "Master",
             description: "Get certified in Governance, Risk & Compliance with industry-recognized qualifications from leading professionals.",
-            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: img2,
             ctaPrimary: "Explore Courses",
             ctaSecondary: "View Certifications",
             secondaryRoute: route('igrcfp.certificates.index')
@@ -29,7 +32,7 @@ export default function SplitHeroSlider({ auth }) {
             id: 3,
             title: "Advance Your Career in",
             description: "Specialize in AML, KYC, and fraud detection with practical training from real-world scenarios.",
-            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: img3,
             ctaPrimary: "Learn More",
             ctaSecondary: "Join Now",
             secondaryRoute: route('igrcfp.certificates.index')
@@ -39,7 +42,7 @@ export default function SplitHeroSlider({ auth }) {
             title: "Become an Expert in",
             highlighted: "Cybersecurity & Data Protection",
             description: "Protect financial institutions from cyber threats with cutting-edge security training and certifications.",
-            image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
             ctaPrimary: "Start Training",
             ctaSecondary: "Course Details",
             secondaryRoute: route('igrcfp.certificates.index')
