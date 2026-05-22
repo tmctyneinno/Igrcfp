@@ -111,7 +111,7 @@ Route::middleware(['auth', 'verified', 'validate.session'])->group(function () {
     Route::get('dashboard/badge/{enrollment}', [CertificateController::class, 'badge'])->name('dashboard.certificates.badge');
     Route::get('dashboard/verify/{id}', [CertificateController::class, 'verify'])->name('dashboard.certificate.verify');
     Route::get('dashboard/registry', [CertificateController::class, 'registry'])->name('dashboard.certificate.registry'); 
-
+ 
     // Exam Routes
     // Route::middleware(['auth'])->prefix('exam')->name('exam.')->group(function () {
         Route::get('/verify/{enrollment}', [ExamController::class, 'showVerification'])->name('verify');
