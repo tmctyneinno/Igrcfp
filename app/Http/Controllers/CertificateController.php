@@ -52,7 +52,7 @@ class CertificateController extends Controller
             'certificate_number' => $enrollment->certificate_number,
             'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
             'verification_url' => route('dashboard.certificate.verify', $enrollment->certificate_number)
-        ];
+        ]; 
 
         $pdf = PDF::loadView('certificates.template', $data);
         
@@ -161,28 +161,68 @@ class CertificateController extends Controller
     /**
      * Verify certificate by number
      */
-    public function verify($certificateNumber)
+     public function verify($certificateNumber)
     {
-        $certificate = Certificate::where('certificate_number', $certificateNumber)
-            ->with(['enrollment.course', 'enrollment.user'])
+        // Find enrollment by certificate number
+        $enrollment = Enrollment::where('certificate_number', $certificateNumber)
+            ->where('certificate_generated', true)
+            ->with(['user', 'course'])
             ->first();
 
-        if (!$certificate) {
+        if (!$enrollment) {
+            // Log failed verification attempt
+            if (class_exists(ActivityLoggerService::class)) {
+                ActivityLoggerService::log(
+                    ActivityLog::EVENT_UPDATED,
+                    'certificates',
+                    'Certificate verification failed',
+                    "Invalid certificate number attempted: {$certificateNumber}",
+                    null,
+                    [
+                        'certificate_number' => $certificateNumber,
+                        'ip' => request()->ip(),
+                        'reason' => 'not_found'
+                    ],
+                    ActivityLog::SEVERITY_WARNING
+                );
+            }
+
             return Inertia::render('Certificate/Verify', [
                 'valid' => false,
-                'message' => 'Certificate not found'
+                'message' => 'Certificate not found. Please check the certificate number and try again.'
             ]);
         }
 
+        // Check if certificate is active
+        $isValid = $enrollment->certificate_status === Enrollment::CERT_STATUS_ACTIVE;
+        
+        // Log successful verification
+        if (class_exists(ActivityLoggerService::class)) {
+            ActivityLoggerService::log(
+                ActivityLog::EVENT_UPDATED,
+                'certificates',
+                'Certificate verified',
+                "Certificate {$certificateNumber} verified successfully",
+                $enrollment,
+                [
+                    'certificate_number' => $certificateNumber,
+                    'ip' => request()->ip(),
+                    'status' => $enrollment->certificate_status
+                ],
+                ActivityLog::SEVERITY_INFO
+            );
+        }
+
         return Inertia::render('Certificate/Verify', [
-            'valid' => true,
+            'valid' => $isValid,
             'certificate' => [
-                'number' => $certificate->certificate_number,
-                'issue_date' => $certificate->created_at->format('F d, Y'),
-                'recipient' => $certificate->enrollment->user->name,
-                'course' => $certificate->enrollment->course->title,
-                'grade' => $certificate->grade,
-                'status' => $certificate->status
+                'number' => $enrollment->certificate_number,
+                'issue_date' => $enrollment->certificate_generated_date?->format('F d, Y'),
+                'recipient' => $enrollment->user->name,
+                'course' => $enrollment->course->title,
+                'grade' => $enrollment->final_grade ?? $this->calculateGrade($enrollment),
+                'status' => $enrollment->certificate_status_display,
+                'is_active' => $isValid,
             ]
         ]);
     }
@@ -241,22 +281,39 @@ class CertificateController extends Controller
     /**
      * Calculate grade based on exam results
      */
-    private function calculateGrade(Enrollment $enrollment)
-    {
-        $exams = $enrollment->examResults;
-        
-        if ($exams->isEmpty()) {
-            return 'Pass';
-        }
+    private function calculateGrade(Enrollment $enrollment): string
+{
+    // Check if Enrollment model has the calculateFinalGrade method
+    if (method_exists($enrollment, 'calculateFinalGrade')) {
+        return $enrollment->calculateFinalGrade();
+    }
 
-        $average = $exams->avg('score');
-        
-        if ($average >= 90) return 'Distinction';
-        if ($average >= 75) return 'Merit';
-        if ($average >= 60) return 'Pass';
-        
+    // Fallback calculation using AssessmentSubmission
+    $submissions = \App\Models\AssessmentSubmission::where('enrollment_id', $enrollment->id)
+        ->where('status', 'graded')
+        ->get();
+
+    if ($submissions->isEmpty()) {
         return 'Pass';
     }
+
+    $averagePercentage = $submissions->avg('percentage');
+    
+    if ($averagePercentage >= 90) {
+        return 'Distinction';
+    }
+    if ($averagePercentage >= 75) {
+        return 'Merit';
+    }
+    if ($averagePercentage >= 60) {
+        return 'Pass';
+    }
+    if ($averagePercentage >= 40) {
+        return 'Referral';
+    }
+    
+    return 'Fail';
+}
 
     /**
      * Send notification when certificate is generated

@@ -113,7 +113,7 @@ Route::get('/partnerships', [HomeController::class, 'partnerships'])
 Route::get('/scholarship/{slug}', [HomeController::class, 'showNews'])->name('scholarship.show');
 Route::post('/scholarship/apply', [ScholarshipController::class, 'store'])->name('scholarship.apply');
  
-Route::prefix('verify-certificate')->name('certificate.verify.')->group(function () {
+Route::prefix('verify-certificate')->name('certificate.verify.public.')->group(function () {
     Route::get('/', [PublicCertificateController::class, 'index'])->name('index');
     Route::post('/check', [PublicCertificateController::class, 'verify'])->name('check');
     Route::get('/{number}', [PublicCertificateController::class, 'verifyByNumber'])->name('show');

@@ -52,7 +52,7 @@ class CertificateGeneratedMail extends Mailable
                 'completionDate' => $this->enrollment->certificate_generated_date->format('F d, Y'),
                 'downloadUrl' => route('dashboard.certificates.download', $this->enrollment->id),
                 'verifyUrl' => route('dashboard.certificate.verify', $this->enrollment->certificate_number),
-            ],
+            ], 
         );
     }
 
