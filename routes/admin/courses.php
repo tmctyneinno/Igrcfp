@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\ModuleController;
@@ -119,3 +120,16 @@ Route::prefix('admin/projects')->name('admin.projects.')->group(function () {
      Route::get('/submission/{submission}', [ProjectAssessmentController::class, 'viewSubmission'])->name('submission.view');
     Route::post('/submission/{submission}/grade', [ProjectAssessmentController::class, 'gradeSubmission'])->name('submission.grade');
 });
+Route::prefix('admin')->name('admin.')->group(function () {
+    // Certificate Management
+    Route::prefix('certificates')->name('certificates.')->group(function () {
+        Route::get('/', [AdminCertificateController::class, 'index'])->name('index');
+        Route::get('/{enrollment}', [AdminCertificateController::class, 'show'])->name('show');
+        Route::get('/{enrollment}/edit', [AdminCertificateController::class, 'edit'])->name('edit');
+        Route::post('/{enrollment}/generate', [AdminCertificateController::class, 'generate'])->name('generate');
+        Route::post('/{enrollment}/update-status', [AdminCertificateController::class, 'updateStatus'])->name('update-status');
+        Route::post('/bulk-generate', [AdminCertificateController::class, 'bulkGenerate'])->name('bulk-generate');
+    });
+
+});
+
