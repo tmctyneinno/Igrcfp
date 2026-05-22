@@ -150,13 +150,13 @@ acbm
 
 
 <!--  Igrcfp % npm run serve -->
-User Profile
+<!-- User Profile -->
 
-Memebership Plan 
+<!-- Memebership Plan  -->
 <!-- Login failed attempt -->
 <!-- Seesion if user can not user the same account for a different broswer -->
 Certification Verification link 
-Activity Audit log for User and Admin
+<!-- Activity Audit log for User and Admin -->
 
 
 
