@@ -170,10 +170,19 @@
                                     <th class="text-muted">Verification URL</th>
                                     <td>
                                         @if($enrollment->certificate_number)
-                                            <a href="{{ $enrollment->verification_url }}" target="_blank" class="small">
-                                                {{ $enrollment->verification_url }}
-                                                <i class="fas fa-external-link-alt ms-1"></i>
-                                            </a>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <code class="small">{{ $enrollment->verification_url }}</code>
+                                                <button class="btn btn-sm btn-outline-secondary" 
+                                                        onclick="copyToClipboard('{{ $enrollment->verification_url }}')"
+                                                        title="Copy URL" data-bs-toggle="tooltip">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                                <a href="{{ $enrollment->verification_url }}" target="_blank" 
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Open in new tab" data-bs-toggle="tooltip">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                </a>
+                                            </div>
                                         @else
                                             <span class="text-muted">N/A</span>
                                         @endif
@@ -433,7 +442,7 @@
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Certificate Status</label>
                             <select name="status" class="form-select form-select-sm" required id="statusSelect">
-                                @foreach(Enrollment::getCertificateStatuses() as $value => $label)
+                                @foreach(\App\Models\Enrollment::getCertificateStatuses() as $value => $label)
                                     <option value="{{ $value }}" {{ ($enrollment->certificate_status ?? 'pending') === $value ? 'selected' : '' }}>
                                         {{ $label }}
                                     </option>
@@ -446,13 +455,13 @@
                                 Revocation Reason <span class="text-danger">*</span>
                             </label>
                             <textarea name="revocation_reason" class="form-control form-control-sm" rows="3" 
-                                      placeholder="Please provide a detailed reason for revocation...">{{ $enrollment->certificate_revocation_reason }}</textarea>
+                                    placeholder="Please provide a detailed reason for revocation...">{{ $enrollment->certificate_revocation_reason }}</textarea>
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Admin Notes</label>
                             <textarea name="admin_notes" class="form-control form-control-sm" rows="2" 
-                                      placeholder="Optional notes..."></textarea>
+                                    placeholder="Optional notes..."></textarea>
                         </div>
                         
                         <button type="submit" class="btn btn-primary btn-sm w-100">
@@ -475,21 +484,32 @@
                             <a href="{{ route('admin.certificates.edit', $enrollment) }}" class="btn btn-success btn-sm">
                                 <i class="fas fa-certificate"></i> Generate Certificate
                             </a>
+                        @else
+                            <a href="{{ route('admin.certificates.edit', $enrollment) }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i> Edit Certificate Details
+                            </a>
                         @endif
                         
                         @if($enrollment->isCertificateRevoked())
                             <form action="{{ route('admin.certificates.update-status', $enrollment) }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="status" value="active">
-                                <input type="hidden" name="admin_notes" value="Certificate reactivated">
+                                <input type="hidden" name="admin_notes" value="Certificate reactivated by admin">
                                 <button type="submit" class="btn btn-outline-success btn-sm w-100">
                                     <i class="fas fa-undo"></i> Reactivate Certificate
                                 </button>
                             </form>
                         @endif
                         
-                        <a href="{{ route('admin.enrollments.show', $enrollment) }}" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-user-graduate"></i> View Enrollment
+                        @if($enrollment->certificate_generated && $enrollment->isCertificateActive())
+                            <button class="btn btn-outline-info btn-sm" 
+                                    onclick="copyToClipboard('{{ $enrollment->verification_url }}')">
+                                <i class="fas fa-copy"></i> Copy Verification Link
+                            </button>
+                        @endif
+                        
+                        <a href="{{ route('admin.enrollments.show', $enrollment) }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-user-graduate"></i> View Enrollment Details
                         </a>
                         
                         <a href="{{ route('admin.users.show', $enrollment->user_id) }}" class="btn btn-outline-info btn-sm">
@@ -498,6 +518,10 @@
                         
                         <a href="{{ route('admin.courses.show', $enrollment->course_id) }}" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-book"></i> View Course
+                        </a>
+
+                        <a href="{{ route('admin.certificates.index') }}" class="btn btn-outline-dark btn-sm">
+                            <i class="fas fa-arrow-left"></i> Back to Certificates
                         </a>
                     </div>
                 </div>
@@ -556,10 +580,20 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         const statusSelect = document.getElementById('statusSelect');
-        if (statusSelect.value === 'revoked') {
+        if (statusSelect && statusSelect.value === 'revoked') {
             document.getElementById('revocationReasonDiv').style.display = 'block';
         }
     });
+
+    // Copy to clipboard function
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // Show success toast or alert
+            alert('Verification URL copied to clipboard!');
+        }).catch(function(err) {
+            console.error('Could not copy text: ', err);
+        });
+    }
 </script>
 @endpush
 @endsection

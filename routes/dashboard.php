@@ -255,7 +255,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ ADD THIS POST ROUTE
     Route::post('/courses/{course:slug}/project/{assessment}/submit', [QuizProjectAssessmentController::class, 'submitProject'])
         ->name('quiz.project.submit');
-
+ 
     Route::get('/certificate/verify/{certificateNumber}', [CertificateController::class, 'verify'])
         ->name('certificate.verify');
 
