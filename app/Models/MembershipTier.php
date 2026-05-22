@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class MembershipTier extends Model
 {
     use HasFactory;
-
+ 
     protected $fillable = [
         'name',
         'slug',
