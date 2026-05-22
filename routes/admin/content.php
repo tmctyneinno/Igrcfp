@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ContentManagementController;
+
 use Illuminate\Support\Facades\Route;
 
 // Content Management Routes (Protected - all admin roles)
@@ -83,4 +84,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:mo
     // Content Bulk Actions
     Route::post('/content/bulk-action', [ContentManagementController::class, 'bulkAction'])
         ->name('content.bulk-action');
+
+    
 });

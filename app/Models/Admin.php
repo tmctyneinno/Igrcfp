@@ -11,7 +11,7 @@ class Admin extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $guard = 'admin';
-
+ 
     protected $fillable = [
         'name',
         'email',
@@ -32,6 +32,7 @@ class Admin extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
+        'last_login_at' => 'datetime', 
     ];
 
     // Role constants

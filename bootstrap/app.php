@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'active.membership' => \App\Http\Middleware\EnsureActiveMembership::class,
             'validate.session' => \App\Http\Middleware\ValidateSessionToken::class,
             'mentor.membership' => \App\Http\Middleware\EnsureMentorMembership::class,
-        ]);
+        ]); 
          
         // Admin middleware group
         $middleware->group('admin', [

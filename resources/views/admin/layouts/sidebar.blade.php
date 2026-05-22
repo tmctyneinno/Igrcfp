@@ -158,6 +158,16 @@
                 </li>
             @endif
 
+            {{-- Add to your admin sidebar/navigation --}}
+            @if(auth()->guard('admin')->user()->isAdmin())
+                <li class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.activity-logs.index') }}">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+            @endif
+
             <!-- Memberships & Mentors -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
@@ -253,6 +263,7 @@
                     @endif
                 </ul>
             </li>
+            
 
             <!-- Events Management - All admins -->
             <li class="dropdown">
