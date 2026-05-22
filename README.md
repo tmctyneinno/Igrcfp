@@ -155,10 +155,12 @@ acbm
 <!-- Memebership Plan  -->
 <!-- Login failed attempt -->
 <!-- Seesion if user can not user the same account for a different broswer -->
-Certification Verification link 
+<!-- Certification Verification link  -->
 <!-- Activity Audit log for User and Admin -->
 
+ 
 
+2500 words 
+Footer course (MNot Found)
 
-
-
+Policy content

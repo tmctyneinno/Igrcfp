@@ -12,7 +12,7 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
     const { data, setData, post: submitForm, processing, errors, reset } = useForm({
         full_name: '',
         nationality: '',
-        country_of_residence: '',
+        country_of_residence: '', 
         email: '',
         phone_number: '',
         academic_background: '',
@@ -416,7 +416,7 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
                                     Personal Statement <span className="text-red-500">*</span>
                                 </h3>
                                 <p className="text-sm text-gray-600 mb-3">
-                                    Please provide a short statement (maximum 500 words) explaining:
+                                    Please provide a short statement (maximum 2500 words) explaining:
                                 </p>
                                 <ul className="list-disc list-inside text-sm text-gray-600 mb-4 space-y-1">
                                     <li>Why you are applying</li>
@@ -432,8 +432,8 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
                                     required
                                 />
                                 <div className="flex justify-between text-sm mt-1">
-                                    <span className={data.personal_statement.length < 100 ? 'text-red-500' : 'text-gray-400'}>
-                                        Min 100 characters
+                                    <span className={data.personal_statement.length < 2500 ? 'text-red-500' : 'text-gray-400'}>
+                                        Min 2500 characters
                                     </span>
                                     <span className="text-gray-400">
                                         {data.personal_statement.length} characters
