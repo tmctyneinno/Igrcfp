@@ -39,35 +39,35 @@ class AuthenticatedSessionController extends Controller
 
     public function login(LoginRequest $request): RedirectResponse
     {
-        // // 1. Validate reCAPTCHA
-        // try {
-        //     $request->validate([
-        //         'g-recaptcha-response' => 'required|captcha'
-        //     ], [
-        //         'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
-        //         'g-recaptcha-response.captcha'  => 'Security verification failed. Please try again.'
-        //     ]);
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     \Log::warning('Login failed reCAPTCHA', ['ip' => $request->ip()]);
+        // 1. Validate reCAPTCHA
+        try {
+            $request->validate([
+                'g-recaptcha-response' => 'required|captcha'
+            ], [
+                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
+                'g-recaptcha-response.captcha'  => 'Security verification failed. Please try again.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::warning('Login failed reCAPTCHA', ['ip' => $request->ip()]);
             
-        //     // Log reCAPTCHA failure
-        //     ActivityLoggerService::log(
-        //         \App\Models\ActivityLog::EVENT_LOGIN_FAILED,
-        //         'authentication',
-        //         'reCAPTCHA verification failed',
-        //         'reCAPTCHA verification failed for email: ' . ($request->email ?? 'not provided'),
-        //         null,
-        //         [
-        //             'ip' => $request->ip(),
-        //             'reason' => 'recaptcha_failed'
-        //         ],
-        //         \App\Models\ActivityLog::SEVERITY_WARNING
-        //     );
+            // Log reCAPTCHA failure
+            ActivityLoggerService::log(
+                \App\Models\ActivityLog::EVENT_LOGIN_FAILED,
+                'authentication',
+                'reCAPTCHA verification failed',
+                'reCAPTCHA verification failed for email: ' . ($request->email ?? 'not provided'),
+                null,
+                [
+                    'ip' => $request->ip(),
+                    'reason' => 'recaptcha_failed'
+                ],
+                \App\Models\ActivityLog::SEVERITY_WARNING
+            );
             
-        //     return redirect()->back()
-        //         ->withErrors($e->errors())
-        //         ->withInput($request->except('g-recaptcha-response'));
-        // }
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput($request->except('g-recaptcha-response'));
+        }
 
         // 2. Find user and check if account is locked BEFORE authenticating
         $user = User::where('email', $request->email)->first();
