@@ -162,8 +162,11 @@
             @if(auth()->guard('admin')->user()->isAdmin())
                 <li class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.activity-logs.index') }}">
-                        <i class="fas fa-history"></i>
+                        <iconify-icon icon="solar:history-bold-duotone" class="icon text-xl"></iconify-icon>
                         <span>Activity Logs</span>
+                        @if($unreadAlerts ?? 0 > 0)
+                            <span class="badge bg-danger ms-auto">{{ $unreadAlerts }}</span>
+                        @endif
                     </a>
                 </li>
             @endif
