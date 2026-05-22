@@ -7,6 +7,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgrammesController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\PublicCertificateController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -111,3 +112,9 @@ Route::get('/partnerships', [HomeController::class, 'partnerships'])
     ->name('partnerships.index');
 Route::get('/scholarship/{slug}', [HomeController::class, 'showNews'])->name('scholarship.show');
 Route::post('/scholarship/apply', [ScholarshipController::class, 'store'])->name('scholarship.apply');
+
+Route::prefix('verify-certificate')->name('certificate.verify.public.')->group(function () {
+    Route::get('/', [PublicCertificateController::class, 'index'])->name('index');
+    Route::post('/check', [PublicCertificateController::class, 'verify'])->name('check');
+    Route::get('/{number}', [PublicCertificateController::class, 'verifyByNumber'])->name('show');
+});
