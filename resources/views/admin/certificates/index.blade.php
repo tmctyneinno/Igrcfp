@@ -262,8 +262,10 @@
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ route('admin.certificates.show', $enrollment) }}" 
-                                           class="btn btn-outline-primary" title="View Details" data-bs-toggle="tooltip">
-                                            <i class="fas fa-eye"></i>
+                                            class="bg-info-focus bg-hover-info-200 text-info-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none" 
+                                            title="View Certificate"
+                                           data-bs-toggle="tooltip">
+                                            <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
                                         @if(!$enrollment->certificate_generated)
                                             <a href="{{ route('admin.certificates.edit', $enrollment) }}" 
