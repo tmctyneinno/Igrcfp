@@ -111,7 +111,10 @@ class CertificateController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.certificates.show', compact('enrollment', 'verificationHistory'));
+        // Get available certificate statuses
+        $certificateStatuses = Enrollment::getCertificateStatuses();
+
+        return view('admin.certificates.show', compact('enrollment', 'verificationHistory', 'certificateStatuses'));
     }
 
     /**
