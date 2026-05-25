@@ -151,7 +151,7 @@ class OTPVerificationController extends Controller
         // Generate new OTP
         $otp = $user->generateOTP();
         
-        // Send OTP via email
+        // Send OTP via email 
         try {
             Mail::to($user->email)->send(new OTPMail($otp));
             

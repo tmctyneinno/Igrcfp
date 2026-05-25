@@ -48,7 +48,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
   const formatPrice = (price) => {
     const numPrice = parseFloatSafe(price);
-    return numPrice === 0 ? 'Free' : `$${numPrice.toFixed(2)}`;
+    return numPrice === 0 ? 'Free' : `£${numPrice.toFixed(2)}`;
   };
 
   // Parse prices safely

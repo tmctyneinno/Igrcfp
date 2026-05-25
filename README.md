@@ -134,7 +134,7 @@ Morgans888
 £
 Dimension:1536 × 1024
 
-enquired@igrcfp.org
+enquiries@igrcfp.org
 }u_^naWj}]Ti
 
 training@igrcfp.org
