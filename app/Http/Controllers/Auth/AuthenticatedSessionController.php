@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use App\Mail\AccountLockedMail;
+use App\Services\BrevoMailService;
 use Inertia\Inertia;
 use Inertia\Response;
 
