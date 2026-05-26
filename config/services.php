@@ -43,5 +43,8 @@ return [
         'token' => env('TWILIO_TOKEN'),
         'from'  => env('TWILIO_FROM'),
     ],
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
 
 ];

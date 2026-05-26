@@ -164,3 +164,14 @@ acbm
 Footer course (MNot Found)
 
 Policy content
+
+
+use App\Mail\OTPMail;
+use Illuminate\Support\Facades\Mail;
+
+Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));
+
+use App\Services\BrevoMailService;
+
+$mailer = new BrevoMailService();
+$mailer->sendOTP('eshanokpe@gmail.com', '123456');

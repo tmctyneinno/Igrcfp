@@ -203,7 +203,9 @@ class AuthenticatedSessionController extends Controller
         $otp = $user->generateOTP();
 
         try {
-            Mail::to($user->email)->send(new OTPMail($otp));
+            // Mail::to($user->email)->send(new OTPMail($otp));
+            $brevoMail = new BrevoMailService();
+            $brevoMail->sendOTP($user->email, $otp);
             \Log::info('OTP email sent successfully', ['user_id' => $user->id]);
         } catch (\Exception $e) {
             \Log::error('Failed to send OTP: ' . $e->getMessage(), [

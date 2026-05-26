@@ -17,9 +17,11 @@ class OTPMail extends Mailable
         $this->otp = $otp;
     }
 
+
     public function build()
     {
-        return $this->subject('Your Login Verification Code')
+        return $this->from('onboarding@resend.dev', 'IGRCFP')
+                    ->subject('Your Login Verification Code')
                     ->view('emails.otp');
     }
 }

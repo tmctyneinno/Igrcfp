@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\OTPMail;
 use App\Models\User;
+use App\Services\BrevoMailService;  
 use App\Services\ActivityLoggerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -153,7 +154,9 @@ class OTPVerificationController extends Controller
         
         // Send OTP via email 
         try {
-            Mail::to($user->email)->send(new OTPMail($otp));
+            $brevoMail = new BrevoMailService();
+            $brevoMail->sendOTP($user->email, $otp);
+            // Mail::to($user->email)->send(new OTPMail($otp));
             
             // Log OTP resend
             ActivityLoggerService::log(
