@@ -199,7 +199,7 @@ class AuthenticatedSessionController extends Controller
             ],
             \App\Models\ActivityLog::SEVERITY_INFO
         );
-
+ 
         // 5. Generate OTP and send email
         $otp = $user->generateOTP();
 
