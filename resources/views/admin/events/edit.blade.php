@@ -68,11 +68,11 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
+ 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                <textarea name="description" class="form-control @error('description') is-invalid @enderror" 
-                                          rows="8" placeholder="Detailed description of the event..." required>{{ old('description', $event->description) }}</textarea>
+                                <textarea name="description" class="form-control rich-editor @error('description') is-invalid @enderror"
+                                          rows="8" placeholder="Detailed description of the event...">{{ old('description', $event->description) }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -358,6 +358,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const noImagePlaceholder = document.getElementById('noImagePlaceholder');
     const currentImage = document.getElementById('currentImage');
     const removeImageCheckbox = document.getElementById('removeImage');
+    const ckEditorInstances = new Map();
+
+    function initializeCKEditors() {
+        if (typeof ClassicEditor === 'undefined') {
+            console.warn('CKEditor not loaded yet, retrying...');
+            setTimeout(initializeCKEditors, 300);
+            return;
+        }
+
+        document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])').forEach(function(textarea) {
+            ClassicEditor.create(textarea, {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'alignment', '|',
+                        'link', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                height: '300px'
+            })
+            .then(function(editor) {
+                textarea.setAttribute('data-ck-initialized', 'true');
+                ckEditorInstances.set(textarea.name, editor);
+            })
+            .catch(function(error) {
+                console.error('CKEditor error for', textarea.name, error);
+                textarea.style.display = 'block';
+            });
+        });
+    }
+
+    setTimeout(initializeCKEditors, 100);
 
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
@@ -411,6 +446,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startDate && endDate) {
         startDate.addEventListener('change', function() {
             endDate.min = this.value;
+        });
+    }
+
+    const form = document.querySelector('form');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            ckEditorInstances.forEach(function(editor, name) {
+                const textarea = form.querySelector('textarea[name="' + name + '"]');
+                if (textarea) {
+                    textarea.value = editor.getData();
+                }
+            });
+
+            const descriptionTextarea = form.querySelector('textarea[name="description"]');
+            const description = descriptionTextarea ? descriptionTextarea.value : '';
+            const plainDescription = description.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+
+            if (!plainDescription) {
+                e.preventDefault();
+                alert('Please enter the event full description.');
+                return false;
+            }
         });
     }
 });

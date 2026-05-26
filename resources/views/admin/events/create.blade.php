@@ -63,16 +63,8 @@
 
                             <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
-                                
-                                <!-- Hidden input to store the HTML -->
-                                <input type="hidden" name="description" id="description" value="{{ old('description') }}">
-                                
-                                <!-- CKEditor 5 Container -->
-                                <div id="editor" class="form-control @error('description') is-invalid @enderror" 
-                                    style="min-height: 500px; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
-                                    {!! old('description') !!}
-                                </div>
-                                
+                                <textarea name="description" class="form-control rich-editor @error('description') is-invalid @enderror"
+                                          rows="8" placeholder="Detailed description of the event...">{{ old('description') }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -325,6 +317,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('imagePreview');
     const previewImage = document.getElementById('previewImage');
     const noImagePlaceholder = document.getElementById('noImagePlaceholder');
+    const ckEditorInstances = new Map();
+
+    function initializeCKEditors() {
+        if (typeof ClassicEditor === 'undefined') {
+            console.warn('CKEditor not loaded yet, retrying...');
+            setTimeout(initializeCKEditors, 300);
+            return;
+        }
+
+        document.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])').forEach(function(textarea) {
+            ClassicEditor.create(textarea, {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'alignment', '|',
+                        'link', 'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                height: '300px'
+            })
+            .then(function(editor) {
+                textarea.setAttribute('data-ck-initialized', 'true');
+                ckEditorInstances.set(textarea.name, editor);
+            })
+            .catch(function(error) {
+                console.error('CKEditor error for', textarea.name, error);
+                textarea.style.display = 'block';
+            });
+        });
+    }
+
+    setTimeout(initializeCKEditors, 100);
 
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
@@ -373,6 +400,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (startDate && endDate) {
         startDate.addEventListener('change', function() {
             endDate.min = this.value;
+        });
+    }
+
+    const form = document.querySelector('form');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            ckEditorInstances.forEach(function(editor, name) {
+                const textarea = form.querySelector('textarea[name="' + name + '"]');
+                if (textarea) {
+                    textarea.value = editor.getData();
+                }
+            });
+
+            const descriptionTextarea = form.querySelector('textarea[name="description"]');
+            const description = descriptionTextarea ? descriptionTextarea.value : '';
+            const plainDescription = description.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+
+            if (!plainDescription) {
+                e.preventDefault();
+                alert('Please enter the event full description.');
+                return false;
+            }
         });
     }
 });
