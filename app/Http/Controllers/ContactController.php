@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Mail\ContactFormConfirmation;
 use App\Mail\ContactFormSubmitted;
+use App\Models\ActivityLog;
 use App\Models\ContactMessage;
+use App\Rules\Recaptcha;
+use App\Services\ActivityLoggerService;
+use App\Services\BrevoMailService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
 class ContactController extends Controller
 {
+    public function __construct(
+        protected BrevoMailService $brevoMailService
+    ) {}
     
     public function store(Request $request)
     {
@@ -29,6 +35,9 @@ class ContactController extends Controller
                 'phone' => ['required', 'string', 'max:20'], // Removed regex temporarily
                 'message' => ['required', 'string', 'min:10', 'max:2000'],
                 'agree' => ['required', 'accepted'],
+                'g-recaptcha-response' => ['required', new Recaptcha],
+            ], [
+                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification.',
             ]);
             
             Log::info('Validation passed:', $validated);
@@ -50,6 +59,8 @@ class ContactController extends Controller
                 'privacy_agreed' => $request->boolean('agree'),
             ]);
 
+            ActivityLoggerService::created($contactMessage, 'contacts');
+
             Log::info('Contact created successfully:', [
                 'id' => $contactMessage->id,
                 'email' => $contactMessage->email,
@@ -58,21 +69,56 @@ class ContactController extends Controller
             
             // Try to send emails (optional - comment out if causing issues)
             try {
-                $adminEmail = config('mail.from.address', 'admin@example.com');
+                $adminEmail = "enquiries@igrcfp.org";
                 Log::info('Attempting to send emails:', [
                     'admin_email' => $adminEmail,
                     'user_email' => $contactMessage->email,
-                ]);
-                
-                Mail::to($adminEmail)->send(new ContactFormSubmitted($contactMessage));
-                Mail::to($contactMessage->email)->send(new ContactFormConfirmation($contactMessage));
+                ]); 
+                 
+                $adminMail = $this->brevoMailService->sendContactFormSubmitted(
+                    $adminEmail,
+                    new ContactFormSubmitted($contactMessage)
+                );
+                $userMail = $this->brevoMailService->sendContactFormConfirmation(
+                    $contactMessage->email,
+                    new ContactFormConfirmation($contactMessage)
+                );
                 
                 Log::info('Emails sent successfully');
+                ActivityLoggerService::log(
+                    ActivityLog::EVENT_CREATED,
+                    'contacts',
+                    'Contact emails sent via Brevo',
+                    "Contact submission emails sent for {$contactMessage->email}",
+                    $contactMessage,
+                    [
+                        'provider' => 'brevo',
+                        'admin_email' => $adminEmail,
+                        'user_email' => $contactMessage->email,
+                        'admin_message_id' => $adminMail['message_id'] ?? null,
+                        'user_message_id' => $userMail['message_id'] ?? null,
+                    ],
+                    ActivityLog::SEVERITY_INFO
+                );
             } catch (\Exception $mailException) {
                 Log::warning('Email sending failed (but form was saved):', [
                     'error' => $mailException->getMessage(),
                     'contact_id' => $contactMessage->id,
                 ]);
+                ActivityLoggerService::log(
+                    ActivityLog::EVENT_CREATED,
+                    'contacts',
+                    'Contact email delivery failed',
+                    "Brevo failed to send contact emails for {$contactMessage->email}",
+                    $contactMessage,
+                    [
+                        'provider' => 'brevo',
+                        'admin_email' => $adminEmail ?? 'enquiries@igrcfp.org',
+                        'user_email' => $contactMessage->email,
+                        'error' => $mailException->getMessage(),
+                    ],
+                    ActivityLog::SEVERITY_ERROR
+                );
                 // Continue even if email fails
             }
 

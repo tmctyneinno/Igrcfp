@@ -13,7 +13,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules;
 use App\Mail\AccountLockedMail;
@@ -23,7 +22,10 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(protected TwilioSmsService $sms) {}
+    public function __construct(
+        protected TwilioSmsService $sms,
+        protected BrevoMailService $brevoMailService
+    ) {}
 
     public function create(): Response
     {
@@ -111,7 +113,12 @@ class AuthenticatedSessionController extends Controller
                 // Account just got locked
                 if ($user->isLocked()) {
                     try {
-                        Mail::to($user->email)->send(new AccountLockedMail($user));
+                        $this->brevoMailService->sendMailable(
+                            $user->email,
+                            new AccountLockedMail($user),
+                            'Account Locked'
+                        );
+                        
                     } catch (\Exception $mailException) {
                         \Log::error('Failed to send account locked email: ' . $mailException->getMessage());
                     }
