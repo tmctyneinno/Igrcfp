@@ -81,7 +81,7 @@ export default function MentorshipProgramme() {
                 {/* MENTEES */}
                 <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
                     <img
-                        src="/assets/images/innerpage/gallery/mentee.png"
+                        href="/login"
                         alt="For Mentees"
                         className="mb-6 mx-auto"
                     />
@@ -103,7 +103,7 @@ export default function MentorshipProgramme() {
                     </p>
 
                     <Link
-                        href="/mentorship/mentee"
+                        href="/login"
                         className="text-blue-600 font-medium hover:underline"
                     >
                         Join as a Mentee →
