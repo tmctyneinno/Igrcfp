@@ -58,7 +58,7 @@
         </div>
 
         <div style="text-align: center;">
-            <a href="{{ url('/admin/contact-messages/' . $contactMessage->id) }}" class="btn">
+            <a href="{{ route('admin.contacts.show', $contactMessage) }}" class="btn">
                 View in Admin Panel
             </a>
         </div>

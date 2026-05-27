@@ -37,6 +37,36 @@
                 </a>
             </li>
 
+            <li class="dropdown {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:email-fast-outline" class="menu-icon"></iconify-icon>
+                    <span>Contact</span>
+                    @php
+                        $newContactMessages = \App\Models\ContactMessage::where('status', 'new')->count();
+                    @endphp
+                    @if($newContactMessages > 0)
+                        <span class="badge bg-warning ms-2">{{ $newContactMessages }}</span>
+                    @endif
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.contacts.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            All Messages
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.contacts.index', ['status' => 'new']) }}">
+                            <i class="ri-circle-fill circle-icon text-warning-main w-auto"></i>
+                            New Messages
+                            @if($newContactMessages > 0)
+                                <span class="badge bg-warning ms-1">{{ $newContactMessages }}</span>
+                            @endif
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- Courses Management -->
             <li class="dropdown">
                 <a href="javascript:void(0)">
@@ -172,7 +202,7 @@
                             Revoked
                         </a>
                     </li>
-                </ul>
+                </ul> 
             </li>
 
             <!-- Transactions & Reports - Only for admins -->

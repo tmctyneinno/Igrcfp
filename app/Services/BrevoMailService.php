@@ -39,18 +39,10 @@ class BrevoMailService
     public function sendMailable(string|array $to, Mailable $mailable, ?string $fallbackSubject = null): array
     {
         try {
-            \Log::info('sendMailable started', ['class' => get_class($mailable)]);
             
             $envelope = method_exists($mailable, 'envelope') ? $mailable->envelope() : null;
-            \Log::info('Envelope retrieved', ['has_envelope' => !is_null($envelope)]);
-            
             $subject = $envelope?->subject ?? $mailable->subject ?? $fallbackSubject ?? 'Notification';
-            \Log::info('Subject determined', ['subject' => $subject]);
-            
-            // Test if render works
-            \Log::info('Attempting to render mailable...');
             $htmlContent = $mailable->render();
-            \Log::info('Render successful', ['html_length' => strlen($htmlContent)]);
             
             $payload = [
                 'sender' => $this->formatAddress($envelope?->from ?? new Address($this->fromEmail, $this->fromName)),
@@ -59,15 +51,10 @@ class BrevoMailService
                 'htmlContent' => $htmlContent,
             ];
             
-            \Log::info('Payload prepared, sending...');
             return $this->sendPayload($payload);
             
         } catch (\Exception $e) {
-            \Log::error('sendMailable failed', [
-                'class' => get_class($mailable),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            
             throw $e;
         }
     }

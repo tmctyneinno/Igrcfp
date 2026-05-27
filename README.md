@@ -166,10 +166,9 @@ Footer course (MNot Found)
 Policy content
 
 
-use App\Mail\OTPMail;
-use Illuminate\Support\Facades\Mail;
-
-Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));
+php artisan config:clear
+php artisan cache:clear
+php artisan tinker
 
 use App\Services\BrevoMailService;
 
