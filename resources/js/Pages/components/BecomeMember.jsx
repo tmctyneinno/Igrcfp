@@ -65,9 +65,8 @@ export default function BecomeMember() {
                 </div>
 
                 {/* IMAGES */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-                    {/* LEFT IMAGE */}
                     <motion.div
                         variants={scaleIn}
                         initial="hidden"
@@ -82,7 +81,6 @@ export default function BecomeMember() {
                         />
                     </motion.div>
 
-                    {/* RIGHT IMAGE */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -96,7 +94,7 @@ export default function BecomeMember() {
                             className="max-w-2xl w-full pt-24"
                         />
                     </motion.div>
-                </div>
+                </div> */}
             </div>
         </section>
     );

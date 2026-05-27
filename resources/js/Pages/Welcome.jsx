@@ -17,7 +17,7 @@ import CourseCatalogue from "@/Pages/components/CourseCatalogue";
  
    
  
-export default function Welcome({ auth, courses,  latestArticles = [], featuredArticles = [] }) {
+export default function Welcome({ auth, courses, latestArticles = [], featuredArticles = [], homepageEvents = [], latestBlogs = [] }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const mobileMenuRef = useRef(null);
@@ -74,9 +74,8 @@ export default function Welcome({ auth, courses,  latestArticles = [], featuredA
             <Head title="IGRCFP - Professional Learning Platform" />
             
             {/* Hero Section with AOS effects */}
-            <div className="pt-0">
-                <SplitHeroSlider auth={auth} />
-            </div>
+            <SplitHeroSlider auth={auth} />
+            
 
             {/* Scholarship Banner - Add this right after the hero */}
             <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
@@ -110,11 +109,12 @@ export default function Welcome({ auth, courses,  latestArticles = [], featuredA
             {/* Course Catalogue Preview Section */}
             <CourseCatalogue courseCategories={courseCategories}/>
 
-            <Articles latestArticles = {latestArticles}  featuredArticles = {featuredArticles} />
-            
             <Certification courses={courses} />
+
+            <Articles latestArticles={latestArticles} featuredArticles={featuredArticles} latestBlogs={latestBlogs} />
+            
            
-            <GlobalEvents />
+            <GlobalEvents events={homepageEvents} />
   
             <BecomeMember /> 
 

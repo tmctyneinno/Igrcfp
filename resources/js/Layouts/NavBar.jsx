@@ -54,7 +54,7 @@ export default function NavBar({ auth }) {
     }, [isMobileMenuOpen]);
 
     return (
-        <nav className="bg-white shadow-sm sticky top-0 z-50">
+        <nav className=" sticky top-0 z-50 rounded-full ">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     
@@ -66,7 +66,16 @@ export default function NavBar({ auth }) {
                                 alt="IGRCFP Logo" 
                                 className="h-10 w-auto"
                             />
-                            <span className="ml-3 text-xl font-bold text-gray-900 hidden sm:block">
+                            <span 
+                             style={{
+                                fontFamily: 'Inter',
+                                fontWeight: 700,
+                                fontStyle: 'bold',
+                                fontSize: '30px',
+                                lineHeight: '100%',
+                                letterSpacing: '0%'
+                            }}
+                            className="ml-3 text-xl font-bold text-gray-900 hidden sm:block">
                                 IGRCFP
                             </span>
                         </Link>
@@ -78,14 +87,14 @@ export default function NavBar({ auth }) {
                         {/* Home */}
                         <Link 
                             href="/" 
-                            className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
+                            className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Home
                         </Link>
                         
                         {/* About Us Dropdown */}
                         <div className="relative group">
-                            <button className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center">
+                            <button className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center">
                                 About
                                 <svg className="ml-1 w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -93,13 +102,13 @@ export default function NavBar({ auth }) {
                             </button>
                             
                             <div className="absolute left-0 mt-1 w-56 bg-white rounded-lg shadow-lg py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <Link href='/welcome-to-igrcfp' className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href='/welcome-to-igrcfp' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Welcome to IGRCFP
                                 </Link>
-                                <Link href='/our-structure' className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href='/our-structure' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Our Structure
                                 </Link>
-                                <Link href='/why-igrcfp' className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href='/why-igrcfp' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Why IGRCFP
                                 </Link>
                             </div>
@@ -115,13 +124,13 @@ export default function NavBar({ auth }) {
                                 className={`px-3 py-2 text-sm font-medium rounded-lg transition duration-200 flex items-center whitespace-nowrap ${
                                     openMegaMenu 
                                         ? 'text-blue-900 bg-blue-50' 
-                                        : 'text-gray-700 hover:text-blue-900 hover:bg-blue-50'
+                                        : 'text-black hover:text-blue-900 hover:bg-blue-50'
                                 }`}
                                 onClick={() => setOpenMegaMenu(!openMegaMenu)}
                                 onMouseEnter={() => setOpenMegaMenu(true)}
                                 aria-expanded={openMegaMenu}
                             >
-                                Programmes & Qualifications
+                                Programmes
                                 <svg className={`ml-1 w-4 h-4 transition-transform duration-200 ${openMegaMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -400,7 +409,7 @@ export default function NavBar({ auth }) {
                         {/* Membership */}
                         <Link 
                             href="/membership" 
-                            className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
+                            className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Membership
                         </Link>
@@ -419,14 +428,14 @@ export default function NavBar({ auth }) {
                         {/* Events */}
                         <Link 
                             href="/events" 
-                            className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
+                            className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Events
                         </Link>
 
                         {/* Resources Dropdown (Blog + News) */}
                         <div className="relative group">
-                            <button className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center">
+                            <button className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center">
                                 Resources
                                 <svg className="ml-1 w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -434,7 +443,7 @@ export default function NavBar({ auth }) {
                             </button>
                             
                             <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <Link href="/blog" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href="/blog" className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     <div className="flex items-center">
                                         <svg className="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -442,7 +451,7 @@ export default function NavBar({ auth }) {
                                         Blog
                                     </div>
                                 </Link>
-                                <Link href={route('news.index')} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href={route('news.index')} className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     <div className="flex items-center">
                                         <svg className="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -456,7 +465,7 @@ export default function NavBar({ auth }) {
                         {/* Connect */}
                         <Link 
                             href="/contact" 
-                            className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
+                            className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Connect
                         </Link>
@@ -506,7 +515,7 @@ export default function NavBar({ auth }) {
                             <div className="hidden lg:block">
                                 <Link
                                     href='/login'
-                                    className="bg-blue-900 text-white text-sm px-5 py-2.5 rounded-lg font-medium hover:bg-blue-800 transition duration-200 shadow-sm hover:shadow-md"
+                                    className="bg-blue-900 text-white text-sm px-4 py-2.5 rounded-full font-medium hover:bg-blue-800 transition duration-200 shadow-sm hover:shadow-md"
                                 >
                                     Join the Institute
                                 </Link>
@@ -643,7 +652,7 @@ export default function NavBar({ auth }) {
                         
                         {!auth?.user && (
                             <div className="pt-3 border-t border-gray-100 mt-3">
-                                <Link href='/login' className="block w-full text-center bg-blue-900 text-white px-4 py-3 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href='/login' className="block w-full text-center bg-blue-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                                     Join the Institute
                                 </Link>
                             </div>

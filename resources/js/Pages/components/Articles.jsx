@@ -2,10 +2,15 @@ import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 import React from "react";
+import { ArrowRight, BookOpen, Clock3, UserRound } from "lucide-react";
 
-export default function Articles({latestArticles, featuredArticles}) {
+export default function Articles({ latestArticles = [], featuredArticles = [], latestBlogs = [] }) {
 
     const formatDate = (dateString) => {
+        if (!dateString) {
+            return 'Recently published';
+        }
+
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -97,6 +102,93 @@ export default function Articles({latestArticles, featuredArticles}) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                 </svg>
                             </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {latestBlogs.length > 0 && (
+                <section className="bg-slate-950 py-20 overflow-hidden" data-aos="fade-up" data-aos-duration="1000">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
+                            <div className="max-w-2xl">
+                                <div className="inline-flex items-center gap-2 text-sm tracking-widest text-emerald-300 uppercase mb-3">
+                                    <BookOpen className="h-4 w-4" aria-hidden="true" />
+                                    From the Blog
+                                </div>
+                                <h2 className="text-3xl md:text-4xl font-bold text-white">
+                                    Practical thinking for governance and compliance leaders
+                                </h2>
+                                <p className="text-slate-300 mt-3 leading-relaxed">
+                                    Explore expert perspectives, institutional updates, and field notes from the IGRCFP team.
+                                </p>
+                            </div>
+
+                            <Link
+                                href="/blog"
+                                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-slate-950 rounded-lg font-semibold hover:bg-emerald-100 transition w-fit"
+                            >
+                                View all blog posts
+                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                            </Link>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            {latestBlogs.map((blog, index) => (
+                                <motion.article
+                                    key={blog.id}
+                                    variants={index === 0 ? scaleIn : fadeLeft}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
+                                    className="group bg-white rounded-lg overflow-hidden border border-white/10 shadow-xl"
+                                >
+                                    <Link href={`/blog/${blog.slug}`} className="block">
+                                        <div className="relative h-56 overflow-hidden bg-slate-800">
+                                            <img
+                                                src={blog.image || '/assets/images/innerpage/blog/blog-grid1.jpg'}
+                                                alt={blog.title}
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                onError={(event) => {
+                                                    event.currentTarget.src = '/assets/images/innerpage/blog/blog-grid1.jpg';
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 to-transparent opacity-80" />
+                                            <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-900">
+                                                Blog
+                                            </span>
+                                        </div>
+
+                                        <div className="p-2">
+                                            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-4">
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    {blog.author}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    {blog.reading_time}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-xl font-bold text-slate-950 leading-snug mb-3 line-clamp-2 group-hover:text-emerald-700 transition">
+                                                {blog.title}
+                                            </h3>
+                                            <p className="text-slate-600 text-sm leading-relaxed mb-5 line-clamp-3">
+                                                {blog.excerpt}
+                                            </p>
+
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="text-xs text-slate-400">{formatDate(blog.published_at)}</span>
+                                                <span className="inline-flex items-center gap-1 text-sm font-bold text-emerald-700 group-hover:gap-2 transition-all">
+                                                    Read article
+                                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </motion.article>
+                            ))}
                         </div>
                     </div>
                 </section>

@@ -11,7 +11,7 @@ import {
   ShoppingCartIcon, 
   UserCircleIcon,
   CogIcon,
-  ArrowRightOnRectangleIcon,
+  ArrowRightOnRectangleIcon, 
   ChevronDownIcon
 } from '@heroicons/react/24/outline'; 
 

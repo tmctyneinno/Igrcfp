@@ -25,7 +25,7 @@ class HomeController extends Controller
             ->where('is_featured', true)
             ->orWhere('is_popular', true)
             ->inRandomOrder()
-            ->take(8)
+            ->take(4)
             ->get();
  
         // Get 4 random courses from the remaining
@@ -33,7 +33,7 @@ class HomeController extends Controller
             ->withCount('modules')
             ->whereNotIn('id', $featuredCourses->pluck('id'))
             ->inRandomOrder()
-            ->take(8)
+            ->take(4)
             ->get();
 
         // Merge and shuffle the collections
@@ -93,6 +93,53 @@ class HomeController extends Controller
                 ];
             });
 
+        $homepageEvents = Event::where('status', 'published')
+            ->orderByDesc('is_featured')
+            ->orderByRaw('CASE WHEN start_date >= ? THEN 0 ELSE 1 END', [now()->toDateString()])
+            ->orderBy('start_date')
+            ->take(3)
+            ->get()
+            ->map(function ($event) {
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'slug' => $event->slug,
+                    'short_description' => $event->short_description,
+                    'image' => $event->image,
+                    'image_url' => $event->image_url,
+                    'start_date' => $event->start_date?->toDateString(),
+                    'end_date' => $event->end_date?->toDateString(),
+                    'start_time' => $event->start_time,
+                    'end_time' => $event->end_time,
+                    'event_date' => $event->event_date,
+                    'event_time' => $event->event_time,
+                    'location' => $event->location,
+                    'venue' => $event->venue,
+                    'capacity' => $event->capacity,
+                    'available_seats' => $event->available_seats,
+                    'registration_status' => $event->registration_status,
+                    'is_featured' => $event->is_featured,
+                ];
+            });
+
+        $latestBlogs = Blog::with('user')
+            ->where('status', 'published')
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function ($blog) {
+                return [
+                    'id' => $blog->id,
+                    'title' => $blog->title,
+                    'slug' => $blog->slug,
+                    'excerpt' => $blog->excerpt,
+                    'image' => $blog->image_url,
+                    'author' => $blog->user->name ?? 'IGRCFP',
+                    'reading_time' => $blog->reading_time,
+                    'published_at' => $blog->created_at?->toDateString(),
+                ];
+            });
+
 
         return Inertia::render('Welcome', [
             'canLogin' => \Route::has('login'),
@@ -100,6 +147,8 @@ class HomeController extends Controller
             'courses' => $courses,
             'latestArticles' => $latestArticles,
             'featuredArticles' => $featuredArticles,
+            'homepageEvents' => $homepageEvents,
+            'latestBlogs' => $latestBlogs,
         ]);
     }
 
