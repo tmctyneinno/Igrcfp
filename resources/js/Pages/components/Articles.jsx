@@ -108,7 +108,7 @@ export default function Articles({ latestArticles = [], featuredArticles = [], l
             )}
 
             {latestBlogs.length > 0 && (
-                <section className="bg-slate-950 py-20 overflow-hidden" data-aos="fade-up" data-aos-duration="1000">
+                <section className="bg-blue-950 py-20 overflow-hidden" data-aos="fade-up" data-aos-duration="1000">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
                             <div className="max-w-2xl">
@@ -126,7 +126,7 @@ export default function Articles({ latestArticles = [], featuredArticles = [], l
 
                             <Link
                                 href="/blog"
-                                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-slate-950 rounded-lg font-semibold hover:bg-emerald-100 transition w-fit"
+                                className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-slate-950 rounded-full font-semibold hover:bg-emerald-100 transition w-fit"
                             >
                                 View all blog posts
                                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -160,11 +160,8 @@ export default function Articles({ latestArticles = [], featuredArticles = [], l
                                         </div>
 
                                         <div className="p-2">
-                                            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-4">
-                                                <span className="inline-flex items-center gap-1.5">
-                                                    <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
-                                                    {blog.author}
-                                                </span>
+                                            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-3">
+                                                
                                                 <span className="inline-flex items-center gap-1.5">
                                                     <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                                                     {blog.reading_time}
@@ -174,7 +171,7 @@ export default function Articles({ latestArticles = [], featuredArticles = [], l
                                             <h3 className="text-xl font-bold text-slate-950 leading-snug mb-3 line-clamp-2 group-hover:text-emerald-700 transition">
                                                 {blog.title}
                                             </h3>
-                                            <p className="text-slate-600 text-sm leading-relaxed mb-5 line-clamp-3">
+                                            <p className="text-slate-600 text-sm leading-relaxed mb-3 line-clamp-3">
                                                 {blog.excerpt}
                                             </p>
 

@@ -115,7 +115,7 @@ export default function GlobalEvents({ events = [] }) {
 
                     <Link
                         href="/events"
-                        className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-slate-950 text-white rounded-lg font-semibold hover:bg-emerald-700 transition w-fit shadow-sm"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-slate-950 text-white rounded-full font-semibold hover:bg-emerald-700 transition w-fit shadow-sm"
                     >
                         View all events
                         <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -131,7 +131,7 @@ export default function GlobalEvents({ events = [] }) {
                             viewport={{ once: true }}
                             className="lg:col-span-7 group bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
                         >
-                            <div className="relative min-h-[420px]">
+                            <div className="relative min-h-[560px]">
                                 <img
                                     src={getEventImage(featuredEvent)}
                                     alt={featuredEvent.title}
@@ -170,7 +170,7 @@ export default function GlobalEvents({ events = [] }) {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Clock3 className="h-4 w-4 text-emerald-300" aria-hidden="true" />
-                                            <span>{getEventTime(featuredEvent)}</span>
+                                            <span>{getEventTime(featuredEvent)}</span>(UK Time)
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <MapPin className="h-4 w-4 text-emerald-300" aria-hidden="true" />
@@ -236,7 +236,7 @@ export default function GlobalEvents({ events = [] }) {
                                 </article>
                             ))}
 
-                            <div className="bg-slate-950 rounded-lg p-6 text-white mt-auto">
+                            {/* <div className="bg-slate-950 rounded-lg p-6 text-white mt-auto">
                                 <p className="text-sm uppercase tracking-widest text-emerald-300 mb-2">Event formats</p>
                                 <p className="text-lg font-semibold mb-4">
                                     Summits, awards, women in GRC forums, practical workshops, webinars, and specialist speaker sessions.
@@ -245,7 +245,7 @@ export default function GlobalEvents({ events = [] }) {
                                     Browse the full calendar
                                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                                 </Link>
-                            </div>
+                            </div> */}
                         </motion.div>
                     </div>
                 ) : (
