@@ -140,7 +140,7 @@ export default function GlobalEvents({ events = [] }) {
                                         event.currentTarget.src = "/images/default-event.jpg";
                                     }}
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-red-950 via-red-950/45 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
                                 <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 text-white">
                                     <div className="flex flex-wrap items-center gap-2 mb-4">
                                         {featuredEvent.is_featured && (
@@ -151,7 +151,7 @@ export default function GlobalEvents({ events = [] }) {
                                         <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ${getStatusStyles(featuredEvent.registration_status)}`}>
                                             {getStatusLabel(featuredEvent.registration_status)}
                                         </span>
-                                    </div> 
+                                    </div>
 
                                     <h3 className="text-2xl md:text-4xl font-bold leading-tight mb-4 line-clamp-3">
                                         <Link href={`/events/${featuredEvent.slug}`} className="hover:text-emerald-200 transition">
