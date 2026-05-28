@@ -188,8 +188,8 @@ export default function Footer() {
                                 "Welcome to IGRCFP",
                                 "Our Structure",
                                 'Course Catalogue', 
-                                'IGRCFP Code of Conduct', 
-                                'IGRCFP Quality Assurance',
+                                'Code of Conduct', 
+                                'Quality Assurance',
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 

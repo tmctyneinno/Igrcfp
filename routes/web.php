@@ -118,6 +118,6 @@ Route::prefix('verify-certificate')->name('certificate.verify.public.')->group(f
     Route::post('/check', [PublicCertificateController::class, 'verify'])->name('check');
     Route::get('/{number}', [PublicCertificateController::class, 'verifyByNumber'])->name('show');
 });
-Route::get('/igrcfp-code-of-conduct', [HomeController::class, 'codeOfConduct'])->name('igrcfp.code-of-conduct');
+Route::get('/code-of-conduct', [HomeController::class, 'codeOfConduct'])->name('igrcfp.code-of-conduct');
 Route::get('/quality-assurance', [HomeController::class, 'qualityAssurance'])->name('igrcfp.quality-assurance');
 
