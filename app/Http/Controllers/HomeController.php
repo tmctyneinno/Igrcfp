@@ -238,22 +238,24 @@ class HomeController extends Controller
         ]);
     }
  
-    public function certificationsOverview(){
-    
+    public function certificationsOverview()
+    {
         return Inertia::render('Certifications/CertificationsOverview', [
             'title' => 'certifications Overview',
             'description' => 'Certified GRC & Financial Crime Specialist',
         ]);
     }
 
-    public function certificationsPathway(){
+    public function certificationsPathway()
+    {
         return Inertia::render('Certifications/Pathway', [
             'title' => 'Certification Pathway',
             'description' => '',
         ]);
     }
 
-    public function cgfcsSpecialist(){
+    public function cgfcsSpecialist()
+    {
     
         return Inertia::render('Certifications/CGFCSSpecialist', [
             'title' => 'CGFCS Specialist',
@@ -262,7 +264,8 @@ class HomeController extends Controller
     }
 
 
-    public function eventsIndex(){
+    public function eventsIndex()
+    {
         $currentDate = now()->toDateString();
         
         $events = Event::query()
@@ -355,7 +358,8 @@ class HomeController extends Controller
         ]);
     }
 
-    public function blog(){
+    public function blog()
+    {
         $blogs = Blog::with('user')
             ->where('status', 'published')
             ->latest()
@@ -430,7 +434,8 @@ class HomeController extends Controller
         ]);
     }
 
-    public function contact(){
+    public function contact()
+    {
         return Inertia::render('Contact/Index', [
             'title' => 'Contact Us',
             'description' => 'Our friendly team would love to hear from you.',
@@ -683,7 +688,6 @@ class HomeController extends Controller
         ]);
     }
 
-
     public function qualificationsPack(){
         return Inertia::render('QualificationsPack/Index');
     }
@@ -693,7 +697,7 @@ class HomeController extends Controller
     }
 
 
-   public function showNews($slug)
+    public function showNews($slug)
     {
         $post = Article::where('slug', $slug)->firstOrFail();
 
@@ -710,5 +714,12 @@ class HomeController extends Controller
             'description' => $post->meta_description ?? $post->excerpt,
         ]);
     }
-   
+    
+    public function codeOfConduct()
+    {
+        return Inertia::render('CodeOfConduct/Index', [
+            'title' => 'IGRCFP Code of Conduct',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+        ]);
+    }
 }

@@ -451,7 +451,6 @@ export default function Index({ auth, title }) {
             </section>
 
             {/* Main Content Section */}
-            {/* Main Content */}
             <section className="py-12 lg:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -565,7 +564,7 @@ export default function Index({ auth, title }) {
                                                     </div>
 
                                                     {/* Media & Publications */}
-                                                    <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2hover:border-amber-200 transition-colors duration-200">
+                                                    <div className="bg-white rounded-xl border border-gray-200 pl-2 pr-2 pt-4 pb-2 hover:border-amber-200 transition-colors duration-200">
                                                         <div className="flex items-start">
                                                             <div className="flex-shrink-0">
                                                                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -606,109 +605,102 @@ export default function Index({ auth, title }) {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                {/* Alternative Contact */}
-                                                {/* <div className="mt-6 text-center">
-                                                    <p className="text-gray-600 text-sm">
-                                                        Prefer other contact methods? 
-                                                        <a href="/contact" className="text-blue-600 hover:text-blue-700 font-medium ml-1">
-                                                            Visit our full contact page →
-                                                        </a>
-                                                    </p>
-                                                </div> */}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl border border-purple-100 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                                        <div className="flex items-start">
-                                            {/* Icon Section */}
-                                            <div className="relative">
-                                                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl flex items-center justify-center shadow-md">
-                                                    <MapPinIcon className="h-6 w-6 text-white" />
+                                    
+
+                                    {/* Combined Office Locations */}
+                                    <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                                        <div className="flex items-start mb-6">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                                                <MapPinIcon className="h-6 w-6 text-white" />
+                                            </div>
+                                            <div className="ml-4">
+                                                <h3 className="text-lg font-semibold text-gray-900">Our Offices</h3>
+                                                <p className="text-sm text-gray-600 mt-1">Serving our global community from strategic locations</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {/* London Office */}
+                                            <div className="bg-white rounded-xl p-4 border border-purple-100 hover:border-purple-200 transition-colors">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                        <span className="text-xs font-bold text-purple-600">UK</span>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-gray-900">London Office</h4>
+                                                        <span className="text-xs text-purple-600 font-medium">Headquarters</span>
+                                                    </div>
                                                 </div>
-                                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full border-2 border-purple-100 flex items-center justify-center">
-                                                    <span className="text-xs font-bold text-purple-600">UK</span>
-                                                </div>
+                                                <address className="not-italic text-sm text-gray-600 space-y-1 mb-3">
+                                                    <p>85 Great Portland Street</p>
+                                                    <p>London W1W 7LT</p>
+                                                    <p>United Kingdom</p>
+                                                </address>
+                                                <a
+                                                    href="https://maps.google.com/?q=85+Great+Portland+Street+London+W1W+7LT"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center text-sm text-purple-600 hover:text-purple-700 font-medium"
+                                                >
+                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    Get Directions
+                                                </a>
                                             </div>
 
-                                            {/* Content Section */}
-                                            <div className="ml-5 flex-1">
-                                                <div className="flex items-center justify-between">
-                                                    <h3 className="text-lg font-semibold text-gray-900">London Office</h3>
-                                                    <span className="text-xs font-medium bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full">
-                                                        Headquarters
-                                                    </span>
+                                            {/* US Office */}
+                                            <div className="bg-white rounded-xl p-4 border border-blue-100 hover:border-blue-200 transition-colors">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                        <span className="text-xs font-bold text-blue-600">US</span>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-gray-900">US Office</h4>
+                                                        <span className="text-xs text-blue-600 font-medium">Regional Office</span>
+                                                    </div>
                                                 </div>
-
-                                                {/* Address */}
-                                                <address className="mt-3 text-gray-800 not-italic space-y-2">
-                                                    <div className="flex items-start">
-                                                        <svg className="w-4 h-4 text-purple-500 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        </svg>
-                                                        <div>
-                                                            <p className="font-medium text-gray-900">85 Great Portland Street</p>
-                                                            <p className="text-sm text-gray-700">London W1W 7LT</p>
-                                                            <p className="text-sm text-gray-600 mt-1">Westminster, England</p>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Response Time */}
-                                                    <div className="flex items-start pt-3 border-t border-purple-100">
-                                                        <svg className="w-4 h-4 text-purple-500 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                        <div>
-                                                            <p className="text-sm text-gray-800">
-                                                                <span className="font-medium">Response time:</span> Typically  
-                                                                <span className="font-semibold text-purple-700 pl-1"> 2–3 working days</span>
-                                                            </p>
-                                                            <p className="text-xs text-gray-600 mt-1">
-                                                                For urgent matters, please include <span className="font-medium text-purple-600">"URGENT"</span> in your subject line.
-                                                            </p>
-                                                        </div>
-                                                    </div>
+                                                <address className="not-italic text-sm text-gray-600 space-y-1 mb-3">
+                                                    <p>1111B S Governors Ave</p>
+                                                    <p>Suite 57613</p>
+                                                    <p>Dover, DE 19904</p>
                                                 </address>
+                                                <a
+                                                    href="https://maps.google.com/?q=1111B+S+Governors+Ave+Suite+57613+Dover+DE+19904"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                                >
+                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    Get Directions
+                                                </a>
+                                            </div>
+                                        </div>
 
-                                                {/* Action Buttons */}
-                                                <div className="mt-6 flex flex-wrap gap-3">
-                                                    <a
-                                                        href="https://maps.google.com/?q=85+Great+Portland+Street+London+W1W+7LT"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 group"
-                                                    >
-                                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                                        </svg>
-                                                        Get Directions
-                                                        <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                        </svg>
-                                                    </a>
-
-                                                    {/* <a
-                                                        href="tel:+442012345678"
-                                                        className="inline-flex items-center px-4 py-2.5 bg-white border border-gray-300 hover:border-purple-300 hover:bg-purple-50 text-gray-700 font-medium rounded-lg transition-colors duration-200"
-                                                    >
-                                                        <svg className="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                                        </svg>
-                                                        Call Office
-                                                    </a> */}
-                                                </div>
-
-                                                {/* Additional Info */}
-                                                <div className="mt-4 pt-4 border-t border-purple-100">
-                                                    <div className="flex items-center text-sm text-gray-600">
-                                                        <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                                        </svg>
-                                                        <span>By appointment only. Please contact us to schedule a visit.</span>
-                                                    </div>
-                                                </div>
+                                        {/* Response Time Note */}
+                                        <div className="mt-4 pt-4 border-t border-gray-200">
+                                            <div className="flex items-center text-sm text-gray-600">
+                                                <svg className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>
+                                                    <span className="font-medium">Response time:</span> Typically 2–3 working days. 
+                                                    For urgent matters, include <span className="font-medium text-blue-600">"URGENT"</span> in your subject line.
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center text-sm text-gray-600 mt-2">
+                                                <svg className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                </svg>
+                                                <span>By appointment only. Please contact us to schedule a visit.</span>
                                             </div>
                                         </div>
                                     </div>

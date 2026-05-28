@@ -137,7 +137,6 @@ export default function Footer() {
                                 { label: "Certifications", href: "/certifications" },
                                 { label: "Events", href: "/events" },
                                 { label: "News", href: "/news" },
-                                // { label: "", href: "/course" },
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link 
@@ -189,7 +188,7 @@ export default function Footer() {
                                 "Welcome to IGRCFP",
                                 "Our Structure",
                                 'Course Catalogue', 
-                                // 'Course'
+                                'IGRCFP Code of Conduct', 
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 
@@ -209,7 +208,7 @@ export default function Footer() {
                         <h4 className="text-white font-semibold text-lg mb-6 pb-3 border-b border-blue-800/30">
                             Contact Information
                         </h4>
-                        <ul className="space-y-3">
+                        <ul className="space-y-4">
                             <li className="flex items-start gap-4">
                                 <div className="w-10 h-10 rounded-lg bg-blue-900/30 flex items-center justify-center flex-shrink-0">
                                     {/* Email Icon */}
@@ -220,10 +219,10 @@ export default function Footer() {
                                 <div>
                                     <span className="block text-sm text-gray-500 mb-1">Email</span>
                                     <a 
-                                        href="mailto:enquiries@igrfcp.org" 
+                                        href="mailto:enquiries@igrcfp.org" 
                                         className="text-white hover:text-blue-300 transition-colors font-medium"
                                     >
-                                        enquiries@igrfcp.org
+                                        enquiries@igrcfp.org
                                     </a>
                                 </div>
                             </li>
@@ -236,37 +235,20 @@ export default function Footer() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <span className="block text-sm text-gray-500 mb-1">Headquarters</span>
-                                    <address className="not-italic text-gray-300 leading-relaxed">
-                                        85 Great Portland Street<br />
-                                        First Floor, W1W 7LT<br />
-                                        London, United Kingdom
-                                    </address>
+                                    <span className="block text-sm text-gray-500 mb-2">Our Offices</span>
+                                    <div className="space-y-2">
+                                        <address className="not-italic text-gray-300 leading-relaxed text-sm">
+                                            <span className="text-blue-400 font-medium text-xs">HQ:</span> 85 Great Portland Street, First Floor, W1W 7LT, London, UK
+                                        </address>
+                                        <address className="not-italic text-gray-300 leading-relaxed text-sm">
+                                            <span className="text-blue-400 font-medium text-xs">US:</span> 1111B S Governors Ave, Suite 57613, Dover, DE 19904
+                                        </address>
+                                    </div>
                                 </div>
                             </li>
-                            {/* <li className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-lg bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                                     <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <span className="block text-sm text-gray-500 mb-1">Phone</span>
-                                    <a 
-                                        href="tel:+442071234567" 
-                                        className="text-white hover:text-blue-300 transition-colors font-medium"
-                                    >
-                                        +44 (0)20 7123 4567
-                                    </a>
-                                </div>
-                            </li> */}
                         </ul>
-
-                       
                     </motion.div>
                 </motion.div>
-
-               
 
                 {/* Bottom Bar */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-2 pt-4 border-t border-blue-900/30">
@@ -281,10 +263,6 @@ export default function Footer() {
                             <Link href="/terms-conditions" className="text-sm text-gray-400 hover:text-white transition">
                                 Terms and Conditions
                             </Link>
-                            {/* <span className="text-gray-600">•</span>
-                            <Link href="/privacy-preference-center" className="text-sm text-gray-400 hover:text-white transition">
-                                Privacy Preference Center
-                            </Link> */}
                         </div>
                     </div>
                 </div>
