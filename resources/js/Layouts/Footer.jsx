@@ -182,13 +182,14 @@ export default function Footer() {
                         <h4 className="text-white font-semibold text-lg mb-6 pb-3 border-b border-blue-800/30">
                             More Links
                         </h4>
-                        <ul className="space-y-3">
+                        <ul className="space-y-2">
                             {[
                                 "About Us",
                                 "Welcome to IGRCFP",
                                 "Our Structure",
                                 'Course Catalogue', 
                                 'IGRCFP Code of Conduct', 
+                                'IGRCFP Quality Assurance',
                             ].map((item, index) => (
                                 <li key={index}>
                                     <Link 
