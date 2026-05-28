@@ -207,12 +207,6 @@ export default function GlobalEvents({ events = [] }) {
                                                 <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${getStatusStyles(event.registration_status)}`}>
                                                     {getStatusLabel(event.registration_status)}
                                                 </span>
-                                                {event.available_seats !== null && event.capacity ? (
-                                                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                                                        <UsersRound className="h-3 w-3" aria-hidden="true" />
-                                                        {event.available_seats}/{event.capacity}
-                                                    </span>
-                                                ) : null}
                                             </div>
 
                                             <h3 className="text-lg font-bold text-slate-950 leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition">
