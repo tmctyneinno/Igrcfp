@@ -456,7 +456,7 @@ export default function CodeOfConduct({ auth }) {
                     </div>
 
                     {/* Declaration */}
-                    <div className="mb-16">
+                    {/* <div className="mb-16">
                         <div className="flex items-center gap-3 mb-10">
                             <div className="w-12 h-1 bg-blue-600 rounded-full"></div>
                             <h2 className="text-3xl font-bold text-gray-900">Declaration</h2>
@@ -485,7 +485,7 @@ export default function CodeOfConduct({ auth }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Footer Note */}
                     <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
