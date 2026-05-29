@@ -1,7 +1,7 @@
 import { Link } from "@inertiajs/react";
 import React, { useEffect, useState, useRef } from "react";
 
-export default function NavBar({ auth }) {
+function NavBar({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const [openMegaMenu, setOpenMegaMenu] = useState(false);
@@ -68,7 +68,6 @@ export default function NavBar({ auth }) {
                             />
                             <span 
                              style={{
-                                fontFamily: 'Inter',
                                 fontWeight: 700,
                                 fontStyle: 'bold',
                                 fontSize: '30px',
@@ -663,3 +662,5 @@ export default function NavBar({ auth }) {
         </nav>
     );
 }
+
+export default React.memo(NavBar);

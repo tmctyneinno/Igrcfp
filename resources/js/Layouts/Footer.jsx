@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { fadeIn, scaleIn, staggerContainer } from "@/utils/motionPresets";
 
-export default function Footer() {
+function Footer() {
     const currentYear = new Date().getFullYear();
      
     return (    
@@ -287,3 +287,5 @@ export default function Footer() {
         </footer>
     );
 }
+
+export default React.memo(Footer);

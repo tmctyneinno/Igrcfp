@@ -1,25 +1,9 @@
-import { Head, Link } from '@inertiajs/react';
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "@/Layouts/NavBar";
-import Footer from '@/Layouts/Footer'; 
-import AOS from "aos";
-import "aos/dist/aos.css";
+import Footer from '@/Layouts/Footer';
 
 export default function GuestLayout({ children, auth }) {
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [openDropdown, setOpenDropdown] = useState(null);
     const [isScrolled, setIsScrolled] = useState(false);
-    const mobileMenuRef = useRef(null);
-    
-    // ✅ AOS INIT — ONCE ONLY
-    useEffect(() => { 
-        AOS.init({
-            duration: 500,
-            easing: "ease-out-cubic",
-            once: true,
-            offset: 80,
-        });
-    }, []); 
     
     // Handle scroll event to change navbar background
     useEffect(() => {
@@ -34,24 +18,6 @@ export default function GuestLayout({ children, auth }) {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-   
-    // Close mobile menu when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (
-                mobileMenuRef.current &&
-                !mobileMenuRef.current.contains(e.target)
-            ) {
-                setIsMobileMenuOpen(false);
-            }
-        };
-
-        if (isMobileMenuOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-        }
-
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [isMobileMenuOpen]);
 
     return (
         <div className="min-h-screen bg-gray-50 rounded-xl">
@@ -82,29 +48,6 @@ export default function GuestLayout({ children, auth }) {
             > 
                 <Footer/>
             </footer>
-
-            {/* Mobile Menu Toggle Script */}
-            <script>{`
-                document.addEventListener('DOMContentLoaded', function() {
-                    const mobileMenuButton = document.querySelector('button.md\\:hidden');
-                    const mobileMenu = document.querySelector('.md\\:hidden.bg-white');
-                    
-                    if (mobileMenuButton && mobileMenu) {
-                        mobileMenuButton.addEventListener('click', function() {
-                            mobileMenu.classList.toggle('hidden');
-                        });
-                    }
-                });
-            `}</script>
-
-            {/* Refresh AOS on page load */}
-            <script>{`
-                document.addEventListener('DOMContentLoaded', function() {
-                    if (typeof AOS !== 'undefined') {
-                        AOS.refresh();
-                    }
-                });
-            `}</script>
 
         </div>
     );
