@@ -60,7 +60,7 @@ export default function HowMembershipWorks() {
                                         d="M21 16.5V7.5L12 2.25 3 7.5v9L12 21.75 21 16.5z"
                                     />
                                 </svg>
-                            </div>
+                            </div> 
 
                             {/* Text */}
                             <p className="text-base leading-relaxed">

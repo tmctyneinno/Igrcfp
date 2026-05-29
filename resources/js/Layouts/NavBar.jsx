@@ -71,8 +71,6 @@ function NavBar({ auth }) {
                                 fontWeight: 700,
                                 fontStyle: 'bold',
                                 fontSize: '30px',
-                                lineHeight: '100%',
-                                letterSpacing: '0%'
                             }}
                             className="ml-3 text-xl font-bold text-gray-900 hidden sm:block">
                                 IGRCFP

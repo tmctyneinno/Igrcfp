@@ -135,7 +135,7 @@ export default function MentorshipProgramme() {
                     </p>
 
                     <Link
-                        href="/mentorship/mentor"
+                        href="/login"
                         className="text-blue-600 font-medium hover:underline"
                     >
                         Join as a Mentor →

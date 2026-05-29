@@ -41,6 +41,7 @@ function Footer() {
 
                         <p className="text-gray-400 leading-relaxed mb-6">
                             The Institute of Governance, Risk, Compliance & Financial Crime Prevention.
+                            <br/>
                             Professionals body advancing professional standards, ethics, 
                             and global best practices worldwide.
                         </p>

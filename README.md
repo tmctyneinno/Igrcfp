@@ -181,3 +181,7 @@ Work on the Nav Items
 Work on the 
 Work on the blog on the dashboard
 Work on the news on the dashboard
+
+Trendy Courses that make people employable
+Trendy Courses That Boost Employability
+In-Demand Courses That Lead to Jobs
