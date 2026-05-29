@@ -25,7 +25,6 @@ export default function AboutIndex({ auth, title, description }) {
                 </div>
             </section>
 
-            <PartnersSlider />
 
             <section className="bg-white py-24 overflow-hidden">
                 <WhoAreWe auth={auth} />
@@ -37,6 +36,7 @@ export default function AboutIndex({ auth, title, description }) {
 
             <CoreServices />
 
+            <PartnersSlider />
            
         </GuestLayout>
     );

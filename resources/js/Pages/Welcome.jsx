@@ -13,8 +13,7 @@ import WhoAreWe from "@/Pages/components/WhoAreWe";
 import Articles from "@/Pages/components/Articles";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
-import CourseCatalogue from "@/Pages/components/CourseCatalogue";
- 
+import CourseCatalogue from "@/Pages/components/CourseCatalogue";import PartnersSlider from '@/Pages/About/PartnersSlider'; 
    
  
 export default function Welcome({ auth, courses, latestArticles = [], featuredArticles = [], homepageEvents = [], latestBlogs = [] }) {
@@ -97,7 +96,8 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
                     </div>
                 </div>
             </section>
- 
+
+          
  
             <section className="bg-white py-24 overflow-hidden">
                <WhoAreWe auth={auth} />
@@ -108,7 +108,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
 
             {/* Course Catalogue Preview Section */}
             <CourseCatalogue courseCategories={courseCategories}/>
-
+ 
             <Certification courses={courses} />
 
             <Articles latestArticles={latestArticles} featuredArticles={featuredArticles} latestBlogs={latestBlogs} />
@@ -153,7 +153,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
                     </Link>
                 </div>
             </section>
-  
+            <PartnersSlider />
         </GuestLayout>
     );
 }

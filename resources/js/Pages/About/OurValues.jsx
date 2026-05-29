@@ -6,22 +6,27 @@ const valuesData = [
   {
     title: 'Integrity',
     description:
-      'We uphold the highest ethical standards in governance, compliance, and financial crime prevention. Integrity guides every action we take and every partnership we build.',
-  },
-  {
-    title: 'Innovation',
-    description:
-      'We embrace new ideas, technologies, and approaches from RegTech to ESG frameworks to prepare professionals for the challenges of tomorrow.',
-  },
-  {
-    title: 'Collaboration',
-    description:
-      'We believe progress comes from working together. IGRCFP connects regulators, institutions, and practitioners across continents to drive global impact.',
+      'We hold ourselves and our members to the highest standards of professional and ethical conduct. In a field devoted to preventing financial crime, integrity is not optional.',
   },
   {
     title: 'Excellence',
     description:
-      'We are committed to delivering world-class training, certifications, research, and events that set the benchmark for professional standards worldwide.',
+      'We pursue rigorous standards in everything we produce — from qualifications to publications because the professionals we serve deserve nothing less.',
+  },
+  {
+    title: 'Independence',
+    description:
+      'Our standards and positions are determined by professional merit and practitioner insight, free from commercial or political influence.',
+  },
+  {
+    title: 'Global Reach',
+    description:
+      'Financial crime knows no borders. IGRCFP serves members across the UK, Africa, the Caribbean, the Middle East, and beyond.',
+  },
+  {
+    title: 'Global Reach',
+    description:
+      'Financial crime knows no borders. IGRCFP serves members across the UK, Africa, the Caribbean, the Middle East, and beyond.',
   },
 ];
 
@@ -36,28 +41,27 @@ export default function OurValues() {
 
         {/* Flexbox layout: Left - Values, Right - Image */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-            {/* Left Side - Values Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5 flex-1 h-full">
+            {/* Left Side - Values Section - 60% */}
+            <div className="flex-[6] grid grid-cols-1 sm:grid-cols-3 gap-5 h-full">
                 {valuesData.map((value, index) => (
-                <div
-                    key={index}
-                    className="bg-gray-100 p-2.5 rounded-lg shadow-md text-center flex flex-col justify-between h-full"
-                >
-                    <div className="mb-0">
-                        {/* Icon Placeholder */}
-                        <div className="w-16 h-16 bg-gray-300 mx-auto mb-0 rounded-full flex items-center justify-center">
-                            <span className="text-3xl text-gray-700">📦</span> {/* Example icon */}
+                    <div
+                        key={index}
+                        className="bg-gray-100 p-2.5 rounded-lg shadow-md text-center flex flex-col justify-between h-full"
+                    >
+                        <div className="mb-0">
+                            <div className="w-16 h-16 bg-gray-300 mx-auto mb-0 rounded-full flex items-center justify-center">
+                                <span className="text-3xl text-gray-700">📦</span>
+                            </div>
                         </div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
+                        <p className="text-gray-600">{value.description}</p>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
-                    <p className="text-gray-600">{value.description}</p>
-                </div>
                 ))}
             </div>
 
-            {/* Right Side - Image */}
-            <div className="flex-1 h-full">
-               <BackgroundVideo />
+            {/* Right Side - Image - 40% */}
+            <div className="flex-[4] h-full">
+                <BackgroundVideo />
             </div>
         </div>
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 export default function PartnersSlider() {
     const sliderRef = useRef(null);
-
+ 
     useEffect(() => {
         const slider = sliderRef.current;
         let animationFrame;
@@ -25,11 +25,11 @@ export default function PartnersSlider() {
     }, []);
 
     const partners = [
-        { name: 'Reform', src: 'assets/images/partners/reform.png' },
-        { name: 'Tuple', src: 'assets/images/partners/tuple.png' },
-        { name: 'SavvyCal', src: 'assets/images/partners/savvycal.png' },
-        { name: 'Statamic', src: 'assets/images/partners/statamic.png' },
-        { name: 'Transistor', src: 'assets/images/partners/transistor.png' },
+        { name: 'Stripe', src: 'assets/images/partners/stripe.png' },
+        { name: 'GDPR', src: 'assets/images/partners/gdpr.jpeg' },
+        // { name: 'SavvyCal', src: 'assets/images/partners/savvycal.png' },
+        { name: 'ISO', src: 'assets/images/partners/iso.png' },
+        { name: 'EU', src: 'assets/images/partners/eu.png' },
     ];
 
     return (
