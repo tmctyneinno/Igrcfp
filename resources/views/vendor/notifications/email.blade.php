@@ -85,7 +85,7 @@
 
         <!-- Email Content -->
         <div class="email-body">
-            {{ $slot }}
+            {{ $slot ?? '' }}
         </div>
 
         <!-- Footer -->
