@@ -404,7 +404,7 @@ export default function Register() {
                                                     name="password"
                                                     value={data.password}
                                                     className="pl-10 pr-10 w-full"
-                                                    placeholder="••••••••"
+                                                    placeholder="Password"
                                                     autoComplete="new-password"
                                                     onChange={(e) => setData('password', e.target.value)}
                                                     required
@@ -441,7 +441,7 @@ export default function Register() {
                                                     name="password_confirmation"
                                                     value={data.password_confirmation}
                                                     className="pl-10 pr-10 w-full"
-                                                    placeholder="••••••••"
+                                                    placeholder="Confirm Password"
                                                     autoComplete="new-password"
                                                     onChange={(e) => setData('password_confirmation', e.target.value)}
                                                     required
