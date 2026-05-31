@@ -490,7 +490,7 @@
                             <label class="form-label">Bulk Module Content</label>
                             {{-- NO rich-editor class here — must stay plain textarea --}}
                             <textarea name="bulk_modules"
-                                class="form-control rich-editor @error('bulk_modules') is-invalid @enderror"
+                                class="form-control @error('bulk_modules') is-invalid @enderror"
                                 rows="15"
                                 placeholder="Module 1: Introduction to GRC&#10;Description of this module...&#10;&#10;Module 2: Risk Management&#10;Description...">{{ old('bulk_modules') }}</textarea>
                             @error('bulk_modules')<div class="invalid-feedback">{{ $message }}</div>@enderror

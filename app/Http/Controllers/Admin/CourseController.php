@@ -257,6 +257,9 @@ class CourseController extends Controller
         // FIX: never write these into the courses table
         $courseData = Arr::except($validated, ['bulk_modules', 'deleted_at']);
 
+        // Preserve original values for activity logging after the update.
+        $originalData = $course->getOriginal();
+
         // Force proper booleans (validation can return "0"/"1" strings)
         $courseData['is_featured'] = (bool) ($courseData['is_featured'] ?? false);
         $courseData['is_popular']  = (bool) ($courseData['is_popular']  ?? false);

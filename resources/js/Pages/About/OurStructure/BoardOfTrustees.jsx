@@ -46,7 +46,7 @@ export default function BoardOfTrustees() {
                         <li>Overseeing governance policies and ensuring sustainability.</li>
                         <li>Approving annual budgets and financial reports.</li>
                         <li>Appointing council members and leadership succession.</li>
-                        <li>Ensuring compliance with Nigerian and international standards.</li>
+                        <li>Ensuring compliance with Local and international standards.</li>
                     </ul>
 
                     {/* TRUSTEES */}
