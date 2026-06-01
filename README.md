@@ -187,4 +187,36 @@ correct courses title
 
 Trendy Courses that make people employable
 Trendy Courses That Boost Employability
-In-Demand Courses That Lead to Jobs
+In-Demand Courses That Lead to Jobs 
+
+
+Community & chapter still working on it
+Uploading of ccourses content
+(Scholarship June 1 - 15)
+
+
+sustaniable finane 
+data protection
+AI data tech
+Effective user techolou
+cybersecurity and awareness
+change in expectation
+effective risk mana assessemnt
+impact tech in GRC
+building and leading change in GRC
+impact leadership
+materclass
+company materclas
+board leadership series
+coorporate govrenacl
+problem 
+business
+marhet and sale 
+insurance
+public safe and security
+detecing and preventive
+introduction to operational management(move and leave)
+business contunity
+risk register and asessment
+risk assessment
+intorduction to risk management

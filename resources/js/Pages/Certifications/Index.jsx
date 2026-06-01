@@ -12,7 +12,7 @@ export default function Certifications({ auth, title, description, courses }) {
     return ( 
         <GuestLayout auth={auth}>
             <Head title={title} />
-             
+              
             {/* ===== HERO SECTION ===== */}
             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

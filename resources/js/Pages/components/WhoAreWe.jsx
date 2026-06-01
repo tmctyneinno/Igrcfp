@@ -44,13 +44,10 @@ export default function WhoAreWe() {
                     viewport={{ once: true }}
                 >
                     <p className="text-gray-600 mb-4">
-                        The Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP) is a global professional body dedicated to raising standards in governance, risk management, compliance, and financial crime prevention.
+                       IGRCFP is an independent professional body serving practitioners across governance, risk, compliance, anti-money laundering (AML), fraud prevention, anti-bribery and corruption, sanctions compliance, and financial crime investigation. Our members work across banking, insurance, asset management, legal services, the public sector, and regulated industries worldwide.
                     </p>
                      <p className="text-gray-600 mb-4">
-                        We equip professionals and organizations with world-class training, certifications, and resources to stay ahead in a fast-changing regulatory environment.
-                    </p>
-                     <p className="text-gray-600 mb-4">
-                        With a presence across Africa, Europe, Asia, the Middle East, and the Americas, IGRCFP connects experts, regulators, and industry leaders to share knowledge, drive innovation, and build stronger institutions worldwide.
+                        We are practitioner-led. Our programmes, designations and standards are shaped by professionals who have spent their careers on the front lines of financial crime prevention and regulatory compliance not by academics alone or by commercial interests. This gives everything we produce a practical credibility that members and employers rely upon.
                     </p>
 
                     <Link
@@ -62,19 +59,7 @@ export default function WhoAreWe() {
                 </motion.div>
             </div>
 
-            <motion.div
-                variants={scaleIn}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="mt-24 flex justify-center"
-            >
-                <img
-                    src="assets/images/home-three/bg/intro-bg.png"
-                    alt="IGRCFP"
-                    className="max-w-2xl w-full"
-                />
-            </motion.div>
+            
         </div>
     );
 }

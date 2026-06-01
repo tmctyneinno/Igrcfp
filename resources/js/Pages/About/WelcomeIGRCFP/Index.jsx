@@ -5,6 +5,8 @@ import WhoAreWe from "@/Pages/components/WhoAreWe";
 import OurValues from '@/Pages/About/OurValues';
 import CoreServices from '@/Pages/About/CoreServices';
 import PartnersSlider from '@/Pages/About/PartnersSlider';
+import GovernanceLeadership from '@/Pages/About/GovernanceLeadership';
+import InternationalReachMap from '@/Pages/About/InternationalReachMap';
 import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
 
 export default function AboutIndex({ auth, title, description }) {
@@ -24,17 +26,21 @@ export default function AboutIndex({ auth, title, description }) {
                     </div>
                 </div>
             </section>
-
+ 
 
             <section className="bg-white py-24 overflow-hidden">
                 <WhoAreWe auth={auth} />
-            </section>
-
+            </section> 
+ 
             <VisionMissionSlider />
             
             <OurValues />
 
             <CoreServices />
+
+            <InternationalReachMap />
+
+            <GovernanceLeadership />
 
             <PartnersSlider />
            

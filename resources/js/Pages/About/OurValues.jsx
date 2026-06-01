@@ -1,7 +1,6 @@
 import React from 'react';
 import BackgroundVideo from '@/Pages/About/BackgroundVideo';
 
-
 const valuesData = [
   {
     title: 'Integrity',
@@ -11,7 +10,7 @@ const valuesData = [
   {
     title: 'Excellence',
     description:
-      'We pursue rigorous standards in everything we produce — from qualifications to publications because the professionals we serve deserve nothing less.',
+      'We pursue rigorous standards in everything we produce from qualifications to publications because the professionals we serve deserve nothing less.',
   },
   {
     title: 'Independence',
@@ -24,9 +23,14 @@ const valuesData = [
       'Financial crime knows no borders. IGRCFP serves members across the UK, Africa, the Caribbean, the Middle East, and beyond.',
   },
   {
-    title: 'Global Reach',
+    title: 'Inclusion',
     description:
-      'Financial crime knows no borders. IGRCFP serves members across the UK, Africa, the Caribbean, the Middle East, and beyond.',
+      'We are committed to widening access to professional qualifications and membership across all backgrounds and regions.',
+  },
+  {
+    title: 'Collaboration',
+    description:
+      'We work alongside universities, regulators, employers and professional organisations to advance the discipline.',
   },
 ];
 
@@ -42,7 +46,7 @@ export default function OurValues() {
         {/* Flexbox layout: Left - Values, Right - Image */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
             {/* Left Side - Values Section - 60% */}
-            <div className="flex-[6] grid grid-cols-1 sm:grid-cols-3 gap-5 h-full">
+            <div className="flex-[6] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 h-full">
                 {valuesData.map((value, index) => (
                     <div
                         key={index}
@@ -64,12 +68,7 @@ export default function OurValues() {
                 <BackgroundVideo />
             </div>
         </div>
-
-
       </div>
     </section>
   );
 }
-
-
-

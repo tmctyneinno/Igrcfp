@@ -131,17 +131,20 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
         <GuestLayout auth={auth}> 
             <Head title={title ? `IGRCFP | ${title}` : 'IGRCFP | Courses'} />
             <div className="min-h-screen bg-gray-50">
-                <section className="bg-white border-b border-gray-200">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                        <p className="text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
-                            {igrcfpCategory || 'Courses'}
-                        </p>
-                        <h1 className="mt-3 text-3xl md:text-4xl font-bold text-gray-900">
-                            {title || 'Courses'}
-                        </h1>
-                        <p className="mt-3 max-w-3xl text-gray-600">
-                            {description || 'Browse our latest professional learning programmes.'}
-                        </p>
+                {/* ===== HERO SECTION ===== */}
+                <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center">
+                            <p className="text-sm font-semibold tracking-[0.2em] text-blue-700 uppercase">
+                                {igrcfpCategory || 'Courses'}
+                            </p>
+                            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                                {title || 'Courses'}
+                            </h1> 
+                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                                {description || 'Browse our latest professional learning programmes.'}
+                            </p>
+                        </div>
                     </div>
                 </section>
                

@@ -27,7 +27,7 @@ export default function PartnersSlider() {
     const partners = [
         { name: 'Stripe', src: 'assets/images/partners/stripe.png' },
         { name: 'GDPR', src: 'assets/images/partners/gdpr.jpeg' },
-        // { name: 'SavvyCal', src: 'assets/images/partners/savvycal.png' },
+        { name: 'ICO', src: 'assets/images/partners/ico.png' },
         { name: 'ISO', src: 'assets/images/partners/iso.png' },
         { name: 'EU', src: 'assets/images/partners/eu.png' },
     ];

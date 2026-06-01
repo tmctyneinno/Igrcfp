@@ -103,7 +103,7 @@ export default function Index({ auth, title, description }) {
                                 ))}
                             </div>
                             <div className="mt-6 pt-6 border-t border-gray-200">
-                                <a href="/programmes/all-courses" className="block text-center bg-blue-900 text-white py-3 rounded-lg font-medium hover:bg-blue-800 transition duration-300">
+                                <a href="/course-catalogue" className="block text-center bg-blue-900 text-white py-3 rounded-lg font-medium hover:bg-blue-800 transition duration-300">
                                     View Complete Course Catalog
                                 </a>
                             </div>

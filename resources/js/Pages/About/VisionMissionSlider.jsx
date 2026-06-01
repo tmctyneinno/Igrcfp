@@ -7,28 +7,34 @@ export default function VisionMissionSlider() {
 useEffect(() => {
     const interval = setInterval(() => {
         setActiveIndex((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 6000); 
 
     return () => clearInterval(interval);
 }, []);
 
     const slides = [
         {
-            title: 'OUR VISION',
+            title: 'PURPOSE',
             content:
-                'To be the foremost international institute advancing governance, compliance, and financial crime prevention through knowledge, innovation, and collaboration.',
+                'IGRCFP — the Institute of Governance, Risk, Compliance and Financial Crime Prevention is a professional body committed to raising standards among practitioners working in governance, risk management, regulatory compliance, and the prevention of financial crime.' +
+                'We exist because financial crime is a global threat, and the professionals who stand against it deserve a dedicated home: a body that champions their expertise, develops their capabilities, and gives their work the professional recognition it deserves.',
         },
-        {
-            title: 'OUR MISSION',
-            content:
-                'Elevate GRC & FCC standards globally, empower professionals with skills, certifications, and mentorship, empower professionals with skills, certifications, and mentorship & champion diversity, equity, and inclusion in compliance leadership',
-        },
+        // {
+        //     title: 'OUR VISION',
+        //     content:
+        //         'To be the foremost international institute advancing governance, compliance, and financial crime prevention through knowledge, innovation, and collaboration.',
+        // },
+        // {
+        //     title: 'OUR MISSION',
+        //     content:
+        //         'Elevate GRC & FCC standards globally, empower professionals with skills, certifications, and mentorship, empower professionals with skills, certifications, and mentorship & champion diversity, equity, and inclusion in compliance leadership',
+        // },
     ];
 
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <section className="py-28 bg-white">
+        <section className="py-20 bg-white">
             <div className="max-w-4xl mx-auto px-4 text-center">
 
                 {/* Title with Divider Lines */}
@@ -57,7 +63,7 @@ useEffect(() => {
                 </div>
 
                 {/* Navigation Dots */}
-                <div className="flex items-center justify-center gap-3 mt-14">
+                <div className="flex items-center justify-center gap-3 mt-20">
                     {slides.map((_, index) => (
                         <button
                             key={index}
