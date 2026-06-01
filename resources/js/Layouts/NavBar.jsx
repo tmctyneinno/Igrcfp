@@ -8,6 +8,7 @@ function NavBar({ auth }) {
     const [mobileMegaMenuOpen, setMobileMegaMenuOpen] = useState(false);
     const mobileMenuRef = useRef(null);
     const megaMenuRef = useRef(null);
+    const ignoreMegaMenuHoverRef = useRef(false);
      
     // Close mobile menu when clicking outside
     useEffect(() => {
@@ -115,7 +116,10 @@ function NavBar({ auth }) {
                         <div 
                             className="relative"
                             ref={megaMenuRef}
-                            onMouseLeave={() => setOpenMegaMenu(false)}
+                            onMouseLeave={() => {
+                                ignoreMegaMenuHoverRef.current = false;
+                                setOpenMegaMenu(false);
+                            }}
                         >
                             <button 
                                 className={`px-3 py-2 text-sm font-medium rounded-lg transition duration-200 flex items-center whitespace-nowrap ${
@@ -123,8 +127,17 @@ function NavBar({ auth }) {
                                         ? 'text-blue-900 bg-blue-50' 
                                         : 'text-black hover:text-blue-900 hover:bg-blue-50'
                                 }`}
-                                onClick={() => setOpenMegaMenu(!openMegaMenu)}
-                                onMouseEnter={() => setOpenMegaMenu(true)}
+                                onClick={() => {
+                                    setOpenMegaMenu((isOpen) => {
+                                        ignoreMegaMenuHoverRef.current = isOpen;
+                                        return !isOpen;
+                                    });
+                                }}
+                                onMouseEnter={() => {
+                                    if (!ignoreMegaMenuHoverRef.current) {
+                                        setOpenMegaMenu(true);
+                                    }
+                                }}
                                 aria-expanded={openMegaMenu}
                             >
                                 🎓 Certifications & Trainings
@@ -146,14 +159,14 @@ function NavBar({ auth }) {
                                     ></div>
                                     
                                     <div 
-                                        className="fixed left-1/2 -translate-x-1/2 mt-2 w-[95vw] max-w-[1200px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
+                                        className="fixed left-1/2 -translate-x-1/2 mt-2 w-[95vw] max-w-[1000px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden"
                                         style={{ 
                                             maxHeight: 'calc(100vh - 100px)',
                                         }}
                                     >
-                                        <div className="overflow-y-auto" style={{ maxHeight: 'calc(100vh - 160px)' }}>
+                                        <div className="overflow-y-auto" style={{ maxHeight: 'calc(95vh - 160px)' }}>
                                             <div className="p-6 lg:p-8">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                                     
                                                     {/* COLUMN 1: Qualification Levels */}
                                                     <div>
@@ -324,7 +337,7 @@ function NavBar({ auth }) {
                                                     </div>
 
                                                     {/* COLUMN 4: Quick Links & CTA */}
-                                                    <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl p-5">
+                                                    {/* <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl p-5">
                                                         <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-4">
                                                             Getting Started
                                                         </h3>
@@ -363,7 +376,7 @@ function NavBar({ auth }) {
                                                                 Speak to an Advisor
                                                             </Link>
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                         </div>
