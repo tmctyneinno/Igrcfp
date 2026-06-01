@@ -31,7 +31,7 @@ const memberships = [
         icon: "🎓",
     },
     {
-        title: "Cooperate Member (for Organizations)",
+        title: "Corporate Member (for Organizations)",
         bg: "bg-blue-900",
         text: "text-white",
         icon: "🎓",

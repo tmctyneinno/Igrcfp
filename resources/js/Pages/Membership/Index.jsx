@@ -32,7 +32,7 @@ export default function Membership({ auth, title, description }) {
             <MembershipTable/>
             <MentorshipProgramme />
             <HowMembershipWorks />
-           
+            
         </GuestLayout>
     );
 }

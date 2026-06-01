@@ -195,13 +195,13 @@ Uploading of ccourses content
 (Scholarship June 1 - 15)
 
 
-sustaniable finane 
-data protection
+<!-- sustaniable finane  -->
+<!-- data protection -->
 AI data tech
-Effective user techolou
-cybersecurity and awareness
+<!-- Effective user techolou -->
+<!-- cybersecurity and awareness -->
 change in expectation
-effective risk mana assessemnt
+<!-- effective risk mana assessemnt -->
 impact tech in GRC
 building and leading change in GRC
 impact leadership
@@ -209,12 +209,12 @@ materclass
 company materclas
 board leadership series
 coorporate govrenacl
-problem 
+<!-- problem  -->
 business
-marhet and sale 
+<!-- marhet and sale  -->
 insurance
 public safe and security
-detecing and preventive
+<!-- detecing and preventive -->
 introduction to operational management(move and leave)
 business contunity
 risk register and asessment

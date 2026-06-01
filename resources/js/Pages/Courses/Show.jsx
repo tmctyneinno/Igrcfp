@@ -49,8 +49,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
   const formatPrice = (price) => {
     const numPrice = parseFloatSafe(price);
     return numPrice === 0 ? 'Free' : `£${numPrice.toFixed(2)}`;
-  };
-
+  }; 
   // Parse prices safely
   const price = parseFloatSafe(course.price);
   const discountPrice = parseFloatSafe(course.discount_price);
@@ -88,15 +87,14 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
   return (
     <>
-      <GuestLayout auth={auth}>
-        
+      <GuestLayout auth={auth} forceWhiteNavbar>
+        <Head title={course.title} />
 
-        {/* Hero Banner */}
         <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
           {/* Background Banner Image - Added */}
          
           <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  pt-40 pb-20">
             <div className="flex flex-col lg:flex-row items-start gap-8">
               {/* Course Title & Basic Info */}
               <div className="lg:w-2/3">
@@ -158,7 +156,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                 )}
                 
                 <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-bold">Enroll Now</h3>
                     {hasDiscount && (
                       <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
@@ -167,7 +165,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                     )}
                   </div>
                   
-                  <div className="mb-6">
+                  <div className="mb-0">
                     {hasDiscount ? (
                       <div className="space-y-2">
                         <div className="flex items-center">
