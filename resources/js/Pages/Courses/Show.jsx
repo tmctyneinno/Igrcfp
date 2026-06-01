@@ -612,9 +612,9 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                 >
                   Enroll Now - £{hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
                 </button>
-                <button className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/10 transition duration-200">
+                {/* <button className="bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white/10 transition duration-200">
                   Download Syllabus
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
