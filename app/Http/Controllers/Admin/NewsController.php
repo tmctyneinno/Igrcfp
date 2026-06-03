@@ -10,6 +10,7 @@ use App\Models\ArticleCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
