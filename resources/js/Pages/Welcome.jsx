@@ -84,7 +84,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
                             <span className="text-4xl">🎓</span>
                             <div className="text-white">
                                 <h3 className="text-xl font-bold">Emerging Professionals Scholarship 2026</h3>
-                                <p className="text-yellow-100">25 slots available globally. Apply from 1st to June 30, 2026.</p>
+                                <p className="text-yellow-100">25 slots available globally. Apply from 1st to June 15, 2026.</p>
                             </div>
                         </div>
                         <Link
