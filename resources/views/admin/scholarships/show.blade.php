@@ -19,6 +19,7 @@
                         <tr><th>Phone</th><td>{{ $application->phone_number }}</td></tr>
                         <tr><th>Nationality</th><td>{{ $application->nationality }}</td></tr>
                         <tr><th>Country</th><td>{{ $application->country_of_residence }}</td></tr>
+                        <tr><th>Academic Background</th><td>{{ $application->academic_background }}</td></tr>
                         <tr><th>Qualification</th><td>{{ $application->highest_qualification }}</td></tr>
                         <tr><th>Institution</th><td>{{ $application->institution }}</td></tr>
                         <tr><th>Year Completed</th><td>{{ $application->year_completed }}</td></tr>
