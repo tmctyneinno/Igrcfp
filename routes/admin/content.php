@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\ContentManagementController;
 use Illuminate\Support\Facades\Route;
 
 // Content Management Routes (Protected - all admin roles)
-Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'admin.role:moderator,admin,super_admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth.admin', 'admin.role:moderator,admin,super_admin'])->group(function () {
     // Content Index (Blog/Articles/Pages)
     Route::get('/content', [ContentManagementController::class, 'index'])
         ->name('content.index');

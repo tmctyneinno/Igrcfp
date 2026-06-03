@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use Illuminate\Support\Facades\Route; 
 
 // Admin Dashboard Routes (Protected)
-Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
         ->name('dashboard'); 

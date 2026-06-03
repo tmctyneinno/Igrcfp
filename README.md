@@ -220,3 +220,11 @@ business contunity
 risk register and asessment
 risk assessment
 intorduction to risk management
+
+
+systemctl reload nginx
+
+Uderwriting
+Strategic Risk Management 
+Risk-Based Approach to AML & CFT
+Risk Appetite

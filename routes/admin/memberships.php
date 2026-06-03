@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\MentorController;
 use App\Http\Controllers\Admin\MentorApplicationController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(function () {
     // Memberships
     Route::resource('membership-tiers', MembershipTierController::class);
     Route::resource('membership-plans', MembershipPlanController::class);
