@@ -16,7 +16,9 @@ export default function VerifyEmail({ status }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('verification.send'));
+        post(route('verification.send'), {
+            preserveScroll: true,
+        });
     };
 
     return (

@@ -30,7 +30,7 @@ class AuthenticateAdmin
             return redirect()->guest(route('admin.login'));
         }
 
-        // Fallback for other routes
-        return redirect()->guest(route('admin.login'));
+        // Fallback for non-admin routes
+        return redirect()->guest(route('login'));
     }
 }

@@ -64,7 +64,7 @@
             <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="IGRCFP Logo">
             <h1>Welcome to IGRCFP!</h1> 
         </div>
-
+ 
         <!-- Content Section -->
         <div class="content">
             <p>Dear {{ $name }},</p>
