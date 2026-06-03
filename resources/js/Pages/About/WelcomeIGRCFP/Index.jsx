@@ -5,7 +5,7 @@ import WhoAreWe from "@/Pages/components/WhoAreWe";
 import OurValues from '@/Pages/About/OurValues';
 import CoreServices from '@/Pages/About/CoreServices';
 import PartnersSlider from '@/Pages/About/PartnersSlider';
-import GovernanceLeadership from '@/Pages/About/GovernanceLeadership';
+
 import InternationalReachMap from '@/Pages/About/InternationalReachMap';
 import VisionMissionSlider from '@/Pages/About/VisionMissionSlider';
 
@@ -39,8 +39,6 @@ export default function AboutIndex({ auth, title, description }) {
             <CoreServices />
 
             <InternationalReachMap />
-
-            <GovernanceLeadership />
 
             <PartnersSlider />
            

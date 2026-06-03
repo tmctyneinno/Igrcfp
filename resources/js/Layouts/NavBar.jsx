@@ -100,13 +100,13 @@ function NavBar({ auth }) {
                             </button>
                             
                             <div className="absolute left-0 mt-1 w-56 bg-white rounded-lg shadow-lg py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <Link href='/welcome-to-igrcfp' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href={route('welcome-to-igrcfp')} className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Welcome to IGRCFP
                                 </Link>
-                                <Link href='/our-structure' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href={route('our-structure')} className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Our Structure
                                 </Link>
-                                <Link href='/why-igrcfp' className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href={route('why-igrcfp')} className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     Why IGRCFP
                                 </Link>
                             </div>
@@ -418,7 +418,7 @@ function NavBar({ auth }) {
 
                         {/* Membership */}
                         <Link 
-                            href="/membership" 
+                            href={route('membership')} 
                             className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Membership
@@ -437,7 +437,7 @@ function NavBar({ auth }) {
 
                         {/* Events */}
                         <Link 
-                            href="/events" 
+                            href={route('events.index')} 
                             className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Events
@@ -453,7 +453,7 @@ function NavBar({ auth }) {
                             </button>
                             
                             <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <Link href="/blog" className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
+                                <Link href={route('blog')} className="block px-4 py-2.5 text-sm text-black hover:bg-blue-50 hover:text-blue-900 transition duration-150">
                                     <div className="flex items-center">
                                         <svg className="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -474,7 +474,7 @@ function NavBar({ auth }) {
 
                         {/* Connect */}
                         <Link 
-                            href="/contact" 
+                            href={route('contact')} 
                             className="px-3 py-2 text-sm font-medium text-black hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                         >
                             Connect
@@ -486,7 +486,7 @@ function NavBar({ auth }) {
                         {auth && auth.user ? (
                             <div className="hidden lg:flex items-center space-x-3">
                                 <Link 
-                                    href='/dashboard'
+                                    href={route('dashboard.index')}
                                     className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200"
                                 >
                                     Dashboard
@@ -503,15 +503,15 @@ function NavBar({ auth }) {
                                     </button>
                                     
                                     <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-100">
-                                        <Link href="/profile" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition duration-150">
+                                        <Link href={route('profile.edit')} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition duration-150">
                                             Profile
                                         </Link>
-                                        <Link href="/settings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition duration-150">
+                                        <Link href={route('settings')} className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 transition duration-150">
                                             Settings
                                         </Link>
                                         <div className="border-t border-gray-100 my-1"></div>
                                         <Link 
-                                            href='/logout' 
+                                            href={route('logout')} 
                                             method="post"
                                             as="button"
                                             className="block w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition duration-150"
@@ -524,7 +524,7 @@ function NavBar({ auth }) {
                         ) : (
                             <div className="hidden lg:block">
                                 <Link
-                                    href='/login'
+                                    href={route('login')}
                                     className="bg-blue-900 text-white text-sm px-4 py-2.5 rounded-full font-medium hover:bg-blue-800 transition duration-200 shadow-sm hover:shadow-md"
                                 >
                                     Join the Institute
@@ -577,9 +577,9 @@ function NavBar({ auth }) {
                             </button>
                             {openDropdown === 'about' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">
-                                    <Link href="/welcome-to-igrcfp" className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Welcome to IGRCFP</Link>
-                                    <Link href="/our-structure" className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Our Structure</Link>
-                                    <Link href="/why-igrcfp" className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Why IGRCFP</Link>
+                                    <Link href={route('welcome-to-igrcfp')} className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Welcome to IGRCFP</Link>
+                                    <Link href={route('our-structure')} className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Our Structure</Link>
+                                    <Link href={route('why-igrcfp')} className="block px-3 py-2 text-sm text-gray-600 hover:text-blue-900" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Why IGRCFP</Link>
                                 </div>
                             )}
                         </div>
@@ -617,7 +617,7 @@ function NavBar({ auth }) {
                             )}
                         </div>
                         
-                        <Link href="/membership" className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Link href={route('membership')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                             💎 Membership
                         </Link>
 
@@ -633,7 +633,7 @@ function NavBar({ auth }) {
                             ✅ Verify Certificate
                         </Link>
 
-                        <Link href="/events" className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Link href={route('events.index')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                             📅 Events
                         </Link>
                         
@@ -650,19 +650,19 @@ function NavBar({ auth }) {
                             </button>
                             {openDropdown === 'resources' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">
-                                    <Link href="/blog" className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Blog</Link>
+                                    <Link href={route('blog')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Blog</Link>
                                     <Link href={route('news.index')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>News</Link>
                                 </div>
                             )}
                         </div>
                         
-                        <Link href="/contact" className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                        <Link href={route('contact')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                             📞 Connect
                         </Link>
                         
                         {!auth?.user && (
                             <div className="pt-3 border-t border-gray-100 mt-3">
-                                <Link href='/login' className="block w-full text-center bg-blue-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href={route('login')} className="block w-full text-center bg-blue-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                                     Join the Institute
                                 </Link>
                             </div>

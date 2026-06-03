@@ -25,7 +25,7 @@ export default function GovernanceLeadership() {
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Governance Structure</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  IGRCFP is governed by a <span className="font-medium text-blue-600">Director</span> and guided by a 
+                  IGRCFP is governed by a <span className="font-medium text-blue-600">the President, Advisory Board </span> and guided by a 
                   professional standards framework that underpins the integrity of our qualifications, 
                   membership and designations.
                 </p>

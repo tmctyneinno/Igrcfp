@@ -1,6 +1,7 @@
 import React from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import GovernanceLeadership from '@/Pages/About/GovernanceLeadership';
 import BoardOfTrustees from '@/Pages/About/OurStructure/BoardOfTrustees';
 
 export default function OurStructure({ auth, title, description }) {
