@@ -22,7 +22,7 @@ export default function BoardOfTrustees() {
 
     return (
         <section className="bg-white py-20">
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-16">
+            <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-16">
 
                 {/* LEFT CONTENT */}
                 <div className="lg:col-span-3">

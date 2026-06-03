@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function GovernanceLeadership() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-10 bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -25,7 +25,7 @@ export default function GovernanceLeadership() {
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Governance Structure</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  IGRCFP is governed by a <span className="font-medium text-blue-600">the President, Advisory Board </span> and guided by a 
+                  IGRCFP is governed by the <span className="font-medium text-blue-600">President, Advisory Board </span> and guided by a 
                   professional standards framework that underpins the integrity of our qualifications, 
                   membership and designations.
                 </p>
