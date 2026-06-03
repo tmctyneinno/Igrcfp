@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Mail\VerificationEmail;
@@ -37,7 +38,15 @@ class RegisteredUserController extends Controller
                 'role' => 'required|string|max:255',
                 'phone' => 'required|string|max:255',
                 'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'password' => [
+                    'required',
+                    'confirmed',
+                    Rules\Password::min(8)->mixedCase()->numbers()->symbols(),
+                ],
+                'g-recaptcha-response' => 'required|captcha',
+            ], [
+                'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
+                'g-recaptcha-response.captcha' => 'Security verification failed. Please try again.',
             ]);
 
             $user = User::create([
@@ -90,7 +99,7 @@ class RegisteredUserController extends Controller
             ]);
             // Create proper validation errors
             $validator = Validator::make([], []);
-            // $validator->errors()->add('email', 'Registration failed. Please try again.');
+            $validator->errors()->add('registration', 'Registration failed. Please try again.');
             
             if (str_contains($e->getMessage(), 'The email has already been taken.')) {
                 $validator->errors()->add('email', 'This email is already registered.');

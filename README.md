@@ -228,3 +228,8 @@ Uderwriting
 Strategic Risk Management 
 Risk-Based Approach to AML & CFT
 Risk Appetite
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OTPMail;
+
+Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));

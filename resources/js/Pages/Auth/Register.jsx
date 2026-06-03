@@ -8,7 +8,7 @@ import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, clearErrors } = useForm({
         name: '',
         email: '',
         password: '',
@@ -23,9 +23,129 @@ export default function Register() {
     const [currentStep, setCurrentStep] = useState(1);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [clientErrors, setClientErrors] = useState({});
 
     const recaptchaRef = useRef(null);
     const widgetIdRef = useRef(null);
+    const formPanelRef = useRef(null);
+
+    const clearFieldError = (field) => {
+        setClientErrors((currentErrors) => {
+            if (!Object.prototype.hasOwnProperty.call(currentErrors, field)) {
+                return currentErrors;
+            }
+
+            const nextErrors = { ...currentErrors };
+            delete nextErrors[field];
+            return nextErrors;
+        });
+
+        if (typeof clearErrors === 'function') {
+            clearErrors(field);
+        }
+    };
+
+    const setFieldError = (field, message) => {
+        setClientErrors((currentErrors) => {
+            if (!message) {
+                if (!Object.prototype.hasOwnProperty.call(currentErrors, field)) {
+                    return currentErrors;
+                }
+
+                const nextErrors = { ...currentErrors };
+                delete nextErrors[field];
+                return nextErrors;
+            }
+
+            return {
+                ...currentErrors,
+                [field]: message,
+            };
+        });
+
+        if (typeof clearErrors === 'function') {
+            clearErrors(field);
+        }
+    };
+
+    const getPasswordError = (password, required = false) => {
+        if (!password) {
+            return required ? 'Please enter your password.' : '';
+        }
+
+        if (password.length < 8) {
+            return 'Password must be at least 8 characters.';
+        }
+
+        if (!/[a-z]/.test(password)) {
+            return 'Password must include at least one lowercase letter.';
+        }
+
+        if (!/[A-Z]/.test(password)) {
+            return 'Password must include at least one uppercase letter.';
+        }
+
+        if (!/[0-9]/.test(password)) {
+            return 'Password must include at least one number.';
+        }
+
+        if (!/[^A-Za-z0-9]/.test(password)) {
+            return 'Password must include at least one special character.';
+        }
+
+        return '';
+    };
+
+    const getPasswordConfirmationError = (password, confirmation, required = false) => {
+        if (!confirmation) {
+            return required ? 'Please confirm your password.' : '';
+        }
+
+        if (password !== confirmation) {
+            return 'Password confirmation does not match.';
+        }
+
+        return '';
+    };
+
+    const updateField = (field, value) => {
+        setData(field, value);
+
+        if (field === 'password') {
+            setFieldError('password', getPasswordError(value));
+            setFieldError('password_confirmation', getPasswordConfirmationError(value, data.password_confirmation));
+            return;
+        }
+
+        if (field === 'password_confirmation') {
+            setFieldError('password_confirmation', getPasswordConfirmationError(data.password, value));
+            return;
+        }
+
+        clearFieldError(field);
+    };
+
+    const getStepForError = (field) => {
+        if (['role'].includes(field)) {
+            return 1;
+        }
+
+        if (['name', 'email', 'phone', 'linkedin', 'linkedin_url', 'date_of_birth'].includes(field)) {
+            return 2;
+        }
+
+        return 3;
+    };
+
+    const goToFirstErrorStep = (validationErrors) => {
+        const firstErrorField = Object.keys(validationErrors)[0];
+
+        if (!firstErrorField) {
+            return;
+        }
+
+        setCurrentStep(getStepForError(firstErrorField));
+    };
 
     // Load & render reCAPTCHA v2 widget when user reaches Step 3
     useEffect(() => {
@@ -39,7 +159,7 @@ export default function Register() {
                 widgetIdRef.current = window.grecaptcha.render(recaptchaRef.current, {
                     sitekey: SITE_KEY,
                     callback: (token) => {
-                        setData('g-recaptcha-response', token);
+                        updateField('g-recaptcha-response', token);
                     },
                     'expired-callback': () => {
                         setData('g-recaptcha-response', '');
@@ -75,22 +195,75 @@ export default function Register() {
 
     useEffect(() => {
         if (Object.keys(errors).length > 0) {
-            const firstErrorElement = document.querySelector('[id^="error-"]');
-            if (firstErrorElement) {
-                firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            goToFirstErrorStep(errors);
+
+            window.requestAnimationFrame(() => {
+                formPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
         }
     }, [errors]);
+
+    const validateStep = (step = currentStep) => {
+        const validationErrors = {};
+
+        if (step >= 1 && !data.role) {
+            validationErrors.role = 'Please select a role.';
+        }
+
+        if (step >= 2) {
+            if (!data.name.trim()) {
+                validationErrors.name = 'Please enter your full name.';
+            }
+
+            if (!data.email.trim()) {
+                validationErrors.email = 'Please enter your email address.';
+            }
+
+            if (!data.phoneLocal && !data.phone.replace(/^\+\d+\s*/, '').trim()) {
+                validationErrors.phone = 'Please enter your phone number.';
+            }
+        }
+
+        if (step >= 3) {
+            const passwordError = getPasswordError(data.password, true);
+            const passwordConfirmationError = getPasswordConfirmationError(
+                data.password,
+                data.password_confirmation,
+                true
+            );
+
+            if (passwordError) {
+                validationErrors.password = passwordError;
+            }
+
+            if (passwordConfirmationError) {
+                validationErrors.password_confirmation = passwordConfirmationError;
+            }
+
+            if (!data['g-recaptcha-response']) {
+                validationErrors['g-recaptcha-response'] = 'Please complete the reCAPTCHA verification to continue.';
+            }
+        }
+
+        setClientErrors(validationErrors);
+        goToFirstErrorStep(validationErrors);
+        return Object.keys(validationErrors).length === 0;
+    };
 
     const submit = (e) => {
         e.preventDefault();
         if (currentStep < 3) {
-            setCurrentStep(currentStep + 1);
+            nextStep();
         } else {
+            if (!validateStep(3)) {
+                return;
+            }
+
             post(route('register'), {
-                onFinish: () => {
-                    reset('password', 'password_confirmation');
-                    // Reset widget after failed attempt
+                preserveScroll: true,
+                onError: () => {
+                    // Reset only the verification token after a failed attempt.
+                    // Keep field values and server errors visible so the user can fix them.
                     if (window.grecaptcha && widgetIdRef.current !== null) {
                         window.grecaptcha.reset(widgetIdRef.current);
                         setData('g-recaptcha-response', '');
@@ -101,15 +274,11 @@ export default function Register() {
     };
 
     const nextStep = () => {
-        if (currentStep === 1 && !data.role) {
-            alert('Please select a role');
-            return;
+        const currentStepServerErrors = Object.keys(errors).filter((field) => getStepForError(field) === currentStep);
+
+        if (currentStepServerErrors.length === 0 && validateStep(currentStep)) {
+            setCurrentStep(prev => prev + 1);
         }
-        if (currentStep === 2 && (!data.name || !data.email)) {
-            alert('Please fill in name and email');
-            return;
-        }
-        setCurrentStep(prev => prev + 1);
     };
 
     const prevStep = () => {
@@ -126,6 +295,44 @@ export default function Register() {
         { number: 2, title: 'Personal Info', description: 'Enter your details' },
         { number: 3, title: 'Security', description: 'Create your password' },
     ];
+
+    const formErrors = { ...clientErrors, ...errors };
+    const getErrorsForStep = (step) => Object.fromEntries(
+        Object.entries(formErrors).filter(([field]) => getStepForError(field) === step)
+    );
+    const step1ErrorEntries = Object.entries(getErrorsForStep(1));
+    const step2ErrorEntries = Object.entries(getErrorsForStep(2));
+    const step3ErrorEntries = Object.entries(getErrorsForStep(3));
+    const hasStep3Errors = step3ErrorEntries.length > 0;
+    const hasBlockingFinalStepError = processing || hasStep3Errors;
+
+    const StepErrorSummary = ({ entries, title }) => {
+        if (entries.length === 0) {
+            return null;
+        }
+
+        return (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
+                <div className="flex items-start">
+                    <svg className="h-5 w-5 text-red-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <h4 className="text-sm font-medium text-red-800">{title}</h4>
+                        <ul className="mt-2 text-sm text-red-700 space-y-1">
+                            {entries.map(([field, messages]) =>
+                                Array.isArray(messages)
+                                    ? messages.map((message, index) => (
+                                        <li key={`${field}-${index}`}>• {message}</li>
+                                    ))
+                                    : <li key={field}>• {messages}</li>
+                            )}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <GuestLayout>
@@ -152,8 +359,8 @@ export default function Register() {
                 </div>
 
                 {/* Right Side - Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-                    <div className="w-full max-w-2xl">
+                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 pt-20">
+                    <div ref={formPanelRef} className="w-full max-w-2xl pt-0">
                         {/* Header */}
                         <div className="text-center mb-8">
                             <div className="site-branding mb-4">
@@ -167,30 +374,16 @@ export default function Register() {
                             </div>
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Join Us!</h2>
                             <p className="text-gray-600">Please provide your details</p>
+                            <p className="mt-3 text-sm text-gray-600">
+                                Already have an account?{' '}
+                                <Link
+                                    href={route('login')}
+                                    className="font-medium text-blue-900 hover:text-indigo-500"
+                                >
+                                    Sign in
+                                </Link>
+                            </p>
                         </div>
-
-                        {/* Global Error Summary */}
-                        {Object.keys(errors).length > 0 && (
-                            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <div className="flex items-start">
-                                    <svg className="h-5 w-5 text-red-400 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                    </svg>
-                                    <div>
-                                        <h4 className="text-sm font-medium text-red-800">Please fix the following errors:</h4>
-                                        <ul className="mt-2 text-sm text-red-700 space-y-1">
-                                            {Object.entries(errors).map(([field, messages]) =>
-                                                Array.isArray(messages)
-                                                    ? messages.map((message, index) => (
-                                                        <li key={`${field}-${index}`}>• {message}</li>
-                                                    ))
-                                                    : <li key={field}>• {messages}</li>
-                                            )}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
 
                         {/* Progress Steps */}
                         <div className="mb-8">
@@ -221,6 +414,10 @@ export default function Register() {
                             {/* Step 1 - Role Selection */}
                             {currentStep === 1 && (
                                 <div className="space-y-6">
+                                    <StepErrorSummary
+                                        entries={step1ErrorEntries}
+                                        title="Please choose an account role to continue."
+                                    />
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Select Your Role</h3>
                                         <p className="text-gray-600 mt-2">Choose how you want to use our platform</p>
@@ -228,7 +425,7 @@ export default function Register() {
                                     <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                                         <div
                                             className={`border-2 rounded-lg p-6 cursor-pointer transition-all duration-300 ${data.role === 'learner' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
-                                            onClick={() => setData('role', 'learner')}
+                                            onClick={() => updateField('role', 'learner')}
                                         >
                                             <div className="text-center">
                                                 <div className="mb-4">
@@ -256,7 +453,7 @@ export default function Register() {
                                             </div>
                                         </div> */}
                                     </div>
-                                    <InputError message={errors.role} className="mt-2 text-center" />
+                                    <InputError message={formErrors.role} className="mt-2 text-center" />
                                     <div className="flex justify-end pt-4">
                                         <button
                                             type="button"
@@ -273,6 +470,10 @@ export default function Register() {
                             {/* Step 2 - Personal Info */}
                             {currentStep === 2 && (
                                 <div className="space-y-6">
+                                    <StepErrorSummary
+                                        entries={step2ErrorEntries}
+                                        title="Please fix your personal information."
+                                    />
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Personal Information</h3>
                                         <p className="text-gray-600 mt-2">Tell us a bit about yourself</p>
@@ -286,9 +487,9 @@ export default function Register() {
                                                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                                     </svg>
                                                 </div>
-                                                <TextInput id="name" name="name" value={data.name} className="pl-10 w-full" placeholder="John Doe" autoComplete="name" isFocused={true} onChange={(e) => setData('name', e.target.value)} required />
+                                                <TextInput id="name" name="name" value={data.name} className="pl-10 w-full" placeholder="John Doe" autoComplete="name" isFocused={true} onChange={(e) => updateField('name', e.target.value)} required />
                                             </div>
-                                            <InputError message={errors.name} className="mt-2" />
+                                            <InputError message={formErrors.name} className="mt-2" />
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="email" value="Email Address *" />
@@ -299,13 +500,13 @@ export default function Register() {
                                                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                                     </svg>
                                                 </div>
-                                                <TextInput id="email" type="email" name="email" value={data.email} className="pl-10 w-full" placeholder="email@gmail.com" autoComplete="email" onChange={(e) => setData('email', e.target.value)} required />
+                                                <TextInput id="email" type="email" name="email" value={data.email} className="pl-10 w-full" placeholder="email@gmail.com" autoComplete="email" onChange={(e) => updateField('email', e.target.value)} required />
                                             </div>
-                                            <InputError message={errors.email} className="mt-2" />
+                                            <InputError message={formErrors.email} className="mt-2" />
                                         </div>
                                         {/* Phone Number with Country Code Selector */}
                                         <div>
-                                            <InputLabel htmlFor="phone" value="Phone Number" />
+                                            <InputLabel htmlFor="phone" value="Phone Number *" />
                                             <div className="mt-1 relative flex">
                                                 
                                                 {/* Country Code Dropdown */}
@@ -315,7 +516,7 @@ export default function Register() {
                                                         setData('phoneCountryCode', code);
                                                         // Rebuild full phone whenever country code changes
                                                         const localNumber = (data.phone || '').replace(/^\+\d+\s*/, '');
-                                                        setData('phone', `${code} ${localNumber}`.trim());
+                                                        updateField('phone', `${code} ${localNumber}`.trim());
                                                     }}
                                                 />
 
@@ -332,12 +533,12 @@ export default function Register() {
                                                         onChange={(e) => {
                                                             const local = e.target.value.replace(/\D/g, ''); // digits only
                                                             setData('phoneLocal', local);
-                                                            setData('phone', `${data.phoneCountryCode || '+234'} ${local}`.trim());
+                                                            updateField('phone', `${data.phoneCountryCode || '+234'} ${local}`.trim());
                                                         }}
                                                     />
                                                 </div>
                                             </div>
-                                            <InputError message={errors.phone} className="mt-2" />
+                                            <InputError message={formErrors.phone} className="mt-2" />
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="linkedin" value="LinkedIn Profile" />
@@ -347,9 +548,9 @@ export default function Register() {
                                                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                                     </svg>
                                                 </div>
-                                                <TextInput id="linkedin" type="text" name="linkedin" value={data.linkedin} className="pl-10 w-full" placeholder="https://linkedin.com/in/username" onChange={(e) => setData('linkedin', e.target.value)} />
+                                                <TextInput id="linkedin" type="text" name="linkedin" value={data.linkedin} className="pl-10 w-full" placeholder="https://linkedin.com/in/username" onChange={(e) => updateField('linkedin', e.target.value)} />
                                             </div>
-                                            <InputError message={errors.linkedin} className="mt-2" />
+                                            <InputError message={formErrors.linkedin} className="mt-2" />
                                         </div>
                                         <div className="md:col-span-2">
                                             <InputLabel htmlFor="date_of_birth" value="Date of Birth" />
@@ -359,9 +560,9 @@ export default function Register() {
                                                         <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                                                     </svg>
                                                 </div>
-                                                <TextInput id="date_of_birth" type="date" name="date_of_birth" value={data.date_of_birth} className="pl-10 w-full" onChange={(e) => setData('date_of_birth', e.target.value)} />
+                                                <TextInput id="date_of_birth" type="date" name="date_of_birth" value={data.date_of_birth} className="pl-10 w-full" onChange={(e) => updateField('date_of_birth', e.target.value)} />
                                             </div>
-                                            <InputError message={errors.date_of_birth} className="mt-2" />
+                                            <InputError message={formErrors.date_of_birth} className="mt-2" />
                                         </div>
                                     </div>
                                     <div className="flex justify-between pt-4">
@@ -371,8 +572,7 @@ export default function Register() {
                                         <button
                                             type="button"
                                             onClick={nextStep}
-                                            disabled={!data.name || !data.email}
-                                            className={`px-3 py-2 rounded-md font-medium ${data.name && data.email ? 'bg-blue-950 text-white hover:bg-blue-900' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                                            className="px-3 py-2 rounded-md font-medium bg-blue-950 text-white hover:bg-blue-900"
                                         >
                                             Continue
                                         </button>
@@ -383,6 +583,10 @@ export default function Register() {
                             {/* Step 3 - Password + reCAPTCHA */}
                             {currentStep === 3 && (
                                 <div className="space-y-6">
+                                    <StepErrorSummary
+                                        entries={step3ErrorEntries}
+                                        title="Please fix your password or security verification."
+                                    />
                                     <div className="text-center mb-6">
                                         <h3 className="text-xl font-semibold text-gray-900">Create Password</h3>
                                         <p className="text-gray-600 mt-2">Secure your account with a strong password</p>
@@ -406,7 +610,7 @@ export default function Register() {
                                                     className="pl-10 pr-10 w-full"
                                                     placeholder="Password"
                                                     autoComplete="new-password"
-                                                    onChange={(e) => setData('password', e.target.value)}
+                                                    onChange={(e) => updateField('password', e.target.value)}
                                                     required
                                                 />
                                                 <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowPassword(!showPassword)}>
@@ -423,7 +627,7 @@ export default function Register() {
                                                     )}
                                                 </button>
                                             </div>
-                                            <InputError message={errors.password} className="mt-2" />
+                                            <InputError message={formErrors.password} className="mt-2" />
                                         </div>
 
                                         {/* Confirm Password */}
@@ -443,7 +647,7 @@ export default function Register() {
                                                     className="pl-10 pr-10 w-full"
                                                     placeholder="Confirm Password"
                                                     autoComplete="new-password"
-                                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                                    onChange={(e) => updateField('password_confirmation', e.target.value)}
                                                     required
                                                 />
                                                 <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
@@ -460,7 +664,7 @@ export default function Register() {
                                                     )}
                                                 </button>
                                             </div>
-                                            <InputError message={errors.password_confirmation} className="mt-2" />
+                                            <InputError message={formErrors.password_confirmation} className="mt-2" />
                                         </div>
 
                                         {/* Terms */}
@@ -483,9 +687,9 @@ export default function Register() {
                                         {/* ✅ reCAPTCHA v2 Widget */}
                                         <div>
                                             <div ref={recaptchaRef} />
-                                            {errors['g-recaptcha-response'] && (
+                                            {formErrors['g-recaptcha-response'] && (
                                                 <p className="mt-2 text-sm text-red-600">
-                                                    Please complete the reCAPTCHA check.
+                                                    {formErrors['g-recaptcha-response']}
                                                 </p>
                                             )}
                                         </div>
@@ -524,13 +728,7 @@ export default function Register() {
                                             <PrimaryButton
                                                 type="submit"
                                                 className="px-4 py-3"
-                                                disabled={
-                                                    processing ||
-                                                    !data.password ||
-                                                    !data.password_confirmation ||
-                                                    data.password !== data.password_confirmation ||
-                                                    !data['g-recaptcha-response']  // ← disabled until captcha checked
-                                                }
+                                                disabled={hasBlockingFinalStepError}
                                             >
                                                 {processing ? 'Creating Account...' : 'Complete Registration'}
                                             </PrimaryButton>

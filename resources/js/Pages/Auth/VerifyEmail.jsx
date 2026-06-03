@@ -23,7 +23,7 @@ export default function VerifyEmail({ status }) {
         <GuestLayout>
             <Head title="Email Verification | IGRCFP" />
 
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex flex-col justify-center py-1 sm:px-3 lg:px-8">
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-50 flex flex-col justify-center py-20 sm:px-3 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
                     
                     <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-gray-900">
