@@ -45,7 +45,8 @@
                     <tbody>
                         @foreach($applications as $app)
                         <tr>
-                            <td>#{{ $loop->iteration + ($applications->currentPage() - 1) * $applications->perPage() }}
+                            <td>#
+                                {{ $loop->iteration + ($applications->currentPage() - 1) * $applications->perPage() }}
                             </td>
                             <td>{{ $app->full_name }}</td>
                             <td>{{ $app->email }}</td>
