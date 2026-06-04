@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const counter = document.querySelector(counterSelector);
         
         if (textarea && counter) {
-            const maxLength = textarea.getAttribute('maxlength') || 500;
+            const maxLength = textarea.getAttribute('maxlength');
             
             function updateCount() {
                 const length = textarea.value.length;
