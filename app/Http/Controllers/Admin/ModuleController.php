@@ -95,7 +95,7 @@ class ModuleController extends Controller
             'title' => 'required|string|max:255',
             'code' => 'nullable|string|max:20|unique:course_modules,code,' . $module->id . ',id,course_id,' . $course->id,
             'module_number' => 'required|integer|min:1',
-            'course_outline' => 'required|string|max:500',
+            'course_outline' => 'required|string',
             'full_content' => 'required|string',
             'learning_objectives' => 'nullable|string',
             'key_concepts' => 'nullable|string',
