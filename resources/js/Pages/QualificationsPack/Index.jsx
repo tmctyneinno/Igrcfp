@@ -676,7 +676,7 @@ export default function QualificationPartnershipPack({ auth }) {
                             <ArrowRightIcon className="w-5 h-5 ml-2" />
                         </Link>
                         <Link
-                            href={route('partnerships.index')}
+                            href={route('contact')}
                             className="inline-flex items-center px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 transition"
                         >
                             Partnership Enquiries

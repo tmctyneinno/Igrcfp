@@ -10,7 +10,7 @@ export default function Certifications({ auth, title, description, courses }) {
     const hasCourses = Array.isArray(courseData) ? courseData.length > 0 : false;
 
     return ( 
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title={title} />
               
             {/* ===== HERO SECTION ===== */}
@@ -275,23 +275,27 @@ export default function Certifications({ auth, title, description, courses }) {
 
             {/* ===== PROFESSIONAL RECOGNITION ===== */}
             <section className="py-16 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-6 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">PROFESSIONAL RECOGNITION</h2>
                     <p className="text-xl opacity-90 max-w-3xl mx-auto mb-8">Completion of IGRCFP programmes may lead to:</p>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
-                        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl mx-auto">
+                        <div className="bg-white/10 backdrop-blur-sm p-1 rounded-xl border border-white/20">
                             <div className="text-2xl font-semibold">IGRCFP</div>
                             <div className="text-lg">Professional Certificates</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
+                        <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
+                            <div className="text-2xl font-semibold">Diploma</div>
+                            <div className="text-lg">Diplomas</div>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
                             <div className="text-2xl font-semibold">Advanced</div>
                             <div className="text-lg">Diplomas</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
+                        <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
                             <div className="text-xl font-semibold">CGFCS</div>
                             <div className="text-lg">Certified GRC & Financial Crime Specialist</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20">
+                        <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
                             <div className="text-2xl font-semibold">Fellowship</div>
                             <div className="text-lg">eligibility (subject to experience)</div>
                         </div>
