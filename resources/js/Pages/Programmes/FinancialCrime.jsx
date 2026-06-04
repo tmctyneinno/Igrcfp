@@ -74,7 +74,7 @@ export default function FinancialCrimePathway({auth}) {
 
     return (
         <>
-         <GuestLayout auth={auth}>
+         <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="Financial Crime Prevention | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -260,9 +260,9 @@ export default function FinancialCrimePathway({auth}) {
                                 Completion of Financial Crime Prevention pathway courses may lead to IGRCFP professional certifications and eligibility for the Certified Financial Crime Specialist (CFCS) designation.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a href="/courses" className="bg-white text-red-900 px-8 py-3 rounded-lg font-semibold hover:bg-red-50 transition duration-300">
+                                <a href={route('igrcfp.certificates.index')} className="bg-white text-red-900 px-8 py-3 rounded-lg font-semibold hover:bg-red-50 transition duration-300">
                                     View All Courses →
-                                </a>
+                                </a> 
                                 <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-red-900 transition duration-300">
                                     Contact Admissions
                                 </a>

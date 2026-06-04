@@ -58,13 +58,13 @@ export default function VerifyOTP({ email, phone }) {
             setResendDisabled(false);
             setCountdown(0);
         }
-    };
+    }; 
 
     return (
         <GuestLayout auth={auth}>
             <Head title="Verify OTP" />
             
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="min-h-screen pt-20 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
                 <div className="w-full max-w-md">
                     <div className="bg-white rounded-2xl shadow-xl p-8">
                         <div className="text-center mb-8">

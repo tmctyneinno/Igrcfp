@@ -399,7 +399,7 @@ function NavBar({ auth }) {
                                                         Verify Certificate
                                                     </Link>
                                                     <Link 
-                                                        href={route('course.catalog.index')}
+                                                        href={route('programmes')}
                                                         onClick={() => setOpenMegaMenu(false)}
                                                         className="inline-flex items-center text-sm font-medium text-blue-900 hover:text-blue-700 transition duration-200 whitespace-nowrap"
                                                     >

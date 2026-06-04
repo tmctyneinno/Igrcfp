@@ -49,7 +49,7 @@ class AuthenticatedSessionController extends Controller
             ], [
                 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification to continue.',
                 'g-recaptcha-response.captcha'  => 'Security verification failed. Please try again.'
-            ]);
+            ]); 
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::warning('Login failed reCAPTCHA', ['ip' => $request->ip()]);
             
@@ -206,6 +206,12 @@ class AuthenticatedSessionController extends Controller
             ],
             \App\Models\ActivityLog::SEVERITY_INFO
         );
+
+        // If the user is not verified, keep them logged in and redirect to verify-email page.
+        if (! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')
+                ->with('warning', 'Your email is not verified. Please verify your email to continue.');
+        }
  
         // 5. Generate OTP and send email
         $otp = $user->generateOTP();

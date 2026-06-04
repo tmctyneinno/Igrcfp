@@ -74,7 +74,7 @@ export default function CybersecurityPathway({auth}) {
 
     return (
         <>
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="Cybersecurity & Digital Risk | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -277,10 +277,10 @@ export default function CybersecurityPathway({auth}) {
                                 Completion of Cybersecurity & Digital Risk pathway courses may lead to IGRCFP professional certifications and eligibility for the Certified Cyber Risk Leader (CCRL) designation.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <a href="/certifications/cyber" className="bg-white text-green-900 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition duration-300">
-                                    Explore CCRL Certification
+                                <a href={route('igrcfp.certificates.index')} className="bg-white text-green-900 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition duration-300">
+                                    View all courses
                                 </a>
-                                <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-900 transition duration-300">
+                                <a href={route('contact')} className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-900 transition duration-300">
                                     Contact Admissions
                                 </a>
                             </div>
@@ -288,6 +288,7 @@ export default function CybersecurityPathway({auth}) {
                     </div>
                 </div>
             </div>
+            
             </GuestLayout>
         </>
     );

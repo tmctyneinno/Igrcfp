@@ -74,7 +74,7 @@ export default function CryptoPathway({auth}) {
 
     return (
         <>
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="Crypto & Digital Assets | IGRCFP Programmes" />
             
             {/* Hero Section */}
@@ -279,10 +279,10 @@ export default function CryptoPathway({auth}) {
                         Gain the knowledge and skills needed to succeed in the rapidly evolving digital asset landscape
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="/programmes/all-courses" className="bg-white text-purple-900 px-8 py-3 rounded-lg font-semibold hover:bg-purple-50 transition duration-300">
+                        <a href={route('igrcfp.certificates.index')}  className="bg-white text-purple-900 px-8 py-3 rounded-lg font-semibold hover:bg-purple-50 transition duration-300">
                             View All Courses
                         </a>
-                        <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-900 transition duration-300">
+                        <a href={route('contact')} className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-900 transition duration-300">
                             Contact Admissions
                         </a>
                     </div>

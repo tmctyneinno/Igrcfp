@@ -289,9 +289,9 @@ export default function ProgrammesIndex({auth}) {
                         Join professionals from leading organizations who trust IGRCFP for their professional development
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="courses" className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
+                        <a href={route('igrcfp.certificates.index')} className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
                             View All Courses
-                        </a>
+                        </a> 
                         <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition duration-300">
                             Contact Admissions
                         </a>

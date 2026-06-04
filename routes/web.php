@@ -74,7 +74,7 @@ require __DIR__.'/dashboard.php';
 
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+ 
 Route::prefix('programmes')->group(function () { 
     Route::get('/', [ProgrammesController::class, 'index'])->name('programmes');
     Route::get('/grc', [ProgrammesController::class, 'grc'])->name('programmes.grc');

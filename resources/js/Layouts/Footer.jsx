@@ -185,7 +185,7 @@ function Footer() {
                         </h4>
                         <ul className="space-y-2">
                             {[
-                                "About Us",
+                                "Why IGRCFP",
                                 "Welcome to IGRCFP",
                                 "Our Structure",
                                 'Course Catalogue', 

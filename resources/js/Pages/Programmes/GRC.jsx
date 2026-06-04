@@ -74,7 +74,7 @@ export default function GRCPathway({auth}) {
 
     return (
         <>
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="GRC Pathway | IGRCFP Programmes" />
             
             {/* Hero Section */}

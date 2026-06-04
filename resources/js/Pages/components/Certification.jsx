@@ -209,7 +209,7 @@ export default function Certification({ courses }) { // Remove default value fro
                 {/* VIEW ALL BUTTON */}
                 {coursesData.length > 0 && (
                     <div className="text-center mt-12">
-                        <Link
+                        <Link 
                             href={route('igrcfp.certificates.index')}
                             className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
                         >
