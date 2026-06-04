@@ -21,6 +21,68 @@ export default function WhatWeOffer() {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     const allCourses = [
+        // GRC & Risk Management Courses
+        {
+            title: "GRC & Risk Management",
+            description: "Comprehensive programmes for governance, risk, and compliance professionals",
+            link: "/programmes/grc",
+            theme: "blue",
+            bgColor: "blue-50",
+            borderColor: "blue-100",
+            iconBg: "blue-600",
+            textColor: "blue-900",
+            hoverColor: "blue-700",
+            category: "GRC & Risk Management",
+            svg: (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            )
+        },
+        {
+            title: "Enterprise Risk Management (ERM)",
+            description: "Strategic risk management frameworks for modern organizations",
+            link: "/programmes/grc",
+            theme: "cyan",
+            bgColor: "cyan-50",
+            borderColor: "cyan-100",
+            iconBg: "cyan-600",
+            textColor: "cyan-900",
+            hoverColor: "cyan-700",
+            category: "GRC & Risk Management",
+            svg: (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            )
+        },
+        // Financial Crime Prevention Courses
+        {
+            title: "Financial Crime Prevention",
+            description: "Specialised courses in AML, fraud prevention, sanctions, and investigations",
+            link: "/programmes/financial-crime",
+            theme: "red",
+            bgColor: "red-50",
+            borderColor: "red-100",
+            iconBg: "red-600",
+            textColor: "red-900",
+            hoverColor: "red-700",
+            category: "Financial Crime Prevention",
+            svg: (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            )
+        },
+        {
+            title: "AML & Counter-Terrorist Financing",
+            description: "Advanced anti-money laundering frameworks and CTF compliance strategies",
+            link: "/programmes/financial-crime",
+            theme: "rose",
+            bgColor: "rose-50",
+            borderColor: "rose-100",
+            iconBg: "rose-600",
+            textColor: "rose-900",
+            hoverColor: "rose-700",
+            category: "Financial Crime Prevention",
+            svg: (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            )
+        },
         // AI Courses
         {
             title: "AI Governance, Ethics & Accountability",
@@ -460,18 +522,26 @@ export default function WhatWeOffer() {
                 </div>
 
                 {/* Category Quick Links */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-                    <a href="/programmes/ai" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        <h3 className="text-xl font-bold mb-2">AI & Emerging Technology</h3>
-                        <p className="text-purple-100">6 specialized courses →</p>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-16">
+                    <a href="/programmes/grc" className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-4 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <h3 className="text-sm font-bold mb-1">GRC & Risk</h3>
+                        <p className="text-blue-100 text-xs">2 courses →</p>
                     </a>
-                    <a href="/programmes/crypto" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-6 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        <h3 className="text-xl font-bold mb-2">Crypto & Digital Assets</h3>
-                        <p className="text-indigo-100">6 specialized courses →</p>
+                    <a href="/programmes/financial-crime" className="bg-gradient-to-r from-red-600 to-rose-600 text-white p-4 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <h3 className="text-sm font-bold mb-1">Financial Crime</h3>
+                        <p className="text-red-100 text-xs">2 courses →</p>
                     </a>
-                    <a href="/programmes/cybersecurity" className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-6 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        <h3 className="text-xl font-bold mb-2">Cybersecurity & Digital Risk</h3>
-                        <p className="text-emerald-100">6 specialized courses →</p>
+                    <a href="/programmes/ai" className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <h3 className="text-sm font-bold mb-1">AI & Emerging Tech</h3>
+                        <p className="text-purple-100 text-xs">6 courses →</p>
+                    </a>
+                    <a href="/programmes/crypto" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-4 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <h3 className="text-sm font-bold mb-1">Crypto & Digital Assets</h3>
+                        <p className="text-indigo-100 text-xs">6 courses →</p>
+                    </a>
+                    <a href="/programmes/cybersecurity" className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-4 rounded-xl text-center hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <h3 className="text-sm font-bold mb-1">Cybersecurity</h3>
+                        <p className="text-emerald-100 text-xs">6 courses →</p>
                     </a>
                 </div>
 
