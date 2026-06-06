@@ -618,8 +618,17 @@ class HomeController extends Controller
         // Paginate results
         $courses = $query->paginate(20)->withQueryString();
 
+        $enrolledCourseIds = [];
+        if (auth()->check()) {
+            $user = auth()->user();
+            $enrolledCourseIds = array_unique(array_merge(
+                $user->courses()->pluck('courses.id')->toArray(),
+                $user->enrollments()->pluck('course_id')->toArray()
+            ));
+        }
+
         // Transform courses for the frontend
-        $courses->getCollection()->transform(function ($course) {
+        $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
             // Handle instructor relationship if it exists
             $instructorData = null;
             if (isset($course->instructor) && $course->instructor) {
@@ -646,7 +655,8 @@ class HomeController extends Controller
                 'is_popular' => $course->is_popular,
                 'format' => $course->format,
                 'instructor' => $instructorData,
-                'created_at' => $course->created_at->format('M d, Y')
+                'created_at' => $course->created_at->format('M d, Y'),
+                'is_enrolled' => in_array($course->id, $enrolledCourseIds),
             ];
         });
  

@@ -16,49 +16,58 @@ class CourseController extends Controller
   
     public function index(Request $request)
     {
-        $query = Course::with('instructor', 'category') // Add category here
+        $query = Course::with('instructor', 'category')
             ->where('status', 'published');
 
         // Filter by category if provided
         if ($request->has('category') && $request->category) {
             $query->where('category_id', $request->category);
         }
-        $courses = $query->paginate(15);
-        // Fetch courses with instructor and reviews count
-        $courses = Course::with('instructor','category')
-            ->where('status', 'published') 
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($course) {
-                return [
-                    'id' => $course->id,
-                    'title' => $course->title,
-                    'short_title' => $course->short_title,
-                    'slug' => $course->slug,
-                    'description' => $course->description,
-                    'excerpt' => $course->excerpt,
-                    'level' => $course->level,
-                    'level_badge' => $course->level_badge,
-                    'price' => $course->current_price,
-                    'has_discount' => $course->has_discount,
-                    'discount_price' => $course->discount_price,
-                    'discount_percentage' => $course->discount_percentage,
-                    'image_url' => $course->image ? Storage::url($course->image) : null,
-                    'instructor' => $course->instructor
-                        ? [
-                            'id' => $course->instructor->id,
-                            'name' => $course->instructor->name,
-                        ]
-                        : null,
-                    'rating' => round($course->averageRating(), 1),
-                    'reviews_count' => $course->reviewsCount(),
-                    'enrollments_count' => $course->activeEnrollmentsCount,
-                    'duration' => $course->duration,
-                    'modules_count' => $course->modules_count,
-                    'certification' => $course->certification,
-                ];
-            }); 
-        // Return Inertia page (React)
+
+        $courses = $query->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        $enrolledCourseIds = [];
+        if (auth()->check()) {
+            $user = auth()->user();
+            $enrolledCourseIds = array_unique(array_merge(
+                $user->courses()->pluck('courses.id')->toArray(),
+                $user->enrollments()->pluck('course_id')->toArray()
+            ));
+        }
+
+        $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'short_title' => $course->short_title,
+                'slug' => $course->slug,
+                'description' => $course->description,
+                'excerpt' => $course->excerpt,
+                'level' => $course->level,
+                'level_badge' => $course->level_badge,
+                'price' => $course->current_price,
+                'has_discount' => $course->has_discount,
+                'discount_price' => $course->discount_price,
+                'discount_percentage' => $course->discount_percentage,
+                'image_url' => $course->image ? Storage::url($course->image) : null,
+                'instructor' => $course->instructor
+                    ? [
+                        'id' => $course->instructor->id,
+                        'name' => $course->instructor->name,
+                    ]
+                    : null,
+                'rating' => round($course->averageRating(), 1),
+                'reviews_count' => $course->reviewsCount(),
+                'enrollments_count' => $course->activeEnrollmentsCount,
+                'duration' => $course->duration,
+                'modules_count' => $course->modules_count,
+                'certification' => $course->certification,
+                'is_enrolled' => in_array($course->id, $enrolledCourseIds),
+            ];
+        }); 
+
         return Inertia::render('Welcome', [
             'courses' => $courses,
             'categories' => CourseCategory::active()->ordered()->get(),
@@ -219,6 +228,7 @@ class CourseController extends Controller
         
         // Add course to cart
         $cart->items()->create([
+            'item_type' => 'course',
             'course_id' => $course->id,
             'price' => $course->discount_price ?? $course->price,
             'quantity' => 1,
@@ -349,12 +359,47 @@ class CourseController extends Controller
         
         // Get paginated results
         $courses = $query->paginate(20)->withQueryString();
-        
+
+        $enrolledCourseIds = [];
+        if (auth()->check()) {
+            $user = auth()->user();
+            $enrolledCourseIds = array_unique(array_merge(
+                $user->courses()->pluck('courses.id')->toArray(),
+                $user->enrollments()->pluck('course_id')->toArray()
+            ));
+        }
+
+        $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'short_description' => $course->short_description,
+                'full_description' => $course->full_description,
+                'banner_image' => $course->banner_image,
+                'image_url' => $course->image_url,
+                'level' => $course->level,
+                'duration' => $course->duration,
+                'price' => $course->price,
+                'discount_price' => $course->discount_price,
+                'discount_percentage' => $course->discount_percentage,
+                'modules_count' => $course->modules_count,
+                'is_featured' => $course->is_featured,
+                'is_popular' => $course->is_popular,
+                'category' => $course->category ? [
+                    'id' => $course->category->id,
+                    'name' => $course->category->name,
+                    'slug' => $course->category->slug,
+                ] : null,
+                'is_enrolled' => in_array($course->id, $enrolledCourseIds),
+            ];
+        });
+
         // Get all categories for filter options
         $categories = CourseCategory::where('is_active', true)
             ->orderBy('name')
             ->get();
-        
+
         return Inertia::render('Courses/ByCategory', [ // Use the same view
             'courses' => $courses,
             'category' => [

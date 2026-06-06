@@ -86,13 +86,15 @@ class CheckoutController extends Controller
             return redirect()->route('dashboard.cart.index')->with('error', 'Your cart is empty.');
         }
 
-        // Separate course and membership items
+        // Separate course and membership items, allowing fallback when item_type is missing
         $courseItems = $cart->items->filter(function($item) {
-            return $item->item_type === 'course' && $item->course;
+            return ($item->item_type === 'course' || (!$item->item_type && $item->course_id))
+                && $item->course;
         });
         
         $membershipItems = $cart->items->filter(function($item) {
-            return $item->item_type === 'membership' && $item->membershipPlan;
+            return ($item->item_type === 'membership' || (!$item->item_type && $item->membership_plan_id))
+                && $item->membershipPlan;
         });
 
         // Check if user is already enrolled in any of the courses
@@ -330,9 +332,9 @@ class CheckoutController extends Controller
             foreach ($cart->items as $item) {
                 $productName = '';
 
-                if ($item->item_type === 'course' && $item->course) {
+                if (($item->item_type === 'course' || !$item->item_type) && $item->course) {
                     $productName = trim($item->course->title ?? '');
-                } elseif ($item->item_type === 'membership' && $item->membershipPlan) {
+                } elseif (($item->item_type === 'membership' || !$item->item_type) && $item->membershipPlan) {
                     $productName = trim($item->membershipPlan->name ?? '') . ' Membership';
                 }
 

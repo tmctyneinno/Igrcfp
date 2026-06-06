@@ -146,7 +146,7 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
                             </p>
                         </div>
                     </div>
-                </section>
+                </section> 
                
                 {/* Main Content */}
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

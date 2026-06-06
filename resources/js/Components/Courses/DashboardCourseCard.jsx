@@ -152,7 +152,14 @@ export default function DashboardCourseCard({ course, onAddToCart, isInCart, isA
                     )}
                     
                     {/* CART BUTTON - Now with remove option when in cart */}
-                    {isCourseInCart ? (
+                    {course?.is_enrolled ? (
+                        <Link
+                            href={route('dashboard.courses.show', course.slug)}
+                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                        >
+                            Continue Course
+                        </Link>
+                    ) : isCourseInCart ? (
                         <div className="flex gap-2">
                             <Link
                                 href={route('dashboard.cart.index')}
@@ -161,7 +168,6 @@ export default function DashboardCourseCard({ course, onAddToCart, isInCart, isA
                             >
                                 View Cart
                             </Link>
-                           
                         </div>
                     ) : (
                         <button
