@@ -402,6 +402,19 @@ export default function ModuleQuiz({ enrollment, module, assessment, attempt }) 
                                                 />
                                             </div>
                                         )}
+
+                                        {/* Essay Answer */}
+                                        {question.type === 'essay' && (
+                                            <div>
+                                                <textarea
+                                                    value={answers[question.id] || ''}
+                                                    onChange={(e) => handleAnswer(question.id, e.target.value)}
+                                                    placeholder="Write your essay response here..."
+                                                    rows={8}
+                                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Navigation Footer */}

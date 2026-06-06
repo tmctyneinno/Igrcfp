@@ -108,11 +108,13 @@ class OTPVerificationController extends Controller
                 'session_token' => $user->active_session_token,
             ]);
 
-            session()->forget('otp_user_id');
+            $redirect = session('post_login_redirect', route('dashboard.index'));
+
+            session()->forget(['otp_user_id', 'post_login_redirect', 'intended_enrollment']);
 
             return response()->json([
                 'success'  => true,
-                'redirect' => route('dashboard.index')
+                'redirect' => $redirect
             ]);
         }
 

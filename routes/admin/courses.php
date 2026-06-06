@@ -80,6 +80,7 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 Route::prefix('admin')->name('admin.')->group(function () {
     // Main assessments page
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
+    Route::get('/assessments/quizzes', [AssessmentController::class, 'quizzes'])->name('assessments.quizzes');
     Route::get('/assessments/course/{course}', [AssessmentController::class, 'course'])->name('assessments.course');
     
     // Separate create pages for each assessment type

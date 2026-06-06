@@ -119,6 +119,32 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Part B: Essays Card -->
+                <div class="card mt-24">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Part B: Essays</h6>
+                            <p class="text-sm text-secondary-light mt-1">Add essay prompts with marks and examiner guidance.</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addEssay()">
+                            Add Essay
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="essay-questions-container">
+                            <!-- Essay questions will be added here dynamically -->
+                        </div>
+                        <div class="text-center py-5 bg-light rounded-8" id="no-essay-questions-message" style="display: block;">
+                            <iconify-icon icon="solar:document-text-outline" class="icon-4x text-muted mb-3"></iconify-icon>
+                            <h6 class="text-muted mb-2">No essay questions added yet</h6>
+                            <p class="text-muted mb-3">Click the button above to begin adding essay questions.</p>
+                            <button type="button" class="btn btn-primary" onclick="addEssay()">
+                                Add First Essay
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Right Column - Settings -->
@@ -274,6 +300,38 @@
     </div>
 </template>
 
+<template id="essay-question-template">
+    <div class="question-item card mb-4" data-question-idx="{idx}">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Essay Question <span class="essay-question-number">1</span></h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-question" onclick="removeEssay(this)">
+                Remove
+            </button>
+        </div>
+        <div class="card-body">
+            <input type="hidden" name="questions[{idx}][type]" value="essay" class="question-type">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-semibold">Question Text</label>
+                    <textarea name="questions[{idx}][text]" class="form-control question-text" rows="3" required></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Marks</label>
+                    <input type="number" name="questions[{idx}][points]" class="form-control question-points" value="5" min="1" required>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label fw-semibold">Type</label>
+                    <input type="text" class="form-control" value="Essay" readonly>
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-semibold">Examiner's Marking Guidance</label>
+                    <textarea name="questions[{idx}][explanation]" class="form-control" rows="3" placeholder="Enter guidance for the examiner or rubric notes."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 {{--
     FIX 2: Option radio value changed from "{option-value}" (which produced "option1","option2"...)
     to "{option-index}" (which produces 0, 1, 2...).
@@ -416,6 +474,51 @@ function addQuestion() {
     updateQuestionNumbers();
 }
 
+function addEssay() {
+    const container = document.getElementById('essay-questions-container');
+    const noEssayMsg = document.getElementById('no-essay-questions-message');
+    const template = document.getElementById('essay-question-template');
+
+    if (!template) { console.error('Essay question template not found!'); return; }
+    if (noEssayMsg) noEssayMsg.style.display = 'none';
+
+    let questionHtml = template.innerHTML;
+    questionHtml = questionHtml.replace(/{idx}/g, questionCount);
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = questionHtml.trim();
+    const questionElement = tempDiv.firstElementChild;
+
+    if (!questionElement) { console.error('Failed to create essay question element'); return; }
+
+    questionElement.dataset.questionIdx = questionCount;
+    const numberSpan = questionElement.querySelector('.essay-question-number');
+    if (numberSpan) numberSpan.textContent = container.children.length + 1;
+
+    container.appendChild(questionElement);
+    questionCount++;
+    updateEssayNumbers();
+}
+
+function removeEssay(button) {
+    const questionItem = button.closest('.question-item');
+    if (questionItem) {
+        questionItem.remove();
+        if (document.querySelectorAll('#essay-questions-container .question-item').length === 0) {
+            const noEssayMsg = document.getElementById('no-essay-questions-message');
+            if (noEssayMsg) noEssayMsg.style.display = 'block';
+        }
+        updateEssayNumbers();
+    }
+}
+
+function updateEssayNumbers() {
+    document.querySelectorAll('#essay-questions-container .question-item').forEach((question, index) => {
+        const numberSpan = question.querySelector('.essay-question-number');
+        if (numberSpan) numberSpan.textContent = index + 1;
+    });
+}
+
 // removeQuestion — unchanged
 function removeQuestion(button) {
     const questionItem = button.closest('.question-item');
@@ -480,6 +583,9 @@ function handleQuestionTypeChange(select) {
                 if (answerInput) answerInput.setAttribute('required', 'required');
             }
             break;
+        case 'essay':
+            // Essay questions are handled through the dedicated Part B essay section.
+            break;
     }
 }
 
@@ -532,7 +638,7 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
         const question    = questions[i];
         const questionText = question.querySelector('.question-text')?.value;
         const points      = question.querySelector('.question-points')?.value;
-        const typeSelect  = question.querySelector('.question-type');
+        const typeInput   = question.querySelector('.question-type') || question.querySelector('input[name$="[type]"]');
         
         if (!questionText || !questionText.trim()) {
             e.preventDefault();
@@ -544,9 +650,9 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             alert(`❌ Question ${i + 1}: Valid points are required.`);
             return false;
         }
-        if (!typeSelect) continue;
+        if (!typeInput) continue;
         
-        const questionType = typeSelect.value;
+        const questionType = typeInput.value;
         
         switch(questionType) {
             case 'multiple_choice':
@@ -589,15 +695,10 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
                     return false;
                 }
                 break;
+            case 'essay':
+                // Essay questions do not require a correct answer.
+                break;
         }
-    }
-
-    // FIX 3: Disable inputs in hidden containers before submit so they send nothing to PHP.
-    // This is the core fix for the NULL bug — hidden inputs were submitting empty/wrong values
-    // that overwrote the actual correct_answer from the visible container.
-    document.querySelectorAll('.question-item').forEach(question => {
-        const type = question.querySelector('.question-type')?.value;
-        if (!type) return;
 
         const containers = {
             multiple_choice: question.querySelector('.options-container'),
@@ -608,10 +709,10 @@ document.getElementById('quizForm')?.addEventListener('submit', function(e) {
         Object.entries(containers).forEach(([containerType, container]) => {
             if (!container) return;
             container.querySelectorAll('input').forEach(inp => {
-                inp.disabled = (containerType !== type);
+                inp.disabled = (containerType !== questionType);
             });
         });
-    });
+    }
     
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {

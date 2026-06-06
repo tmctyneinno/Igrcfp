@@ -48,8 +48,10 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
   const formatPrice = (price) => {
     const numPrice = parseFloatSafe(price);
-    return numPrice === 0 ? 'Free' : `£${numPrice.toFixed(2)}`;
-  }; 
+    return numPrice === 0
+      ? 'Free'
+      : `£${numPrice.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
   // Parse prices safely
   const price = parseFloatSafe(course.price);
   const discountPrice = parseFloatSafe(course.discount_price);
@@ -169,8 +171,8 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                     {hasDiscount ? (
                       <div className="space-y-2">
                         <div className="flex items-center">
-                          <span className="text-3xl font-bold">£{discountPrice.toFixed(2)}</span>
-                          <span className="text-lg line-through text-gray-500 ml-2">£{price.toFixed(2)}</span>
+                          <span className="text-3xl font-bold">{formatPrice(discountPrice)}</span>
+                          <span className="text-lg line-through text-gray-500 ml-2">{formatPrice(price)}</span>
                         </div>
                         <p className="text-sm text-green-600 font-medium">Limited time offer</p>
                       </div>
@@ -610,7 +612,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   onClick={() => startEnrollment(course)}
                   className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
                 >
-                  Enroll Now - £{hasDiscount ? discountPrice.toFixed(2) : price.toFixed(2)}
+                  Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
                 </button>
               </div>
             </div>

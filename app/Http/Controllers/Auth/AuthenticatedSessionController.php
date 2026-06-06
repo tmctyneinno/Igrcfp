@@ -207,6 +207,13 @@ class AuthenticatedSessionController extends Controller
             \App\Models\ActivityLog::SEVERITY_INFO
         );
 
+        // Preserve any intended redirect from the login request so it survives OTP verification
+        if ($request->query('redirect')) {
+            session(['post_login_redirect' => $request->query('redirect')]);
+        } elseif (session()->has('intended_enrollment')) {
+            session(['post_login_redirect' => route('courses.enroll', ['course' => session('intended_enrollment')])]);
+        }
+
         // If the user is not verified, keep them logged in and redirect to verify-email page.
         if (! $user->hasVerifiedEmail()) {
             return redirect()->route('verification.notice')

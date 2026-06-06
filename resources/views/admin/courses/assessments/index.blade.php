@@ -6,6 +6,8 @@
         <h6 class="fw-semibold mb-0">
             @if(isset($course))
                 Assessments: {{ $course->title }}
+            @elseif(request('level') === 'quiz')
+                Quizzes
             @else
                 All Assessments
             @endif
@@ -144,7 +146,7 @@
                         <option value="">All Courses</option>
                         @foreach($courses as $courseOption)
                             <option value="{{ $courseOption->id }}" 
-                                {{ (isset($course) && $course->id == $courseOption->id) ? 'selected' : '' }}>
+                                {{ ((isset($course) && $course->id == $courseOption->id) || request('course_id') == $courseOption->id) ? 'selected' : '' }}>
                                 {{ $courseOption->title }}
                             </option>
                         @endforeach
@@ -154,19 +156,19 @@
                     <label class="form-label fw-semibold">Type</label>
                     <select class="form-select" id="levelFilter" onchange="filterByLevel(this.value)">
                         <option value="">All Types</option>
-                        <option value="quiz">Quizzes</option>
-                        <option value="module_assessment">Module Assessments</option>
-                        <option value="final_exam">Final Exams</option>
-                        <option value="diploma">Diploma</option>
+                        <option value="quiz" {{ request('level') === 'quiz' ? 'selected' : '' }}>Quizzes</option>
+                        <option value="module_assessment" {{ request('level') === 'module_assessment' ? 'selected' : '' }}>Module Assessments</option>
+                        <option value="final_exam" {{ request('level') === 'final_exam' ? 'selected' : '' }}>Final Exams</option>
+                        <option value="diploma" {{ request('level') === 'diploma' ? 'selected' : '' }}>Diploma</option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Status</label>
                     <select class="form-select" id="statusFilter" onchange="filterByStatus(this.value)">
-                        <option value="">All</option>
-                        <option value="active">Active</option>
-                        <option value="draft">Draft</option>
-                        <option value="archived">Archived</option>
+                        <option value="" {{ request('status') === null || request('status') === '' ? 'selected' : '' }}>All</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archived</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -222,6 +224,7 @@
                                 <th>Course</th>
                                 <th>Module</th>
                                 <th>Type</th>
+                                <th>Essay</th>
                                 <th>Duration</th>
                                 <th>Due Date</th>
                                 <th>Questions</th>
@@ -278,7 +281,14 @@
                                     <span class="badge {{ $color }} text-white px-12 py-6 radius-8">
                                         {{ $label }}
                                     </span>
-                                </td> 
+                                </td>
+                                <td>
+                                    @if($assessment->essay_questions_count > 0)
+                                        <span class="badge bg-warning-600 text-white px-12 py-6 radius-8">Essay</span>
+                                    @else
+                                        <span class="text-muted">No</span>
+                                    @endif
+                                </td>
                                 <td>
                                     @if($assessment->duration)
                                         <span class="d-flex align-items-center gap-1">

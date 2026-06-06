@@ -5,7 +5,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useCart } from '@/contexts/CartContext';
 import toast from 'react-hot-toast';
-
+ 
 export default function CartIndex({ cart }) {
     const { props } = usePage();
     const { removeFromCart, clearCart } = useCart();

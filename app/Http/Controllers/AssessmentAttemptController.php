@@ -334,20 +334,23 @@ class AssessmentAttemptController extends Controller
             $results = [];
 
             foreach ($assessment->questions as $question) {
-                $totalPoints += $question->points;
                 $userAnswer = $request->answers[$question->id] ?? null;
                 
+                if ($question->question_type !== 'essay') {
+                    $totalPoints += $question->points;
+                }
+
                 $isCorrect = $this->checkAnswer($question, $userAnswer);
                 
-                if ($isCorrect) {
+                if ($question->question_type !== 'essay' && $isCorrect) {
                     $earnedPoints += $question->points;
                 }
 
                 $results[$question->id] = [
-                    'correct' => $isCorrect,
+                    'correct' => $question->question_type === 'essay' ? null : $isCorrect,
                     'user_answer' => $userAnswer,
-                    'correct_answer' => $question->correct_answer,
-                    'points_earned' => $isCorrect ? $question->points : 0,
+                    'correct_answer' => $question->question_type === 'essay' ? null : $question->correct_answer,
+                    'points_earned' => $question->question_type === 'essay' ? 0 : ($isCorrect ? $question->points : 0),
                 ];
             }
 

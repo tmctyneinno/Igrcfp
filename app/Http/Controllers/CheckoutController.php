@@ -329,12 +329,25 @@ class CheckoutController extends Controller
             $lineItems = [];
             foreach ($cart->items as $item) {
                 $productName = '';
+
                 if ($item->item_type === 'course' && $item->course) {
-                    $productName = $item->course->title;
+                    $productName = trim($item->course->title ?? '');
                 } elseif ($item->item_type === 'membership' && $item->membershipPlan) {
-                    $productName = $item->membershipPlan->name . ' Membership';
+                    $productName = trim($item->membershipPlan->name ?? '') . ' Membership';
                 }
-                
+
+                if ($productName === '') {
+                    // Log invalid cart item and skip it rather than send an empty product name to Stripe
+                    \Log::warning('Invalid cart item detected during checkout', [
+                        'cart_id' => $cart->id,
+                        'item_id' => $item->id,
+                        'item_type' => $item->item_type,
+                        'course_id' => $item->course_id,
+                        'membership_plan_id' => $item->membership_plan_id,
+                    ]);
+                    continue;
+                }
+
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => 'gbp',
@@ -343,8 +356,12 @@ class CheckoutController extends Controller
                         ],
                         'unit_amount' => (int)($item->price * 100),
                     ],
-                    'quantity' => 1,
+                    'quantity' => max(1, (int) $item->quantity),
                 ];
+            }
+
+            if (empty($lineItems)) {
+                throw new \Exception('No valid items available for checkout. Please review your cart.');
             }
 
             $checkoutSession = StripeSession::create([

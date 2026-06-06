@@ -15,7 +15,7 @@
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.all') }}" class="hover-text-primary">Assessments</a>
-            </li>
+            </li> 
             <li>-</li>
             <li class="fw-medium">
                 <a href="{{ route('admin.assessments.show', $assessment->id) }}" class="hover-text-primary">
@@ -139,6 +139,31 @@
                             <p class="text-muted mb-3">Click the button below to add your first question.</p>
                             <button type="button" class="btn btn-primary" onclick="addQuestion()">
                                 Add First Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-24">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Part B: Essay Questions</h6>
+                            <p class="text-sm text-secondary-light mt-1">Edit or add essay prompts with examiner guidance.</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addEssay()">
+                            Add Essay
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="essay-questions-container"></div>
+                        <div class="text-center py-5 bg-light rounded-8"
+                             id="no-essay-questions-message" style="display:none;">
+                            <iconify-icon icon="solar:document-text-outline"
+                                          class="icon-4x text-muted mb-3"></iconify-icon>
+                            <h6 class="text-muted mb-2">No essay questions added yet</h6>
+                            <p class="text-muted mb-3">Click the button below to add your first essay question.</p>
+                            <button type="button" class="btn btn-primary" onclick="addEssay()">
+                                Add First Essay
                             </button>
                         </div>
                     </div>
@@ -315,6 +340,7 @@
                         <option value="multiple_choice">Multiple Choice</option>
                         <option value="true_false">True/False</option>
                         <option value="short_answer">Short Answer</option>
+                        <option value="essay">Essay</option>
                     </select>
                 </div>
 
@@ -366,6 +392,14 @@
                            class="form-control" placeholder="Enter the correct answer">
                 </div>
 
+                <div class="col-12 mb-3 essay-container" style="display:none;">
+                    <label class="form-label fw-semibold">Examiner's Marking Guidance</label>
+                    <textarea name="questions[{idx}][explanation]"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Enter guidance for the examiner or rubric notes."></textarea>
+                </div>
+
             </div>
         </div>
     </div>
@@ -386,9 +420,51 @@
     </div>
 </template>
 
+<template id="essay-question-template">
+    <div class="question-item card mb-4" data-question-idx="{idx}">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Essay Question <span class="essay-question-number">1</span></h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-question"
+                    onclick="removeEssay(this)">
+                Remove
+            </button>
+        </div>
+        <div class="card-body">
+            <input type="hidden" name="questions[{idx}][type]" value="essay" class="question-type">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-semibold">Question Text</label>
+                    <textarea name="questions[{idx}][text]"
+                              class="form-control question-text"
+                              rows="3" required></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Points</label>
+                    <input type="number" name="questions[{idx}][points]"
+                           class="form-control question-points" value="5" min="1" required>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label fw-semibold">Type</label>
+                    <input type="text" class="form-control" value="Essay" readonly>
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label fw-semibold">Examiner's Marking Guidance</label>
+                    <textarea name="questions[{idx}][explanation]"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Enter guidance for the examiner or rubric notes."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 {{-- Pass existing questions to JS --}}
 <script id="existing-questions-data" type="application/json">
-    {!! $questionsData->toJson() !!}
+    {!! json_encode($questionsData, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) !!}
+</script>
+<script id="existing-essay-questions-data" type="application/json">
+    {!! json_encode($essayQuestionsData, JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) !!}
 </script>
 
 {{-- Pass existing module_id for pre-selection --}}
@@ -443,6 +519,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Load existing questions
     let existingQuestions = [];
+    let existingEssayQuestions = [];
     try {
         const raw = document.getElementById('existing-questions-data').textContent.trim();
         existingQuestions = JSON.parse(raw);
@@ -450,11 +527,25 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Failed to parse questions JSON:', err);
     }
 
+    try {
+        const rawEssay = document.getElementById('existing-essay-questions-data').textContent.trim();
+        existingEssayQuestions = JSON.parse(rawEssay);
+    } catch(err) {
+        console.error('Failed to parse essay questions JSON:', err);
+    }
+
     if (existingQuestions.length > 0) {
         document.getElementById('no-questions-message').style.display = 'none';
         existingQuestions.forEach(function(q) { addQuestion(q); });
     } else {
         document.getElementById('no-questions-message').style.display = 'block';
+    }
+
+    if (existingEssayQuestions.length > 0) {
+        document.getElementById('no-essay-questions-message').style.display = 'none';
+        existingEssayQuestions.forEach(function(q) { addEssay(q); });
+    } else {
+        document.getElementById('no-essay-questions-message').style.display = 'block';
     }
 });
 
@@ -569,6 +660,13 @@ function addQuestion(existingData) {
                 if (input) input.value = existingData.correct_answer || '';
                 break;
             }
+
+            case 'essay': {
+                const essayContainer = questionEl.querySelector('.essay-container');
+                const textarea = essayContainer?.querySelector('textarea');
+                if (textarea) textarea.value = existingData.explanation || '';
+                break;
+            }
         }
 
     } else {
@@ -584,6 +682,59 @@ function addQuestion(existingData) {
 
     questionCount++;
     updateQuestionNumbers();
+}
+
+function addEssay(existingData) {
+    const container = document.getElementById('essay-questions-container');
+    const noEssayMsg = document.getElementById('no-essay-questions-message');
+    const template = document.getElementById('essay-question-template');
+
+    if (!template) { console.error('Essay question template not found!'); return; }
+    if (noEssayMsg) noEssayMsg.style.display = 'none';
+
+    let html = template.innerHTML.replace(/{idx}/g, questionCount);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html.trim();
+    const questionEl = tempDiv.firstElementChild;
+    if (!questionEl) return;
+
+    questionEl.dataset.questionIdx = questionCount;
+    const numberSpan = questionEl.querySelector('.essay-question-number');
+    if (numberSpan) numberSpan.textContent = container.children.length + 1;
+    container.appendChild(questionEl);
+
+    if (existingData) {
+        const textArea = questionEl.querySelector('.question-text');
+        if (textArea) textArea.value = existingData.text || '';
+
+        const pointsInput = questionEl.querySelector('.question-points');
+        if (pointsInput) pointsInput.value = parseInt(existingData.points) || 1;
+
+        const explanation = questionEl.querySelector('textarea[name$="[explanation]"]');
+        if (explanation) explanation.value = existingData.explanation || '';
+    }
+
+    questionCount++;
+    updateEssayNumbers();
+}
+
+function removeEssay(button) {
+    const questionItem = button.closest('.question-item');
+    if (questionItem) {
+        questionItem.remove();
+        if (document.querySelectorAll('#essay-questions-container .question-item').length === 0) {
+            const noEssayMsg = document.getElementById('no-essay-questions-message');
+            if (noEssayMsg) noEssayMsg.style.display = 'block';
+        }
+        updateEssayNumbers();
+    }
+}
+
+function updateEssayNumbers() {
+    document.querySelectorAll('#essay-questions-container .question-item').forEach((q, i) => {
+        const span = q.querySelector('.essay-question-number');
+        if (span) span.textContent = i + 1;
+    });
 }
 
 // ── Remove question ───────────────────────────────────────────────────────────
@@ -621,6 +772,8 @@ function handleQuestionTypeChange(select) {
         }
     });
 
+    const essayContainer = questionItem.querySelector('.essay-container');
+
     switch (select.value) {
         case 'multiple_choice':
             if (optionsContainer) {
@@ -641,6 +794,11 @@ function handleQuestionTypeChange(select) {
                 shortAnswerContainer.style.display = 'block';
                 const inp = shortAnswerContainer.querySelector('input[type="text"]');
                 if (inp) inp.setAttribute('required', 'required');
+            }
+            break;
+        case 'essay':
+            if (essayContainer) {
+                essayContainer.style.display = 'block';
             }
             break;
     }
@@ -767,6 +925,7 @@ document.getElementById('quizForm')?.addEventListener('submit', function (e) {
             multiple_choice: question.querySelector('.options-container'),
             true_false:      question.querySelector('.true-false-container'),
             short_answer:    question.querySelector('.short-answer-container'),
+            essay:           question.querySelector('.essay-container'),
         };
 
         Object.entries(containers).forEach(([containerType, container]) => {

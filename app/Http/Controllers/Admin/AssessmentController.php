@@ -40,9 +40,33 @@ class AssessmentController extends Controller
     public function all(Request $request)
     {
         $query = Assessment::with(['course', 'module'])
+            ->withCount(['questions as essay_questions_count' => fn($q) => $q->where('question_type', 'essay')])
             ->orderBy('created_at', 'desc');
 
         if ($request->filled('level'))     $query->where('assessment_level', $request->level);
+        if ($request->filled('course_id')) $query->where('course_id', $request->course_id);
+        if ($request->filled('status'))    $query->where('status', $request->status);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(fn($q) => $q->where('title', 'LIKE', "%{$search}%")
+                                      ->orWhere('description', 'LIKE', "%{$search}%"));
+        }
+
+        $assessments = $query->paginate(15);
+        $courses     = Course::orderBy('title')->get();
+        $statistics  = $this->getStatistics();
+
+        return view('admin.courses.assessments.index',
+            compact('assessments', 'courses', 'statistics'));
+    }
+
+    public function quizzes(Request $request)
+    {
+        $query = Assessment::with(['course', 'module'])
+            ->withCount(['questions as essay_questions_count' => fn($q) => $q->where('question_type', 'essay')])
+            ->where('assessment_level', 'quiz')
+            ->orderBy('created_at', 'desc');
+
         if ($request->filled('course_id')) $query->where('course_id', $request->course_id);
         if ($request->filled('status'))    $query->where('status', $request->status);
         if ($request->filled('search')) {
@@ -125,6 +149,7 @@ class AssessmentController extends Controller
     {
         $query = Assessment::where('course_id', $course->id)
             ->with('module')
+            ->withCount(['questions as essay_questions_count' => fn($q) => $q->where('question_type', 'essay')])
             ->orderBy('assessment_level')
             ->orderBy('created_at', 'desc');
 
@@ -159,6 +184,20 @@ class AssessmentController extends Controller
             if ($request->has('project_brief')) $validated['project_brief'] = $request->project_brief;
             if ($request->has('rubric'))        $validated['rubric'] = json_decode($request->rubric, true);
 
+            if ($request->assessment_level === 'quiz') {
+                $exists = Assessment::where('course_id', $validated['course_id'])
+                    ->where('assessment_level', 'quiz')
+                    ->exists();
+
+                if ($exists) {
+                    return back()->withInput()
+                        ->with('error', 'A quiz already exists for this course. Only one quiz section is allowed per course.');
+                }
+            }
+
+            $validated['has_essay'] = collect($request->questions ?? [])
+                ->contains(fn($question) => ($question['type'] ?? null) === 'essay');
+
             $assessment = Assessment::create($validated);
 
             if (in_array($request->assessment_level, ['quiz', 'module_assessment', 'final_exam'])
@@ -189,18 +228,37 @@ class AssessmentController extends Controller
         $courses = Course::orderBy('title')->get();
         $modules = CourseModule::orderBy('module_number')->get();
 
-        $questionsData = $assessment->questions->map(fn($q) => [
-            'text'           => $q->question_text,
-            'type'           => $q->question_type,
-            'points'         => $q->points,
-            'difficulty'     => $q->difficulty_level ?? 'medium',
-            'options'        => $q->options ?? [],
-            'correct_answer' => $q->correct_answer,
-        ]);
+        $questions = $assessment->questions->sortBy('order')->values();
+
+        $questionsData = $questions
+            ->where('question_type', '!=', 'essay')
+            ->values()
+            ->map(fn($q) => [
+                'text'           => $q->question_text,
+                'type'           => $q->question_type,
+                'points'         => $q->points,
+                'difficulty'     => $q->difficulty_level ?? 'medium',
+                'options'        => $q->options ?? [],
+                'correct_answer' => $q->correct_answer,
+                'explanation'    => $q->explanation,
+            ]);
+
+        $essayQuestionsData = $questions
+            ->where('question_type', 'essay')
+            ->values()
+            ->map(fn($q) => [
+                'text'           => $q->question_text,
+                'type'           => $q->question_type,
+                'points'         => $q->points,
+                'difficulty'     => $q->difficulty_level ?? 'medium',
+                'options'        => $q->options ?? [],
+                'correct_answer' => $q->correct_answer,
+                'explanation'    => $q->explanation,
+            ]);
 
         if ($assessment->assessment_level === 'quiz') {
             return view('admin.courses.assessments.edit-quiz',
-                compact('assessment', 'courses', 'modules', 'questionsData'));
+                compact('assessment', 'courses', 'modules', 'questionsData', 'essayQuestionsData'));
         }
 
         return view('admin.courses.assessments.projects.edit',
@@ -215,6 +273,18 @@ class AssessmentController extends Controller
         DB::beginTransaction();
 
         try {
+            if ($validated['assessment_level'] === 'quiz') {
+                $exists = Assessment::where('course_id', $validated['course_id'])
+                    ->where('assessment_level', 'quiz')
+                    ->where('id', '!=', $assessment->id)
+                    ->exists();
+
+                if ($exists) {
+                    return back()->withInput()
+                        ->with('error', 'A quiz already exists for this course. Only one quiz section is allowed per course.');
+                }
+            }
+
             $assessment->title         = $validated['title'];
             $assessment->description   = $validated['description']   ?? $assessment->description;
             $assessment->course_id     = $validated['course_id'];
@@ -255,6 +325,8 @@ class AssessmentController extends Controller
 
                 $this->saveQuestions($assessment, $request->questions);
                 $assessment->question_count = count($request->questions);
+                $assessment->has_essay = collect($request->questions)
+                    ->contains(fn($question) => ($question['type'] ?? null) === 'essay');
                 $assessment->save();
             }
 
@@ -415,10 +487,11 @@ class AssessmentController extends Controller
                     'passing_score'              => 'nullable|integer|min:1|max:100',
                     'questions'                  => 'nullable|array',
                     'questions.*.text'           => 'required_with:questions|string',
-                    'questions.*.type'           => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
+                    'questions.*.type'           => 'required_with:questions|string|in:multiple_choice,true_false,short_answer,essay',
                     'questions.*.points'         => 'required_with:questions|integer|min:1',
                     'questions.*.options'        => 'nullable|array',
                     'questions.*.correct_answer' => 'nullable|string',
+                    'questions.*.explanation'    => 'nullable|string',
                 ]);
 
             case 'module_assessment':
@@ -546,6 +619,8 @@ class AssessmentController extends Controller
                     break;
 
                 case 'essay':
+                    $row['explanation'] = trim($questionData['explanation'] ?? '') ?: null;
+                    break;
                 case 'case_study':
                     break;
             }

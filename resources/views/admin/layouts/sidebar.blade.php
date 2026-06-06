@@ -162,11 +162,17 @@
                             All Assessments
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('admin.assessments.quizzes') }}">
+                            <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
+                            Quiz List
+                        </a>
+                    </li>
                     @if(auth()->guard('admin')->user()->isAdmin())
                         <li>
                             <a href="{{ route('admin.assessments.create.quiz') }}">
                                 <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
-                                Quiz
+                                Create Quiz
                             </a>
                         </li>
                         <li>

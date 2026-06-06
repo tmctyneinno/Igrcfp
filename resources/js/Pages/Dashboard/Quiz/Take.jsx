@@ -856,28 +856,46 @@ export default function QuizTake({
                                                 </div>
                                                 
                                                 <div className="space-y-3">
-                                                    {currentQuestion?.options?.map((option, index) => (
-                                                        <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
-                                                            isCurrentQuizCompleted 
-                                                                ? 'cursor-not-allowed opacity-80'
-                                                                : 'cursor-pointer hover:bg-gray-50'
-                                                        } ${
-                                                            answers[currentQuestion?.id] === option 
-                                                                ? 'border-blue-500 bg-blue-50' 
-                                                                : 'border-gray-200'
-                                                        }`}>
-                                                            <input
-                                                                type="radio"
-                                                                name={`q-${currentQuestion?.id}`}
-                                                                value={option}
-                                                                checked={answers[currentQuestion?.id] === option}
-                                                                onChange={() => handleAnswer(currentQuestion?.id, option)}
+                                                    {currentQuestion?.options?.length > 0 && currentQuestion?.type !== 'essay' && (
+                                                        currentQuestion?.options.map((option, index) => (
+                                                            <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
+                                                                isCurrentQuizCompleted 
+                                                                    ? 'cursor-not-allowed opacity-80'
+                                                                    : 'cursor-pointer hover:bg-gray-50'
+                                                            } ${
+                                                                answers[currentQuestion?.id] === option 
+                                                                    ? 'border-blue-500 bg-blue-50' 
+                                                                    : 'border-gray-200'
+                                                            }`}>
+                                                                <input
+                                                                    type="radio"
+                                                                    name={`q-${currentQuestion?.id}`}
+                                                                    value={option}
+                                                                    checked={answers[currentQuestion?.id] === option}
+                                                                    onChange={() => handleAnswer(currentQuestion?.id, option)}
+                                                                    disabled={isCurrentQuizCompleted}
+                                                                    className="w-4 h-4 text-blue-600 disabled:opacity-50"
+                                                                />
+                                                                <span className="ml-3 text-gray-700">{option}</span>
+                                                            </label>
+                                                        ))
+                                                    )}
+
+                                                    {(currentQuestion?.type === 'essay' || currentQuestion?.type === 'short_answer') && (
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                {currentQuestion?.type === 'essay' ? 'Essay Response' : 'Answer'}
+                                                            </label>
+                                                            <textarea
+                                                                value={answers[currentQuestion?.id] || ''}
+                                                                onChange={(e) => handleAnswer(currentQuestion?.id, e.target.value)}
+                                                                placeholder={currentQuestion?.type === 'essay' ? 'Write your essay response here...' : 'Type your answer here...'}
+                                                                rows={currentQuestion?.type === 'essay' ? 8 : 4}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                                 disabled={isCurrentQuizCompleted}
-                                                                className="w-4 h-4 text-blue-600 disabled:opacity-50"
                                                             />
-                                                            <span className="ml-3 text-gray-700">{option}</span>
-                                                        </label>
-                                                    ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             

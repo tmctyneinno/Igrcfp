@@ -27,18 +27,15 @@
     <!-- Action Buttons -->
     <div class="d-flex gap-3 justify-content-end mb-24">
         <a href="{{ route('admin.assessments.edit', $assessment->id) }}" class="btn btn-primary">
-            <iconify-icon icon="lucide:edit" class="icon me-1"></iconify-icon>
             Edit Assessment
         </a>
         <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-info">
-            <iconify-icon icon="solar:users-group-rounded-outline" class="icon me-1"></iconify-icon>
             View Submissions ({{ $assessment->submissions_count }})
         </a>
         <form action="{{ route('admin.assessments.destroy', $assessment->id) }}" method="POST" class="d-inline">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this assessment?')">
-                <iconify-icon icon="fluent:delete-24-regular" class="icon me-1"></iconify-icon>
                 Delete
             </button>
         </form>
@@ -203,15 +200,19 @@
                 </div>
             </div>
 
-            <!-- Questions Card (for quiz/exam types) -->
-            @if(in_array($assessment->assessment_level, ['quiz', 'module_assessment', 'final_exam']) && $assessment->questions->count() > 0)
+            @php
+                $quizQuestions = $assessment->questions->where('question_type', '!=', 'essay');
+                $essayQuestions = $assessment->questions->where('question_type', 'essay');
+            @endphp
+
+            @if(in_array($assessment->assessment_level, ['quiz', 'module_assessment', 'final_exam']) && $quizQuestions->count() > 0)
             <div class="card mt-24">
                 <div class="card-header">
-                    <h6 class="card-title mb-0">Questions ({{ $assessment->questions->count() }})</h6>
+                    <h6 class="card-title mb-0">Quiz Questions ({{ $quizQuestions->count() }})</h6>
                 </div>
                 <div class="card-body">
-                    <div class="accordion" id="questionsAccordion">
-                        @foreach($assessment->questions as $index => $question)
+                    <div class="accordion" id="quizQuestionsAccordion">
+                        @foreach($quizQuestions as $index => $question)
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading{{ $question->id }}">
                                 <button class="accordion-button {{ $index > 0 ? 'collapsed' : '' }}" type="button" 
@@ -224,7 +225,7 @@
                                 </button>
                             </h2>
                             <div id="collapse{{ $question->id }}" class="accordion-collapse collapse {{ $index == 0 ? 'show' : '' }}" 
-                                 data-bs-parent="#questionsAccordion">
+                                 data-bs-parent="#quizQuestionsAccordion">
                                 <div class="accordion-body">
                                     <p><strong>Type:</strong> {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}</p>
                                     
@@ -249,6 +250,46 @@
                         </div>
                         @endforeach
                     </div>
+                </div>
+            </div>
+            @endif
+
+            @if(in_array($assessment->assessment_level, ['quiz', 'module_assessment', 'final_exam']))
+            <div class="card mt-24 border-warning-subtle">
+                <div class="card-header bg-warning-50">
+                    <h6 class="card-title mb-0">Part B: Essay Questions ({{ $essayQuestions->count() }})</h6>
+                </div>
+                <div class="card-body">
+                    @if($essayQuestions->count() > 0)
+                        <div class="accordion" id="essayQuestionsAccordion">
+                            @foreach($essayQuestions as $index => $question)
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEssay{{ $question->id }}">
+                                    <button class="accordion-button {{ $index > 0 ? 'collapsed' : '' }}" type="button" 
+                                            data-bs-toggle="collapse" data-bs-target="#collapseEssay{{ $question->id }}">
+                                        <div class="d-flex align-items-center gap-3 w-100">
+                                            <span class="badge bg-warning-600 text-white">B{{ $index + 1 }}</span>
+                                            <span class="fw-medium">{{ Str::limit($question->question_text, 80) }}</span>
+                                            <span class="ms-auto me-3">{{ $question->points }} pts</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapseEssay{{ $question->id }}" class="accordion-collapse collapse {{ $index == 0 ? 'show' : '' }}" 
+                                     data-bs-parent="#essayQuestionsAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Type:</strong> {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}</p>
+                                        <p><strong>Examiner's Marking Guidance:</strong> {{ $question->explanation ?: 'Not provided' }}</p>
+                                        <p><strong>Difficulty:</strong> {{ ucfirst($question->difficulty_level) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="alert alert-secondary mb-0">
+                            No Part B essay questions have been added for this assessment.
+                        </div>
+                    @endif
                 </div>
             </div>
             @endif
@@ -373,15 +414,12 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         <a href="{{ route('admin.assessments.edit', $assessment->id) }}" class="btn btn-outline-primary">
-                            <iconify-icon icon="lucide:edit" class="icon me-1"></iconify-icon>
                             Edit Assessment
                         </a>
                         <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-info">
-                            <iconify-icon icon="solar:users-group-rounded-outline" class="icon me-1"></iconify-icon>
                             View Submissions
                         </a>
                         <button type="button" class="btn btn-outline-success" onclick="window.print()">
-                            <iconify-icon icon="solar:printer-outline" class="icon me-1"></iconify-icon>
                             Print Details
                         </button>
                     </div>
