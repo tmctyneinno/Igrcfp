@@ -155,7 +155,7 @@ export default function DashboardCourseCard({ course, onAddToCart, isInCart, isA
                     {course?.is_enrolled ? (
                         <Link
                             href={route('dashboard.courses.show', course.slug)}
-                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                            className="inline-flex items-center px-2 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                         >
                             Continue Course
                         </Link>

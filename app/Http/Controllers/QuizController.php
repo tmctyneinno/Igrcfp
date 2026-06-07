@@ -10,6 +10,7 @@ use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
 use App\Models\Notification; // ✅ ADD THIS
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
  
 class QuizController extends Controller
@@ -43,7 +44,7 @@ class QuizController extends Controller
         
         // Get ALL questions for this assessment
         $allQuestions = $assessment->questions()
-            ->select('id', 'question_text', 'options', 'marks', 'correct_answer', 'module_id')
+            ->select('id', 'question_text', 'question_type', 'options', 'points', 'correct_answer', 'module_id')
             ->inRandomOrder()
             ->get()
             ->map(function ($question) {
@@ -64,6 +65,7 @@ class QuizController extends Controller
                 'id' => $assessment->id,
                 'title' => $assessment->title,
                 'description' => $assessment->description,
+                'essay_instructions' => $assessment->essay_instructions,
                 'duration' => $assessment->duration,
                 'total_marks' => $assessment->total_marks,
                 'passing_score' => $assessment->passing_score,
@@ -136,6 +138,11 @@ class QuizController extends Controller
         if (!$this->allModulesRead($course, $enrollment)) {
             return response()->json(['error' => 'Please read all module content before submitting the quiz.'], 403);
         }
+
+        $request->validate([
+            'essay_files' => ['nullable', 'array'],
+            'essay_files.*' => ['file', 'mimes:pdf,doc,docx,txt,rtf', 'max:20480'],
+        ]);
         
         // Find or create attempt
         $attempt = AssessmentAttempt::where('user_id', $user->id)
@@ -177,7 +184,13 @@ class QuizController extends Controller
         }
         
         $answers = $request->input('answers', []);
+        if (is_string($answers)) {
+            $decodedAnswers = json_decode($answers, true);
+            $answers = is_array($decodedAnswers) ? $decodedAnswers : [];
+        }
+        $essayFiles = $request->file('essay_files', []);
         $questions = $assessment->questions()->get();
+        $requiresManualMarking = $assessment->needs_manual_marking || $questions->contains('question_type', 'essay');
         
         $totalMarks = 0;
         $earnedMarks = 0;
@@ -186,31 +199,49 @@ class QuizController extends Controller
         
         foreach ($questions as $question) {
             $marks = $question->points ?? 1;
-            $totalMarks += $marks;
             $userAnswer = $answers[$question->id] ?? null;
             $isCorrect = $question->isAnswerCorrect($userAnswer);
+            $isManualQuestion = in_array($question->question_type, ['essay', 'case_study'], true);
             
-            $pointsEarned = ($isCorrect === true) ? $marks : 0;
+            $pointsEarned = null;
+
+            if (!$isManualQuestion) {
+                $totalMarks += $marks;
+                $pointsEarned = ($isCorrect === true) ? $marks : 0;
+            }
             
             // Store detailed question responses for the submission
             $questionResponses[$question->id] = [
                 'question_id' => $question->id,
                 'question_text' => $question->question_text,
                 'answer' => $userAnswer,
-                'correct_answer' => $question->correct_answer,
+                'correct_answer' => $isManualQuestion ? null : $question->correct_answer,
                 'points_earned' => $pointsEarned,
                 'points_possible' => $marks,
-                'correct' => $isCorrect === true,
+                'correct' => $isManualQuestion ? null : $isCorrect === true,
             ];
+
+            if ($question->question_type === 'essay' && isset($essayFiles[$question->id])) {
+                $file = $essayFiles[$question->id];
+                $path = $file->store("quiz-essays/{$course->id}/{$assessment->id}/{$user->id}", 'public');
+
+                $questionResponses[$question->id]['uploaded_file'] = [
+                    'path' => $path,
+                    'url' => Storage::url($path),
+                    'name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType(),
+                ];
+            }
             
-            if ($isCorrect === true) {
+            if (!$isManualQuestion && $isCorrect === true) {
                 $earnedMarks += $marks;
                 $correctAnswers++;
             }
         }
         
         $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
-        $passed = $score >= ($assessment->passing_score ?? 70);
+        $passed = !$requiresManualMarking && $score >= ($assessment->passing_score ?? 70);
         
         // Update the attempt
         $attempt->update([
@@ -255,7 +286,7 @@ class QuizController extends Controller
         }
         
         $submission->submitted_at = now();
-        $submission->status = $assessment->needs_manual_marking ? 'submitted' : 'graded';
+        $submission->status = $requiresManualMarking ? 'submitted' : 'graded';
         $submission->answers = $answers;
         $submission->question_responses = $questionResponses;
         $submission->score = $earnedMarks;
@@ -266,7 +297,7 @@ class QuizController extends Controller
         $submission->user_agent = $request->userAgent();
         
         // If auto-graded, set graded_at
-        if (!$assessment->needs_manual_marking) {
+        if (!$requiresManualMarking) {
             $submission->graded_at = now();
         }
         
@@ -300,6 +331,7 @@ class QuizController extends Controller
                 'message' => 'Quiz submitted successfully!',
                 'score' => $score,
                 'passed' => $passed,
+                'manual_review' => $requiresManualMarking,
                 'submission_id' => $submission->id,
             ]);
         }
@@ -633,8 +665,9 @@ class QuizController extends Controller
         return [
             'id' => $question->id,
             'text' => $question->question_text,
+            'type' => $question->question_type,
             'options' => $options ?? [],
-            'marks' => $question->marks ?? 1,
+            'marks' => $question->points ?? $question->marks ?? 1,
             'correct_answer' => $question->correct_answer,
             'module_id' => $question->module_id,
         ];

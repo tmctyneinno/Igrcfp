@@ -30,12 +30,13 @@ import {
 
 // Utility functions
 const formatPrice = (price) => {
-  if (!price || price === 0) return 'Free';
-  return new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
+  const amount = Number(price);
+
+  if (!amount) return 'Free';
+
+  return `£${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2
-  }).format(price);
+  }).format(amount)}`;
 };
 
 const stripHtml = (html) => {
@@ -663,11 +664,6 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                 </button>
               </div>
 
-              {/* Download Syllabus */}
-              <button className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                <ArrowDownTrayIcon className="w-5 h-5" />
-                Download Syllabus
-              </button>
             </div>
           </motion.div>
         </AnimatePresence>

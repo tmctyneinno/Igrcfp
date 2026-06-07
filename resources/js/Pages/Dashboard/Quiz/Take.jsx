@@ -44,6 +44,8 @@ export default function QuizTake({
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [finalScore, setFinalScore] = useState(null);
+    const [finalManualReview, setFinalManualReview] = useState(false);
+    const [essayFiles, setEssayFiles] = useState({});
     
     // ==================== MEMOIZED DATA ====================
     
@@ -63,11 +65,14 @@ export default function QuizTake({
     }, [allQuizzes]);
     
     const currentQuiz = allQuizzesWithStatus[currentQuizIndex];
-    const questions = currentQuiz?.questions || [];
+    const allQuestions = currentQuiz?.questions || [];
+    const essayQuestions = allQuestions.filter(question => question.type === 'essay');
+    const questions = allQuestions.filter(question => question.type !== 'essay');
     const currentQuestion = questions[currentQuestionIndex];
     const progress = questions.length > 0 
         ? Math.round(((currentQuestionIndex + 1) / questions.length) * 100) 
-        : 0;
+        : (essayQuestions.length > 0 ? 100 : 0);
+    const hasEssayQuestions = essayQuestions.length > 0;
     
     const isQuizUnlocked = useCallback(() => true, []);
     
@@ -175,6 +180,23 @@ export default function QuizTake({
         setAnswers(prev => ({ ...prev, [questionId]: answer }));
         setHasUnsavedChanges(true);
     }, [isCurrentQuizCompleted]);
+
+    const handleEssayFileChange = useCallback((questionId, file) => {
+        if (isCurrentQuizCompleted) return;
+
+        setEssayFiles(prev => {
+            const nextFiles = { ...prev };
+
+            if (file) {
+                nextFiles[questionId] = file;
+            } else {
+                delete nextFiles[questionId];
+            }
+
+            return nextFiles;
+        });
+        setHasUnsavedChanges(true);
+    }, [isCurrentQuizCompleted]);
     
     const handleNext = useCallback(() => {
         if (currentQuestionIndex < questions.length - 1) {
@@ -224,6 +246,7 @@ export default function QuizTake({
         setSelectedQuiz(quiz);
         setCurrentQuestionIndex(0);
         setAnswers({});
+        setEssayFiles({});
         setFlaggedQuestions(new Set());
         setHasUnsavedChanges(false);
     }, [allQuizzesWithStatus, completedQuizzes, hasUnsavedChanges, autoSaveProgress]);
@@ -237,6 +260,7 @@ export default function QuizTake({
                 setSelectedQuiz(quiz);
                 setCurrentQuestionIndex(0);
                 setAnswers({});
+                setEssayFiles({});
                 setFlaggedQuestions(new Set());
                 setHasUnsavedChanges(false);
                 return;
@@ -253,6 +277,7 @@ export default function QuizTake({
                 setSelectedQuiz(quiz);
                 setCurrentQuestionIndex(0);
                 setAnswers({});
+                setEssayFiles({});
                 setFlaggedQuestions(new Set());
                 setHasUnsavedChanges(false);
                 return;
@@ -285,11 +310,78 @@ export default function QuizTake({
         });
     }, []);
 
+    const buildSubmitRequest = useCallback((extraPayload = {}) => {
+        const selectedEssayFiles = Object.entries(essayFiles).filter(([, file]) => Boolean(file));
+
+        if (selectedEssayFiles.length === 0) {
+            return {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ answers, ...extraPayload }),
+            };
+        }
+
+        const formData = new FormData();
+        formData.append('answers', JSON.stringify(answers));
+
+        Object.entries(extraPayload).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        selectedEssayFiles.forEach(([questionId, file]) => {
+            formData.append(`essay_files[${questionId}]`, file);
+        });
+
+        return {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: formData,
+        };
+    }, [answers, essayFiles]);
+
+    const confirmMissingEssayFiles = useCallback((missingCount) => {
+        return new Promise(resolve => {
+            toast((t) => (
+                <div className="space-y-3">
+                    <p className="font-medium">{missingCount} essay document(s) missing</p>
+                    <p className="text-sm text-gray-600">Submit without all essay uploads?</p>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => { toast.dismiss(t.id); resolve(false); }}
+                            className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={() => { toast.dismiss(t.id); resolve(true); }}
+                            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            ), { duration: Infinity });
+        });
+    }, []);
+
     const handleSubmitAndContinue = useCallback(async () => {
         const unanswered = questions.filter(q => !answers[q.id]).length;
+        const missingEssayFiles = essayQuestions.filter(q => !essayFiles[q.id]).length;
         
         if (unanswered > 0) {
             const confirmed = await confirmUnanswered(unanswered);
+            if (!confirmed) return;
+        }
+
+        if (missingEssayFiles > 0) {
+            const confirmed = await confirmMissingEssayFiles(missingEssayFiles);
             if (!confirmed) return;
         }
         
@@ -301,15 +393,12 @@ export default function QuizTake({
                 assessment: currentQuiz.id 
             });
             
+            const submitRequest = buildSubmitRequest({ skip_results: true });
+
             const response = await fetch(submitUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({ answers, skip_results: true }),
+                headers: submitRequest.headers,
+                body: submitRequest.body,
             });
             
             const contentType = response.headers.get('content-type');
@@ -339,13 +428,19 @@ export default function QuizTake({
         } finally {
             setIsSubmitting(false);
         }
-    }, [questions, answers, course.slug, currentQuiz, handleNextQuiz, confirmUnanswered]);
+    }, [questions, answers, essayQuestions, essayFiles, course.slug, currentQuiz, handleNextQuiz, confirmUnanswered, confirmMissingEssayFiles, buildSubmitRequest]);
 
     const handleSubmitAndFinish = useCallback(async () => {
         const unanswered = questions.filter(q => !answers[q.id]).length;
+        const missingEssayFiles = essayQuestions.filter(q => !essayFiles[q.id]).length;
         
         if (unanswered > 0) {
             const confirmed = await confirmUnanswered(unanswered);
+            if (!confirmed) return;
+        }
+
+        if (missingEssayFiles > 0) {
+            const confirmed = await confirmMissingEssayFiles(missingEssayFiles);
             if (!confirmed) return;
         }
         
@@ -357,15 +452,12 @@ export default function QuizTake({
                 assessment: currentQuiz.id 
             });
             
+            const submitRequest = buildSubmitRequest();
+
             const response = await fetch(submitUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({ answers }),
+                headers: submitRequest.headers,
+                body: submitRequest.body,
             });
             
             const contentType = response.headers.get('content-type');
@@ -379,6 +471,7 @@ export default function QuizTake({
                 setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
                 setHasUnsavedChanges(false);
                 setFinalScore(data.score);
+                setFinalManualReview(Boolean(data.manual_review));
                 setShowCompletionModal(true);
             } else {
                 throw new Error('Server returned HTML instead of JSON');
@@ -390,7 +483,7 @@ export default function QuizTake({
         } finally {
             setIsSubmitting(false);
         }
-    }, [questions, answers, course.slug, currentQuiz, confirmUnanswered]);
+    }, [questions, answers, essayQuestions, essayFiles, course.slug, currentQuiz, confirmUnanswered, confirmMissingEssayFiles, buildSubmitRequest]);
      
     const handleViewResults = useCallback(() => {
         setShowCompletionModal(false);
@@ -434,14 +527,26 @@ export default function QuizTake({
                         </div>
                         
                         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                            Congratulations! 🎉
+                            {finalManualReview ? 'Submission Received' : 'Congratulations! 🎉'}
                         </h2>
                         
                         <p className="text-gray-600 mb-4">
-                            You've successfully completed the course quiz!
+                            {finalManualReview
+                                ? 'Your quiz and essay document(s) have been submitted for review.'
+                                : "You've successfully completed the course quiz!"}
                         </p>
                         
-                        {finalScore !== null && (
+                        {finalManualReview ? (
+                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 mb-6">
+                                <p className="text-sm text-gray-600 mb-1">Status</p>
+                                <p className="text-2xl font-bold text-indigo-700">
+                                    Pending Manual Review
+                                </p>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Your essay submission will be graded by an examiner.
+                                </p>
+                            </div>
+                        ) : finalScore !== null && (
                             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 mb-6">
                                 <p className="text-sm text-gray-600 mb-1">Your Score</p>
                                 <p className={`text-4xl font-bold ${finalScore >= 70 ? 'text-green-600' : 'text-orange-600'}`}>
@@ -485,7 +590,8 @@ export default function QuizTake({
                                     {currentQuiz?.title || 'Course Quiz'}
                                 </h1>
                                 <p className="text-sm text-gray-500">
-                                    {course.title} • {questions.length} question{questions.length === 1 ? '' : 's'}
+                                    {course.title} • {questions.length} quiz question{questions.length === 1 ? '' : 's'}
+                                    {hasEssayQuestions ? ` • ${essayQuestions.length} essay${essayQuestions.length === 1 ? '' : 's'}` : ''}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
@@ -605,57 +711,70 @@ export default function QuizTake({
                             <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 mb-4">
                                 <p className="text-sm font-medium text-gray-900">{assessment.title || 'Course Quiz'}</p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                    Answer all questions for this course in one continuous quiz.
+                                    Complete Part A, then review Part B essay details and upload your essay document(s).
                                 </p>
                                 <div className="grid grid-cols-2 gap-3 mt-4 text-center">
                                     <div className="bg-white rounded-lg p-3 border border-gray-100">
                                         <p className="text-lg font-bold text-gray-900">{questions.length}</p>
-                                        <p className="text-xs text-gray-500">Questions</p>
+                                        <p className="text-xs text-gray-500">Part A</p>
                                     </div>
                                     <div className="bg-white rounded-lg p-3 border border-gray-100">
-                                        <p className="text-lg font-bold text-gray-900">{assessment.passing_score}%</p>
-                                        <p className="text-xs text-gray-500">Passing</p>
+                                        <p className="text-lg font-bold text-gray-900">{essayQuestions.length}</p>
+                                        <p className="text-xs text-gray-500">Part B</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mb-3 flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-700">Question Navigator</span>
-                                <span className="text-xs text-gray-500">
-                                    {Object.keys(answers).length}/{questions.length} answered
-                                </span>
-                            </div>
+                            {questions.length > 0 && (
+                                <>
+                                    <div className="mb-3 flex items-center justify-between">
+                                        <span className="text-sm font-medium text-gray-700">Part A Navigator</span>
+                                        <span className="text-xs text-gray-500">
+                                            {questions.filter(question => Boolean(answers[question.id])).length}/{questions.length} answered
+                                        </span>
+                                    </div>
 
-                            <div className="grid grid-cols-5 gap-2">
-                                {questions.map((question, index) => {
-                                    const isActive = index === currentQuestionIndex;
-                                    const isAnswered = Boolean(answers[question.id]);
-                                    const isFlagged = flaggedQuestions.has(question.id);
+                                    <div className="grid grid-cols-5 gap-2">
+                                        {questions.map((question, index) => {
+                                            const isActive = index === currentQuestionIndex;
+                                            const isAnswered = Boolean(answers[question.id]);
+                                            const isFlagged = flaggedQuestions.has(question.id);
 
-                                    return (
-                                        <button
-                                            key={question.id}
-                                            type="button"
-                                            onClick={() => setCurrentQuestionIndex(index)}
-                                            className={`relative h-10 rounded-lg text-sm font-semibold border transition ${
-                                                isActive
-                                                    ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
-                                                    : isAnswered
-                                                        ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
-                                                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                                            }`}
-                                            title={`Question ${index + 1}`}
-                                        >
-                                            {index + 1}
-                                            {isFlagged && (
-                                                <span className={`absolute -top-1 -right-1 h-3 w-3 rounded-full ${
-                                                    isActive ? 'bg-amber-300' : 'bg-amber-500'
-                                                }`} />
-                                            )}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                                            return (
+                                                <button
+                                                    key={question.id}
+                                                    type="button"
+                                                    onClick={() => setCurrentQuestionIndex(index)}
+                                                    className={`relative h-10 rounded-lg text-sm font-semibold border transition ${
+                                                        isActive
+                                                            ? 'border-blue-600 bg-blue-600 text-white shadow-sm'
+                                                            : isAnswered
+                                                                ? 'border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+                                                                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                                                    }`}
+                                                    title={`Question ${index + 1}`}
+                                                >
+                                                    {index + 1}
+                                                    {isFlagged && (
+                                                        <span className={`absolute -top-1 -right-1 h-3 w-3 rounded-full ${
+                                                            isActive ? 'bg-amber-300' : 'bg-amber-500'
+                                                        }`} />
+                                                    )}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )}
+
+                            {hasEssayQuestions && (
+                                <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+                                    <p className="text-sm font-semibold text-indigo-900">Part B Essay</p>
+                                    <p className="text-xs text-indigo-700 mt-1">
+                                        {essayQuestions.filter(question => Boolean(essayFiles[question.id])).length}/{essayQuestions.length} document{essayQuestions.length === 1 ? '' : 's'} uploaded
+                                    </p>
+                                </div>
+                            )}
 
                             <div className="mt-4 pt-4 border-t border-gray-200">
                                 <div className="grid grid-cols-2 gap-2 text-xs">
@@ -699,7 +818,7 @@ export default function QuizTake({
                                     <h2 className="text-xl font-semibold text-gray-900 mb-2">Select a Quiz</h2>
                                     <p className="text-gray-500">Choose a quiz from the left sidebar to begin.</p>
                                 </div>
-                            ) : questions.length === 0 ? (
+                            ) : allQuestions.length === 0 ? (
                                 <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                                     <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                                     <h2 className="text-xl font-semibold text-gray-900 mb-2">No Questions</h2>
@@ -830,79 +949,150 @@ export default function QuizTake({
                                     ) : (
                                         // Show ACTIVE quiz questions
                                         <>
-                                            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-                                                <div className="flex items-start justify-between mb-4">
-                                                    <div>
-                                                        <span className="text-sm text-gray-500 mb-1 block">
-                                                            Question {currentQuestionIndex + 1} of {questions.length}
-                                                        </span>
-                                                        <h2 className="text-lg font-medium text-gray-900">
-                                                            {currentQuestion?.text}
-                                                        </h2>
-                                                    </div>
-                                                    {!isCurrentQuizCompleted && (
-                                                        <button 
-                                                            onClick={() => toggleFlag(currentQuestion?.id)}
-                                                            className={`p-2 rounded-lg transition ${
-                                                                flaggedQuestions.has(currentQuestion?.id) 
-                                                                    ? 'text-amber-500 bg-amber-50' 
-                                                                    : 'text-gray-400 hover:text-amber-500 hover:bg-gray-50'
-                                                            }`}
-                                                            title="Flag for review"
-                                                        >
-                                                            <FlagIcon className="w-5 h-5" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                                
-                                                <div className="space-y-3">
-                                                    {currentQuestion?.options?.length > 0 && currentQuestion?.type !== 'essay' && (
-                                                        currentQuestion?.options.map((option, index) => (
-                                                            <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
-                                                                isCurrentQuizCompleted 
-                                                                    ? 'cursor-not-allowed opacity-80'
-                                                                    : 'cursor-pointer hover:bg-gray-50'
-                                                            } ${
-                                                                answers[currentQuestion?.id] === option 
-                                                                    ? 'border-blue-500 bg-blue-50' 
-                                                                    : 'border-gray-200'
-                                                            }`}>
-                                                                <input
-                                                                    type="radio"
-                                                                    name={`q-${currentQuestion?.id}`}
-                                                                    value={option}
-                                                                    checked={answers[currentQuestion?.id] === option}
-                                                                    onChange={() => handleAnswer(currentQuestion?.id, option)}
-                                                                    disabled={isCurrentQuizCompleted}
-                                                                    className="w-4 h-4 text-blue-600 disabled:opacity-50"
-                                                                />
-                                                                <span className="ml-3 text-gray-700">{option}</span>
-                                                            </label>
-                                                        ))
-                                                    )}
-
-                                                    {(currentQuestion?.type === 'essay' || currentQuestion?.type === 'short_answer') && (
+                                            {questions.length > 0 ? (
+                                                <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+                                                    <div className="flex items-start justify-between mb-4">
                                                         <div>
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                {currentQuestion?.type === 'essay' ? 'Essay Response' : 'Answer'}
-                                                            </label>
-                                                            <textarea
-                                                                value={answers[currentQuestion?.id] || ''}
-                                                                onChange={(e) => handleAnswer(currentQuestion?.id, e.target.value)}
-                                                                placeholder={currentQuestion?.type === 'essay' ? 'Write your essay response here...' : 'Type your answer here...'}
-                                                                rows={currentQuestion?.type === 'essay' ? 8 : 4}
-                                                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                                disabled={isCurrentQuizCompleted}
-                                                            />
+                                                            <span className="text-sm text-gray-500 mb-1 block">
+                                                                Part A • Question {currentQuestionIndex + 1} of {questions.length}
+                                                            </span>
+                                                            <h2 className="text-lg font-medium text-gray-900">
+                                                                {currentQuestion?.text}
+                                                            </h2>
                                                         </div>
-                                                    )}
+                                                        {!isCurrentQuizCompleted && (
+                                                            <button 
+                                                                onClick={() => toggleFlag(currentQuestion?.id)}
+                                                                className={`p-2 rounded-lg transition ${
+                                                                    flaggedQuestions.has(currentQuestion?.id) 
+                                                                        ? 'text-amber-500 bg-amber-50' 
+                                                                        : 'text-gray-400 hover:text-amber-500 hover:bg-gray-50'
+                                                                }`}
+                                                                title="Flag for review"
+                                                            >
+                                                                <FlagIcon className="w-5 h-5" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <div className="space-y-3">
+                                                        {currentQuestion?.options?.length > 0 && (
+                                                            currentQuestion?.options.map((option, index) => (
+                                                                <label key={index} className={`flex items-center p-4 border-2 rounded-lg transition ${
+                                                                    isCurrentQuizCompleted 
+                                                                        ? 'cursor-not-allowed opacity-80'
+                                                                        : 'cursor-pointer hover:bg-gray-50'
+                                                                } ${
+                                                                    answers[currentQuestion?.id] === option 
+                                                                        ? 'border-blue-500 bg-blue-50' 
+                                                                        : 'border-gray-200'
+                                                                }`}>
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={`q-${currentQuestion?.id}`}
+                                                                        value={option}
+                                                                        checked={answers[currentQuestion?.id] === option}
+                                                                        onChange={() => handleAnswer(currentQuestion?.id, option)}
+                                                                        disabled={isCurrentQuizCompleted}
+                                                                        className="w-4 h-4 text-blue-600 disabled:opacity-50"
+                                                                    />
+                                                                    <span className="ml-3 text-gray-700">{option}</span>
+                                                                </label>
+                                                            ))
+                                                        )}
+
+                                                        {currentQuestion?.type === 'short_answer' && (
+                                                            <div>
+                                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                    Answer
+                                                                </label>
+                                                                <textarea
+                                                                    value={answers[currentQuestion?.id] || ''}
+                                                                    onChange={(e) => handleAnswer(currentQuestion?.id, e.target.value)}
+                                                                    placeholder="Type your answer here..."
+                                                                    rows={4}
+                                                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                    disabled={isCurrentQuizCompleted}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ) : (
+                                                <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+                                                    <span className="text-sm text-gray-500 mb-1 block">Part A</span>
+                                                    <h2 className="text-lg font-semibold text-gray-900">No Part A quiz questions</h2>
+                                                    <p className="text-gray-600 mt-2">
+                                                        This assessment only has Part B essay questions.
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {hasEssayQuestions && (
+                                                <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-indigo-100">
+                                                    <div className="mb-5">
+                                                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wide">
+                                                            Part B Essay
+                                                        </span>
+                                                        <h2 className="text-xl font-bold text-gray-900 mt-1">
+                                                            Essay Details & Document Upload
+                                                        </h2>
+                                                        {assessment.essay_instructions && (
+                                                            <p className="text-sm text-gray-600 mt-2">
+                                                                {assessment.essay_instructions}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="space-y-5">
+                                                        {essayQuestions.map((question, index) => (
+                                                            <div key={question.id} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                                                                <div className="flex items-start justify-between gap-4">
+                                                                    <div>
+                                                                        <p className="text-sm font-semibold text-gray-500">
+                                                                            Essay {index + 1} of {essayQuestions.length}
+                                                                        </p>
+                                                                        <h3 className="text-base font-semibold text-gray-900 mt-1">
+                                                                            {question.text}
+                                                                        </h3>
+                                                                        <p className="text-xs text-gray-500 mt-2">
+                                                                            {question.marks} mark{Number(question.marks) === 1 ? '' : 's'}
+                                                                        </p>
+                                                                    </div>
+                                                                    {essayFiles[question.id] && (
+                                                                        <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                                                            Uploaded
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="mt-4">
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Upload essay document
+                                                                    </label>
+                                                                    <input
+                                                                        type="file"
+                                                                        accept=".pdf,.doc,.docx,.txt,.rtf"
+                                                                        onChange={(event) => handleEssayFileChange(question.id, event.target.files?.[0] || null)}
+                                                                        disabled={isCurrentQuizCompleted}
+                                                                        className="block w-full text-sm text-gray-700 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-indigo-700 disabled:opacity-50"
+                                                                    />
+                                                                    {essayFiles[question.id] && (
+                                                                        <p className="mt-2 text-xs text-gray-600">
+                                                                            Selected: {essayFiles[question.id].name}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
                                             
                                             <div className="flex items-center justify-between">
                                                 <button
                                                     onClick={handlePrevious}
-                                                    disabled={currentQuestionIndex === 0}
+                                                    disabled={questions.length === 0 || currentQuestionIndex === 0}
                                                     className="flex items-center gap-2 px-4 py-2 text-gray-600 disabled:opacity-50 hover:bg-gray-100 rounded-lg"
                                                 >
                                                     <ChevronLeftIcon className="w-4 h-4" />

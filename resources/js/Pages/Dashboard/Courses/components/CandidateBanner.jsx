@@ -41,13 +41,13 @@ export default function CandidateBanner({ candidate, enrollment }) {
                         <DocumentDuplicateIcon className="w-4 h-4" />
                         Copy ID
                     </button>
-                    <Link
+                    {/* <Link
                         href={`/certificate/verify/${candidate.certificate_id}`}
                         className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-gray-100 transition"
                     >
                         <ShieldCheckIcon className="w-4 h-4" />
                         Verify
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </motion.div>
