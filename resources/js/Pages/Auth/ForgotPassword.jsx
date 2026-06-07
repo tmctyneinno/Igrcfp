@@ -116,7 +116,7 @@ export default function ForgotPassword({ status }) {
                                         name="email"
                                         value={data.email}
                                         className="pl-10 w-full"
-                                        placeholder="you@example.com"
+                                        placeholder="Email Address"
                                         autoComplete="email"
                                         isFocused={true}
                                         onChange={(e) => setData('email', e.target.value)}
