@@ -129,6 +129,14 @@ class DashboardController extends Controller
                 ->filter() // Remove null values
                 ->values(); // Reset array keys
         }
+
+        $enrolledCourseIds = [];
+        if ($user) {
+            $enrolledCourseIds = array_unique(array_merge(
+                $user->courses()->pluck('courses.id')->toArray(),
+                $user->enrollments()->pluck('course_id')->toArray()
+            ));
+        }
         
         // Get popular courses
         $popularCourses = Course::published()
@@ -153,7 +161,7 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(4)
             ->get()
-            ->map(function ($course) {
+            ->map(function ($course) use ($enrolledCourseIds) {
                 return [
                     'id' => $course->id,
                     'title' => $course->title,
@@ -168,6 +176,7 @@ class DashboardController extends Controller
                     'discount_price' => $course->discount_price,
                     'is_featured' => $course->is_featured,
                     'rating' => $course->rating,
+                    'is_enrolled' => in_array($course->id, $enrolledCourseIds),
                     'category' => $course->category ? [
                         'id' => $course->category->id,
                         'name' => $course->category->name,

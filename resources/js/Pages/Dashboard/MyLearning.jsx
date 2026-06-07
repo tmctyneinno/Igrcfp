@@ -12,5 +12,5 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
             <Head title="Dashboard" />
             <MyLearning enrolledCourses={enrolledCourses} />
         </AuthenticatedLayout> 
-    );
+    ); 
 }

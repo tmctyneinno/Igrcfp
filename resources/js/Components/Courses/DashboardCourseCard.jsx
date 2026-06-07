@@ -150,7 +150,7 @@ export default function DashboardCourseCard({ course, onAddToCart, isInCart, isA
                             FREE
                         </span>
                     )}
-                    
+                      
                     {/* CART BUTTON - Now with remove option when in cart */}
                     {course?.is_enrolled ? (
                         <Link

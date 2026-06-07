@@ -6,6 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 export default function MostPopular({ initialCourses = [] }) {
     const { addToCart, cartItems } = useCart(); 
     const [addingToCart, setAddingToCart] = useState({});
+    
  
     // Helper function to get level badge color
     const getLevelBadgeColor = (level) => { 
@@ -227,20 +228,30 @@ export default function MostPopular({ initialCourses = [] }) {
                                             </span>
                                         )}
                                         
-                                        {/* ADD TO CART BUTTON */}
-                                        {inCart ? (
+                                        
+                                        {/* CART BUTTON - Now with remove option when in cart */}
+                                        {course?.is_enrolled ? (
                                             <Link
-                                                href={route('dashboard.cart.index')}
+                                                href={route('dashboard.courses.show', course.slug)}
                                                 className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                                             >
-                                               
-                                                View in Cart
+                                                Continue Course
                                             </Link>
+                                        ) : inCart ? (
+                                            <div className="flex gap-2">
+                                                <Link
+                                                    href={route('dashboard.cart.index')}
+                                                    onClick={handleViewCartClick}
+                                                    className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                                                >
+                                                    View Cart
+                                                </Link>
+                                            </div>
                                         ) : (
                                             <button
                                                 onClick={(e) => handleAddToCart(course, e)}
                                                 disabled={isAdding}
-                                                className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="inline-flex items-center px-2.5 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 {isAdding ? (
                                                     <>
@@ -252,8 +263,10 @@ export default function MostPopular({ initialCourses = [] }) {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        
                                                         Add to Cart
+                                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                                        </svg>
                                                     </>
                                                 )}
                                             </button>

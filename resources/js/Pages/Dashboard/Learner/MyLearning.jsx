@@ -13,7 +13,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
         };   
         return levelMap[level] || 'bg-blue-100 text-blue-800';
     };
-
+ 
     // Helper function to get format badge color
     const getFormatBadgeColor = (format) => {
         const formatMap = {
@@ -71,7 +71,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
 
                 {enrolledCourses.length > 0 && (
                     <Link
-                        href={route('dashboard.my-courses')}
+                        href={route('dashboard.courses.index')}
                         className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
                     >
                         View All Courses →

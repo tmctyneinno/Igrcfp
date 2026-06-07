@@ -1,5 +1,3 @@
-// resources/js/Pages/Courses/Index.jsx
-
 import React, { useState, useEffect } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,7 +7,7 @@ import DashboardCourseCard from '@/components/Courses/DashboardCourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
- 
+  
 export default function Courses({ auth, courses, filters, filterOptions }) {
     const { addToCart, cartItems, refreshCart } = useCart();
     const { props } = usePage();
