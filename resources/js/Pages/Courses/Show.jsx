@@ -51,7 +51,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
     return numPrice === 0
       ? 'Free'
       : `£${numPrice.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  };
+  };  
   // Parse prices safely
   const price = parseFloatSafe(course.price);
   const discountPrice = parseFloatSafe(course.discount_price);
