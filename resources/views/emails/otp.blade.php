@@ -47,6 +47,9 @@
 <body>
     <div class="container">
         <div class="header">
+            <img src="{{ asset('assets/images/home-three/logo/logo-main.png') }}" alt="IGRCFP Logo" class="logo">
+            <h2>The Institute of GRC and Financial Crime Prevention (IGRCFP)</h2>
+       
             <h2>Email Verification</h2>
         </div>
         <div class="content">

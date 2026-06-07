@@ -190,7 +190,10 @@ class QuizController extends Controller
         }
         $essayFiles = $request->file('essay_files', []);
         $questions = $assessment->questions()->get();
-        $requiresManualMarking = $assessment->needs_manual_marking || $questions->contains('question_type', 'essay');
+        $hasEssayQuestions = $questions->contains('question_type', 'essay');
+        $isPartAOnly = $request->boolean('part_a_only');
+        $isSplitPartASubmission = $isPartAOnly && $hasEssayQuestions;
+        $requiresManualMarking = !$isPartAOnly && ($assessment->needs_manual_marking || $hasEssayQuestions);
         
         $totalMarks = 0;
         $earnedMarks = 0;
@@ -245,8 +248,8 @@ class QuizController extends Controller
         
         // Update the attempt
         $attempt->update([
-            'status' => 'completed',
-            'completed_at' => now(),
+            'status' => $isSplitPartASubmission ? 'in_progress' : 'completed',
+            'completed_at' => $isSplitPartASubmission ? null : now(),
             'answers' => json_encode($answers),
             'score' => $score,
             'earned_marks' => $earnedMarks,
@@ -285,8 +288,13 @@ class QuizController extends Controller
             $timeSpent = now()->diffInSeconds($submission->started_at);
         }
         
-        $submission->submitted_at = now();
-        $submission->status = $requiresManualMarking ? 'submitted' : 'graded';
+        if (!$isSplitPartASubmission) {
+            $submission->submitted_at = now();
+        }
+
+        $submission->status = $isSplitPartASubmission
+            ? 'in_progress'
+            : ($requiresManualMarking ? 'submitted' : 'graded');
         $submission->answers = $answers;
         $submission->question_responses = $questionResponses;
         $submission->score = $earnedMarks;
@@ -310,12 +318,14 @@ class QuizController extends Controller
         $assessment->calculateStatistics();
         
         // Update enrollment progress if passed
-        if ($passed) {
+        if (!$isSplitPartASubmission && $passed) {
             $enrollment->updateProgress();
         }
         
         // ✅ CREATE NOTIFICATION FOR QUIZ SUBMISSION
-        $this->createQuizNotification($user, $course, $assessment, $passed, $score);
+        if (!$isSplitPartASubmission) {
+            $this->createQuizNotification($user, $course, $assessment, $passed, $score);
+        }
         
         \Log::info('Quiz submitted successfully', [
             'score' => $score,
@@ -332,6 +342,7 @@ class QuizController extends Controller
                 'score' => $score,
                 'passed' => $passed,
                 'manual_review' => $requiresManualMarking,
+                'part_a_submitted' => $isSplitPartASubmission,
                 'submission_id' => $submission->id,
             ]);
         }

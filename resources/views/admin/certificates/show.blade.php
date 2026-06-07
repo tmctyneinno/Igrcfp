@@ -164,7 +164,7 @@
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Full Name</th>
-                                    <td>Institute of Governance, Risk, Compliance & Financial Crime Prevention</td>
+                                    <td>The Institute of Governance, Risk, Compliance & Financial Crime Prevention</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Verification URL</th>

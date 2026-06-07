@@ -284,7 +284,7 @@
                 @endif
                 <div class="certificate-header-text">
                     <div class="organization-name">{{ config('app.name', 'IGRCFP') }}</div>
-                    <div class="organization-tagline">Institute of GRC & Financial Crime Prevention</div>
+                    <div class="organization-tagline">The Institute of GRC & Financial Crime Prevention</div>
                 </div>
             </div>
             

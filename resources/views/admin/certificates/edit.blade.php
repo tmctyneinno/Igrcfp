@@ -201,7 +201,7 @@
                             {{ now()->format('F d, Y') }}
                         </p>
                         <p><strong>Issuing Body:</strong><br>
-                            IGRCFP - Institute of Governance, Risk, Compliance & Financial Crime Prevention
+                            IGRCFP - The Institute of Governance, Risk, Compliance & Financial Crime Prevention
                         </p>
                         <p><strong>Verification:</strong><br>
                             <small class="text-muted">A unique verification URL will be generated for this certificate</small>

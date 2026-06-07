@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\CourseCatalogController;
+use App\Http\Controllers\ScholarshipAcceptController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
@@ -121,3 +122,5 @@ Route::prefix('verify-certificate')->name('certificate.verify.public.')->group(f
 Route::get('/code-of-conduct', [HomeController::class, 'codeOfConduct'])->name('igrcfp.code-of-conduct');
 Route::get('/quality-assurance', [HomeController::class, 'qualityAssurance'])->name('igrcfp.quality-assurance');
 
+Route::get('/scholarship/{application}/accept', [ScholarshipAcceptController::class, 'accept'])
+    ->name('scholarship.accept');

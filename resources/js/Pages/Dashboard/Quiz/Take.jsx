@@ -46,6 +46,8 @@ export default function QuizTake({
     const [finalScore, setFinalScore] = useState(null);
     const [finalManualReview, setFinalManualReview] = useState(false);
     const [essayFiles, setEssayFiles] = useState({});
+    const [partASubmitted, setPartASubmitted] = useState(false);
+    const [partAScore, setPartAScore] = useState(null);
     
     // ==================== MEMOIZED DATA ====================
     
@@ -73,6 +75,8 @@ export default function QuizTake({
         ? Math.round(((currentQuestionIndex + 1) / questions.length) * 100) 
         : (essayQuestions.length > 0 ? 100 : 0);
     const hasEssayQuestions = essayQuestions.length > 0;
+    const isPartALocked = hasEssayQuestions && partASubmitted;
+    const canAccessPartB = !hasEssayQuestions || questions.length === 0 || partASubmitted;
     
     const isQuizUnlocked = useCallback(() => true, []);
     
@@ -176,10 +180,10 @@ export default function QuizTake({
     // ==================== EVENT HANDLERS ====================
     
     const handleAnswer = useCallback((questionId, answer) => {
-        if (isCurrentQuizCompleted) return;
+        if (isCurrentQuizCompleted || isPartALocked) return;
         setAnswers(prev => ({ ...prev, [questionId]: answer }));
         setHasUnsavedChanges(true);
-    }, [isCurrentQuizCompleted]);
+    }, [isCurrentQuizCompleted, isPartALocked]);
 
     const handleEssayFileChange = useCallback((questionId, file) => {
         if (isCurrentQuizCompleted) return;
@@ -247,6 +251,8 @@ export default function QuizTake({
         setCurrentQuestionIndex(0);
         setAnswers({});
         setEssayFiles({});
+        setPartASubmitted(false);
+        setPartAScore(null);
         setFlaggedQuestions(new Set());
         setHasUnsavedChanges(false);
     }, [allQuizzesWithStatus, completedQuizzes, hasUnsavedChanges, autoSaveProgress]);
@@ -261,6 +267,8 @@ export default function QuizTake({
                 setCurrentQuestionIndex(0);
                 setAnswers({});
                 setEssayFiles({});
+                setPartASubmitted(false);
+                setPartAScore(null);
                 setFlaggedQuestions(new Set());
                 setHasUnsavedChanges(false);
                 return;
@@ -278,6 +286,8 @@ export default function QuizTake({
                 setCurrentQuestionIndex(0);
                 setAnswers({});
                 setEssayFiles({});
+                setPartASubmitted(false);
+                setPartAScore(null);
                 setFlaggedQuestions(new Set());
                 setHasUnsavedChanges(false);
                 return;
@@ -370,6 +380,112 @@ export default function QuizTake({
             ), { duration: Infinity });
         });
     }, []);
+
+    const handleSubmitPartA = useCallback(async () => {
+        const unanswered = questions.filter(q => !answers[q.id]).length;
+
+        if (unanswered > 0) {
+            const confirmed = await confirmUnanswered(unanswered);
+            if (!confirmed) return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const submitUrl = route('dashboard.quiz.submit', {
+                course: course.slug,
+                assessment: currentQuiz.id
+            });
+
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ answers, part_a_only: true }),
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Part A submission failed');
+                }
+
+                setPartASubmitted(true);
+                setPartAScore(data.score);
+                setHasUnsavedChanges(false);
+
+                if (hasEssayQuestions) {
+                    toast.success('Part A submitted. You can now complete Part B.');
+                } else {
+                    setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
+                    setFinalScore(data.score);
+                    setFinalManualReview(false);
+                    setShowCompletionModal(true);
+                }
+            } else {
+                throw new Error('Server returned HTML instead of JSON');
+            }
+        } catch (error) {
+            if (isDev) console.error('Part A submit error:', error);
+            toast.error('Failed to submit Part A. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [questions, answers, course.slug, currentQuiz, confirmUnanswered, hasEssayQuestions]);
+
+    const handleSubmitPartB = useCallback(async () => {
+        const missingEssayFiles = essayQuestions.filter(q => !essayFiles[q.id]).length;
+
+        if (missingEssayFiles > 0) {
+            const confirmed = await confirmMissingEssayFiles(missingEssayFiles);
+            if (!confirmed) return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const submitUrl = route('dashboard.quiz.submit', {
+                course: course.slug,
+                assessment: currentQuiz.id
+            });
+
+            const submitRequest = buildSubmitRequest();
+
+            const response = await fetch(submitUrl, {
+                method: 'POST',
+                headers: submitRequest.headers,
+                body: submitRequest.body,
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Part B submission failed');
+                }
+
+                setCompletedQuizzes(prev => new Set([...prev, currentQuiz.id]));
+                setHasUnsavedChanges(false);
+                setFinalScore(data.score);
+                setFinalManualReview(Boolean(data.manual_review));
+                setShowCompletionModal(true);
+            } else {
+                throw new Error('Server returned HTML instead of JSON');
+            }
+        } catch (error) {
+            if (isDev) console.error('Part B submit error:', error);
+            toast.error('Failed to submit Part B. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }, [essayQuestions, essayFiles, course.slug, currentQuiz, confirmMissingEssayFiles, buildSubmitRequest]);
 
     const handleSubmitAndContinue = useCallback(async () => {
         const unanswered = questions.filter(q => !answers[q.id]).length;
@@ -771,7 +887,9 @@ export default function QuizTake({
                                 <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
                                     <p className="text-sm font-semibold text-indigo-900">Part B Essay</p>
                                     <p className="text-xs text-indigo-700 mt-1">
-                                        {essayQuestions.filter(question => Boolean(essayFiles[question.id])).length}/{essayQuestions.length} document{essayQuestions.length === 1 ? '' : 's'} uploaded
+                                        {canAccessPartB
+                                            ? `${essayQuestions.filter(question => Boolean(essayFiles[question.id])).length}/${essayQuestions.length} document${essayQuestions.length === 1 ? '' : 's'} uploaded`
+                                            : 'Available after Part A is submitted'}
                                     </p>
                                 </div>
                             )}
@@ -939,7 +1057,7 @@ export default function QuizTake({
                                                                 return newSet;
                                                             });
                                                         }}
-                                                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                                        className="px-6 py-2 bg-bflue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                                     >
                                                         Retake Quiz
                                                     </button>
@@ -993,7 +1111,7 @@ export default function QuizTake({
                                                                         value={option}
                                                                         checked={answers[currentQuestion?.id] === option}
                                                                         onChange={() => handleAnswer(currentQuestion?.id, option)}
-                                                                        disabled={isCurrentQuizCompleted}
+                                                                        disabled={isCurrentQuizCompleted || isPartALocked}
                                                                         className="w-4 h-4 text-blue-600 disabled:opacity-50"
                                                                     />
                                                                     <span className="ml-3 text-gray-700">{option}</span>
@@ -1012,7 +1130,7 @@ export default function QuizTake({
                                                                     placeholder="Type your answer here..."
                                                                     rows={4}
                                                                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                                    disabled={isCurrentQuizCompleted}
+                                                                    disabled={isCurrentQuizCompleted || isPartALocked}
                                                                 />
                                                             </div>
                                                         )}
@@ -1028,68 +1146,7 @@ export default function QuizTake({
                                                 </div>
                                             )}
 
-                                            {hasEssayQuestions && (
-                                                <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-indigo-100">
-                                                    <div className="mb-5">
-                                                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wide">
-                                                            Part B Essay
-                                                        </span>
-                                                        <h2 className="text-xl font-bold text-gray-900 mt-1">
-                                                            Essay Details & Document Upload
-                                                        </h2>
-                                                        {assessment.essay_instructions && (
-                                                            <p className="text-sm text-gray-600 mt-2">
-                                                                {assessment.essay_instructions}
-                                                            </p>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="space-y-5">
-                                                        {essayQuestions.map((question, index) => (
-                                                            <div key={question.id} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-                                                                <div className="flex items-start justify-between gap-4">
-                                                                    <div>
-                                                                        <p className="text-sm font-semibold text-gray-500">
-                                                                            Essay {index + 1} of {essayQuestions.length}
-                                                                        </p>
-                                                                        <h3 className="text-base font-semibold text-gray-900 mt-1">
-                                                                            {question.text}
-                                                                        </h3>
-                                                                        <p className="text-xs text-gray-500 mt-2">
-                                                                            {question.marks} mark{Number(question.marks) === 1 ? '' : 's'}
-                                                                        </p>
-                                                                    </div>
-                                                                    {essayFiles[question.id] && (
-                                                                        <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                                                                            Uploaded
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="mt-4">
-                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                        Upload essay document
-                                                                    </label>
-                                                                    <input
-                                                                        type="file"
-                                                                        accept=".pdf,.doc,.docx,.txt,.rtf"
-                                                                        onChange={(event) => handleEssayFileChange(question.id, event.target.files?.[0] || null)}
-                                                                        disabled={isCurrentQuizCompleted}
-                                                                        className="block w-full text-sm text-gray-700 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-indigo-700 disabled:opacity-50"
-                                                                    />
-                                                                    {essayFiles[question.id] && (
-                                                                        <p className="mt-2 text-xs text-gray-600">
-                                                                            Selected: {essayFiles[question.id].name}
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            
-                                            <div className="flex items-center justify-between">
+                                             <div className="flex items-center justify-between">
                                                 <button
                                                     onClick={handlePrevious}
                                                     disabled={questions.length === 0 || currentQuestionIndex === 0}
@@ -1099,7 +1156,7 @@ export default function QuizTake({
                                                     Previous
                                                 </button>
                                                 
-                                                <div className="flex gap-3">
+                                                <div className="flex gap-3 pb-4">
                                                     {currentQuestionIndex < questions.length - 1 ? (
                                                         <button
                                                             onClick={handleNext}
@@ -1112,7 +1169,30 @@ export default function QuizTake({
                                                         <>
                                                             {!isCurrentQuizCompleted && (
                                                                 <>
-                                                                    {!isOnlyQuiz && !isLastQuiz ? (
+                                                                    {hasEssayQuestions && questions.length > 0 ? (
+                                                                        <button
+                                                                            onClick={handleSubmitPartA}
+                                                                            disabled={isSubmitting || partASubmitted}
+                                                                            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 shadow-md transition"
+                                                                        >
+                                                                            {isSubmitting ? (
+                                                                                <>
+                                                                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                                    Submitting...
+                                                                                </>
+                                                                            ) : partASubmitted ? (
+                                                                                <>
+                                                                                    <CheckCircleIcon className="w-4 h-4" />
+                                                                                    Part A Submitted
+                                                                                </>
+                                                                            ) : (
+                                                                                <>
+                                                                                    <CheckCircleIcon className="w-4 h-4" />
+                                                                                    Submit Part A
+                                                                                </>
+                                                                            )}
+                                                                        </button>
+                                                                    ) : !isOnlyQuiz && !isLastQuiz ? (
                                                                         <button
                                                                             onClick={handleSubmitAndContinue}
                                                                             disabled={isSubmitting}
@@ -1155,6 +1235,100 @@ export default function QuizTake({
                                                     )}
                                                 </div>
                                             </div>
+
+                                            {hasEssayQuestions && (
+                                                <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-indigo-100">
+                                                    <div className="mb-5">
+                                                        <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wide">
+                                                            Part B Essay
+                                                        </span>
+                                                        <h2 className="text-xl font-bold text-gray-900 mt-1">
+                                                            Essay Details & Document Upload
+                                                        </h2>
+                                                        {questions.length > 0 && !partASubmitted && (
+                                                            <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                                                Submit Part A first to unlock the essay upload section.
+                                                            </div>
+                                                        )}
+                                                        {partASubmitted && partAScore !== null && (
+                                                            <div className="mt-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                                                                Part A submitted. Score: <span className="font-semibold">{partAScore}%</span>
+                                                            </div>
+                                                        )}
+                                                        {assessment.essay_instructions && (
+                                                            <p className="text-sm text-gray-600 mt-2">
+                                                                {assessment.essay_instructions}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="space-y-5">
+                                                        {essayQuestions.map((question, index) => (
+                                                            <div key={question.id} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                                                                <div className="flex items-start justify-between gap-4">
+                                                                    <div>
+                                                                        <p className="text-sm font-semibold text-gray-500">
+                                                                            Essay {index + 1} of {essayQuestions.length}
+                                                                        </p>
+                                                                        <h3 className="text-base font-semibold text-gray-900 mt-1">
+                                                                            {question.text}
+                                                                        </h3>
+                                                                        <p className="text-xs text-gray-500 mt-2">
+                                                                            {question.marks} mark{Number(question.marks) === 1 ? '' : 's'}
+                                                                        </p>
+                                                                    </div>
+                                                                    {essayFiles[question.id] && (
+                                                                        <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                                                            Uploaded
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="mt-4">
+                                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                        Upload essay document
+                                                                    </label>
+                                                                    <input
+                                                                        type="file"
+                                                                        accept=".pdf,.doc,.docx,.txt,.rtf"
+                                                                        onChange={(event) => handleEssayFileChange(question.id, event.target.files?.[0] || null)}
+                                                                        disabled={isCurrentQuizCompleted || !canAccessPartB}
+                                                                        className="block w-full text-sm text-gray-700 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-indigo-700 disabled:opacity-50"
+                                                                    />
+                                                                    {essayFiles[question.id] && (
+                                                                        <p className="mt-2 text-xs text-gray-600">
+                                                                            Selected: {essayFiles[question.id].name}
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    <div className="mt-6 flex justify-end">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleSubmitPartB}
+                                                            disabled={isSubmitting || !canAccessPartB}
+                                                            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 shadow-md transition"
+                                                        >
+                                                            {isSubmitting ? (
+                                                                <>
+                                                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                                    Submitting...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <SparklesIcon className="w-4 h-4" />
+                                                                    Submit Part B
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                           
                                         </>
                                     )}
                                 </>

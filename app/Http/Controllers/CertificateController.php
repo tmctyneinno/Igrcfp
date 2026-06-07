@@ -12,7 +12,7 @@ use App\Mail\CertificateGeneratedMail;
 
 class CertificateController extends Controller
 {
-    
+     
     public function generate(Enrollment $enrollment)
     {
         // Check if user is authorized

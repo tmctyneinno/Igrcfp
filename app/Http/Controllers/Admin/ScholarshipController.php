@@ -4,10 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ScholarshipApplication;
+use App\Services\BrevoMailService;
+use App\Traits\SendsScholarshipNotifications;
 use Illuminate\Http\Request;
 
 class ScholarshipController extends Controller
 {
+    use SendsScholarshipNotifications;
+    
+    protected $mailService;
+
+    public function __construct(BrevoMailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+
     public function index(Request $request)
     {
         $query = ScholarshipApplication::with('post')->latest();
@@ -42,13 +53,34 @@ class ScholarshipController extends Controller
             'status' => 'required|in:pending,under_review,accepted,rejected',
             'admin_notes' => 'nullable|string',
         ]);
+        
+        $oldStatus = $application->status;
+        $newStatus = $request->status;
+        
+        if ($oldStatus === $newStatus) {
+            return redirect()->route('admin.scholarships.index')
+                ->with('info', 'Application status is already set to ' . ucfirst(str_replace('_', ' ', $newStatus)));
+        }
 
         $application->update([
-            'status' => $request->status,
+            'status' => $newStatus,
             'admin_notes' => $request->admin_notes,
         ]);
+        
+        // Send notification
+        $this->sendStatusChangeNotification($application, $this->mailService, $oldStatus, $newStatus);
 
-        return back()->with('success', 'Application status updated successfully!');
+        $message = 'Application status updated successfully!';
+        
+        if ($newStatus === 'accepted') {
+            $message .= ' A scholarship approval email has been sent to the applicant.';
+        } elseif ($newStatus === 'under_review') {
+            $message .= ' A notification email has been sent to the applicant.';
+        }
+
+        // Redirect to index page instead of back
+        return redirect()->route('admin.scholarships.index')
+            ->with('success', $message);
     }
 
     public function destroy(ScholarshipApplication $application)

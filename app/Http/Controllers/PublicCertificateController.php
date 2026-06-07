@@ -66,7 +66,7 @@ class PublicCertificateController extends Controller
                     'status' => $enrollment->status === 'completed' ? 'Valid' : 'Pending',
                     'completion_date' => $enrollment->completed_at?->format('F d, Y'),
                     'issuing_body' => 'IGRCFP',
-                    'issuing_body_full' => 'Institute of Governance, Risk, Compliance & Financial Crime Prevention',
+                    'issuing_body_full' => 'The Institute of Governance, Risk, Compliance & Financial Crime Prevention',
                     'verification_url' => route('certificate.verify.public.index', ['number' => $enrollment->certificate_number]),
                     'badge_url' => asset('images/badges/verified-badge.png'),
                 ]
@@ -106,7 +106,7 @@ class PublicCertificateController extends Controller
                     'grade' => $certificate->grade ?? 'Pass',
                     'status' => $certificate->status === 'active' ? 'Valid' : ucfirst($certificate->status),
                     'issuing_body' => 'IGRCFP',
-                    'issuing_body_full' => 'Institute of Governance, Risk, Compliance & Financial Crime Prevention',
+                    'issuing_body_full' => 'The Institute of Governance, Risk, Compliance & Financial Crime Prevention',
                 ]
             ]);
         }
