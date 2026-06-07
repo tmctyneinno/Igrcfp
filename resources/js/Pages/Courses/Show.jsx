@@ -61,6 +61,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
   const discountPercentage = hasDiscount && price > 0 
     ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
+  const enrolled = Boolean(course?.is_enrolled ?? isEnrolled);
 
   // Check if arrays exist
   const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
@@ -168,26 +169,44 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   </div>
                   
                   <div className="mb-0">
-                    {hasDiscount ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <span className="text-3xl font-bold">{formatPrice(discountPrice)}</span>
-                          <span className="text-lg line-through text-gray-500 ml-2">{formatPrice(price)}</span>
-                        </div>
-                        <p className="text-sm text-green-600 font-medium">Limited time offer</p>
+                    {enrolled ? (
+                      <div className="mb-4">
+                        <p className="text-2xl font-bold text-green-700 text-white">You're enrolled</p>
+                        <p className="text-sm text-gray-600 mt-2">Continue learning from your dashboard.</p>
                       </div>
                     ) : (
-                      <div className="text-3xl font-bold">{formatPrice(price)}</div>
+                      <div className="mb-0">
+                        {hasDiscount ? (
+                          <div className="space-y-2">
+                            <div className="flex items-center">
+                              <span className="text-3xl font-bold">{formatPrice(discountPrice)}</span>
+                              <span className="text-lg line-through text-gray-500 ml-2">{formatPrice(price)}</span>
+                            </div>
+                            <p className="text-sm text-green-600 font-medium">Limited time offer</p>
+                          </div>
+                        ) : (
+                          <div className="text-3xl font-bold">{formatPrice(price)}</div>
+                        )}
+                      </div>
                     )}
+                    
                     <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
                   </div>
-
-                  <button 
-                    onClick={() => startEnrollment(course)}
-                    className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
-                  >
-                    {user ? 'Enroll Now' : 'Sign In to Enroll'}
-                  </button>
+                  {enrolled ? (
+                      <Link
+                          href={route('dashboard.courses.show', course.slug)}
+                          className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
+                      >
+                          Continue Course
+                      </Link>
+                    ) :(
+                      <button 
+                        onClick={() => startEnrollment(course)}
+                        className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
+                      >
+                        {user ? 'Enroll Now' : 'Sign In to Enroll'}
+                      </button>
+                    )}
                   
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center">
@@ -332,11 +351,14 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                                   )}
                                 </div>
                               </div>
-                              {isEnrolled ? (
+                              {enrolled ? (
                                 <div className="flex items-center space-x-2">
-                                  <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                                  <Link
+                                    href={route('dashboard.courses.show', course.slug)}
+                                    className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                                  >
                                     Start
-                                  </button>
+                                  </Link>
                                   <PlayIcon className="h-5 w-5 text-blue-600" />
                                 </div>
                               ) : (
@@ -363,7 +385,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                     </div>
 
                     {/* Enrollment CTA at Bottom */}
-                    {!isEnrolled && (
+                    {!enrolled && (
                       <div className="p-6 bg-blue-50 border-t border-blue-100">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                           <div>
@@ -608,12 +630,21 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                 Join thousands of professionals who have transformed their careers with our certification programmes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
-                  onClick={() => startEnrollment(course)}
-                  className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
-                >
-                  Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
-                </button>
+                {enrolled ? (
+                      <Link
+                          href={route('dashboard.courses.show', course.slug)}
+                          className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
+                      >
+                          Continue Course
+                      </Link>
+                    ) :(
+                    <button 
+                      onClick={() => startEnrollment(course)}
+                      className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
+                    >
+                      Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
+                    </button>
+                  )}
               </div>
             </div>
           </div>

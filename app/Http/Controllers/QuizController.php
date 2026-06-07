@@ -199,6 +199,7 @@ class QuizController extends Controller
         $earnedMarks = 0;
         $correctAnswers = 0;
         $questionResponses = [];
+        $uploadedEssayFiles = [];
         
         foreach ($questions as $question) {
             $marks = $question->points ?? 1;
@@ -235,6 +236,7 @@ class QuizController extends Controller
                     'size' => $file->getSize(),
                     'mime_type' => $file->getMimeType(),
                 ];
+                $uploadedEssayFiles[] = $questionResponses[$question->id]['uploaded_file'];
             }
             
             if (!$isManualQuestion && $isCorrect === true) {
@@ -303,6 +305,13 @@ class QuizController extends Controller
         $submission->time_spent = $timeSpent;
         $submission->ip_address = $request->ip();
         $submission->user_agent = $request->userAgent();
+
+        if (!empty($uploadedEssayFiles)) {
+            $primaryEssayFile = $uploadedEssayFiles[0];
+            $submission->submission_file_path = $primaryEssayFile['path'];
+            $submission->submission_file_name = $primaryEssayFile['name'];
+            $submission->submission_file_size = $primaryEssayFile['size'];
+        }
         
         // If auto-graded, set graded_at
         if (!$requiresManualMarking) {
@@ -462,14 +471,22 @@ class QuizController extends Controller
                     ->where('status', 'completed')
                     ->latest()
                     ->first();
+
+                $submission = AssessmentSubmission::where('assessment_id', $quiz->id)
+                    ->where('user_id', $user->id)
+                    ->where('enrollment_id', $enrollment->id)
+                    ->latest()
+                    ->first();
                 
                 // Get questions with user's answers
                 $questions = $quiz->questions()->get();
                 $answers = $attempt ? (json_decode($attempt->answers, true) ?? []) : [];
                 
-                $questionsWithResults = $questions->map(function ($question) use ($answers) {
+                $questionsWithResults = $questions->map(function ($question) use ($answers, $submission) {
                     $userAnswer = $answers[$question->id] ?? null;
-                    $isCorrect = $question->isAnswerCorrect($userAnswer);
+                    $isManualQuestion = in_array($question->question_type, ['essay', 'case_study'], true);
+                    $response = $submission?->question_responses[$question->id] ?? [];
+                    $isCorrect = $isManualQuestion ? null : $question->isAnswerCorrect($userAnswer);
                     
                     $options = $question->options;
                     if (is_string($options)) {
@@ -479,13 +496,19 @@ class QuizController extends Controller
                     return [
                         'id' => $question->id,
                         'text' => $question->question_text,
+                        'type' => $question->question_type,
                         'options' => $options,
                         'correct_answer' => $question->correct_answer,
                         'user_answer' => $userAnswer,
                         'is_correct' => $isCorrect,
+                        'is_manual' => $isManualQuestion,
                         'points' => $question->points ?? 1,
+                        'uploaded_file' => $response['uploaded_file'] ?? null,
                     ];
                 });
+
+                $isUnderManualReview = $submission && $submission->status === 'submitted';
+                $isGraded = $submission && $submission->status === 'graded';
                 
                 return [
                     'id' => $quiz->id,
@@ -507,6 +530,18 @@ class QuizController extends Controller
                         'correct_answers' => $attempt->correct_answers,
                         'passed' => $attempt->passed,
                         'completed_at' => $attempt->completed_at ? $attempt->completed_at->format('M d, Y H:i') : null,
+                    ] : null,
+                    'submission' => $submission ? [
+                        'id' => $submission->id,
+                        'status' => $submission->status,
+                        'is_under_review' => $isUnderManualReview,
+                        'is_graded' => $isGraded,
+                        'score' => $submission->score,
+                        'percentage' => $submission->percentage,
+                        'passed' => $submission->passed,
+                        'feedback' => $submission->feedback,
+                        'submitted_at' => $submission->submitted_at?->format('M d, Y H:i'),
+                        'graded_at' => $submission->graded_at?->format('M d, Y H:i'),
                     ] : null,
                     'questions' => $questionsWithResults,
                     'has_attempt' => !is_null($attempt),

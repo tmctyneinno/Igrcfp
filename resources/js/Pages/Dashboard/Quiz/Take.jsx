@@ -1165,7 +1165,7 @@ export default function QuizTake({
                                                             Next
                                                             <ChevronRightIcon className="w-4 h-4" />
                                                         </button>
-                                                    ) : (
+                                                    ) : ( 
                                                         <>
                                                             {!isCurrentQuizCompleted && (
                                                                 <>

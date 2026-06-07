@@ -12,7 +12,7 @@ import {
     DocumentTextIcon,
     ClockIcon
 } from '@heroicons/react/24/outline';
-
+ 
 export default function Results({ 
     course, 
     currentAssessment, 
@@ -228,6 +228,12 @@ export default function Results({
                                                     const isExpanded = expandedQuizzes[quiz.id] === true;
                                                     const hasAttempt = quiz.has_attempt;
                                                     const attempt = quiz.attempt;
+                                                    const submission = quiz.submission;
+                                                    const isPartBUnderReview = submission?.is_under_review;
+                                                    const isManuallyGraded = submission?.is_graded;
+                                                    const displayedScore = isManuallyGraded
+                                                        ? submission?.percentage
+                                                        : attempt?.score;
                                                     
                                                     return (
                                                         <div key={quiz.id} className="bg-white">
@@ -241,7 +247,9 @@ export default function Results({
                                                             >
                                                                 <div className="flex items-center gap-3">
                                                                     {hasAttempt ? (
-                                                                        attempt?.passed ? (
+                                                                        isPartBUnderReview ? (
+                                                                            <ClockIcon className="w-5 h-5 text-yellow-500" />
+                                                                        ) : attempt?.passed || submission?.passed ? (
                                                                             <CheckCircleIcon className="w-5 h-5 text-green-600" />
                                                                         ) : (
                                                                             <XCircleIcon className="w-5 h-5 text-red-500" />
@@ -259,11 +267,20 @@ export default function Results({
                                                                 <div className="flex items-center gap-4">
                                                                     {hasAttempt ? (
                                                                         <>
-                                                                            <span className={`text-lg font-bold ${
-                                                                                attempt?.passed ? 'text-green-600' : 'text-red-500'
-                                                                            }`}>
-                                                                                {attempt?.score}%
-                                                                            </span>
+                                                                            <div className="text-right">
+                                                                                <span className={`text-lg font-bold ${
+                                                                                    isPartBUnderReview
+                                                                                        ? 'text-yellow-600'
+                                                                                        : (attempt?.passed || submission?.passed ? 'text-green-600' : 'text-red-500')
+                                                                                }`}>
+                                                                                    {displayedScore}%
+                                                                                </span>
+                                                                                {isPartBUnderReview && (
+                                                                                    <p className="text-xs font-medium text-yellow-600">
+                                                                                        Part A result
+                                                                                    </p>
+                                                                                )}
+                                                                            </div>
                                                                             {isExpanded ? (
                                                                                 <ChevronDownIcon className="w-5 h-5 text-gray-400" />
                                                                             ) : (
@@ -279,13 +296,43 @@ export default function Results({
                                                             {/* Quiz Details */}
                                                             {isExpanded && hasAttempt && (
                                                                 <div className="px-6 pb-4 bg-gray-50">
+                                                                    {isPartBUnderReview && (
+                                                                        <div className="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3">
+                                                                            <div className="flex items-start gap-3">
+                                                                                <ClockIcon className="w-5 h-5 text-yellow-600 mt-0.5" />
+                                                                                <div>
+                                                                                    <p className="text-sm font-semibold text-yellow-800">
+                                                                                        Part B is under admin review
+                                                                                    </p>
+                                                                                    <p className="text-sm text-yellow-700">
+                                                                                        Your Part A result is shown now. Your final grading result and feedback will appear here after the admin reviews your Part B essay document.
+                                                                                    </p>
+                                                                                    {submission?.submitted_at && (
+                                                                                        <p className="text-xs text-yellow-700 mt-1">
+                                                                                            Submitted: {submission.submitted_at}
+                                                                                        </p>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {isManuallyGraded && submission?.feedback && (
+                                                                        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
+                                                                            <p className="text-sm font-semibold text-green-800">
+                                                                                Admin feedback
+                                                                            </p>
+                                                                            <p className="text-sm text-green-700 mt-1">{submission.feedback}</p>
+                                                                        </div>
+                                                                    )}
+
                                                                     <div className="flex items-center justify-between mb-3 pt-2">
                                                                         <div className="flex gap-4 text-sm">
-                                                                            <span>✅ {attempt?.correct_answers} correct</span>
-                                                                            <span>📊 {attempt?.earned_marks}/{attempt?.total_marks} points</span>
-                                                                            <span>⏱️ {attempt?.completed_at}</span>
+                                                                            <span>{attempt?.correct_answers} correct</span>
+                                                                            <span>{attempt?.earned_marks}/{attempt?.total_marks} Part A points</span>
+                                                                            <span>{attempt?.completed_at}</span>
                                                                         </div>
-                                                                        {!attempt?.passed && (
+                                                                        {!attempt?.passed && !isPartBUnderReview && (
                                                                             <button
                                                                                 onClick={() => handleRetakeQuiz(quiz.id)}
                                                                                 className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
@@ -298,27 +345,49 @@ export default function Results({
                                                                     {/* Questions Review */}
                                                                     <div className="space-y-2 mt-3">
                                                                         <p className="text-sm font-medium text-gray-700">Question Review:</p>
-                                                                        {quiz.questions.map((q, idx) => (
-                                                                            <div key={q.id} className={`p-3 rounded-lg text-sm ${
-                                                                                q.is_correct 
-                                                                                    ? 'bg-green-100 border border-green-200' 
-                                                                                    : 'bg-red-100 border border-red-200'
-                                                                            }`}>
-                                                                                <p className="font-medium mb-1">
-                                                                                    {idx + 1}. {q.text}
-                                                                                </p>
-                                                                                <p>
-                                                                                    Your answer: <span className={q.is_correct ? 'text-green-700' : 'text-red-700'}>
-                                                                                        {q.user_answer || 'Not answered'}
-                                                                                    </span>
-                                                                                </p>
-                                                                                {!q.is_correct && (
-                                                                                    <p className="text-green-700">
-                                                                                        Correct: {q.correct_answer}
+                                                                        {quiz.questions.map((q, idx) => {
+                                                                            const reviewClass = q.is_manual
+                                                                                ? 'bg-yellow-50 border border-yellow-200'
+                                                                                : q.is_correct
+                                                                                    ? 'bg-green-100 border border-green-200'
+                                                                                    : 'bg-red-100 border border-red-200';
+                                                                            const answerClass = q.is_manual
+                                                                                ? 'text-yellow-700'
+                                                                                : q.is_correct
+                                                                                    ? 'text-green-700'
+                                                                                    : 'text-red-700';
+
+                                                                            return (
+                                                                                <div key={q.id} className={`p-3 rounded-lg text-sm ${reviewClass}`}>
+                                                                                    <p className="font-medium mb-1">
+                                                                                        {idx + 1}. {q.text}
                                                                                     </p>
-                                                                                )}
-                                                                            </div>
-                                                                        ))}
+                                                                                    {q.is_manual ? (
+                                                                                        <>
+                                                                                            <p className="text-yellow-700">
+                                                                                                Part B essay document: {q.uploaded_file?.name || 'Submitted for admin review'}
+                                                                                            </p>
+                                                                                            <p className="text-xs text-yellow-600 mt-1">
+                                                                                                Awaiting admin grading and feedback.
+                                                                                            </p>
+                                                                                        </>
+                                                                                    ) : (
+                                                                                        <>
+                                                                                            <p>
+                                                                                                Your answer: <span className={answerClass}>
+                                                                                                    {q.user_answer || 'Not answered'}
+                                                                                                </span>
+                                                                                            </p>
+                                                                                            {!q.is_correct && (
+                                                                                                <p className="text-green-700">
+                                                                                                    Correct: {q.correct_answer}
+                                                                                                </p>
+                                                                                            )}
+                                                                                        </>
+                                                                                    )}
+                                                                                </div>
+                                                                            );
+                                                                        })}
                                                                     </div>
                                                                 </div>
                                                             )}

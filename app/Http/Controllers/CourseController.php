@@ -8,7 +8,6 @@ use App\Models\CourseCategory;
 use Illuminate\Http\Request;
 
 use Inertia\Inertia;
-use Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
@@ -99,6 +98,11 @@ class CourseController extends Controller
         ->where('slug', $slug)
         ->firstOrFail();
 
+        $isEnrolled = auth()->check()
+            ? auth()->user()->courses()->where('course_id', $course->id)->exists()
+                || auth()->user()->enrollments()->where('course_id', $course->id)->exists()
+            : false;
+
         // Format course data for Inertia
         $formattedCourse = [
             'id' => $course->id,
@@ -141,6 +145,7 @@ class CourseController extends Controller
             'status' => $course->status,
             'is_featured' => $course->is_featured,
             'is_popular' => $course->is_popular,
+            'is_enrolled' => $isEnrolled,
             'modules' => $course->modules->map(function($module) {
                 return [
                     'id' => $module->id,
@@ -164,13 +169,16 @@ class CourseController extends Controller
             'created_at' => $course->created_at->format('M d, Y'),
             'updated_at' => $course->updated_at->format('M d, Y'),
         ];
-        $isEnrolled = auth()->check() 
-        ? auth()->user()->courses()->where('course_id', $course->id)->exists()
-        : false;
         
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
-            'auth' => Auth::guard('web')->user(),
+            'auth' => [
+                'user' => auth()->user() ? [
+                    'id' => auth()->user()->id,
+                    'name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ] : null,
+            ],
             'isEnrolled' => $isEnrolled,
         ]); 
     }

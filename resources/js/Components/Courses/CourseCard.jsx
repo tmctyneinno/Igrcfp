@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext'; // Add this import
-
-export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) { 
+ 
+export default function CourseCard({ course, onAddToCart, isInCart, isAdding, isEnrolled }) { 
     const { props } = usePage(); 
     const { removeFromCart } = useCart(); // Add this line
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
@@ -14,7 +14,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
     useEffect(() => { 
         setIsCourseInCart(isInCart || false); 
     }, [isInCart]);
-
+    const enrolled = Boolean(course?.is_enrolled ?? isEnrolled);
     // Also check against page props for real-time updates
     useEffect(() => {
         if (props.cart?.items && course?.id) {
@@ -125,38 +125,45 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding }) 
 
                 {/* PRICE SECTION */}
                 <div className="flex items-center justify-between pt-1 border-t">
-                    
-                    {price > 0 ? (
-                        <div className="">
-                            {hasDisc ? (
-                                <>
-                                    <span className="text-lg font-bold text-gray-900">
-                                        £{discountPrice.toFixed(0)}
-                                    </span>
-                                    <span className="text-sm text-gray-500 line-through ml-2">
-                                        £{price.toFixed(0)}
-                                    </span>
-                                    <span className="text-xs font-semibold text-red-600 ml-2">
-                                        -{discountPercentage}%
-                                    </span>
-                                </>
-                            ) : (
-                                <span className="text-lg font-bold text-gray-900">
-                                    £{price.toFixed(2)}
-                                </span>
-                            )}
+                    {enrolled ? (
+                        <div className="mb-4">
+                            <p className="text-sm font-bold text-green-700">You're enrolled</p>
+                            {/* <p className="text-sm text-gray-600 mt-2">Continue learning from your dashboard.</p> */}
                         </div>
                     ) : (
-                        <span className="text-lg font-bold text-green-600">
-                            FREE
-                        </span>
+                        price > 0 ? (
+                            <div className="">
+                                {hasDisc ? (
+                                    <>
+                                        <span className="text-lg font-bold text-gray-900">
+                                            £{discountPrice.toFixed(0)}
+                                        </span>
+                                        <span className="text-sm text-gray-500 line-through ml-2">
+                                            £{price.toFixed(0)}
+                                        </span>
+                                        <span className="text-xs font-semibold text-red-600 ml-2">
+                                            -{discountPercentage}%
+                                        </span>
+                                    </>
+                                ) : (
+                                    <span className="text-lg font-bold text-gray-900">
+                                        £{price.toFixed(2)}
+                                    </span>
+                                )}
+                            </div>
+                        ) : (
+                            <span className="text-lg font-bold text-green-600">
+                                FREE
+                            </span>
+                        )
                     )}
                     
                     {/* CART BUTTON - Now with remove option when in cart */}
                     {course?.is_enrolled ? (
                         <Link
-                            href={`/courses/${course.slug}`}
-                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
+                            // href={`/courses/${course.slug}`}
+                            href={route('dashboard.courses.show', course.slug)}
+                            className="inline-flex items-center px-2 py-1.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1"
                         >
                             Continue Course
                         </Link>

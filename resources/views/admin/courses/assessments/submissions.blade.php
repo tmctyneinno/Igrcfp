@@ -125,6 +125,7 @@
                                 <th>Student</th>
                                 <th>Candidate ID</th>
                                 <th>Submitted</th>
+                                <th>Document</th>
                                 <th>Score</th>
                                 <th>Status</th>
                                 <th>Time Spent</th>
@@ -152,16 +153,33 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div>
-                                        <span class="d-block">{{ $submission->submitted_at->format('M d, Y') }}</span>
-                                        <small class="text-secondary-light">{{ $submission->submitted_at->format('H:i') }}</small>
-                                    </div>
+                                    @if($submission->submitted_at)
+                                        <div>
+                                            <span class="d-block">{{ $submission->submitted_at->format('M d, Y') }}</span>
+                                            <small class="text-secondary-light">{{ $submission->submitted_at->format('H:i') }}</small>
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Not submitted</span>
+                                    @endif
                                 </td>
                                 <td>
-                                    @if($submission->score !== null)
+                                    @if($submission->submission_file_path)
+                                        <a href="{{ $submission->submission_file_url }}" target="_blank" class="text-primary-600 d-inline-flex align-items-center gap-1">
+                                            <iconify-icon icon="solar:file-text-outline"></iconify-icon>
+                                            {{ Str::limit($submission->submission_file_name ?? 'Essay document', 24) }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($submission->percentage !== null)
                                         <span class="fw-bold {{ $submission->passed ? 'text-success-600' : 'text-danger-600' }}">
-                                            {{ number_format($submission->score, 1) }}%
+                                            {{ number_format($submission->percentage, 1) }}%
                                         </span>
+                                        @if($submission->score !== null)
+                                            <p class="text-sm text-secondary-light mb-0">{{ $submission->score }}/{{ $assessment->total_marks }}</p>
+                                        @endif
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
