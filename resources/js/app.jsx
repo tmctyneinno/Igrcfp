@@ -16,7 +16,7 @@ AOS.init({
     once: true,
     offset: 100,
 });
-
+      
 if (typeof document !== 'undefined') {
     const preventClipboardActions = (event) => {
         event.preventDefault();
@@ -53,7 +53,9 @@ createInertiaApp({
                     <App {...props} />
                 </CartProvider>
             </EnrollmentProvider>
-        );
+        );   
+
+        
 
         router.on('navigate', () => {
             AOS.refresh();
