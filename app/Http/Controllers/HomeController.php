@@ -468,7 +468,7 @@ class HomeController extends Controller
     public function privacyPreferenceCenter(){
         return Inertia::render('PrivacyPreferenceCenter/Index');
     }
-  
+   
     public function showIgrcfpProgramme(Request $request, string $programme)
     {
         $programmeConfig = [

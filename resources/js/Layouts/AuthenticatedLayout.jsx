@@ -21,6 +21,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
     const [notifications, setNotifications] = useState([]);
+    const [openDropdown, setOpenDropdown] = useState(null);
     const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
     
     const cartCount = props.cart_count || 0;
@@ -121,13 +122,70 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('dashboard.index')}
                                 >
                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    href={route('dashboard.courses.index')}
-                                    active={route().current('dashboard.courses.index')}
-                                > 
-                                    Courses
-                                </NavLink>  
+                                </NavLink> 
+
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setOpenDropdown(openDropdown === 'courses' ? null : 'courses')}
+                                        className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                                            route().current('dashboard.courses.index') || route().current('igrcfp.*')
+                                                ? 'border-b-2 border-indigo-400 text-gray-900'
+                                                : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                                        }`}
+                                    >
+                                        🎓 Certifications & Trainings
+                                        <ChevronDownIcon className="ml-1 h-4 w-4" />
+                                    </button>
+                                    
+                                    {openDropdown === 'courses' && (
+                                        <div className="absolute left-0 mt-2 w-64 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                                            <div className="py-1">
+                                                <Link 
+                                                    href={route('dashboard.courses.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L1: Certificate
+                                                </Link>
+                                                <Link 
+                                                    href={route('dashboard.diploma.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L2: Diploma
+                                                </Link>
+                                                <Link 
+                                                    href={route('dashboard.advanced-diploma.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L3: Advanced Diploma
+                                                </Link>
+                                                <Link 
+                                                    href={route('dashboard.certified-grc-financial-crime-specialist.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L4: Certified GRC Specialist
+                                                </Link>
+                                                <Link 
+                                                    href={route('dashboard.postgraduate-diploma.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L5: Postgraduate Diploma
+                                                </Link>
+                                                <Link 
+                                                    href={route('dashboard.fellowship.index')} 
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    onClick={() => setOpenDropdown(null)}
+                                                >
+                                                    L6: Fellowship
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                                 <NavLink
                                     href={route('dashboard.my-courses')}
                                     active={route().current('dashboard.my-courses')}

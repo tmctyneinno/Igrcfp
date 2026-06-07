@@ -585,7 +585,7 @@ function NavBar({ auth }) {
                         </div>
 
                         {/* Mobile: Certifications & Trainings */}
-                        <div>
+                        <div> 
                             <button 
                                 className="w-full flex justify-between items-center px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium"
                                 onClick={() => setOpenDropdown(openDropdown === 'programmes' ? null : 'programmes')}

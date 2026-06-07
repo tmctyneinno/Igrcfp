@@ -78,8 +78,20 @@ Route::middleware(['auth', 'verified', 'validate.session'])->group(function () {
 
 
 
+  
+    Route::get('dashboard/certificate/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'certificates')->name('dashboard.courses.index');
+    Route::get('dashboard/diploma/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'diploma')->name('dashboard.diploma.index');
+    Route::get('dashboard/advanced-diploma/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'advanced-diploma')->name('dashboard.advanced-diploma.index');
+    Route::get('dashboard/certified-grc-financial-crime-specialist/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'certified-grc-financial-crime-specialist')->name('dashboard.certified-grc-financial-crime-specialist.index');
+    Route::get('dashboard/postgraduate-diploma/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'postgraduate-diploma')->name('dashboard.postgraduate-diploma.index');
+    Route::get('dashboard/fellowship/courses/', [DashboardController::class, 'courses'])
+    ->defaults('programme', 'fellowship')->name('dashboard.fellowship.index');
 
-    Route::get('dashboard/courses/', [DashboardController::class, 'courses'])->name('dashboard.courses.index');
     Route::get('dashboard/courses/most-popular', [DashboardController::class, 'mostPopular'])->name('courses.mostPopular');
     Route::get('dashboard/course-materials/{material}/download', [DashboardController::class, 'downloadCourseMaterial'])
         ->name('dashboard.course-materials.download');
