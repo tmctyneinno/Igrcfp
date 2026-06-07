@@ -7,6 +7,7 @@ use App\Models\ScholarshipApplication;
 use App\Services\BrevoMailService;
 use App\Traits\SendsScholarshipNotifications;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ScholarshipController extends Controller
 {
@@ -49,26 +50,73 @@ class ScholarshipController extends Controller
 
     public function updateStatus(Request $request, ScholarshipApplication $application)
     {
-        $request->validate([
+        // Log the incoming request
+        Log::info('Updating scholarship status', [
+            'application_id' => $application->id,
+            'request_data' => $request->all()
+        ]);
+
+        // Validate the request
+        $validated = $request->validate([
             'status' => 'required|in:pending,under_review,accepted,rejected',
             'admin_notes' => 'nullable|string',
+            'rejection_reason' => 'required_if:status,rejected|nullable|string',
         ]);
         
         $oldStatus = $application->status;
         $newStatus = $request->status;
         
+        // Check if status is actually changing
         if ($oldStatus === $newStatus) {
             return redirect()->route('admin.scholarships.index')
                 ->with('info', 'Application status is already set to ' . ucfirst(str_replace('_', ' ', $newStatus)));
         }
-
-        $application->update([
+        
+        $updateData = [
             'status' => $newStatus,
             'admin_notes' => $request->admin_notes,
+        ];
+        
+        // Handle rejection
+        if ($newStatus === 'rejected') {
+            $updateData['rejection_reason'] = $request->rejection_reason;
+            $updateData['rejected_at'] = now();
+            Log::info('Setting rejection data', [
+                'reason' => $request->rejection_reason,
+                'rejected_at' => now()
+            ]);
+        }
+        
+        // Handle acceptance
+        if ($newStatus === 'accepted') {
+            $updateData['accepted_at'] = now();
+        }
+        
+        // Update the application
+        $updated = $application->update($updateData);
+        
+        Log::info('Application updated', [
+            'application_id' => $application->id,
+            'updated' => $updated,
+            'new_status' => $application->fresh()->status,
+            'update_data' => $updateData
         ]);
         
         // Send notification
-        $this->sendStatusChangeNotification($application, $this->mailService, $oldStatus, $newStatus);
+        try {
+            $this->sendStatusChangeNotification(
+                $application, 
+                $this->mailService, 
+                $oldStatus, 
+                $newStatus,
+                $request->rejection_reason
+            );
+        } catch (\Exception $e) {
+            Log::error('Notification sending failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
 
         $message = 'Application status updated successfully!';
         
@@ -76,9 +124,10 @@ class ScholarshipController extends Controller
             $message .= ' A scholarship approval email has been sent to the applicant.';
         } elseif ($newStatus === 'under_review') {
             $message .= ' A notification email has been sent to the applicant.';
+        } elseif ($newStatus === 'rejected') {
+            $message .= ' A notification email has been sent to the applicant.';
         }
 
-        // Redirect to index page instead of back
         return redirect()->route('admin.scholarships.index')
             ->with('success', $message);
     }

@@ -3,33 +3,18 @@
 
 @section('content')
 <div class="dashboard-main-body">
-    <!-- Add this success message display -->
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if(session('info'))
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            {{ session('info') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Scholarship Application #{{ $application->id }}</h6>
         <a href="{{ route('admin.scholarships.index') }}" class="btn btn-outline-primary">Back to List</a>
     </div>
     
-
     <div class="row gy-4">
         <div class="col-lg-8">
             <div class="card">
@@ -70,17 +55,31 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select name="status" class="form-select" id="statusSelect">
                                 <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="under_review" {{ $application->status == 'under_review' ? 'selected' : '' }}>Under Review</option>
                                 <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                 <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
                             </select>
                         </div>
+                        
+                        <!-- Rejection Reason Field -->
+                        <div class="mb-3" id="rejectionReasonDiv" style="display: {{ $application->status == 'rejected' ? 'block' : 'none' }};">
+                            <label class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                            <textarea 
+                                name="rejection_reason" 
+                                class="form-control" 
+                                rows="4" 
+                                placeholder="Please provide a reason for rejection..."
+                            >{{ old('rejection_reason', $application->rejection_reason) }}</textarea>
+                            <small class="text-muted">This will be included in the email sent to the applicant.</small>
+                        </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Admin Notes</label>
                             <textarea name="admin_notes" class="form-control" rows="3">{{ $application->admin_notes }}</textarea>
                         </div>
+                        
                         <button type="submit" class="btn btn-primary w-100">Update Status</button>
                     </form>
                 </div>
@@ -98,20 +97,33 @@
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-    // Auto-dismiss alerts after 5 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            alert.style.transition = 'opacity 0.5s ease';
-            alert.style.opacity = '0';
-            setTimeout(function() {
-                alert.remove();
-            }, 500);
-        });
-    }, 5000);
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('statusSelect');
+    const rejectionDiv = document.getElementById('rejectionReasonDiv');
+    const rejectionTextarea = document.querySelector('textarea[name="rejection_reason"]');
+    
+    function toggleRejectionField() {
+        if (statusSelect.value === 'rejected') {
+            rejectionDiv.style.display = 'block';
+            if (rejectionTextarea) {
+                rejectionTextarea.required = true;
+                rejectionTextarea.setAttribute('required', 'required');
+            }
+        } else {
+            rejectionDiv.style.display = 'none';
+            if (rejectionTextarea) {
+                rejectionTextarea.required = false;
+                rejectionTextarea.removeAttribute('required');
+            }
+        }
+    }
+    
+    if (statusSelect) {
+        statusSelect.addEventListener('change', toggleRejectionField);
+        toggleRejectionField(); // Initial check
+    }
+});
 </script>
-@endpush
+@endsection

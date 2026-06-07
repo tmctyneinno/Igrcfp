@@ -4,12 +4,13 @@ namespace App\Traits;
 
 use App\Mail\ScholarshipUnderReview;
 use App\Mail\ScholarshipApproved;
+use App\Mail\ScholarshipRejected;
 use App\Models\ScholarshipApplication;
 use App\Services\BrevoMailService;
 use Illuminate\Support\Facades\Log;
 
 trait SendsScholarshipNotifications
-{
+{ 
     /**
      * Send under review notification to applicant
      */
@@ -66,17 +67,16 @@ trait SendsScholarshipNotifications
     }
 
     /**
-     * Send rejection notification to applicant (optional - can be added later)
+     * Send rejection notification to applicant
      */
     protected function sendRejectionNotification(ScholarshipApplication $application, BrevoMailService $mailService, ?string $reason = null): array
     {
         try {
-            // You can create ScholarshipRejected mailable class similarly
-            // $mailService->sendMailable(
-            //     $application->email,
-            //     new ScholarshipRejected($application, $reason),
-            //     'Update on Your IGRCFP Scholarship Application'
-            // );
+            $mailService->sendMailable(
+                $application->email,
+                new ScholarshipRejected($application, $reason),
+                'Update on Your IGRCFP Scholarship Application'
+            );
             
             Log::info('Scholarship rejection notification sent', [
                 'application_id' => $application->id,
@@ -86,7 +86,10 @@ trait SendsScholarshipNotifications
             
             return ['success' => true, 'message' => 'Rejection notification sent successfully'];
         } catch (\Exception $e) {
-            Log::error('Failed to send scholarship rejection email: ' . $e->getMessage());
+            Log::error('Failed to send scholarship rejection email: ' . $e->getMessage(), [
+                'application_id' => $application->id,
+                'error' => $e->getMessage()
+            ]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -98,7 +101,8 @@ trait SendsScholarshipNotifications
         ScholarshipApplication $application, 
         BrevoMailService $mailService, 
         string $oldStatus, 
-        string $newStatus
+        string $newStatus,
+        ?string $rejectionReason = null  // Added parameter for rejection reason
     ): void {
         // Only send notification if the status has actually changed
         if ($oldStatus === $newStatus) {
@@ -122,8 +126,9 @@ trait SendsScholarshipNotifications
         }
         
         if ($newStatus === 'rejected') {
-            // $result = $this->sendRejectionNotification($application, $mailService);
-            $notificationSent = true; // Update when rejection notification is implemented
+            // Fixed: Now actually sending rejection notification with reason
+            $result = $this->sendRejectionNotification($application, $mailService, $rejectionReason);
+            $notificationSent = $result['success'];
         }
         
         if (!$notificationSent && in_array($newStatus, ['accepted', 'under_review', 'rejected'])) {
