@@ -5,10 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 3. Then your custom CSS rules */
-body {
-  font-family: 'Inter', sans-serif;
-}
 
 html,
 body,

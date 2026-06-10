@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import React, { useEffect, useState, useRef } from "react";
+import TranslateSelector from "@/Components/TranslateSelector";
 
 function NavBar({ auth }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -140,7 +141,7 @@ function NavBar({ auth }) {
                                 }}
                                 aria-expanded={openMegaMenu}
                             >
-                                🎓 Certifications & Trainings
+                                🎓 Certifications
                                 <svg className={`ml-1 w-4 h-4 transition-transform duration-200 ${openMegaMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -335,48 +336,6 @@ function NavBar({ auth }) {
                                                             </Link>
                                                         </div>
                                                     </div>
-
-                                                    {/* COLUMN 4: Quick Links & CTA */}
-                                                    {/* <div className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-xl p-5">
-                                                        <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-4">
-                                                            Getting Started
-                                                        </h3>
-                                                        <div className="space-y-3">
-                                                            <div className="bg-white rounded-lg p-4 shadow-sm">
-                                                                <p className="text-sm font-semibold text-gray-800 mb-3">Not sure where to start?</p>
-                                                                <div className="space-y-2">
-                                                                    <div className="flex items-center text-xs text-gray-600">
-                                                                        <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 text-blue-900 font-bold flex-shrink-0">1</span>
-                                                                        Choose your certification
-                                                                    </div>
-                                                                    <div className="flex items-center text-xs text-gray-600">
-                                                                        <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 text-blue-900 font-bold flex-shrink-0">2</span>
-                                                                        Complete your programme
-                                                                    </div>
-                                                                    <div className="flex items-center text-xs text-gray-600">
-                                                                        <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center mr-2 text-blue-900 font-bold flex-shrink-0">3</span>
-                                                                        Advance your career
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            
-                                                            <Link 
-                                                                href={route('qualifications.pack')}
-                                                                onClick={() => setOpenMegaMenu(false)}
-                                                                className="block w-full text-center bg-blue-900 text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-blue-800 transition duration-200"
-                                                            >
-                                                                View Full Framework
-                                                            </Link>
-                                                            
-                                                            <Link 
-                                                                href="/contact"
-                                                                onClick={() => setOpenMegaMenu(false)}
-                                                                className="block w-full text-center border border-blue-900 text-blue-900 text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-blue-50 transition duration-200"
-                                                            >
-                                                                Speak to an Advisor
-                                                            </Link>
-                                                        </div>
-                                                    </div> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -423,17 +382,6 @@ function NavBar({ auth }) {
                         >
                             Membership
                         </Link>
-
-                        {/* ✅ Verify Certificate - Desktop Nav */}
-                        {/* <Link 
-                            href={route('certificate.verify.public.index')} 
-                            className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center"
-                        >
-                            <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Verify
-                        </Link> */}
 
                         {/* Events */}
                         <Link 
@@ -483,6 +431,12 @@ function NavBar({ auth }) {
 
                     {/* Right Side: Auth Buttons + Mobile Toggle */}
                     <div className="flex items-center space-x-3">
+
+                        {/* 🌐 Google Translate — desktop only */}
+                        <div className="hidden lg:block">
+                            <TranslateSelector pageLanguage="en" />
+                        </div>
+
                         {auth && auth.user ? (
                             <div className="hidden lg:flex items-center space-x-3">
                                 <Link 
@@ -525,7 +479,7 @@ function NavBar({ auth }) {
                             <div className="hidden lg:block">
                                 <Link
                                     href={route('login')}
-                                    className="bg-blue-900 text-white text-sm px-4 py-2.5 rounded-full font-medium hover:bg-blue-800 transition duration-200 shadow-sm hover:shadow-md"
+                                    className="bg-blue-900 text-white text-sm px-2 py-2.5 rounded-full font-medium hover:bg-blue-800 transition duration-200 shadow-sm hover:shadow-md"
                                 >
                                     Join the Institute
                                 </Link>
@@ -659,6 +613,12 @@ function NavBar({ auth }) {
                         <Link href={route('contact')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg text-sm font-medium" onClick={() => setIsMobileMenuOpen(false)}>
                             📞 Connect
                         </Link>
+
+                        {/* 🌐 Google Translate — mobile menu */}
+                        <div className="px-3 py-2.5 border-t border-gray-100 mt-1 pt-3">
+                            <p className="text-xs text-gray-400 mb-2 uppercase tracking-wider font-medium">Translate page</p>
+                            <TranslateSelector pageLanguage="en" />
+                        </div>
                         
                         {!auth?.user && (
                             <div className="pt-3 border-t border-gray-100 mt-3">

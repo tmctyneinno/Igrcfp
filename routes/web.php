@@ -12,7 +12,7 @@ use App\Http\Controllers\PublicCertificateController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 
 Route::get('/', [HomeController::class, 'index']);
@@ -124,3 +124,4 @@ Route::get('/quality-assurance', [HomeController::class, 'qualityAssurance'])->n
 
 Route::get('/scholarship/{application}/accept', [ScholarshipAcceptController::class, 'accept'])
     ->name('scholarship.accept');
+

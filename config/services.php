@@ -46,5 +46,8 @@ return [
     'resend' => [
         'key' => env('RESEND_KEY'),
     ],
+    'google_translate' => [
+        'key' => env('GOOGLE_TRANSLATE_KEY'),
+    ],
 
 ];
