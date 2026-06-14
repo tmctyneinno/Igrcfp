@@ -233,3 +233,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OTPMail;
 
 Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));
+
+ns1.tynesideinnovation.com
+ns2.tynesideinnovation.com

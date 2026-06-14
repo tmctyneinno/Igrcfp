@@ -115,7 +115,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
 
                             <div class="col-12">
                                 <label class="form-label">Full Content <span class="text-danger">*</span></label>
