@@ -69,7 +69,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
 
 
     return (
-        <GuestLayout auth={auth}> 
+         <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="IGRCFP - Professional Learning Platform" />
             
             {/* Hero Section with AOS effects */}
