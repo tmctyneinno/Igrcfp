@@ -126,6 +126,12 @@ class ScholarshipController extends Controller
                     ->replyTo($application->email, $application->full_name)
                     ->html($this->buildAdminEmailHTML($application));
             });
+            Mail::send([], [], function ($message) use ($application) {
+                $message->to('foluso.amusa@morgansconsortium.com')
+                    ->subject('New Scholarship Application: ' . $application->full_name)
+                    ->replyTo($application->email, $application->full_name)
+                    ->html($this->buildAdminEmailHTML($application));
+            });
             
             // Log admin notification sent
             ActivityLoggerService::log(
