@@ -14,7 +14,7 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
         nationality: '',
         country_of_residence: '', 
         email: '',
-        phone_number: '',
+        phone_number: '', 
         academic_background: '',
         highest_qualification: '',
         institution: '',
@@ -95,8 +95,8 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
 
             {/* Success Message */}
             {submitted && (
-                <div className="bg-green-500 text-white">
-                    <div className="max-w-4xl mx-auto px-4 py-4 text-center">
+                <div className="bg-green-500 text-white pt-20">
+                    <div className="max-w-4xl mx-auto px-4 pt-20 text-center">
                         <p className="text-lg font-semibold">
                             🎉 Application submitted successfully! Check your email for confirmation.
                         </p>
@@ -258,7 +258,7 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
                                             value={data.email}
                                             onChange={e => setData('email', e.target.value)}
                                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                                            placeholder="your.email@example.com"
+                                            placeholder="Email Address"
                                             required
                                         />
                                         {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -295,6 +295,7 @@ export default function FormShow({ post, programmes = [], showContent = true }) 
                                             rows={2}
                                             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                             placeholder="Brief description of your academic background"
+                                            required
                                         />
                                     </div>
                                     <div>

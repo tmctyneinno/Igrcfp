@@ -16,7 +16,7 @@ class ScholarshipApplication extends Model
         'country_of_residence',
         'email',
         'phone_number',
-        'academic_background',
+        'academic_background', 
         'highest_qualification',
         'institution',
         'year_completed',
