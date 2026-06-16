@@ -133,9 +133,11 @@ export default function Index({ documents, categories, filters, auth }) {
 
                                     {/* Content */}
                                     <div className="p-6">
+                                        <Link href={route('research.show', doc.slug)}>
                                         <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-900 transition-colors">
                                             {doc.title}
                                         </h3>
+                                        </Link>
                                         
                                         {doc.description && (
                                             <p className="text-gray-600 text-sm mb-4 line-clamp-3">
