@@ -5,7 +5,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-export default function FormShow({ post, programmes = [], showContent = true }) {
+export default function FormShow({ post, programmes = [], showContent = true, auth }) {
     const { recaptchaSiteKey } = usePage().props;
     const recaptchaRef = useRef(null);
     
