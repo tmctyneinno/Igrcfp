@@ -123,7 +123,7 @@ export default function ArticleShow({
   };
 
   return (
-    <GuestLayout auth={auth}>
+    <GuestLayout auth={auth} forceWhiteNavbar>
       <Head title={title}>
         <meta name="description" content={description} />
         <meta name="keywords" content={article.tags?.join(', ')} />
@@ -140,7 +140,7 @@ export default function ArticleShow({
       </Head>
       
       {/* Article Header */}
-      <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-12 md:py-16 border-b">
+      <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-20 md:py-16 border-b">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
             <Link 
