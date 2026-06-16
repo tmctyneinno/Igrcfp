@@ -147,9 +147,9 @@ export default function Index({ documents, categories, filters, auth }) {
 
                                        
                                         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                            <span className="text-xs text-gray-500">
+                                            {/* <span className="text-xs text-gray-500">
                                                 {doc.file_size ? `${(doc.file_size / 1024 / 1024).toFixed(2)} MB` : 'PDF Document'}
-                                            </span>
+                                            </span> */}
                                             <div className="flex gap-2">
                                                 <Link 
                                                     href={route('research.show', doc.slug)}
