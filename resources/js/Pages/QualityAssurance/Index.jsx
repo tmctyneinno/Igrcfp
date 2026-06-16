@@ -8,7 +8,7 @@ export default function Index({ auth }) {
     const title = "Quality Assurance Framework";
 
     return (
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title={title}>
                 <meta 
                     name="description" 

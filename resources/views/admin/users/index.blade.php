@@ -121,7 +121,7 @@
                                     <div class="d-flex align-items-center gap-10">
                                         <div class="form-check style-check d-flex align-items-center">
                                             <input class="form-check-input radius-4 border border-neutral-400 user-checkbox" type="checkbox" name="user_ids[]" value="{{ $user->id }}">
-                                        </div>
+                                        </div> 
                                         {{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}
                                     </div>
                                 </td>

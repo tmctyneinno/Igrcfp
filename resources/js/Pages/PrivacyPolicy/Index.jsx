@@ -125,7 +125,7 @@ export default function PrivacyPolicy({ auth }) {
       <Head title="Privacy Policy | IGRCFP" />
 
       {/* Hero Section */}
-        <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 via-white to-blue-50 pt-25 md:py-20 border-b">
+        <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 via-white to-blue-50 pt-20 md:py-20 border-b">
            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             

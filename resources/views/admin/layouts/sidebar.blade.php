@@ -9,7 +9,7 @@
             <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="dark-logo">
             <img src="{{ asset('assets/images/home-three/logo/logo-main.png')}}" alt="site logo" class="logo-icon">
         </a>
-    </div> 
+    </div>  
     <div class="sidebar-menu-area">
         <ul class="sidebar-menu" id="sidebar-menu">
             <li>
@@ -388,6 +388,40 @@
                     @endif
                 </ul>
             </li>
+            
+            <!-- Research Content & White Papers - NEW -->
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
+            </li>
+            <li class="dropdown {{ request()->routeIs('admin.research.*') ? 'active' : '' }}">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="solar:book-2-outline" class="menu-icon"></iconify-icon>
+                    <span>Research & White Papers</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.research.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            All Documents
+                        </a>
+                    </li>
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.research.create') }}">
+                                <i class="ri-circle-fill circle-icon text-success-main w-auto"></i>
+                                Upload New
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="{{ route('admin.research.categories') }}">
+                            <i class="ri-circle-fill circle-icon text-info-600 w-auto"></i>
+                            Categories
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
         </ul>
     </div>
 </aside>

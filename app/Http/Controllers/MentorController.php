@@ -7,7 +7,7 @@ use App\Services\ActivityLoggerService;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+ 
 class MentorController extends Controller
 {
     public function index(Request $request)

@@ -181,7 +181,7 @@ export default function QualificationPartnershipPack({ auth }) {
     ];
 
     return (
-        <GuestLayout auth={auth}>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="IGRCFP Global Qualification & Partnership Framework" />
             
             {/* Hero Section */}

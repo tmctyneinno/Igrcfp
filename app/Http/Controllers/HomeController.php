@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Research;
 use App\Models\CourseCategory;
 use App\Models\Blog;
 use Illuminate\Foundation\Application;
@@ -262,7 +263,6 @@ class HomeController extends Controller
             'description' => 'Certified GRC & Financial Crime Specialist',
         ]);
     }
-
 
     public function eventsIndex()
     {
@@ -740,4 +740,46 @@ class HomeController extends Controller
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
+
+    public function ResearchPublic(Request $request)
+    {
+        // Get only published documents
+        $documents = Research::where('is_published', true)
+            ->when($request->type, function ($query) use ($request) {
+                $query->where('document_type', $request->type);
+            })
+            ->when($request->category, function ($query) use ($request) {
+                $query->where('category', $request->category);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(12)
+            ->withQueryString(); // Preserve filters in pagination links
+
+        // Get unique categories for filter dropdown
+        $categories = Research::where('is_published', true)
+            ->whereNotNull('category')
+            ->distinct()
+            ->pluck('category');
+
+        return Inertia::render('Research/Index', [
+            'documents' => $documents,
+            'categories' => $categories,
+            'filters' => $request->only(['type', 'category']),
+        ]);
+    }
+
+    /**
+     * Display a single document
+     */
+    public function ResearchPublicShow($slug)
+    {
+        $document = Research::where('slug', $slug)
+            ->where('is_published', true)
+            ->firstOrFail();
+
+        return Inertia::render('Research/Show', [
+            'document' => $document,
+        ]);
+    }
+
 }

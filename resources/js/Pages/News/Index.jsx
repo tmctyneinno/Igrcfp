@@ -61,7 +61,7 @@ export default function News({
   };
 
   return (
-    <GuestLayout auth={auth}>
+    <GuestLayout auth={auth} forceWhiteNavbar>
       <Head title={title} /> 
       
       {/* Hero Section */}
@@ -80,8 +80,6 @@ export default function News({
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
               {description}
             </p>
-            
-           
           </div>
         </div>
       </section>

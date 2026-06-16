@@ -125,3 +125,6 @@ Route::get('/quality-assurance', [HomeController::class, 'qualityAssurance'])->n
 Route::get('/scholarship/{application}/accept', [ScholarshipAcceptController::class, 'accept'])
     ->name('scholarship.accept');
 
+// Public route for research & white papers
+Route::get('/research', [HomeController::class, 'ResearchPublic'])->name('research.index');
+Route::get('/research/{slug}', [HomeController::class, 'ResearchPublicShow'])->name('research.show');
