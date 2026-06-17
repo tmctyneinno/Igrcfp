@@ -19,7 +19,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::put('/{research}', [ResearchController::class, 'update'])->name('update');
         Route::delete('/{research}', [ResearchController::class, 'destroy'])->name('destroy');
         Route::get('/categories', [ResearchController::class, 'categories'])->name('categories');
-    });
+        Route::get('/research-contacts', [ResearchController::class, 'indexResearchContact'])->name('research-contacts.index');
+        Route::get('/research-contacts/{researchContact}', [ResearchController::class, 'showResearchContact'])->name('research-contacts.show');
+        Route::get('/research-contacts/export/csv', [ResearchController::class, 'exportCsvResearchContact'])->name('research-contacts.export.csv');
+    
+    }); 
 
 });
  

@@ -1,4 +1,3 @@
-{{-- Update your sidebar to conditionally show menu items based on role --}}
 <aside class="sidebar">
     <button type="button" class="sidebar-close-btn">
         <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
@@ -393,7 +392,7 @@
             <li class="sidebar-separator">
                 <hr class="my-2 mx-3 opacity-25">
             </li>
-            <li class="dropdown {{ request()->routeIs('admin.research.*') ? 'active' : '' }}">
+            <li class="dropdown {{ request()->routeIs('admin.research.*') || request()->routeIs('admin.research-contacts.*') ? 'active' : '' }}">
                 <a href="javascript:void(0)">
                     <iconify-icon icon="solar:book-2-outline" class="menu-icon"></iconify-icon>
                     <span>Research & White Papers</span>
@@ -413,10 +412,17 @@
                             </a>
                         </li>
                     @endif
-                    <li>
-                        <a href="{{ route('admin.research.categories') }}">
-                            <i class="ri-circle-fill circle-icon text-info-600 w-auto"></i>
-                            Categories
+                    {{-- RESEARCH CONTACT SUBMISSIONS --}}
+                    <li> 
+                        <a href="{{ route('admin.research.research-contacts.index') }}">
+                            <i class="ri-circle-fill circle-icon text-purple-600 w-auto"></i>
+                            Contact Submissions
+                            @php
+                                $newResearchContacts = \App\Models\ResearchContact::count();
+                            @endphp
+                            @if($newResearchContacts > 0)
+                                <span class="badge bg-primary ms-2">{{ $newResearchContacts }}</span>
+                            @endif
                         </a>
                     </li>
                 </ul>

@@ -128,3 +128,4 @@ Route::get('/scholarship/{application}/accept', [ScholarshipAcceptController::cl
 // Public route for research & white papers
 Route::get('/research', [HomeController::class, 'ResearchPublic'])->name('research.index');
 Route::get('/research/{slug}', [HomeController::class, 'ResearchPublicShow'])->name('research.show');
+Route::post('/research/save-contact', [HomeController::class, 'ResearchSaveContact'])->name('research.save-contact');

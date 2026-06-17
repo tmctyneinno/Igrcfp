@@ -7,6 +7,9 @@ use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ResearchContact;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResearchController extends Controller
 {
@@ -27,7 +30,7 @@ class ResearchController extends Controller
 
         return view('admin.research.index', compact('documents'));
     }
-
+ 
     public function create()
     {
         return view('admin.research.create');
@@ -124,4 +127,71 @@ class ResearchController extends Controller
         $categories = Research::distinct()->pluck('category')->filter();
         return view('admin.research.categories', compact('categories'));
     }
+
+     // List all contacts
+    public function indexResearchContact(Request $request)
+    {
+        $contacts = ResearchContact::latest()
+            ->when($request->search, function ($query, $search) {
+                $query->where('full_name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('organisation', 'like', "%{$search}%")
+                      ->orWhere('document_title', 'like', "%{$search}%");
+            })
+            ->paginate(15);
+
+        
+        return view('Admin.Research.researchContactsIndex', [
+            'contacts' => $contacts,
+            'filters' => $request->only(['search']),
+        ]);
+    }
+
+    // Show single contact details
+    public function showResearchContact(ResearchContact $researchContact)
+    {
+        return view('Admin.Research.researchContactsShow', [
+            'contact' => $researchContact,
+        ]); 
+    }
+
+    // Export all to CSV
+    public function exportCsvResearchContact()
+    {
+        $contacts = ResearchContact::latest()->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="research-contacts-' . date('Y-m-d') . '.csv"',
+        ];
+
+        $callback = function () use ($contacts) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Header
+            fputcsv($file, [
+                'ID', 'Full Name', 'Title', 'Organisation', 'Email', 
+                'Document ID', 'Document Title', 'Submitted At'
+            ]);
+
+            // Rows
+            foreach ($contacts as $contact) {
+                fputcsv($file, [
+                    $contact->id,
+                    $contact->full_name,
+                    $contact->title,
+                    $contact->organisation,
+                    $contact->email,
+                    $contact->document_id,
+                    $contact->document_title,
+                    $contact->created_at->format('Y-m-d H:i:s'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
 }
+

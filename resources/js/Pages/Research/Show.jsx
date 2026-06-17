@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function Show({ document, auth }) {
-    // Choose layout based on auth status
-    const Layout = window.auth?.user ? AuthenticatedLayout : GuestLayout;
+    const [hasAccess, setHasAccess] = useState(false);
+    const [contactInfo, setContactInfo] = useState(null);
 
     // Page URL and description for SEO/sharing
     const pageUrl = route('research.show', document.slug);
     const metaDescription = document.description 
         ? document.description.substring(0, 160) + (document.description.length > 160 ? '...' : '')
         : `Read our ${document.document_type === 'research' ? 'research' : 'white paper'}: ${document.title}`;
+
+    useEffect(() => {
+        // Check if user already submitted their details
+        const saved = localStorage.getItem('research_contact');
+        if (saved) {
+            setContactInfo(JSON.parse(saved));
+            setHasAccess(true);
+        }
+    }, []);
 
     function CopyLinkButton({ fileUrl }) {
         const [copied, setCopied] = React.useState(false);
@@ -40,30 +48,48 @@ export default function Show({ document, auth }) {
         );
     }
 
+    // If no access, show message
+    if (!hasAccess) {
+        return (
+            <GuestLayout auth={auth} forceWhiteNavbar>
+                <Head title={document.title} />
+                <div className="bg-gray-50 min-h-screen py-20">
+                    <div className="max-w-2xl mx-auto px-4 text-center">
+                        <svg className="w-20 h-20 text-blue-900/20 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m0 4h.01M12 9v3m0 0v3m0-3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Required</h1>
+                        <p className="text-gray-600 mb-6">You need to provide your contact details before viewing this document.</p>
+                        <Link 
+                            href={route('research.index')}
+                            className="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition"
+                        >
+                            Go Back to Research List
+                        </Link>
+                    </div>
+                </div>
+            </GuestLayout>
+        );
+    }
+
     return (
-       <GuestLayout auth={auth} forceWhiteNavbar>
+        <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title={document.title}>
-                {/* Basic SEO Meta Tags */}
                 <meta name="description" content={metaDescription} />
                 <meta name="keywords" content={`${document.document_type}, ${document.category || 'research'}, white paper, analysis, report`} />
                 <link rel="canonical" href={pageUrl} />
-
-                {/* Open Graph / Facebook */}
                 <meta property="og:type" content="article" />
                 <meta property="og:title" content={document.title} />
                 <meta property="og:description" content={metaDescription} />
                 <meta property="og:url" content={pageUrl} />
                 <meta property="og:site_name" content="The Institute of Governance, Risk, Compliance & Financial Crime Prevention." />
-
-                {/* Twitter */}
-                <meta name="twitter:card" content="The Institute of Governance, Risk, Compliance & Financial Crime Prevention." />
+                <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content={document.title} />
                 <meta name="twitter:description" content={metaDescription} />
             </Head>
 
             <div className="bg-gray-50 min-h-screen py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Back Button */}
                     <div className="mb-6 pt-10">
                         <Link 
                             href={route('research.index')}
@@ -77,16 +103,12 @@ export default function Show({ document, auth }) {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Main Content Area */}
                         <div className="lg:col-span-2">
-                            {/* Document Header */}
                             <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
                                 <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                                     <div>
                                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 ${
-                                            document.document_type === 'research' 
-                                                ? 'bg-blue-100 text-blue-800' 
-                                                : 'bg-indigo-100 text-indigo-800'
+                                            document.document_type === 'research' ? 'bg-blue-100 text-blue-800' : 'bg-indigo-100 text-indigo-800'
                                         }`}>
                                             {document.document_type === 'research' ? 'Research Content' : 'White Paper'}
                                         </span>
@@ -97,9 +119,7 @@ export default function Show({ document, auth }) {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
                                                 {new Date(document.created_at).toLocaleDateString('en-GB', {
-                                                    day: 'numeric',
-                                                    month: 'long',
-                                                    year: 'numeric'
+                                                    day: 'numeric', month: 'long', year: 'numeric'
                                                 })}
                                             </span>
                                             {document.category && (
@@ -129,7 +149,7 @@ export default function Show({ document, auth }) {
                                 )}
                             </div>
 
-                            {/* PDF Viewer */}
+                            {/* PDF Viewer — Only visible after form submission */}
                             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Document Preview</h2>
                                 <div className="w-full h-[700px] border border-gray-200 rounded-lg overflow-hidden">
@@ -147,12 +167,10 @@ export default function Show({ document, auth }) {
                             </div>
                         </div>
 
-                        {/* Sidebar */}
                         <div className="lg:col-span-1">
                             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 sticky top-24">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
                                 
-                                {/* Download Button */}
                                 <a 
                                     href={`/storage/${document.file_path}`}
                                     target="_blank"
@@ -165,7 +183,6 @@ export default function Show({ document, auth }) {
                                     Download PDF
                                 </a>
 
-                                {/* Open in New Tab */}
                                 <a 
                                     href={`/storage/${document.file_path}`}
                                     target="_blank"
@@ -178,11 +195,9 @@ export default function Show({ document, auth }) {
                                     Open in New Tab
                                 </a>
 
-                                {/* Social Sharing Buttons */}
                                 <div className="mb-6">
                                     <h4 className="text-sm font-medium text-gray-900 mb-3">Share this document</h4>
                                     <div className="grid grid-cols-2 gap-2">
-                                        {/* Facebook */}
                                         <a 
                                             href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`}
                                             target="_blank"
@@ -195,7 +210,6 @@ export default function Show({ document, auth }) {
                                             Facebook
                                         </a>
 
-                                        {/* Twitter / X */}
                                         <a 
                                             href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(document.title)}`}
                                             target="_blank"
@@ -208,7 +222,6 @@ export default function Show({ document, auth }) {
                                             X
                                         </a>
 
-                                        {/* LinkedIn */}
                                         <a 
                                             href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(document.title)}&summary=${encodeURIComponent(metaDescription)}`}
                                             target="_blank"
@@ -221,12 +234,10 @@ export default function Show({ document, auth }) {
                                             LinkedIn
                                         </a>
 
-                                        {/* Copy Link Button with Success Message */}
                                         <CopyLinkButton fileUrl={`/storage/${document.file_path}`} />
                                     </div>
                                 </div>
 
-                                {/* Document Info */}
                                 <div className="border-t border-gray-100 pt-4">
                                     <h4 className="text-sm font-medium text-gray-900 mb-3">Document Details</h4>
                                     <ul className="space-y-2 text-sm text-gray-600">

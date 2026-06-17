@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Research;
 use App\Models\CourseCategory;
 use App\Models\Blog;
+use App\Models\ResearchContact;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -152,7 +153,7 @@ class HomeController extends Controller
             'latestBlogs' => $latestBlogs,
         ]);
     }
-
+ 
     public function welcomeToIGRCFP()
     {
         return Inertia::render('About/WelcomeIGRCFP/Index', [
@@ -740,7 +741,7 @@ class HomeController extends Controller
             'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
         ]);
     }
-
+ 
     public function ResearchPublic(Request $request)
     {
         // Get only published documents
@@ -781,5 +782,35 @@ class HomeController extends Controller
             'document' => $document,
         ]);
     }
+
+    
+
+
+    public function ResearchSaveContact(Request $request)
+{
+    // ✅ Get all input data directly
+    $data = $request->all();
+
+    // ✅ Validate correctly
+    $validator = Validator::make($data, [
+        'full_name'      => 'required|string|max:255',
+        'title'          => 'required|string|max:255',
+        'organisation'   => 'required|string|max:255',
+        'email'          => 'required|email|max:255',
+        'document_id'    => 'required|integer|exists:research,id', // adjust table name
+        'document_title' => 'required|string',
+    ]);
+
+    // ✅ If fails: Inertia handles this automatically
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    // ✅ Save to database
+    ResearchContact::create($validator->validated());
+
+    // ✅ Success response (Inertia-compatible)
+    return redirect()->back()->with('success', 'Thank you! Your request has been submitted.');
+}
 
 }
