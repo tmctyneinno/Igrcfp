@@ -77,7 +77,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
             
 
             {/* Scholarship Banner - Add this right after the hero */}
-            <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
+            {/* <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
@@ -95,7 +95,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
                         </Link>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
           
  
