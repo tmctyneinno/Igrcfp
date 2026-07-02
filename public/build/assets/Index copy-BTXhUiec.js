@@ -1,1 +1,0 @@
-import{j as t,H as r}from"./app-BVpBYT_q.js";import{A as o}from"./AuthenticatedLayout-CsJz2JVu.js";import"./transition-CwHipFQ1.js";import"./ChevronDownIcon-46YUtO3M.js";import"./BellIcon-8DE-4shW.js";import"./ArrowRightOnRectangleIcon-rdZRNMc6.js";function d(){return t.jsx(o,{children:t.jsx(r,{title:"Dashboard"})})}export{d as default};
