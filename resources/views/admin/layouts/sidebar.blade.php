@@ -387,6 +387,40 @@
                     @endif
                 </ul>
             </li>
+
+            {{-- Chapters Management -- NEW --}}
+            <li class="sidebar-separator">
+                <hr class="my-2 mx-3 opacity-25">
+            </li>
+            <li class="dropdown {{ request()->routeIs('admin.chapters.*') ? 'active' : '' }}">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="mdi:map-marker-path" class="menu-icon"></iconify-icon>
+                    <span>Chapters</span>
+                    @php
+                        $totalChapters = \App\Models\Chapter::count();
+                        $activeChapters = \App\Models\Chapter::where('is_active', true)->count();
+                    @endphp
+                    @if($totalChapters > 0)
+                        <span class="badge bg-primary ms-2">{{ $activeChapters }}/{{ $totalChapters }}</span>
+                    @endif
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('admin.chapters.index') }}">
+                            <i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i>
+                            All Chapters
+                        </a>
+                    </li>
+                    @if(auth()->guard('admin')->user()->isAdmin())
+                        <li>
+                            <a href="{{ route('admin.chapters.create') }}">
+                                <i class="ri-circle-fill circle-icon text-success-main w-auto"></i>
+                                Add New Chapter
+                            </a>
+                        </li>
+                    @endif
+                </ul>
+            </li>
             
             <!-- Research Content & White Papers - NEW -->
             <li class="sidebar-separator">
@@ -423,7 +457,7 @@
                             @if($newResearchContacts > 0)
                                 <span class="badge bg-primary ms-2">{{ $newResearchContacts }}</span>
                             @endif
-                        </a>
+                        </a> 
                     </li>
                 </ul>
             </li>

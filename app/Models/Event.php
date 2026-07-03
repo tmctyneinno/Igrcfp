@@ -33,6 +33,7 @@ class Event extends Model
         'meta_keywords',
         'user_id',
         'registration_status',
+        'chapter_id',
     ];
 
     protected $casts = [
@@ -54,6 +55,12 @@ class Event extends Model
         'is_past',
         'registration_status'
     ];
+
+    // Add this relationship
+    public function chapter()
+    {
+        return $this->belongsTo(\App\Models\Chapter::class);
+    }
 
     public function user()
     {

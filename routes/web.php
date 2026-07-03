@@ -14,6 +14,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ChapterController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/welcome-to-igrcfp', [HomeController::class, 'welcomeToIGRCFP'])->name('welcome-to-igrcfp');
@@ -128,4 +129,9 @@ Route::get('/scholarship/{application}/accept', [ScholarshipAcceptController::cl
 // Public route for research & white papers
 Route::get('/research', [HomeController::class, 'ResearchPublic'])->name('research.index');
 Route::get('/research/{slug}', [HomeController::class, 'ResearchPublicShow'])->name('research.show');
-Route::post('/research/save-contact', [HomeController::class, 'ResearchSaveContact'])->name('research.save-contact');
+Route::post('/research/save-contact', [HomeController::class, 'ResearchSaveContact'])->name('research.save-contact'); 
+
+// Chapters routes
+Route::get('/chapters', [ChapterController::class, 'index'])->name('chapters.index');
+Route::get('/chapters/{slug}', [ChapterController::class, 'show'])->name('chapters.show');
+

@@ -45,7 +45,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
     const num = parseFloat(value);
     return isNaN(num) ? 0 : num;
   };
-
+ 
   const formatPrice = (price) => {
     const numPrice = parseFloatSafe(price);
     return numPrice === 0
@@ -464,38 +464,124 @@ export default function CourseShow({ auth, course, isEnrolled }) {
               )}
 
               {/* Audience Tab */}
-              {activeTab === 'audience' && course.target_audience && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-6">Who Should Enroll</h3>
-                    
-                    <div 
-                      className="
-                        prose prose-lg max-w-none
-                        [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                        [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                        [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                        [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
-                        [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
-                        [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
-                        [&_li]:mb-1
-                        [&_strong]:font-bold [&_strong]:text-gray-900
-                        [&_b]:font-bold [&_b]:text-gray-900
-                        [&_em]:italic
-                        [&_i]:italic
-                        [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
-                        [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
-                      "
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: course.target_audience }} />
-                    </div>
-                  </div>
-                </motion.div>
+              {/* Audience Tab */}
+{activeTab === 'audience' && (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+      <h3 className="text-xl font-bold text-gray-900 mb-2">Who Is This Course For?</h3>
+
+      {/* If custom content exists, use it */}
+      {course.target_audience ? (
+        <div 
+          className="
+            prose prose-lg max-w-none
+            [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-800 [&_h2]:mb-3
+            [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
+            [&_li]:text-gray-700
+          "
+          dangerouslySetInnerHTML={{ __html: course.target_audience }}
+        />
+      ) : (
+        <>
+          {/* Default structured content if no custom data */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-800 mb-3">✅ Ideal For</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                <span>Professionals looking to build or upgrade their skills in this field</span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                <span>Students and graduates seeking practical, job-ready knowledge</span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                <span>Anyone preparing for professional certification or career advancement</span>
+              </li>
+              {course.level === 'Beginner' && (
+                <li className="flex items-start">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Complete newcomers with no prior experience in this subject</span>
+                </li>
               )}
+              {course.level === 'Intermediate' && (
+                <li className="flex items-start">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Learners with basic knowledge looking to deepen their expertise</span>
+                </li>
+              )}
+              {course.level === 'Advanced' && (
+                <li className="flex items-start">
+                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Experienced practitioners aiming to master advanced concepts and leadership skills</span>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* Prerequisites Section */}
+          <div className="pt-4 border-t border-gray-100">
+            <h4 className="text-lg font-semibold text-gray-800 mb-3">📋 Prerequisites</h4>
+            <ul className="space-y-2 text-gray-700">
+              {course.prerequisites ? (
+                <div dangerouslySetInnerHTML={{ __html: course.prerequisites }} />
+              ) : (
+                <>
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <span>Basic computer and internet skills</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <span>Access to a computer, tablet, or smartphone</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <span>Motivation to learn and complete the course work</span>
+                  </li>
+                  {course.level === 'Advanced' && (
+                    <li className="flex items-start">
+                      <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
+                      <span>Foundational knowledge or experience in this field is recommended</span>
+                    </li>
+                  )}
+                </>
+              )}
+            </ul>
+          </div>
+
+          {/* Who This Is Not For */}
+          <div className="pt-4 border-t border-gray-100">
+            <h4 className="text-lg font-semibold text-gray-800 mb-3">❌ Not Recommended For</h4>
+            <ul className="space-y-2 text-gray-600">
+              <li className="flex items-start">
+                <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
+                <span>Those looking for only theoretical content without practical application</span>
+              </li>
+              {course.level === 'Beginner' && (
+                <li className="flex items-start">
+                  <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
+                  <span>Experienced professionals seeking only advanced, specialized topics</span>
+                </li>
+              )}
+              {course.level === 'Advanced' && (
+                <li className="flex items-start">
+                  <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
+                  <span>Complete beginners without prior background in the subject</span>
+                </li>
+              )}
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  </motion.div>
+)}
 
               {/* Certification Tab */}
               {activeTab === 'certification' && (

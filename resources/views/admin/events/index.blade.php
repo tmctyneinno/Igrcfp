@@ -48,14 +48,25 @@
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                 </form>
                 
-                <form method="GET" class="d-inline d-flex">
+                <form method="GET" class="d-inline d-flex flex-wrap gap-2">
                     <select name="status" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
                         <option value="">All Status</option>
                         <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>Published</option>
                         <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
                         <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                     </select>
-                    @if(request('search') || request('status') || request('per_page') != 10)
+ 
+                    {{-- New Chapter Filter --}}
+                    <select name="chapter_id" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
+                        <option value="">All Chapters</option>
+                        @foreach(\App\Models\Chapter::orderBy('region')->get() as $chapter)
+                            <option value="{{ $chapter->id }}" {{ request('chapter_id') == $chapter->id ? 'selected' : '' }}>
+                                {{ $chapter->region }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if(request('search') || request('status') || request('chapter_id') || request('per_page') != 10)
                         <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
                     @endif
                 </form>
@@ -94,6 +105,7 @@
                                 </th>
                                 <th scope="col">Event Image</th>
                                 <th scope="col">Event Title</th>
+                                <th scope="col">Chapter</th> {{-- New Chapter Header --}}
                                 <th scope="col">Date & Time</th>
                                 <th scope="col">Location</th>
                                 <th scope="col" class="text-center">Price</th>
@@ -126,6 +138,16 @@
                                         <span class="text-md fw-medium text-secondary-light mb-1">{{ Str::limit($event->title, 40) }}</span>
                                         <small class="text-muted">{{ Str::limit($event->short_description, 60) }}</small>
                                     </div>
+                                </td>
+                                {{-- New Chapter Column --}}
+                                <td>
+                                    @if($event->chapter)
+                                        <span class="badge bg-light-primary text-primary-600 fw-medium">
+                                            {{ $event->chapter->region }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted fst-italic">Not Assigned</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column">
@@ -200,11 +222,11 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="10" class="text-center py-4">
+                                <td colspan="11" class="text-center py-4"> {{-- Updated colspan from 10 to 11 --}}
                                     <div class="text-muted">
                                         <iconify-icon icon="mdi:calendar-blank-outline" class="icon-3x mb-2"></iconify-icon>
                                         <p>No events found.</p>
-                                        @if(request('search') || request('status'))
+                                        @if(request('search') || request('status') || request('chapter_id'))
                                             <a href="{{ route('admin.events.index') }}" class="btn btn-sm btn-primary">Clear Filters</a>
                                         @else
                                             <a href="{{ route('admin.events.create') }}" class="btn btn-sm btn-primary">Create Your First Event</a>

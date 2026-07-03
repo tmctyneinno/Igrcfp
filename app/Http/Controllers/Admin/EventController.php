@@ -9,27 +9,33 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class EventController extends Controller
-{
+{ 
     public function index(Request $request)
-    {
-        $search = $request->get('search');
-        $status = $request->get('status');
-        $perPage = $request->get('per_page', 10);
+{
+    $query = Event::with('chapter');
 
-        $events = Event::with('user')
-            ->when($search, function ($query) use ($search) {
-                $query->where('title', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%")
-                      ->orWhere('location', 'like', "%{$search}%");
-            })
-            ->when($status, function ($query) use ($status) {
-                $query->where('status', $status);
-            })
-            ->latest()
-            ->paginate($perPage);
-
-        return view('admin.events.index', compact('events', 'search', 'status', 'perPage'));
+    // Search filter
+    if ($request->filled('search')) {
+        $query->where('title', 'like', "%{$request->search}%")
+              ->orWhere('location', 'like', "%{$request->search}%");
     }
+
+    // Status filter
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // Chapter filter
+    if ($request->filled('chapter_id')) {
+        $query->where('chapter_id', $request->chapter_id);
+    }
+
+    // Pagination
+    $perPage = $request->get('per_page', 10);
+    $events = $query->latest()->paginate($perPage)->withQueryString();
+
+    return view('admin.events.index', compact('events'));
+}
 
     public function create()
     {
@@ -55,6 +61,7 @@ class EventController extends Controller
             'is_featured' => 'boolean',
             'meta_description' => 'nullable|string|max:160',
             'meta_keywords' => 'nullable|string|max:255',
+            'chapter_id' => 'nullable|exists:chapters,id', 
         ]);
 
         $data = [
@@ -76,6 +83,7 @@ class EventController extends Controller
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'user_id' => auth()->guard('admin')->id(),
+            'chapter_id' => $request->chapter_id,
         ];
 
         if ($request->hasFile('image')) {
@@ -87,8 +95,9 @@ class EventController extends Controller
         return redirect()->route('admin.events.index')->with('success', 'Event created successfully.');
     }
 
-    public function show(Event $event)
+    public function show($id)
     {
+        $event = Event::with('chapter')->findOrFail($id);
         return view('admin.events.show', compact('event'));
     }
 
@@ -116,6 +125,7 @@ class EventController extends Controller
             'is_featured' => 'boolean',
             'meta_description' => 'nullable|string|max:160',
             'meta_keywords' => 'nullable|string|max:255',
+            'chapter_id' => 'nullable|exists:chapters,id',
         ]);
 
         $data = [
@@ -136,6 +146,7 @@ class EventController extends Controller
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
             'registration_status' => 'Not Available',
+            'chapter_id' => $request->chapter_id,
         ];
 
         // Update available seats if capacity changed

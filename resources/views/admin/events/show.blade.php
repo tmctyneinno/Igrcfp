@@ -146,6 +146,20 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex flex-column gap-3">
+                        {{-- ✅ Added Chapter here --}}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Assigned Chapter:</span>
+                            <span>
+                                @if($event->chapter)
+                                    <span class="badge bg-light-primary text-primary-600 fw-medium">
+                                        {{ $event->chapter->region }}
+                                    </span>
+                                @else
+                                    <span class="text-muted fst-italic">Not Assigned</span>
+                                @endif
+                            </span>
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">Status:</span>
                             <span class="badge bg-{{ $event->status === 'published' ? 'success' : ($event->status === 'cancelled' ? 'danger' : 'warning') }}">

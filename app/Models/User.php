@@ -620,4 +620,9 @@ public function getCompletedAssessmentsAttribute()
     {
         return $this->unreadNotifications()->count();
     }
+
+    public function chapters()
+    {
+        return $this->belongsToMany(Chapter::class);
+    }
 } 

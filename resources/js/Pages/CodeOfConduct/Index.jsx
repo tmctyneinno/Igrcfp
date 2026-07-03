@@ -11,7 +11,7 @@ export default function CodeOfConduct({ auth }) {
                 <meta 
                     name="description" 
                     content="IGRCFP Code of Professional Conduct - The ethical principles and standards that bind all IGRCFP members in their professional practice." 
-                />
+                /> 
             </Head>
             
             {/* Hero Banner */}

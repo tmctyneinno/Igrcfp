@@ -62,6 +62,21 @@
                             </div>
 
                             <div class="col-12">
+                                <label class="form-label">Assign to Chapter</label>
+                                <select name="chapter_id" class="form-select @error('chapter_id') is-invalid @enderror">
+                                    <option value="">— No Chapter —</option>
+                                    @foreach(\App\Models\Chapter::orderBy('name')->get() as $chapter)
+                                        <option value="{{ $chapter->id }}" {{ old('chapter_id') == $chapter->id ? 'selected' : '' }}>
+                                            {{ $chapter->name ?? $chapter->region }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('chapter_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-12">
                                 <label class="form-label">Full Description <span class="text-danger">*</span></label>
                                 <textarea name="description" class="form-control rich-editor @error('description') is-invalid @enderror"
                                           rows="8" placeholder="Detailed description of the event...">{{ old('description') }}</textarea>

@@ -236,3 +236,8 @@ Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));
 
 ns1.tynesideinnovation.com
 ns2.tynesideinnovation.com
+php artisan make:migration create_chapters_table --create=chapters
+ php artisan db:seed
+ 
+
+Send a notification email to 33 applicant notifying them if the closure of the igrcfp scholarship

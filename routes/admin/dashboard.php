@@ -8,38 +8,33 @@ use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\ChapterController;
 use App\Http\Controllers\Admin\ScholarshipController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use Illuminate\Support\Facades\Route; 
-
+ 
 // Admin Dashboard Routes (Protected)
 Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-        ->name('dashboard'); 
-    
-    // Dashboard Statistics
-    Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])
-        ->name('dashboard.stats');
-     
-    // Recent Activities
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard'); 
+    Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
     Route::get('/dashboard/activities', [AdminDashboardController::class, 'activities'])->name('dashboard.activities');
-    // Quick Actions
-    Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction']) ->name('dashboard.quick-action');
+    Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction'])->name('dashboard.quick-action');
 
     // Event Management
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/', [EventController::class, 'index'])->name('index');
         Route::get('/create', [EventController::class, 'create'])->name('create');
         Route::post('/', [EventController::class, 'store'])->name('store');
-        Route::get('/{event}', [EventController::class, 'show'])->name('show');  // Changed from {id}
+        Route::get('/{event}', [EventController::class, 'show'])->name('show');
         Route::get('/{event}/edit', [EventController::class, 'edit'])->name('edit');
-        Route::put('/{event}', [EventController::class, 'update'])->name('update');  // Changed from {id}
+        Route::put('/{event}', [EventController::class, 'update'])->name('update');
         Route::delete('/{event}', [EventController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-action', [EventController::class, 'bulkAction'])->name('bulk-action');
         Route::patch('/{event}/toggle-featured', [EventController::class, 'toggleFeatured'])->name('toggle-featured');
         Route::patch('/{event}/toggle-status', [EventController::class, 'toggleStatus'])->name('toggle-status');
     });
+
     // Blog Management
     Route::prefix('blogs')->name('blogs.')->group(function () {
         Route::get('/', [BlogController::class, 'index'])->name('index');
@@ -52,7 +47,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::patch('/{blog}/toggle-status', [BlogController::class, 'toggleStatus'])->name('toggle-status');
         Route::post('/bulk-action', [BlogController::class, 'bulkAction'])->name('bulk-action');
     });
-     // News Management
+
+    // News Management
     Route::prefix('news')->name('articles.')->group(function () {
         Route::get('/', [NewsController::class, 'index'])->name('index');
         Route::get('/create', [NewsController::class, 'create'])->name('create');
@@ -82,7 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::delete('/{enrollment}', [EnrollmentController::class, 'destroy'])->name('destroy');
     });
 
-     // Transactions Routes
+    // Transactions Routes
     Route::prefix('transactions')->name('transactions.')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('index');
         Route::get('/pending', [TransactionController::class, 'pending'])->name('pending');
@@ -97,14 +93,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/revenue', [ReportController::class, 'revenue'])->name('revenue');
     });
-    // Activity Logs - FIXED
+
+    // Activity Logs
     Route::prefix('activity-logs')->name('activity-logs.')->group(function () {
         Route::get('/', [ActivityLogController::class, 'index'])->name('index');
         Route::get('/export', [ActivityLogController::class, 'export'])->name('export');
         Route::get('/{activityLog}', [ActivityLogController::class, 'show'])->name('show');
     });
 
-    // Lesson routes (nested under modules)
+    // Lesson routes
     Route::prefix('courses/{course}/modules/{module}/lessons')->name('courses.modules.lessons.')->group(function () {
         Route::get('/', [LessonController::class, 'index'])->name('index');
         Route::get('/create', [LessonController::class, 'create'])->name('create');
@@ -120,5 +117,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     Route::get('/scholarships/{application}', [ScholarshipController::class, 'show'])->name('scholarships.show');
     Route::post('/scholarships/{application}/status', [ScholarshipController::class, 'updateStatus'])->name('scholarships.update-status');
     Route::delete('/scholarships/{application}', [ScholarshipController::class, 'destroy'])->name('scholarships.destroy');
-  
+   
+    //--------------------------------------------------------------------------
+    // ✅ CHAPTER MANAGEMENT (MOVED INSIDE ADMIN GROUP)
+    //--------------------------------------------------------------------------
+    Route::prefix('chapters')->name('chapters.')->group(function () {
+        Route::resource('/', ChapterController::class)->parameters(['' => 'chapter']);
+
+        Route::get('/{chapter}/leadership', [ChapterController::class, 'leadership'])->name('leadership');
+        Route::post('/{chapter}/leadership', [ChapterController::class, 'storeLeadership'])->name('leadership.store');
+        Route::delete('/{chapter}/leadership/{leader}', [ChapterController::class, 'destroyLeadership'])->name('leadership.destroy');
+        Route::get('/{chapter}/events', [ChapterController::class, 'events'])->name('events');
+    });
+
 });
+
+// Optional: Public Chapters Routes (if you need frontend pages)
+// Route::get('/chapters', [\App\Http\Controllers\ChapterController::class, 'index'])->name('chapters.index');
+// Route::get('/chapters/{slug}', [\App\Http\Controllers\ChapterController::class, 'show'])->name('chapters.show');
