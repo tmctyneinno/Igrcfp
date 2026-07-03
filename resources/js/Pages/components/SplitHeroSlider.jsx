@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/react';
 export default function SplitHeroSlider({ auth }) {
     const [activeSlide, setActiveSlide] = useState(0);
     const slideInterval = useRef(null);
-
+ 
     const slides = [
         {
             id: 1,
