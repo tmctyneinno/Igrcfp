@@ -4,10 +4,10 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import WhoAreWe from "@/Pages/components/WhoAreWe";
 import CoreServices from '@/Pages/About/CoreServices';
 import PartnersSlider from '@/Pages/About/PartnersSlider';
+import InternationalReach from '@/Pages/About/InternationalReach';
 import { motion } from "framer-motion";
+import CallToAction from "@/Pages/components/CallToAction";
 import { fadeIn } from "@/utils/motionPresets";
-
-import InternationalReachMap from '@/Pages/About/InternationalReachMap';
 import PurposeValuesOffer from '@/Pages/About/PurposeValuesOffer';
 
 export default function AboutIndex({ auth, title, description }) {
@@ -15,6 +15,7 @@ export default function AboutIndex({ auth, title, description }) {
         <GuestLayout auth={auth}>
             <Head title={title} />
             {/* Hero Section */}
+            
             <section className="w-full bg-[#0A1A2F] text-white pt-28 pb-10 relative overflow-hidden">
                 {/* Subtle grid/background pattern can be added here if needed */}
                 <div className="max-w-7xl mx-auto px-6 lg:px-8 ">
@@ -81,11 +82,11 @@ export default function AboutIndex({ auth, title, description }) {
  
             <PurposeValuesOffer />
 
-            <CoreServices />
-
-            <InternationalReachMap />
+            <InternationalReach />
 
             <PartnersSlider />
+            
+            <CallToAction />
            
         </GuestLayout>
     );

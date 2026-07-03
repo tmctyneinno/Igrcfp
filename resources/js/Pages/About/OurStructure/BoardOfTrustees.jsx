@@ -1,136 +1,98 @@
 import React from "react";
-import { FaInstagram, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
+import { motion } from "framer-motion";
+import { fadeLeft } from "@/utils/motionPresets";
 
 export default function BoardOfTrustees() {
-    const trustees = [
-        {
-            name: 'Wade Warren',
-            role: 'Chairperson',
-            image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12',
-        },
-        {
-            name: 'Wade Warren',
-            role: 'Deputy Chairperson',
-            image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d',
-        },
-        {
-            name: 'Wade Warren',
-            role: 'Legal professionals',
-            image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e',
-        },
-    ];
-
     return (
-        <section className="bg-white py-20">
-            <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-16">
+        <section className="bg-white py-16">
+            <div className="max-w-6xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-                {/* LEFT CONTENT */}
-                <div className="lg:col-span-3">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                        Our Board of Trustees
-                    </h1>
+                    {/* --- MAIN CONTENT --- */}
+                    <motion.div
+                        variants={fadeLeft}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="lg:col-span-9"
+                    >
+                        {/* Section Label */}
+                        <div className="relative inline-flex items-center mb-3">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 48 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="absolute left-0 top-1/2 h-px bg-[#0A2463]"
+                            />
+                            <span className="text-sm tracking-widest text-gray-500 pl-14 uppercase">
+                                OUR STRUCTURE
+                            </span>
+                        </div>
 
-                    <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
-                        The Board of Trustees serves as the strategic oversight body of IGRCFP and is
-                        responsible for guiding the long-term direction of the Institute. The board
-                        ensures that the IGRCFP remains aligned with its mission and vision while
-                        upholding ethical standards.
-                    </p>
+                        {/* Heading */}
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                            OUR <span className="text-[#0A2463]">BOARD OF TRUSTEES</span>
+                        </h2>
 
-                    <h3 className="font-semibold text-gray-900 mb-3">
-                        Key Responsibilities:
-                    </h3>
+                        {/* Description */}
+                        <p className="text-gray-700 leading-relaxed mb-8">
+                            The Board of Trustees serves as the strategic oversight body of IGRCFP and is responsible for guiding the long-term direction of the Institute. The board ensures that the IGRCFP remains aligned with its mission and vision while upholding ethical standards.
+                        </p>
 
-                    <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
-                        <li>Establishing the strategic vision and mission of IGRCFP.</li>
-                        <li>Overseeing governance policies and ensuring sustainability.</li>
-                        <li>Approving annual budgets and financial reports.</li>
-                        <li>Appointing council members and leadership succession.</li>
-                        <li>Ensuring compliance with Local and international standards.</li>
-                    </ul>
+                        {/* Key Responsibilities */}
+                        <div className="relative inline-flex items-center mb-3">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 48 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="absolute left-0 top-1/2 h-px bg-[#0A2463]"
+                            />
+                            <span className="text-sm tracking-widest text-gray-500 pl-14 uppercase">
+                                KEY RESPONSIBILITIES
+                            </span>
+                        </div>
 
-                    {/* TRUSTEES */}
-                    {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {trustees.map((member, index) => (
-                            <div key={index} className="text-center">
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    className="w-40 h-40 rounded-full object-cover mx-auto mb-6"
-                                />
+                        <ul className="list-disc list-inside text-gray-700 space-y-2 pl-2">
+                            <li>Establishing the strategic vision and mission of IGRCFP.</li>
+                            <li>Overseeing governance policies and ensuring sustainability.</li>
+                            <li>Approving annual budgets and financial reports.</li>
+                            <li>Appointing council members and leadership succession.</li>
+                            <li>Ensuring compliance with Local and international standards.</li>
+                        </ul>
+                    </motion.div>
 
-                                <h4 className="font-semibold text-gray-900 text-lg">
-                                    {member.name}
-                                </h4>
-                                <p className="text-gray-500 mb-4">{member.role}</p>
+                    {/* --- RIGHT SIDEBAR --- */}
+                    <motion.aside
+                        variants={fadeLeft}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="lg:col-span-3"
+                    >
+                        <div className="relative inline-flex items-center mb-3">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 48 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="absolute left-0 top-1/2 h-px bg-[#0A2463]"
+                            />
+                            <span className="text-sm tracking-widest text-gray-500 pl-14 uppercase">
+                                PEOPLE
+                            </span>
+                        </div>
 
-                                <div className="flex justify-center gap-4 text-gray-700">
-                                    <FaInstagram className="cursor-pointer hover:text-black" />
-                                    <FaLinkedin className="cursor-pointer hover:text-black" />
-                                    <FaXTwitter className="cursor-pointer hover:text-black" />
-                                </div>
-                            </div>
-                        ))}
-                    </div> */}
-                     {/* The Governing Council */}
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                        The Governing Council
-                    </h1>
-
-                    <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
-                        The Governing Council is responsible for the formulation and implementation of the Institute's policies, providing direction for the activities of the Executive Management, and overseeing the Institute's core functions, including membership, education, certification, and research. 
-                    </p>
-
-                    <h3 className="font-semibold text-gray-900 mb-3">
-                        Key Responsibilities:
-                    </h3>
-
-                    <ul className="list-disc pl-6 text-gray-600 space-y-2 mb-16">
-                        <li>Developing and reviewing policies to ensure alignment with the Institute’s objectives.</li>
-                        <li>Approving the Institute’s code of conduct, certification requirements, and membership policies.</li>
-                        <li>Advising on matters related to education, certification, and professional development.</li>
-                        <li>Overseeing disciplinary matters and upholding ethical standards.</li>
-                        <li>Providing guidance on partnerships and collaboration with regulatory bodies and global organizations.</li>
-                    </ul>
-                    {/* Advisory Committes */}
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                        Advisory Committes
-                    </h1>
-
-                    <p className="text-gray-600 leading-relaxed mb-6 max-w-3xl">
-                        Specialised working groups focused on Education, Research, Policy, and Ethics, fostering collaboration among professionals to shape standards, influence regulatory frameworks, and promote ethical excellence within the industry.
-                    </p>
-
+                        <ul className="space-y-3 text-gray-900">
+                            <li className="font-medium">Board of Trustees</li>
+                            <li>The Governing Council</li>
+                            <li>Advisory Committees</li>
+                        </ul>
+                    </motion.aside>
 
                 </div>
-
-                {/* RIGHT SIDEBAR */}
-                <aside className="space-y-14">
-                    <div>
-                        <h4 className="font-semibold text-lg mb-4">People</h4>
-                        <ul className="space-y-3 text-blue-950">
-                            <li className="font-medium cursor-pointer">Board of Trustees</li>
-                            <li className="cursor-pointer hover:underline">
-                                The Governing Council
-                            </li>
-                            <li className="cursor-pointer hover:underline">
-                                Advisory Committees
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h4 className="font-semibold text-lg mb-3">Need Help?</h4>
-                        <p className="text-gray-600 mb-3">Contact Us Here</p>
-                        {/* <p className="text-blue-600 text-sm mb-1">
-                            +234 (0) 915-341-4314
-                        </p> */}
-                        <p className="text-blue-950 text-sm">
-                            enquiries@igrfcp.org
-                        </p>
-                    </div>
-                </aside>
-
             </div>
         </section>
     );

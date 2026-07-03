@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { motion } from 'framer-motion';
+import { fadeIn } from "@/utils/motionPresets";
 import CourseCard from '@/components/Courses/CourseCard';
 
 export default function Certifications({ auth, title, description, courses }) {
@@ -12,6 +13,66 @@ export default function Certifications({ auth, title, description, courses }) {
     return ( 
         <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title={title} />
+
+            <section className="w-full bg-[#0A1A2F] text-white pt-28 pb-10 relative overflow-hidden">
+                {/* Subtle grid/background pattern can be added here if needed */}
+                <div className="max-w-7xl mx-auto px-6 lg:px-8 ">
+                    <motion.div
+                        variants={fadeIn}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="text-left"
+                    >
+                        {/* Top line text */}
+                        <div className="flex items-center gap-4 mb-4">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 48 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="h-px bg-gray-300"
+                            />
+                            <span className="text-sm tracking-widest text-gray-300 uppercase">
+                                Professional Body . Global Standards . London, UK
+                            </span>
+                        </div>
+
+                        {/* Main Heading */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                            IGRCFP CERTIFICATION
+                        </h1>
+
+                        {/* Subtitle */}
+                        <p className="text-lg md:text-xl text-gray-300 max-w-3xl">
+                        Browse IGRCFP certificate courses and specialists programmes.
+                        </p>
+                    </motion.div>
+                    {/* Bottom Tagline Bar */}
+                    <motion.div
+                        variants={fadeIn}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="mt-12 pt-4 border-t border-gray-700 flex flex-wrap gap-x-2 gap-y-2 text-xs uppercase tracking-wider text-gray-300"
+                    >
+                        <span>Terrorism Financing</span>
+                        <span>•</span>
+                        <span>KYC & CDD</span>
+                        <span>•</span>
+                        <span>Sanctions Compliance</span>
+                        <span>•</span>
+                        <span>Enterprise Risk Management</span>
+                        <span>•</span>
+                        <span>Regulatory Frameworks</span>
+                        <span>•</span>
+                        <span>ESG Sustainable Finance</span>
+                        <span>•</span>
+                        <span>AI in Compliance</span>
+                    </motion.div>
+                </div>
+            </section>
               
             {/* ===== HERO SECTION ===== */}
             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
