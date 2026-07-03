@@ -42,7 +42,7 @@ export default function GuestLayout({ children, auth, forceWhiteNavbar = false }
 
             {/* Footer */}
             <footer 
-                className="bg-blue-950 text-white py-12"
+                className="text-white"
                 data-aos="fade-up"
                 data-aos-duration="1400"
             > 
