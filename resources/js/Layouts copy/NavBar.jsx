@@ -89,7 +89,7 @@ function NavBar({ auth }) {
                                 <Link href={route('our-structure')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Our Structure</Link>
                                 <Link href={route('why-igrcfp')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Why IGRCFP</Link>
                             </div>
-                        </div> 
+                        </div>
 
                         {/* Certifications Mega Menu */}
                         <div 

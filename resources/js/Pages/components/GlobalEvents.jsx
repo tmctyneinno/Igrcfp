@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "@inertiajs/react";
-import { ArrowRight, CalendarDays, Clock3, MapPin, UsersRound } from "lucide-react";
+import { CalendarDays, MapPin } from "lucide-react";
 import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 
 const getStatusStyles = (status) => {
@@ -10,7 +10,6 @@ const getStatusStyles = (status) => {
         few_seats: "bg-amber-50 text-amber-700 ring-amber-200",
         sold_out: "bg-rose-50 text-rose-700 ring-rose-200",
     };
-
     return styles[status] || "bg-slate-50 text-slate-700 ring-slate-200";
 };
 
@@ -21,267 +20,180 @@ const getStatusLabel = (status) => {
         sold_out: "Sold out",
         not_set: "Registration TBA",
     };
-
     return labels[status] || "Registration TBA";
 };
 
+// Check if event is past
+const isEventPast = (event) => {
+    if (!event?.event_date) return false;
+    try {
+        const eventDate = new Date(event.event_end_date || event.event_date);
+        return eventDate < new Date();
+    } catch {
+        return false;
+    }
+};
+
 const formatTime = (time) => {
-    if (!time) {
-        return "";
-    }
-
-    if (time.includes("AM") || time.includes("PM")) {
-        return time;
-    }
-
+    if (!time) return "";
+    if (time.includes("AM") || time.includes("PM")) return time;
     const [hours, minutes = "00"] = time.split(":");
     const hour = Number.parseInt(hours, 10);
-
-    if (Number.isNaN(hour)) {
-        return time;
-    }
-
+    if (Number.isNaN(hour)) return time;
     const suffix = hour >= 12 ? "PM" : "AM";
     const displayHour = hour % 12 || 12;
-
     return `${displayHour}:${minutes.slice(0, 2)} ${suffix}`;
 };
 
 const getEventImage = (event) => {
-    if (event?.image_url) {
-        return event.image_url;
-    }
-
-    if (!event?.image) {
-        return "/images/default-event.jpg";
-    }
-
-    if (event.image.match(/^(https?:)?\/\//) || event.image.startsWith("/")) {
-        return event.image;
-    }
-
+    if (event?.image_url) return event.image_url;
+    if (!event?.image) return "/images/default-event.jpg";
+    if (event.image.match(/^(https?:)?\/\//) || event.image.startsWith("/")) return event.image;
     return `/storage/${event.image}`;
 };
 
 const getEventTime = (event) => {
-    if (event?.event_time && event.event_time !== "Time not set") {
-        return event.event_time;
-    }
-
+    if (event?.event_time && event.event_time !== "Time not set") return event.event_time;
     const startTime = formatTime(event?.start_time);
     const endTime = formatTime(event?.end_time);
-
-    if (startTime && endTime) {
-        return `${startTime} - ${endTime}`;
-    }
-
+    if (startTime && endTime) return `${startTime} - ${endTime}`;
     return startTime || endTime || "Time TBA";
 };
 
 export default function GlobalEvents({ events = [] }) {
-    const featuredEvent = events[0];
-    const supportingEvents = events.slice(1, 3);
+    const mainEvent = events[0] || null;
+    const listEvents = events.slice(1);
     const hasEvents = events.length > 0;
 
     return (
-        <section className="bg-[#f8fafc] py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+        <section className="bg-gray-50 py-16">
             <div className="max-w-7xl mx-auto px-6">
-                <div
-                    className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6 mb-12"
-                    data-aos="fade-up"
+
+                {/* Header */}
+                <motion.div
+                    variants={fadeLeft}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="mb-10"
                 >
-                    <div className="max-w-3xl">
-                        <div className="relative inline-flex items-center mb-3">
-                            <motion.span
-                                initial={{ width: 0 }}
-                                whileInView={{ width: 64 }}
-                                transition={{ duration: 0.5, ease: "easeOut" }}
-                                viewport={{ once: true }}
-                                className="absolute left-0 top-1/2 h-px bg-emerald-500"
-                            />
-                            <span className="text-sm tracking-widest text-slate-500 pl-20 uppercase">
-                                Events & Summits
-                            </span>
-                        </div>
-
-                        <h2 className="text-3xl xl:text-5xl font-bold text-slate-950 mb-5">
-                            Join the conversations shaping GRC and financial crime prevention
-                        </h2>
-                        <p className="text-slate-600 leading-relaxed max-w-2xl">
-                            Connect with regulators, practitioners, and institutional leaders through
-                            IGRCFP conferences, workshops, forums, and specialist sessions.
-                        </p>
+                    <div className="relative inline-flex items-center mb-3">
+                        <motion.span
+                            initial={{ width: 0 }}
+                            whileInView={{ width: 48 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            className="absolute left-0 top-1/2 h-px bg-[#0A2463]"
+                        />
+                        <span className="text-sm tracking-widest text-gray-500 pl-14 uppercase">
+                            Latest News & Insights
+                        </span>
                     </div>
-
-                    <Link
-                        href="/events"
-                        className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-slate-950 text-white rounded-full font-semibold hover:bg-emerald-700 transition w-fit shadow-sm"
-                    >
-                        View all events
-                        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                        UPCOMING <span className="text-[#0A2463]">EVENTS</span>
+                    </h2>
+                </motion.div>
 
                 {hasEvents ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                        <motion.article
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        {/* Left: Main Featured Event */}
+                        <motion.div
                             variants={scaleIn}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="lg:col-span-7 group bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300"
+                            className="bg-white border border-gray-200 rounded-lg p-6 relative overflow-hidden"
                         >
-                            <div className="relative min-h-[560px]">
-                                <img
-                                    src={getEventImage(featuredEvent)}
-                                    alt={featuredEvent.title}
-                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    onError={(event) => {
-                                        event.currentTarget.src = "/images/default-event.jpg";
-                                    }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
-                                <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 text-white">
-                                    <div className="flex flex-wrap items-center gap-2 mb-4">
-                                        {featuredEvent.is_featured && (
-                                            <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider ring-1 ring-white/25 backdrop-blur">
-                                                Featured
-                                            </span>
-                                        )}
-                                        <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ring-1 ${getStatusStyles(featuredEvent.registration_status)}`}>
-                                            {getStatusLabel(featuredEvent.registration_status)}
-                                        </span>
-                                    </div>
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#0A2463]"></div>
 
-                                    <h3 className="text-2xl md:text-4xl font-bold leading-tight mb-4 line-clamp-3">
-                                        <Link href={`/events/${featuredEvent.slug}`} className="hover:text-emerald-200 transition">
-                                            {featuredEvent.title}
-                                        </Link>
-                                    </h3>
-
-                                    <p className="text-slate-200 leading-relaxed max-w-2xl mb-6 line-clamp-3">
-                                        {featuredEvent.short_description}
+                            <div className="pl-2">
+                                {/* Simple text indicator only */}
+                                {mainEvent && isEventPast(mainEvent) && (
+                                    <p className="text-sm text-gray-500 mb-2 font-normal">
+                                        • This event has ended
                                     </p>
+                                )}
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-100">
-                                        <div className="flex items-center gap-2">
-                                            <CalendarDays className="h-4 w-4 text-emerald-300" aria-hidden="true" />
-                                            <span>{featuredEvent.event_date || "Date TBA"}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Clock3 className="h-4 w-4 text-emerald-300" aria-hidden="true" />
-                                            <span>{getEventTime(featuredEvent)}</span>(UK Time)
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="h-4 w-4 text-emerald-300" aria-hidden="true" />
-                                            <span className="truncate">{featuredEvent.venue || featuredEvent.location || "Venue TBA"}</span>
-                                        </div>
-                                    </div>
+                                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                                    <CalendarDays className="w-4 h-4 text-gray-500" />
+                                    <span>{mainEvent?.event_date || "Date TBA"}</span>
                                 </div>
-                            </div>
-                        </motion.article>
 
+                                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                                    <Link href={`/events/${mainEvent?.slug || "#"}`} className="hover:text-[#0A2463] transition-colors">
+                                        {mainEvent?.title || "Event Title"}
+                                    </Link>
+                                </h3>
+
+                                <div className="flex items-center gap-2 text-sm text-gray-600 mb-5">
+                                    <MapPin className="w-4 h-4 text-gray-500" />
+                                    <span>{mainEvent?.venue || mainEvent?.location || "Location TBA"}</span>
+                                </div>
+
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {["Keynotes", "Workshops", "Awards", "Networking"].map((tag) => (
+                                        <span key={tag} className="px-3 py-1 text-xs border border-gray-200 rounded text-gray-600">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <Link
+                                    href={mainEvent?.meeting_link || "#"}
+                                    className="inline-block bg-[#0A2463] text-white px-5 py-2 text-sm font-medium rounded hover:bg-[#081E52] transition-colors"
+                                >
+                                    Register Interest {mainEvent?.meeting_link ? "→" : ""}
+                                </Link>
+                            </div>
+                        </motion.div>
+
+                        {/* Right: List of Smaller Events */}
                         <motion.div
                             variants={fadeLeft}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="lg:col-span-5 flex flex-col gap-4"
+                            className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200"
                         >
-                            {supportingEvents.map((event) => (
-                                <article
-                                    key={event.id}
-                                    className="group bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:border-emerald-200 hover:shadow-lg transition"
-                                >
-                                    <div className="flex gap-4">
-                                        <img
-                                            src={getEventImage(event)}
-                                            alt={event.title}
-                                            className="h-28 w-28 sm:h-32 sm:w-36 rounded-md object-cover bg-slate-100 flex-shrink-0"
-                                            onError={(imageEvent) => {
-                                                imageEvent.currentTarget.src = "/images/default-event.jpg";
-                                            }}
-                                        />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex flex-wrap gap-2 mb-3">
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${getStatusStyles(event.registration_status)}`}>
-                                                    {getStatusLabel(event.registration_status)}
-                                                </span>
-                                            </div>
-
-                                            <h3 className="text-lg font-bold text-slate-950 leading-snug mb-2 line-clamp-2 group-hover:text-emerald-700 transition">
-                                                <Link href={`/events/${event.slug}`}>
-                                                    {event.title}
-                                                </Link>
-                                            </h3>
-
-                                            <div className="space-y-2 text-sm text-slate-600">
-                                                <div className="flex items-center gap-2">
-                                                    <CalendarDays className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                                                    <span>{event.event_date || "Date TBA"}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <MapPin className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                                                    <span className="truncate">{event.venue || event.location || "Venue TBA"}</span>
-                                                </div>
-                                            </div>
+                            {listEvents.length > 0 ? (
+                                listEvents.map((event, index) => (
+                                    <Link
+                                        key={event.id || index}
+                                        href={`/events/${event.slug || "#"}`}
+                                        className="block p-4 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="text-xs text-gray-500 mb-1">
+                                            {event.event_date || "Date TBA"} • {event.location || "Location TBA"}
+                                            {/* Simple text indicator only */}
+                                            {isEventPast(event) && <span className="ml-2 text-gray-400">(Ended)</span>}
                                         </div>
-                                    </div>
-                                </article>
-                            ))}
-
-                            {/* <div className="bg-slate-950 rounded-lg p-6 text-white mt-auto">
-                                <p className="text-sm uppercase tracking-widest text-emerald-300 mb-2">Event formats</p>
-                                <p className="text-lg font-semibold mb-4">
-                                    Summits, awards, women in GRC forums, practical workshops, webinars, and specialist speaker sessions.
-                                </p>
-                                <Link href="/events" className="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-emerald-200 transition">
-                                    Browse the full calendar
-                                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                </Link>
-                            </div> */}
+                                        <h4 className="text-sm md:text-base font-medium text-gray-900 hover:text-[#0A2463] transition-colors">
+                                            {event.title}
+                                        </h4>
+                                    </Link>
+                                ))
+                            ) : (
+                                <div className="p-6 text-center text-gray-500">
+                                    More events coming soon
+                                </div>
+                            )}
                         </motion.div>
+
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center bg-white border border-slate-200 rounded-lg p-6 md:p-8 shadow-sm">
-                        <motion.div
-                            variants={scaleIn}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="overflow-hidden rounded-lg"
+                    <div className="bg-white border border-gray-200 rounded-lg p-10 text-center">
+                        <h3 className="text-xl font-semibold text-gray-800 mb-2">No Upcoming Events</h3>
+                        <p className="text-gray-600 mb-4">Check back soon for new summits, webinars and workshops.</p>
+                        <Link
+                            href="/events"
+                            className="inline-block bg-[#0A2463] text-white px-5 py-2 rounded hover:bg-[#081E52] transition"
                         >
-                            <img
-                                src="assets/images/home-three/gallery/events-image.png"
-                                alt="Global Events & Summits"
-                                className="w-full h-full min-h-[320px] object-cover"
-                            />
-                        </motion.div>
-
-                        <motion.div
-                            variants={fadeLeft}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="flex flex-col"
-                        >
-                            <h3 className="text-2xl font-bold text-slate-950 mb-4">
-                                New events are being prepared
-                            </h3>
-                            <p className="text-slate-600 mb-6 leading-relaxed">
-                                Our event calendar is updated as programmes are confirmed. Expect global summits,
-                                focused workshops, women in GRC and FCC forums, awards, webinars, and speaker sessions.
-                            </p>
-                            <Link
-                                href="/events"
-                                className="inline-flex items-center gap-2 px-5 py-3 bg-slate-950 text-white rounded-lg font-semibold hover:bg-emerald-700 transition w-fit"
-                            >
-                                View events calendar
-                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                            </Link>
-                        </motion.div>
+                            View Event Calendar
+                        </Link>
                     </div>
                 )}
+
             </div>
         </section>
     );

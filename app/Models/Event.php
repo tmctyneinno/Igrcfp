@@ -34,6 +34,7 @@ class Event extends Model
         'user_id',
         'registration_status',
         'chapter_id',
+        'meeting_link'
     ];
 
     protected $casts = [

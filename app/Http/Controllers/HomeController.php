@@ -98,8 +98,8 @@ class HomeController extends Controller
         $homepageEvents = Event::where('status', 'published')
             ->orderByDesc('is_featured')
             ->orderByRaw('CASE WHEN start_date >= ? THEN 0 ELSE 1 END', [now()->toDateString()])
-            ->orderBy('start_date')
-            ->take(3)
+            ->orderBy('start_date', 'desc') 
+            ->take(5)
             ->get()
             ->map(function ($event) {
                 return [
@@ -120,6 +120,7 @@ class HomeController extends Controller
                     'capacity' => $event->capacity,
                     'available_seats' => $event->available_seats,
                     'registration_status' => $event->registration_status,
+                    'meeting_link' => $event->meeting_link,
                     'is_featured' => $event->is_featured,
                 ];
             });

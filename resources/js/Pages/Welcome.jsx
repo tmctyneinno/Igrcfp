@@ -10,6 +10,8 @@ import BecomeMember from "@/Pages/components/BecomeMember";
 import Testimonials from "@/Pages/components/Testimonials";
 import FAQSection from "@/Pages/components/FAQSection";
 import WhoAreWe from "@/Pages/components/WhoAreWe";
+import CallToAction from "@/Pages/components/CallToAction";
+import MembershipPathways from "@/Pages/components/MembershipPathways";
 import Articles from "@/Pages/components/Articles";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
@@ -73,7 +75,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
             <Head title="IGRCFP - Professional Learning Platform" />
             
             {/* Hero Section with AOS effects */}
-            <SplitHeroSlider auth={auth} />
+            <SplitHeroSlider auth={auth} /> 
             
 
             {/* Scholarship Banner - Add this right after the hero */}
@@ -98,15 +100,12 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
             </section> */}
 
           
- 
-            <section className="bg-white py-24 overflow-hidden">
-               <WhoAreWe auth={auth} />
-            </section>
+            <WhoAreWe auth={auth} />
 
-            
-            <WhatWeOffer auth={auth} />
+            <MembershipPathways />
+             
+            {/* <WhatWeOffer auth={auth} /> */}
 
-            {/* Course Catalogue Preview Section */}
             <CourseCatalogue courseCategories={courseCategories}/>
  
             <Certification courses={courses} />
@@ -116,43 +115,21 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
            
             <GlobalEvents events={homepageEvents} />
   
-            <BecomeMember /> 
+            {/* <BecomeMember />   */}
+            {/* <MembershipOptions /> */}
 
-            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <MembershipOptions />
-                <JoinIGRCFP />
-            </section>
 
-            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
-                <FAQSection />
-            </section>
+            <JoinIGRCFP />
 
-            <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
+            <FAQSection />
+
+            {/* <section className="bg-white py-0 overflow-hidden" data-aos="zoom-in" data-aos-duration="1200">
                 <Testimonials />
-            </section>
+            </section> */}
 
             {/* CTA Section with AOS zoom effect */}
-            <section 
-                className="py-20 bg-gradient-to-r from-blue-950 to-blue-900"
-                data-aos="zoom-in"
-                data-aos-duration="1400"
-            >
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
-                    <p className="text-blue-100 mb-8 text-lg">
-                        Join thousands of successful learners who have transformed their careers with our platform.
-                    </p>
-                    <Link
-                        href={auth.user ? route('dashboard.index') : route('register')}
-                        className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
-                        data-aos="fade-up"
-                        data-aos-delay="300"
-                        data-aos-duration="1400"
-                    >
-                        {auth.user ? 'Continue Learning' : 'Get Started for Free'}
-                    </Link>
-                </div>
-            </section>
+            <CallToAction />
+
             <PartnersSlider />
         </GuestLayout>
     );

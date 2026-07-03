@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { fadeLeft, scaleIn } from '@/utils/motionPresets';
 
-export default function Certification({ courses }) { // Remove default value from parameter
-
+export default function Certification({ courses }) {
     // Safe courses initialization
     const coursesData = Array.isArray(courses) ? courses : []; 
   
@@ -11,7 +11,7 @@ export default function Certification({ courses }) { // Remove default value fro
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
         const numPrice = parseFloat(price); 
-        return isNaN(numPrice) ? null : `£${numPrice.toFixed(2)}`;
+        return isNaN(numPrice) ? null : `$${numPrice.toFixed(2)}`;
     }; 
 
     // Check if course has discount
@@ -27,47 +27,54 @@ export default function Certification({ courses }) { // Remove default value fro
         if (!text) return 'No description available';
         
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
-        return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
+        return cleanText.length > 90 ? cleanText.substring(0, 90) + '...' : cleanText;
     };
 
     return (
-         <section className="bg-gray-50 py-24 overflow-hidden" data-aos="zoom-in" data-aos-duration="1000">
+         <section className="bg-gray-50 py-16 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-12">
+                <motion.div 
+                    variants={fadeLeft}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="flex flex-col md:flex-row md:justify-between md:items-center mb-10"
+                >
                     <div>
                         <div className="relative inline-flex items-center mb-3">
                             <motion.span
                                 initial={{ width: 0 }}
-                                whileInView={{ width: 64 }}
+                                whileInView={{ width: 48 }}
                                 transition={{ duration: 0.5, ease: "easeOut" }}
                                 viewport={{ once: true }}
-                                className="absolute left-0 top-1/2 h-px bg-gray-300"
+                                className="absolute left-0 top-1/2 h-px bg-gray-400"
                             />
-                            <span className="text-sm tracking-widest text-gray-400 pl-20 uppercase">
+                            <span className="text-sm tracking-widest text-gray-500 pl-14 uppercase">
                                 Certifications & Trainings
                             </span>
                         </div>
-                        <h2 className="text-3xl font-bold text-gray-900 mt-2">
-                            Our Programmes
-                        </h2> 
-                        <p className="text-gray-600 mt-3 max-w-2xl">
-                            Our professional certifications are designed to equip individuals
-                            and institutions with globally relevant skills to tackle financial
-                            crime and compliance risks.
-                        </p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                            OUR <span className="text-[#0A2463]">PROGRAMMES</span>
+                        </h2>
                     </div>
 
                     <Link
                         href={route('igrcfp.certificates.index')}
-                        className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition"
+                        className="mt-6 md:mt-0 bg-[#0A2463] text-white px-5 py-2 rounded-full text-sm font-medium shadow hover:bg-[#081E52] transition-all duration-200"
                     >
-                        View All Courses →
+                        View all courses
                     </Link>
-                </div>
+                </motion.div>
 
-                {/* COURSES */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* COURSES GRID */}
+                <motion.div
+                    variants={scaleIn}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+                >
                     {coursesData.length > 0 ? (
                         coursesData.map((course, index) => { 
                             const price = parseFloat(course?.price || 0);
@@ -78,145 +85,94 @@ export default function Certification({ courses }) { // Remove default value fro
                                 : 0;
 
                             return (
-                                <div 
+                                <motion.div 
                                     key={course?.id || index}
-                                    className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
-                                    data-aos="fade-up"
-                                    data-aos-delay={index * 150}
+                                    variants={scaleIn}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="relative rounded-3xl overflow-hidden h-[420px] group"
                                 > 
-                                    {/* IMAGE */}
-                                    <div className="h-48 overflow-hidden">
+                                    {/* Background Image + Overlay */}
+                                    <div className="absolute inset-0 w-full h-full">
                                         <img
                                             src={course?.image_url || '/images/fallback-course.jpg'}
                                             alt={course?.title || 'Course image'}
-                                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110 cursor-zoom-in"
+                                            className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 e.target.src = '/images/fallback-course.jpg';
                                             }}
                                         />
+                                        <div className="absolute inset-0 bg-black/55"></div>
                                     </div>
 
-                                    {/* CONTENT */}
-                                    <div className="p-2">
-                                        <Link href={`/courses/${course?.slug || '#'}`}>
-                                            <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition">
-                                                {course?.title || 'Untitled Course'}
-                                            </h4>
-                                        </Link> 
+                                    {/* Content */}
+                                    <div className="relative z-10 h-full flex flex-col justify-end p-3 text-white">
+                                        <h3 className="text-lg font-bold leading-tight mb-2">
+                                            {course?.title || 'Untitled Course'}
+                                        </h3>
                                         
-                                        <p className="text-gray-600 text-sm mb-1">
+                                        <p className="text-sm text-gray-100 mb-4 leading-relaxed">
                                             {getCleanDescription(course)}
                                         </p>
 
-                                        {/* COURSE METADATA */}
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs font-semibold px-3 capitalize py-1 bg-blue-100 text-blue-800 rounded-full">
-                                                {course?.level || 'All Levels'}
+                                        {/* Level & Duration */}
+                                        <div className="flex items-center justify-between mb-5 text-xs">
+                                            <span className="bg-white/20 px-2.5 py-0.5 rounded-sm">
+                                                {course?.level || 'Advanced'}
                                             </span>
-                                            
-                                            <div className="flex items-center space-x-3">
-                                                {course?.duration && (
-                                                    <span className="text-sm text-gray-500">
-                                                        ⏱️ {course.duration}
-                                                    </span>
-                                                )}
-                                                {course?.modules_count > 0 && (
-                                                    <span className="text-sm text-gray-500">
-                                                        📚 {course.modules_count} modules
-                                                    </span>
+                                            <span className="flex items-center gap-1">
+                                                <span>ⓘ</span> {course?.duration || '4 - 6 Months'}
+                                            </span>
+                                        </div>
+
+                                        {/* Price & Button */}
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                {price > 0 ? (
+                                                    hasDisc ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xl font-semibold">
+                                                                {formatPrice(discountPrice)}
+                                                            </span>
+                                                            <span className="text-sm text-gray-300 line-through">
+                                                                {formatPrice(price)}
+                                                            </span>
+                                                            <span className="text-xs text-red-300">-{discountPercentage}%</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xl font-semibold">
+                                                            {formatPrice(price)}
+                                                        </span>
+                                                    )
+                                                ) : (
+                                                    <span className="text-xl font-semibold text-green-300">FREE</span>
                                                 )}
                                             </div>
-                                        </div>
 
-                                        {/* PRICE SECTION */}
-                                        <div className="flex items-center justify-between pt-1 border-t">
-                                            
-                                            {price > 0 ? (
-                                                <div className="text-right">
-                                                    {hasDisc ? (
-                                                        <>
-                                                            <span className="text-lg font-bold text-gray-900">
-                                                                £{discountPrice.toFixed(0)}
-                                                            </span>
-                                                            <span className="text-sm text-gray-500 line-through ml-2">
-                                                                £{price.toFixed(0)}
-                                                            </span>
-                                                            <span className="text-xs font-semibold text-red-600 ml-2">
-                                                                -{discountPercentage}%
-                                                            </span>
-                                                        </>
-                                                    ) : (
-                                                        <span className="text-lg font-bold text-gray-900">
-                                                            £{price.toFixed(2)}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-lg font-bold text-green-600">
-                                                    FREE
-                                                </span>
-                                            )}
-                                            
-                                            {/* ENROLL BUTTON */}
                                             <Link
-                                                href={route('courses.enroll', course.slug)}
-                                                className="inline-flex items-center px-3 py-1.5 bg-blue-900 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+                                                href={route('courses.enroll', course.slug || '#')}
+                                                className="bg-white/90 text-gray-900 px-4 py-1.5 rounded text-sm font-medium hover:bg-white transition-colors"
                                             >
-                                                Enroll Now
-                                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                                </svg>
+                                                Enrol now
                                             </Link>
                                         </div>
-
-                                        {/* BADGES */}
-                                        <div className="mt-1 flex flex-wrap gap-2">
-                                            {/* {course?.is_featured && (
-                                                <span className="text-xs font-semibold px-2 py-1 bg-yellow-100 text-yellow-800 rounded">
-                                                    ⭐ Featured
-                                                </span>
-                                            )}
-                                            {course?.is_popular && (
-                                                <span className="text-xs font-semibold px-2 py-1 bg-green-100 text-green-800 rounded">
-                                                    🔥 Popular
-                                                </span>
-                                            )}
-                                            {course?.format && (
-                                                <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-800 rounded">
-                                                    {course.format}
-                                                </span>
-                                            )} */}
-                                        </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             );
                         })
                     ) : (
-                        <div className="col-span-3 text-center py-12">
+                        <div className="col-span-4 text-center py-16">
                             <p className="text-gray-500 text-lg mb-4">
                                 No courses available at the moment.
                             </p>
                             <Link
                                 href={route('igrcfp.certificates.index')}
-                                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                className="inline-flex items-center px-5 py-2 bg-[#0A2463] text-white rounded-lg hover:bg-[#081E52] transition"
                             >
                                 Browse All Courses
                             </Link>
                         </div>
                     )}
-                </div>
-    
-                {/* VIEW ALL BUTTON */}
-                {coursesData.length > 0 && (
-                    <div className="text-center mt-12">
-                        <Link 
-                            href={route('igrcfp.certificates.index')}
-                            className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
-                        >
-                            View All Courses →
-                        </Link>
-                    </div>
-                )}
+                </motion.div>
             </div>
         </section>
     );
