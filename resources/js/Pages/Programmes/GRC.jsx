@@ -1,6 +1,8 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function GRCPathway({auth}) {
     const courses = [
@@ -78,24 +80,11 @@ export default function GRCPathway({auth}) {
             <Head title="GRC Pathway | IGRCFP Programmes" />
             
             {/* Hero Section */}
-            <div className="relative bg-gradient-to-r from-blue-900 to-blue-800 py-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-6">
-                            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Governance, Risk & Compliance (GRC)
-                        </h1>
-                        <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-                            Designed for professionals responsible for organisational oversight, risk management, and regulatory compliance
-                        </p>
-                    </div>
-                </div>
-            </div>
-
+            <HeroSection 
+                title = "Governance, Risk & Compliance (GRC)"
+                description= "Designed for professionals responsible for organisational oversight, risk management, and regulatory compliance"
+            />
+           
             {/* Overview Section */}
             <div className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -273,6 +262,7 @@ export default function GRCPathway({auth}) {
                     </div>
                 </div>
             </div>
+            <CallToAction />
         </GuestLayout>
         </>
     );

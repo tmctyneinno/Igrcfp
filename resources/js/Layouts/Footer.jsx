@@ -39,32 +39,32 @@ function Footer() {
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/programmes/grc-foundations" className="hover:text-white transition-colors">
+                                <Link href={ route('programmes.grc')} className="hover:text-white transition-colors">
                                     GRC Foundations
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/programmes/financial-crime-prevention" className="hover:text-white transition-colors">
+                                <Link href={ route('programmes.financial-crime')} className="hover:text-white transition-colors">
                                     Financial Crime Prevention
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/programmes/it-grc-cyber" className="hover:text-white transition-colors">
+                                <Link href={ route('programmes.cybersecurity')} className="hover:text-white transition-colors">
                                     IT GRC & Cyber
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/programmes/esg-sustainable-finance" className="hover:text-white transition-colors">
-                                    ESG & Sustainable Finance
+                                <Link href={ route('programmes.crypto')} className="hover:text-white transition-colors">
+                                    Crypto, Digital Assets 
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/programmes/ai-driven-compliance" className="hover:text-white transition-colors">
+                                <Link href={ route('programmes.ai')} className="hover:text-white transition-colors">
                                     AI-Driven Compliance
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/programmes" className="hover:text-white transition-colors font-medium">
+                                <Link href={route('programmes')} className="hover:text-white transition-colors font-medium">
                                     All Programmes
                                 </Link>
                             </li>
@@ -78,12 +78,12 @@ function Footer() {
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/about-igrcfp" className="hover:text-white transition-colors">
+                                <Link href={route('welcome-to-igrcfp')} className="hover:text-white transition-colors">
                                     About IGRCFP
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/membership" className="hover:text-white transition-colors">
+                                <Link href={route('membership')}  className="hover:text-white transition-colors">
                                     Membership
                                 </Link>
                             </li>
@@ -93,17 +93,17 @@ function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="hover:text-white transition-colors">
+                                <Link href={route('course-equivalency.index')} className="hover:text-white transition-colors">
                                     Academic Partnerships
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="hover:text-white transition-colors">
+                                <Link href={route('qualifications.pack')} className="hover:text-white transition-colors">
                                     Corporate Partnerships
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/contact" className="hover:text-white transition-colors">
+                                <Link href={route('contact')} className="hover:text-white transition-colors">
                                     Contact
                                 </Link>
                             </li>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { motion } from "framer-motion";
+import { fadeIn } from "@/utils/motionPresets";
 import { 
     AcademicCapIcon,
     ArrowsUpDownIcon,
@@ -213,36 +215,19 @@ export default function CourseEquivalency({ auth }) {
             <Head title="Course Equivalency & Academic Progression | IGRCFP" />
             
             {/* Hero Section */}
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-24 lg:py-28">
+            <section className="w-full bg-[#0A1A2F] pt-24 pb-10  lg:pt-28 lg:pb-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div>
-                            <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">
-                                <GlobeAltIcon className="w-4 h-4 mr-2" />
-                                Global Academic Alignment
-                            </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-gray-900">
+                            
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
                                 Course Equivalency & Academic Progression
                             </h1>
-                            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                            <p className="text-xl text-white-600 mb-8 leading-relaxed">
                                 Understanding how IGRCFP qualifications align with international higher education 
                                 frameworks, credit systems, and professional standards worldwide.
                             </p>
-                            <div className="flex flex-wrap gap-4">
-                                <Link
-                                    href="#mapping-table"
-                                    className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-xl hover:bg-blue-800 transition shadow-lg hover:shadow-xl"
-                                >
-                                    View Mapping
-                                    <ArrowRightIcon className="w-5 h-5 ml-2" />
-                                </Link>
-                                <a
-                                    href="#entry-pathways"
-                                    className="inline-flex items-center px-6 py-3 border-2 border-blue-900 text-blue-900 font-semibold rounded-xl hover:bg-blue-50 transition"
-                                >
-                                    Entry Pathways
-                                </a>
-                            </div>
+                            
                         </div>
                         <div className="hidden lg:block">
                             <div className="bg-white rounded-2xl p-8 border border-blue-100 shadow-xl">
@@ -267,7 +252,31 @@ export default function CourseEquivalency({ auth }) {
                                 </div>
                             </div>
                         </div>
+                        {/* Bottom Tagline Bar */}
+        
                     </div>
+                    <motion.div
+                        variants={fadeIn}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="mt-12 pt-4 border-t border-gray-700 flex flex-wrap gap-x-2 gap-y-2 text-xs uppercase tracking-wider text-gray-300"
+                        >
+                        <span>Terrorism Financing</span>
+                        <span>•</span>
+                        <span>KYC & CDD</span>
+                        <span>•</span>
+                        <span>Sanctions Compliance</span>
+                        <span>•</span>
+                        <span>Enterprise Risk Management</span>
+                        <span>•</span>
+                        <span>Regulatory Frameworks</span>
+                        <span>•</span>
+                        <span>ESG Sustainable Finance</span>
+                        <span>•</span>
+                        <span>AI in Compliance</span>
+                    </motion.div>
                 </div>
             </section>
 

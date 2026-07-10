@@ -210,7 +210,7 @@ function NavBar({ auth }) {
                                         <div className="bg-gray-50 px-6 lg:px-8 py-4 border-t border-gray-200">
                                             <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
                                                 <p className="text-xs text-gray-500">Internationally aligned qualifications • University credit recognition</p>
-                                                <div className="flex gap-3">
+                                                <div className="flex gap-3"> 
                                                     <Link href={route('certificate.verify.public.index')} onClick={() => setOpenMegaMenu(false)} className="text-sm font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100">Verify Certificate</Link>
                                                     <Link href={route('programmes')} onClick={() => setOpenMegaMenu(false)} className="text-sm font-medium text-blue-900 hover:text-blue-700">Browse all programmes →</Link>
                                                 </div>

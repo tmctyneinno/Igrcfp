@@ -99,7 +99,7 @@ Route::get('/igrcfp-certified-grc-financial-crime-specialist', [HomeController::
     ->name('igrcfp.certified-grc-financial-crime-specialist.index');
 Route::get('/igrcfp-postgraduate-diploma', [HomeController::class, 'showIgrcfpProgramme'])
     ->defaults('programme', 'postgraduate-diploma')
-    ->name('igrcfp.postgraduate-diploma.index');
+    ->name('igrcfp.postgraduate-diploma.index'); 
 Route::get('/igrcfp-fellowship', [HomeController::class, 'showIgrcfpProgramme'])
     ->defaults('programme', 'fellowship')
     ->name('igrcfp.fellowship.index');

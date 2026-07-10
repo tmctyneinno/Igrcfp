@@ -157,7 +157,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                     ) : isCourseInCart ? (
                         <Link
                             href={route('dashboard.cart.index')}
-                            className="px-5 py-2.5 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition"
+                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition"
                         >
                             View Cart
                         </Link>
@@ -165,7 +165,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <button
                             onClick={handleAddToCartClick}
                             disabled={isAdding}
-                            className="px-1 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isAdding ? (
                                 <span className="flex items-center gap-1.5">

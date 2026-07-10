@@ -1,4 +1,6 @@
 import { Head } from '@inertiajs/react';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 import React, { useState } from 'react';
 
 export default function AllCourses() {
@@ -332,18 +334,10 @@ export default function AllCourses() {
             <Head title="All Courses | IGRCFP Programmes" />
             
             {/* Hero Section */}
-            <div className="relative bg-gradient-to-r from-blue-900 to-blue-800 py-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                            Complete Course Catalog
-                        </h1>
-                        <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-                            Browse our comprehensive collection of professional programmes in risk, regulation, and technology
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <HeroSection 
+                title = " Complete Course Catalog"
+                description= " Browse our comprehensive collection of professional programmes in risk, regulation, and technology"
+            />
 
             {/* Search and Filter Section */}
             <div className="py-8 bg-white border-b border-gray-200">
@@ -514,6 +508,7 @@ export default function AllCourses() {
                     </div>
                 </div>
             </div>
+            <CallToAction />
         </>
     );
 }

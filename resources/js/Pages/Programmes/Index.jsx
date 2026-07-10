@@ -1,6 +1,8 @@
 import { Head, Link } from "@inertiajs/react";
 import React from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function ProgrammesIndex({auth}) {
     return (
@@ -8,22 +10,11 @@ export default function ProgrammesIndex({auth}) {
         <GuestLayout auth={auth}>
             <Head title="Programmes & Courses | IGRCFP" />
             {/* Hero Section - Slimmer */}
-            <section className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200 to-indigo-50 py-12 md:py-20">
-                <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
-                            Programmes and Courses
-                       </div>
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-                            Professional Education for Modern Risk, Regulation & Technology
-                        </h1> 
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                             Advanced programmes designed for today's complex regulatory, digital, and financial crime landscape.
-                       </p>
-                    </div>
-                </div>
-            </section>
+            <HeroSection 
+                title = "Professional Education for Modern Risk, Regulation & Technology"
+                description= "Advanced programmes designed for today's complex regulatory, digital, and financial crime landscape."
+            />
+            
             
             {/* Intersection Section */}
             <div className="bg-gray-50 py-16">
@@ -282,22 +273,7 @@ export default function ProgrammesIndex({auth}) {
             </div>
 
             {/* CTA Section */}
-            <div className="bg-blue-900 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Advance Your Career?</h2>
-                    <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-                        Join professionals from leading organizations who trust IGRCFP for their professional development
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href={route('igrcfp.certificates.index')} className="bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-300">
-                            View All Courses
-                        </a> 
-                        <a href="/contact" className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition duration-300">
-                            Contact Admissions
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <CallToAction />
         </GuestLayout>
         </>
     );
