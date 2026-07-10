@@ -82,9 +82,9 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
             <div className="px-6 pt-5 pb-6 flex-1 flex flex-col">
                 {/* Title */}
                 <Link href={route('dashboard.courses.show', course?.slug)}>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2 font-serif leading-snug hover:text-[#0A2463] transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif leading-snug hover:text-[#0A2463] transition-colors">
                         {course?.title || 'Untitled Course'}
-                    </h4>
+                    </h3>
                 </Link>
 
                 {/* Description */}
