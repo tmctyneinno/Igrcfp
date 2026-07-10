@@ -90,7 +90,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
             <div className="px-3 pt-3 pb-3 flex-1 flex flex-col">
                 {/* Title */}
                 <Link href={route('dashboard.courses.show', course?.slug)}>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 font-serif leading-snug hover:text-[#0A2463] transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 leading-snug hover:text-[#0A2463] transition-colors">
                         {course?.title || 'Untitled Course'}
                     </h3>
                 </Link>
@@ -136,15 +136,15 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <div className="flex items-baseline gap-2">
                             {hasDisc ? (
                                 <>
-                                    <span className="text-2xl font-bold text-gray-900 font-serif">${formatPrice(discountPrice)}</span>
+                                    <span className="text-2xl font-bold text-gray-900 ">${formatPrice(discountPrice)}</span>
                                     <span className="text-sm text-gray-400 line-through">${formatPrice(price)}</span>
                                 </>
                             ) : (
-                                <span className="text-2xl font-bold text-gray-900 font-serif">${formatPrice(price)}</span>
+                                <span className="text-2xl font-bold text-gray-900 ">${formatPrice(price)}</span>
                             )}
                         </div>
                     ) : (
-                        <span className="text-2xl font-bold text-green-600 font-serif">FREE</span>
+                        <span className="text-2xl font-bold text-green-600">FREE</span>
                     )}
 
                     {enrolled ? (

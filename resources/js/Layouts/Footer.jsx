@@ -88,17 +88,17 @@ function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/council-governance" className="hover:text-white transition-colors">
+                                <Link href="#" className="hover:text-white transition-colors">
                                     Council & Governance
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/academic-partnerships" className="hover:text-white transition-colors">
+                                <Link href="#" className="hover:text-white transition-colors">
                                     Academic Partnerships
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/corporate-partnerships" className="hover:text-white transition-colors">
+                                <Link href="#" className="hover:text-white transition-colors">
                                     Corporate Partnerships
                                 </Link>
                             </li>
@@ -117,32 +117,32 @@ function Footer() {
                         </h4>
                         <ul className="space-y-2 text-sm">
                             <li>
-                                <Link href="/knowledge-hub" className="hover:text-white transition-colors">
-                                    Knowledge Hub
+                                <Link href={route('blog')} className="hover:text-white transition-colors">
+                                    Blog
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/research-papers" className="hover:text-white transition-colors">
+                                <Link href={route('research.index')} className="hover:text-white transition-colors">
                                     Research Papers
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/regulatory-updates" className="hover:text-white transition-colors">
-                                    Regulatory Updates
+                                <Link href={route('chapters.index')} className="hover:text-white transition-colors">
+                                    Regional Chapters
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/events-calendar" className="hover:text-white transition-colors">
-                                    Events Calendar
+                                <Link href={route('events.index')} className="hover:text-white transition-colors">
+                                    Events
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/grc-fincrime-today" className="hover:text-white transition-colors">
+                                <Link href="https://grcfincrimetoday.org/" className="hover:text-white transition-colors">
                                     GRC Fincrime Today
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/oysterechecks-platform" className="hover:text-white transition-colors">
+                                <Link href="https://oysterchecks.com/" className="hover:text-white transition-colors">
                                     Oysterechecks Platform
                                 </Link>
                             </li>
@@ -155,7 +155,7 @@ function Footer() {
                     <p>© {currentYear} Institute of GRC & Financial Crime Prevention. All rights reserved.</p>
                     <div className="mt-4 md:mt-0 text-right">
                         <p>85 Great Portland Street • London W1W 7LT • United Kingdom</p>
-                        <p>info@igrcfp.org • +44 (0)20 XXXX XXXX</p>
+                        <p>info@igrcfp.org • +44-2078560149</p>
                     </div>
                 </div>
             </div>
