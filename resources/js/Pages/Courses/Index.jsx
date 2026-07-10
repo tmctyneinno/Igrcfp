@@ -9,6 +9,8 @@ import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import GuestLayout from '@/Layouts/GuestLayout';
 import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
+
  
 export default function Courses({ auth, courses, filters, filterOptions, title, description, igrcfpCategory }) {
     const { url } = usePage(); 
@@ -418,6 +420,7 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
                     </div>
                 </section>
             </div>
+            <CallToAction />
         </GuestLayout>
     );
 }
