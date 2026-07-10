@@ -1,20 +1,18 @@
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
 
 export default function Pathway({ auth, title, description }) {
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
 
-            {/* Hero section */}
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        {description || 'Your path from foundational knowledge to senior leadership recognition'}
-                    </p>
-                </div>
-            </section> 
+            {/* Hero Section - Slimmer */}
+            <HeroSection 
+                title = {title}
+                description=  {description || 'Your path from foundational knowledge to senior leadership recognition'}
+            />
+
 
             {/* Main pathway diagram and explanation */}
             <section className="py-16 bg-white">

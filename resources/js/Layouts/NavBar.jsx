@@ -87,7 +87,7 @@ function NavBar({ auth }) {
                             <div className="absolute left-0 mt-1 w-56 bg-white rounded-lg shadow-lg py-2 border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <Link href={route('welcome-to-igrcfp')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Welcome to IGRCFP</Link>
                                 <Link href={route('our-structure')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Our Structure</Link>
-                                <Link href={route('why-igrcfp')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Why IGRCFP</Link>
+                                {/* <Link href={route('why-igrcfp')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Why IGRCFP</Link> */}
                             </div>
                         </div> 
 
@@ -344,7 +344,7 @@ function NavBar({ auth }) {
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">
                                     <Link href={route('welcome-to-igrcfp')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Welcome to IGRCFP</Link>
                                     <Link href={route('our-structure')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Our Structure</Link>
-                                    <Link href={route('why-igrcfp')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Why IGRCFP</Link>
+                                    {/* <Link href={route('why-igrcfp')} className="block px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Why IGRCFP</Link> */}
                                 </div>
                             )}
                         </div>

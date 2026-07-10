@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import ReCAPTCHA from 'react-google-recaptcha';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 import { 
     CheckCircleIcon, 
     ExclamationCircleIcon,
@@ -433,22 +435,11 @@ export default function Index({ auth, title }) {
             )}
             
             {/* Hero Banner */}
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                   <div className="text-center">
-                        <div className="inline-flex items-center bg-blue-100 px-3 py-1 justify-center space-x-2 mb-6 rounded-full">
-                            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span className="font-medium text-sm tracking-wider">{title}</span>
-                        </div>
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                            Let's Start a Conversation
-                        </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Your success is our priority. Connect with our expert team for personalized support, partnership opportunities, or any questions about our services.
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <HeroSection 
+                title = {title}
+                description= "Let's Start a Conversation"
+            />
+            
 
             {/* Main Content Section */}
             <section className="py-12 lg:py-16">
@@ -775,20 +766,7 @@ export default function Index({ auth, title }) {
             </section>
 
             {/* CTA Section */}
-            <section className="py-20 bg-gradient-to-r from-blue-950 to-blue-900">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
-                    <p className="text-blue-100 mb-8 text-lg">
-                        Join thousands of successful learners who have transformed their careers with our platform.
-                    </p>
-                    <Link
-                        href={auth.user ? route('dashboard') : route('register')}
-                        className="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition duration-300 shadow-lg transform hover:scale-105"
-                    >
-                        {auth.user ? 'Continue Learning' : 'Get Started for Free'}
-                    </Link>
-                </div>
-            </section>
+            <CallToAction />
 
             {/* Add CSS animations */}
             <style jsx>{`

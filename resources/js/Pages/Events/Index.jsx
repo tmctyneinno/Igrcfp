@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { format, parseISO } from 'date-fns';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function Events({ auth, title, description, events }) {
     // Handle paginated events data
@@ -11,7 +13,7 @@ export default function Events({ auth, title, description, events }) {
     const featuredCount = eventsData.filter(e => e.is_featured).length;
     const availableCount = eventsData.filter(e => e.registration_status === 'available').length;
     const totalCount = eventsData.length;
-
+ 
     // Helper function to get image URL for storage/app/public
     const getImageUrl = useCallback((imageUrl) => {
         if (!imageUrl) return '/images/default-event.jpg';
@@ -91,42 +93,30 @@ export default function Events({ auth, title, description, events }) {
     return (
         <GuestLayout auth={auth}> 
             <Head title={title} />
-            
+             
             {/* Hero Section - Slimmer */}
-            <section className="relative bg-gradient-to-r from-blue-200 via-white to-blue-200  py-12 md:py-20">
-                <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <div className="inline-flex items-center justify-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium mb-4">
-                            Upcoming Events
-                        </div>
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-                            {title}
-                        </h1> 
-                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                            {description || 'Join us for our upcoming professional development events, workshops, and seminars.'}
-                        </p>
-                    </div>
-                </div>
-            </section> 
+            <HeroSection 
+                title = {title}
+                description= " The Institute of Governance, Risk, Compliance & Financial Crime Prevention "
+            />
 
             {/* Events Section - Compact */}
             <section className="py-12 md:py-16 bg-white">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Stats Bar - Smaller */}
-                    <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                    <div className="mb-8  bg-[#0A1A2F] rounded-xl p-4 border border-blue-100">
                         <div className="grid grid-cols-3 gap-4">
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-blue-700">{featuredCount}</div>
-                                <div className="text-sm text-gray-600">Featured</div>
+                                <div className="text-2xl font-bold text-white">{featuredCount}</div>
+                                <div className="text-sm text-white">Featured</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-green-700">{availableCount}</div>
-                                <div className="text-sm text-gray-600">Available</div>
+                                <div className="text-2xl font-bold text-white">{availableCount}</div>
+                                <div className="text-sm text-white">Available</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-gray-700">{totalCount}</div>
-                                <div className="text-sm text-gray-600">Total</div>
+                                <div className="text-2xl font-bold text-white">{totalCount}</div>
+                                <div className="text-sm text-white">Total</div>
                             </div>
                         </div>
                     </div>
@@ -192,7 +182,7 @@ export default function Events({ auth, title, description, events }) {
                                                         </div>
 
                                                         {/* Title */}
-                                                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                                                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#0A1A2F] transition-colors line-clamp-2">
                                                             <Link href={route('events.show', event.slug)} className="hover:no-underline">
                                                                 {event.title}
                                                             </Link>
@@ -373,27 +363,7 @@ export default function Events({ auth, title, description, events }) {
             </section>
 
             {/* CTA Section - Compact */}
-            <section className="py-12 bg-gradient-to-r from-blue-50 to-indigo-50">
-                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                        Want Event Updates?
-                    </h2>
-                    <p className="text-gray-600 mb-6">
-                        Subscribe to our newsletter for the latest event announcements.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Link
-                            href={route('contact')}
-                            className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-blue-950 to-indigo-950 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow hover:shadow-md transform hover:-translate-y-0.5"
-                        >
-                            Contact Us
-                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <CallToAction />
         </GuestLayout>
     );
 }

@@ -1,12 +1,16 @@
 import React, { useMemo, useState } from "react";
 import { Head, Link } from '@inertiajs/react';
+import { motion } from "framer-motion";
+import { fadeIn } from "@/utils/motionPresets";
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export default function Blog({ auth, title, description, blogs }) {
     const [searchTerm, setSearchTerm] = useState('');
     const blogItems = blogs?.data || [];
-
+ 
     const filteredBlogs = useMemo(() => {
         const term = searchTerm.trim().toLowerCase();
 
@@ -21,27 +25,19 @@ export default function Blog({ auth, title, description, blogs }) {
         });
     }, [blogItems, searchTerm]);
 
-    const featuredBlogs = filteredBlogs.slice(0, 3);
-    const latestBlogs = filteredBlogs.slice(3);
+    const featuredBlogs = filteredBlogs.slice(0, 4);
+    const latestBlogs = filteredBlogs.slice(4);
 
     return (
         <GuestLayout auth={auth}>
             <Head title={title} />
             
-            <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-20 md:py-28 border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-4xl mx-auto">
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            {title}
-                        </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                            {description}
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <HeroSection 
+                title = {title}
+                description= "The Institute of Governance , Risk, Compliance & Financial Crime Prevention"
+            />
 
-            <section className="bg-white py-10">
+            <section className="bg-white py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="max-w-lg mx-auto">
                         <div className="relative">
@@ -58,10 +54,23 @@ export default function Blog({ auth, title, description, blogs }) {
                 </div>
             </section>
 
+
             {featuredBlogs.length > 0 && (
-                <section className="bg-white py-12">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-3xl font-semibold text-gray-900 text-center mb-8">Featured Insights</h2>
+                <section className="bg-white py-10">
+                    <div className="max-w-7xl  px-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center gap-4 mb-4">
+                            <motion.span
+                                initial={{ width: 0 }}
+                                whileInView={{ width: 48 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="h-px bg-[#0A1A2F]"
+                            />
+                            <span className="text-sm tracking-widest text-[#0A1A2F] uppercase">
+                                Blog
+                            </span>
+                        </div>
+                        <h1 className="text-3xl font-semibold text-[#0A1A2F] text-left mb-8 uppercase">Featured</h1>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             {featuredBlogs.map((blog) => (
                                 <BlogCard key={blog.id} blog={blog} />
@@ -73,7 +82,19 @@ export default function Blog({ auth, title, description, blogs }) {
  
             <section className="bg-gray-50 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-semibold text-gray-900 text-center mb-8">Latest Insights</h2>
+                    <div className="flex items-center gap-4 mb-4">
+                        <motion.span
+                            initial={{ width: 0 }}
+                            whileInView={{ width: 48 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            className="h-px bg-[#0A1A2F]"
+                        />
+                        <span className="text-sm tracking-widest text-[#0A1A2F] uppercase">
+                            Blog
+                        </span>
+                    </div>
+                    <h2 className="text-3xl font-semibold text-gray-900 text-left mb-8 uppercase">Latest Insights</h2>
 
                     {filteredBlogs.length === 0 ? (
                         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
@@ -107,60 +128,52 @@ export default function Blog({ auth, title, description, blogs }) {
                 </div>
             </section>
 
-            <section className="max-w-7xl mx-auto px-4 rounded-lg bg-gradient-to-r from-blue-600 via-blue-700 to-green-500">
-                <div className="mx-6 md:mx-12 lg:mx-16 xl:mx-24">
-                    <div className="max-w-7xl mx-auto text-white text-center py-8 md:py-12 lg:py-16">
-                        <h3 className="text-3xl font-semibold mb-4">Never miss an update.</h3>
-                        <p className="text-lg mb-8">Get insights delivered to your inbox.</p>
-
-                        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-4 px-4">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="w-full max-w-md py-3 px-4 border border-white rounded-md text-black"
-                            />
-                            <button className="py-3 px-6 bg-white text-blue-600 font-semibold rounded-md hover:bg-gray-200">
-                                Subscribe
-                            </button>
-                        </div>
-
-                        <p className="text-sm">We care about your data in <Link href="/privacy-policy" className="text-blue-200 hover:text-blue-100">our privacy policy</Link>.</p>
-                    </div>
-                </div>
-            </section>
+             <CallToAction />
         </GuestLayout>
     );
 }
 
 function BlogCard({ blog }) {
     return (
-        <article className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-100 h-full flex flex-col">
+        <article className="relative rounded-[30px] overflow-hidden h-[406px] group">
+            {/* Background Image */}
             <img
                 src={blog.image}
                 alt={blog.title}
-                className="w-full h-56 object-cover"
+                className="w-full h-full object-cover"
                 onError={(event) => {
-                    event.currentTarget.src = '/assets/images/innerpage/blog/blog-grid1.jpg';
+                    event.currentTarget.src = "/assets/images/innerpage/blog/blog-grid1.jpg";
                 }}
             />
-            <div className="p-6 flex flex-col flex-1">
-                <div className="text-sm text-gray-500 mb-3">
-                    {formatDate(blog.published_at || blog.created_at)} · {blog.author} · {blog.reading_time}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{blog.title}</h3>
-                <p className="text-gray-600 line-clamp-3 flex-1">
-                    {blog.excerpt || truncate(stripHtml(blog.content), 160)}
+
+            {/* Dark Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
+                <h3 className="text-lg md:text-xl font-bold mb-2 leading-snug">
+                    {blog.title}
+                </h3>
+
+                <p className="text-sm text-gray-200 mb-3 line-clamp-2">
+                    {blog.excerpt || truncate(stripHtml(blog.content), 100)}
                 </p>
-                <Link
-                    href={`/blog/${blog.slug}`}
-                    className="mt-5 inline-flex font-semibold text-blue-600 hover:text-blue-800"
-                >
-                    Read More
-                </Link>
+
+                <div className="flex items-right justify-between pb-2">
+                    <span className="text-xs text-gray-300">
+                        {/* Written by IGRCFP Team */}
+                    </span>
+                    <Link
+                        href={`/blog/${blog.slug}`}
+                        className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded text-sm font-medium hover:bg-white/30 transition-colors"
+                    >
+                        Read more
+                    </Link>
+                </div>
             </div>
         </article>
     );
-}
+} 
 
 function stripHtml(value = '') {
     return value.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();

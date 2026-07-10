@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import HeroSection from '@/Layouts/HeroSection';
 import GuestLayout from '@/Layouts/GuestLayout';
 
 export default function CGFCSSpecialist({ auth }) {
@@ -7,22 +8,18 @@ export default function CGFCSSpecialist({ auth }) {
             <Head title="Certification programmes | IGRCFP" />
 
             {/* Header */}
-             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Professional certifications & diplomas</h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        IGRCFP credentials: from specialist certificates to advanced diplomas and the flagship CGFCS designation
-                    </p>
-                </div>
-            </section>
+            <HeroSection 
+                title = "Professional certifications & diplomas"
+                description=  " IGRCFP credentials: from specialist certificates to advanced diplomas and the flagship CGFCS designation"
+            />
 
             {/* Main content */}
             <section className="py-16 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
                     
                     {/* 1. CGFCS */}
                     <div className="bg-gray-50 rounded-2xl p-8 md:p-10 shadow-sm border border-gray-200">
-                        <h2 className="text-3xl font-bold text-blue-900 mb-4">1. Certified GRC & Financial Crime Specialist (CGFCS)</h2>
+                        <h2 className="text-3xl font-bold text-[#0A1A2F] mb-4">1. Certified GRC & Financial Crime Specialist (CGFCS)</h2>
                         <p className="text-lg text-gray-700 mb-6 font-medium">Overview</p>
                         <p className="text-gray-700 mb-4">
                             The Certified GRC & Financial Crime Specialist (CGFCS) is the flagship professional certification offered by the Institute of GRC & Financial Crime Prevention (IGRCFP).
@@ -43,7 +40,7 @@ export default function CGFCSSpecialist({ auth }) {
                             The CGFCS certification focuses on developing systems-level understanding, enabling professionals to design and manage integrated governance and compliance frameworks that protect organisations from operational, regulatory, and financial crime risks.
                         </p>
 
-                        <h3 className="text-xl font-semibold text-blue-800 mt-8 mb-3">Key Learning Outcomes</h3>
+                        <h3 className="text-xl font-semibold text-[#0A1A2F] mt-8 mb-3">Key Learning Outcomes</h3>
                         <p className="text-gray-700 mb-2">Participants completing this certification will be able to:</p>
                         <ul className="list-disc pl-6 mb-6 text-gray-700 space-y-1">
                             <li>Understand and apply governance and accountability frameworks</li>
@@ -55,7 +52,7 @@ export default function CGFCSSpecialist({ auth }) {
                             <li>Manage emerging risks including cybercrime, digital assets, and technology-enabled financial crime</li>
                         </ul>
 
-                        <h3 className="text-xl font-semibold text-blue-800 mt-8 mb-3">Who Should Enrol</h3>
+                        <h3 className="text-xl font-semibold text-[#0A1A2F] mt-8 mb-3">Who Should Enrol</h3>
                         <p className="text-gray-700 mb-2">This certification is suitable for professionals working in:</p>
                         <ul className="list-disc pl-6 mb-6 text-gray-700 columns-2 gap-4">
                             <li>Compliance</li>
@@ -68,7 +65,7 @@ export default function CGFCSSpecialist({ auth }) {
                             <li>Consulting and advisory roles</li>
                         </ul>
 
-                        <h3 className="text-xl font-semibold text-blue-800 mt-8 mb-3">Programme Curriculum</h3>
+                        <h3 className="text-xl font-semibold text-[#0A1A2F] mt-8 mb-3">Programme Curriculum</h3>
                         <ul className="list-disc pl-6 mb-6 text-gray-700">
                             <li>Governance and board accountability</li>
                             <li>Enterprise risk architecture</li>
@@ -80,7 +77,7 @@ export default function CGFCSSpecialist({ auth }) {
                             <li>Assurance, reporting, and organisational oversight</li>
                         </ul>
 
-                        <h3 className="text-xl font-semibold text-blue-800 mt-8 mb-3">Delivery Format</h3>
+                        <h3 className="text-xl font-semibold text-[#0A1A2F] mt-8 mb-3">Delivery Format</h3>
                         <p className="text-gray-700 mb-2">The certification is delivered through:</p>
                         <ul className="list-disc pl-6 mb-2 text-gray-700">
                             <li>Instructor-led sessions</li>
@@ -96,7 +93,7 @@ export default function CGFCSSpecialist({ auth }) {
                             <li>Blended learning programmes</li>
                         </ul>
 
-                        <h3 className="text-xl font-semibold text-blue-800 mt-8 mb-3">Assessment</h3>
+                        <h3 className="text-xl font-semibold text-[#0A1A2F] mt-8 mb-3">Assessment</h3>
                         <p className="text-gray-700 mb-2">Participants are assessed through a combination of:</p>
                         <ul className="list-disc pl-6 mb-4 text-gray-700">
                             <li>Knowledge-based examination</li>

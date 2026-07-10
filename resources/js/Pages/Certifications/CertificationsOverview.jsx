@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import WhyCertificationsMatter from '@/Pages/Certifications/WhyCertificationsMatter';
 import { 
     ShieldCheckIcon, 
     AcademicCapIcon, 
@@ -9,7 +10,9 @@ import {
     UserGroupIcon,
     ArrowRightIcon,
     CheckCircleIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
+import CallToAction from "@/Pages/components/CallToAction";
+import HeroSection from '@/Layouts/HeroSection';
 
 export default function CertificationsOverview({ auth, courses = [] }) {
     const certificationPrograms = [
@@ -78,106 +81,23 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             <Head title="Professional Certifications | IGRCFP" />
             
             {/* Hero Section */}
+            <HeroSection 
+            title = "IGRCFP Certifications"
+            description= "From specialist certificates to advanced diplomas and the flagship CFCS designation, The Institute of GRC & Financial Crime Prevention (IGRCFP) offers a portfolio of professional certifications designed to develop advanced capability in governance, risk management, regulatory compliance, and financial crime prevention."
+            />
+
+            <WhyCertificationsMatter />
+
             
-             <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4"> IGRCFP Certifications</h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        IGRCFP credentials: from specialist certificates to advanced diplomas and the flagship CGFCS designation
-                    </p>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        The Institute of GRC & Financial Crime Prevention (IGRCFP) offers a portfolio of 
-                        professional certifications designed to develop advanced capability in governance, 
-                        risk management, regulatory compliance, and financial crime prevention.
-                    </p>
-                </div>
-            </section>
-
-            {/* Why Certifications Matter */}
-            <section className="py-16 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                            Why IGRCFP Certifications Matter
-                        </h2>
-                        <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-                            Modern organisations operate within an increasingly complex risk environment shaped by:
-                        </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            { title: 'Rapid Regulatory Change', icon: '📋' },
-                            { title: 'Cross-border Financial Activity', icon: '🌍' },
-                            { title: 'Digital Transformation', icon: '💻' },
-                            { title: 'Sophisticated Financial Crime', icon: '🔒' }
-                        ].map((item, index) => (
-                            <div key={index} className="bg-gray-50 rounded-xl p-6 text-center">
-                                <div className="text-4xl mb-3">{item.icon}</div>
-                                <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Certification Philosophy */}
-            <section className="py-16 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                            Certification Philosophy
-                        </h2>
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                            IGRCFP programmes are designed around three core principles:
-                        </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="bg-white rounded-xl p-8 shadow-sm">
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                <GlobeAltIcon className="w-6 h-6 text-blue-900" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">Integrated Systems Thinking</h3>
-                            <p className="text-gray-600">
-                                Governance, risk, compliance, and financial crime prevention are interdependent disciplines. 
-                                IGRCFP certifications teach professionals how these systems operate together rather than in isolation.
-                            </p>
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-8 shadow-sm">
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                <CheckCircleIcon className="w-6 h-6 text-blue-900" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">Practical Professional Capability</h3>
-                            <p className="text-gray-600">
-                                Courses focus on real-world scenarios, regulatory expectations, operational frameworks, 
-                                and investigative techniques used by professionals in practice.
-                            </p>
-                        </div>
-                        
-                        <div className="bg-white rounded-xl p-8 shadow-sm">
-                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                                <UserGroupIcon className="w-6 h-6 text-blue-900" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">Global Relevance</h3>
-                            <p className="text-gray-600">
-                                IGRCFP programmes reflect international standards, cross-border regulatory environments, 
-                                and global financial systems.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* Certification Portfolio */}
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-left mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             IGRCFP Certification Portfolio
                         </h2>
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                        <p className="text-left text-gray-600 max-w-3xl">
                             IGRCFP certifications support professional development across multiple areas of 
                             governance, regulatory compliance, risk management, and financial crime prevention.
                         </p>
@@ -247,11 +167,11 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             {/* Specialist Areas */}
             <section className="py-16 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-left mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Specialist Certification Areas
                         </h2>
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                        <p className="text-lg text-gray-600 max-w-3xl ">
                             In addition to flagship programmes, IGRCFP offers specialist certification courses 
                             addressing emerging regulatory and financial crime risks.
                         </p>
@@ -278,11 +198,11 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             {/* Who Should Pursue */}
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-left mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                             Who Should Pursue IGRCFP Certifications
                         </h2>
-                        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                        <p className="text-lg text-gray-600 max-w-3xl">
                             IGRCFP certifications are designed for professionals working in roles such as:
                         </p>
                     </div>
@@ -366,7 +286,7 @@ export default function CertificationsOverview({ auth, courses = [] }) {
             </section>
 
             {/* Community CTA */}
-            <section className="py-16 bg-blue-50">
+            {/* <section className="py-16 bg-blue-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <GlobeAltIcon className="w-16 h-16 text-blue-900 mx-auto mb-6" />
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -385,7 +305,9 @@ export default function CertificationsOverview({ auth, courses = [] }) {
                         <ArrowRightIcon className="w-5 h-5 ml-2" />
                     </Link>
                 </div>
-            </section>
+            </section> */}
+
+            <CallToAction />
         </GuestLayout>
     );
 }

@@ -12,6 +12,8 @@ import {
   EyeIcon, 
   ClockIcon
 } from '@heroicons/react/24/outline';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function News({ 
   auth, 
@@ -65,24 +67,11 @@ export default function News({
       <Head title={title} /> 
       
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 py-16 md:py-28 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
-              <TagIcon className="w-4 h-4 mr-2" />
-              Industry Insights & Updates
-            </div>
-            
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              {title}
-            </h1>
-            
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-              {description}
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroSection 
+          title =  {title}
+          description= {description}
+      />
+      
 
       {/* Featured Articles Section */}
       {featuredArticles.length > 0 && (
@@ -587,30 +576,7 @@ export default function News({
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Need Expert Analysis for Your Organization?
-          </h2>
-          <p className="text-blue-100 text-xl mb-8 max-w-3xl mx-auto">
-            Our team provides customized briefings and regulatory impact assessments tailored to your specific needs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition"
-            >
-              Request a Consultation
-            </Link>
-            {/* <Link
-              href="/services/advisory"
-              className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition"
-            >
-              View Advisory Services
-            </Link> */}
-          </div>
-        </div>
-      </section>
+      <CallToAction />
     </GuestLayout>
   );
 }

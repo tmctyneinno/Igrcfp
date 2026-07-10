@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function Index({ documents, categories, filters, auth }) {
     // ✅ Use Inertia's useForm properly
@@ -14,7 +16,7 @@ export default function Index({ documents, categories, filters, auth }) {
         document_id: '',
         document_title: '',
     });
-
+ 
     const [openForm, setOpenForm] = useState(false);
     const [selectedDoc, setSelectedDoc] = useState(null);
 
@@ -106,20 +108,14 @@ export default function Index({ documents, categories, filters, auth }) {
         <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="Research & White Papers" />
 
+            
+
             <div className="bg-gray-50 min-h-screen py-0">
                 {/* Hero Section */}
-                <section className="w-full bg-gradient-to-r from-blue-50 via-white to-blue-50 pb-5 md:py-28 border-b">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center max-w-4xl mx-auto">
-                            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                                Research & White Papers
-                            </h1>
-                            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                                Access expert insights, industry analysis, and comprehensive guides on Governance, Risk, Compliance, and Financial Crime Prevention.
-                            </p>
-                        </div>
-                    </div>
-                </section>
+                <HeroSection 
+                    title ="Research & White Papers"
+                    description= "Access expert insights, industry analysis, and comprehensive guides on Governance, Risk, Compliance, and Financial Crime Prevention."
+                />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     {/* Documents Grid */}
@@ -310,6 +306,8 @@ export default function Index({ documents, categories, filters, auth }) {
                     </div>
                 </div>
             )}
+            {/* CTA Section */}
+            <CallToAction />
         </GuestLayout>
     );
 }
