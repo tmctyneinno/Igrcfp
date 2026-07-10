@@ -88,6 +88,6 @@ export default function AboutIndex({ auth, title, description }) {
             
             <CallToAction />
            
-        </GuestLayout>
+        </GuestLayout> 
     );
-}
+} 
