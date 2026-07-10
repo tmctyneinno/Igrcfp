@@ -1,7 +1,7 @@
 import React from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import ProfessionalEducation from '@/Pages/About/WhyIgrcfp/ProfessionalEducation';
+import ProfessionalEducation from '@/Pages/About/OurStructure/ProfessionalEducation';
 
 export default function Index({ auth, title, description }) {
     return ( 

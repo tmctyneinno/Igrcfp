@@ -40,6 +40,14 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
         return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
 
+    // Format a number as "2,000.00"
+    const formatPrice = (value) => {
+        return value.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    };
+
     const price = parseFloat(course?.price || 0);
     const discountPrice = parseFloat(course?.discount_price || 0);
     const hasDisc = hasDiscount();
@@ -128,11 +136,11 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <div className="flex items-baseline gap-2">
                             {hasDisc ? (
                                 <>
-                                    <span className="text-2xl font-bold text-gray-900 font-serif">${discountPrice.toFixed(2)}</span>
-                                    <span className="text-sm text-gray-400 line-through">${price.toFixed(2)}</span>
+                                    <span className="text-2xl font-bold text-gray-900 font-serif">${formatPrice(discountPrice)}</span>
+                                    <span className="text-sm text-gray-400 line-through">${formatPrice(price)}</span>
                                 </>
                             ) : (
-                                <span className="text-2xl font-bold text-gray-900 font-serif">${price.toFixed(2)}</span>
+                                <span className="text-2xl font-bold text-gray-900 font-serif">${formatPrice(price)}</span>
                             )}
                         </div>
                     ) : (
@@ -142,7 +150,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                     {enrolled ? (
                         <Link
                             href={route('dashboard.courses.show', course.slug)}
-                            className="px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition"
+                            className="px-1 py-2 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 transition"
                         >
                             Continue
                         </Link>
@@ -157,7 +165,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <button
                             onClick={handleAddToCartClick}
                             disabled={isAdding}
-                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-1 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isAdding ? (
                                 <span className="flex items-center gap-1.5">
