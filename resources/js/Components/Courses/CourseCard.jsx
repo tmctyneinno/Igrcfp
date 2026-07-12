@@ -75,7 +75,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
             data-aos="fade-up"
         >
             {/* Image */}
-            <Link href={route('dashboard.courses.show', course?.slug)} className="block h-48 overflow-hidden relative shrink-0">
+            <Link href={route('courses.show', course?.slug)} className="block h-48 overflow-hidden relative shrink-0">
                 <img
                     src={course?.image_url || '/images/fallback-course.jpg'}
                     alt={course?.title || 'Course image'}
@@ -88,8 +88,8 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
 
             {/* Content Area */}
             <div className="px-3 pt-3 pb-3 flex-1 flex flex-col">
-                {/* Title */}
-                <Link href={route('dashboard.courses.show', course?.slug)}>
+                {/* Title */} 
+                <Link href={route('courses.show', course?.slug)}>
                     <h3 className="text-xl font-bold text-gray-900 mb-2 leading-snug hover:text-[#0A2463] transition-colors">
                         {course?.title || 'Untitled Course'}
                     </h3>
