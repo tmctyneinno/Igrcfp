@@ -93,22 +93,26 @@ export default function Certification({ courses }) {
                                 > 
                                     {/* Background Image + Overlay */}
                                     <div className="absolute inset-0 w-full h-full">
-                                        <img
-                                            src={course?.image_url || '/images/fallback-course.jpg'}
-                                            alt={course?.title || 'Course image'}
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => {
-                                                e.target.src = '/images/fallback-course.jpg';
-                                            }}
-                                        />
+                                        <Link href={route('courses.show', course?.slug)}>
+                                            <img
+                                                src={course?.image_url || '/images/fallback-course.jpg'}
+                                                alt={course?.title || 'Course image'}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.target.src = '/images/fallback-course.jpg';
+                                                }}
+                                            />
+                                        </Link>
                                         <div className="absolute inset-0 bg-black/55"></div>
                                     </div>
 
                                     {/* Content */}
                                     <div className="relative z-10 h-full flex flex-col justify-end p-3 text-white">
-                                        <h3 className="text-lg font-bold leading-tight mb-2">
-                                            {course?.title || 'Untitled Course'}
-                                        </h3>
+                                        <Link href={route('courses.show', course?.slug)}>
+                                            <h3 className="text-lg font-bold leading-tight mb-2">
+                                                {course?.title || 'Untitled Course'}
+                                            </h3>
+                                        </Link>
                                         
                                         <p className="text-sm text-gray-100 mb-4 leading-relaxed">
                                             {getCleanDescription(course)}
