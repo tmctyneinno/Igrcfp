@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext';
-
+ 
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding, isEnrolled }) {
     const { props } = usePage();
     const { removeFromCart } = useCart();
@@ -136,11 +136,11 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <div className="flex items-baseline gap-2">
                             {hasDisc ? (
                                 <>
-                                    <span className="text-2xl font-bold text-gray-900 ">${formatPrice(discountPrice)}</span>
-                                    <span className="text-sm text-gray-400 line-through">${formatPrice(price)}</span>
+                                    <span className="text-2xl font-bold text-gray-900 ">£{formatPrice(discountPrice)}</span>
+                                    <span className="text-sm text-gray-400 line-through">£{formatPrice(price)}</span>
                                 </>
                             ) : (
-                                <span className="text-2xl font-bold text-gray-900 ">${formatPrice(price)}</span>
+                                <span className="text-2xl font-bold text-gray-900 ">£{formatPrice(price)}</span>
                             )}
                         </div>
                     ) : (

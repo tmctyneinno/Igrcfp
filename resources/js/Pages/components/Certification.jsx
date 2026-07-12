@@ -11,7 +11,7 @@ export default function Certification({ courses }) {
     const formatPrice = (price) => {
         if (!price && price !== 0) return null;
         const numPrice = parseFloat(price); 
-        return isNaN(numPrice) ? null : `$${numPrice.toFixed(2)}`;
+        return isNaN(numPrice) ? null : `£${numPrice.toFixed(2)}`;
     }; 
 
     // Check if course has discount

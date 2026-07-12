@@ -4,7 +4,7 @@ import { fadeIn } from "@/utils/motionPresets";
 
 // Define the component with dynamic props
 export default function HeroSection({
-  title = "Courses",
+  title = "Courses", 
   description = "Browse our latest professional learning programmes.",
 }) { 
   return (
