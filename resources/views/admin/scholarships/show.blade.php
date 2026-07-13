@@ -12,9 +12,12 @@
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Scholarship Application #{{ $application->id }}</h6>
-        <a href="{{ route('admin.scholarships.index') }}" class="btn btn-outline-primary">Back to List</a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.scholarships.index') }}" class="btn btn-outline-primary">Back to List</a>
+            <a href="{{ route('admin.scholarships.download-pdf', $application->id) }}" class="btn btn-success" target="_blank">Download Application PDF</a>
+        </div>
     </div>
-    
+     
     <div class="row gy-4">
         <div class="col-lg-8">
             <div class="card">

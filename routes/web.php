@@ -51,7 +51,7 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 Route::get('/course-catalogue', [CourseCatalogController::class, 'index'])->name('course.catalog.index');
 Route::redirect('/course-catelog', '/course-catalog');
-
+ 
 Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show'); 
 Route::get('/courses/category/{slug}', [CourseController::class, 'byCategory'])->name('courses.by-category');
@@ -114,6 +114,10 @@ Route::get('/partnerships', [HomeController::class, 'partnerships'])
     ->name('partnerships.index');
 Route::get('/scholarship/{slug}', [HomeController::class, 'showNews'])->name('scholarship.show');
 Route::post('/scholarship/apply', [ScholarshipController::class, 'store'])->name('scholarship.apply');
+// PDF Export Route
+Route::get('/admin/scholarships/{application}/download-pdf', [ScholarshipController::class, 'downloadPdf'])
+    ->name('admin.scholarships.download-pdf')
+    ->middleware('auth:admin');
  
 Route::prefix('verify-certificate')->name('certificate.verify.public.')->group(function () {
     Route::get('/', [PublicCertificateController::class, 'index'])->name('index');

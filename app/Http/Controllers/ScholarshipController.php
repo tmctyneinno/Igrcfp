@@ -7,13 +7,14 @@ use App\Services\ActivityLoggerService;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Http;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class ScholarshipController extends Controller
 {
     public function store(Request $request)
-    {
+    { 
         // Verify reCAPTCHA
         $recaptchaResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => env('RECAPTCHA_SECRET_KEY'),
@@ -202,6 +203,21 @@ class ScholarshipController extends Controller
         }
 
         return back()->with('success', 'Application submitted successfully! Check your email for confirmation.');
+    }
+
+    public function downloadPdf(ScholarshipApplication $application)
+    {
+        // Load PDF view with applicant data
+        $pdf = Pdf::loadView('admin.scholarships.pdf-template', compact('application'));
+        
+        // Set paper size and orientation
+        $pdf->setPaper('A4', 'portrait');
+        
+        // Generate download filename
+        $filename = "scholarship-application-{$application->id}-{$application->full_name}.pdf";
+        
+        // Return PDF download
+        return $pdf->download($filename);
     }
 
     private function buildAdminEmailHTML($application)

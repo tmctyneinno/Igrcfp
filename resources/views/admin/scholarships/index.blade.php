@@ -1,4 +1,3 @@
-{{-- resources/views/admin/scholarships/index.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('content')
@@ -16,7 +15,7 @@
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    @endif  
 
     @if(session('info'))
         <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -51,20 +50,20 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th width="60">ID</th>
                             <th>Applicant</th>
                             <th>Email</th>
                             <th>Country</th>
                             <th>Programmes</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
+                            <th width="100">Status</th>
+                            <th width="110">Date</th>
+                            <th width="160" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($applications as $app)
                         <tr>
-                            <td>#
+                            <td>
                                 {{ $loop->iteration + ($applications->currentPage() - 1) * $applications->perPage() }}
                             </td>
                             <td>{{ $app->full_name }}</td>
@@ -72,7 +71,7 @@
                             <td>{{ $app->country_of_residence }}</td>
                             <td>
                                 @foreach($app->preferred_programmes as $prog)
-                                    <span class="badge bg-light text-dark">{{ $prog }}</span>
+                                    <span class="badge bg-light text-dark me-1 mb-1">{{ $prog }}</span>
                                 @endforeach
                             </td>
                             <td>
@@ -85,8 +84,11 @@
                                 </span>
                             </td>
                             <td>{{ $app->created_at->format('M d, Y') }}</td>
-                            <td>
-                                <a href="{{ route('admin.scholarships.show', $app->id) }}" class="btn btn-sm btn-primary">View</a>
+                            <td class="text-nowrap">
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a href="{{ route('admin.scholarships.show', $app->id) }}" class="btn btn-sm btn-primary">View</a>
+                                    <a href="{{ route('admin.scholarships.download-pdf', $app->id) }}" class="btn btn-sm btn-outline-success" target="_blank">PDF</a>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
