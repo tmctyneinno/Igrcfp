@@ -111,7 +111,7 @@ function NavBar({ auth }) {
                                 onMouseEnter={() => !ignoreMegaMenuHoverRef.current && setOpenMegaMenu(true)}
                                 aria-expanded={openMegaMenu}
                             >
-                                🎓 Certifications
+                                Certifications
                                 <svg className={`ml-1 w-3.5 h-3.5 transition-transform duration-200 ${openMegaMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -214,7 +214,7 @@ function NavBar({ auth }) {
                                                     <Link href={route('certificate.verify.public.index')} onClick={() => setOpenMegaMenu(false)} className="text-sm font-medium text-green-700 bg-green-50 px-3 py-1.5 rounded-lg hover:bg-green-100">Verify Certificate</Link>
                                                     <Link href={route('programmes')} onClick={() => setOpenMegaMenu(false)} className="text-sm font-medium text-blue-900 hover:text-blue-700">Browse all programmes →</Link>
                                                 </div>
-                                            </div>
+                                            </div> 
                                         </div>
                                     </div>
                                 </>
@@ -231,7 +231,7 @@ function NavBar({ auth }) {
                         {/* ✅ Combined Events & Chapters — NO WRAP */}
                         <div className="relative group">
                             <button className="px-2.5 py-2 text-sm font-medium text-gray-800 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition duration-200 flex items-center whitespace-nowrap">
-                                📅 Events & Chapters
+                                Events & Chapters
                                 <svg className="ml-1 w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
@@ -352,7 +352,7 @@ function NavBar({ auth }) {
                         {/* Mobile Certifications */}
                         <div>
                             <button className="w-full flex justify-between items-center px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setOpenDropdown(openDropdown === 'programmes' ? null : 'programmes')}>
-                                🎓 Certifications & Trainings <svg className={`w-4 h-4 transition-transform ${openDropdown === 'programmes' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                Certifications & Trainings <svg className={`w-4 h-4 transition-transform ${openDropdown === 'programmes' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
                             {openDropdown === 'programmes' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">
@@ -378,9 +378,9 @@ function NavBar({ auth }) {
                         <Link href={route('certificate.verify.public.index')} className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-green-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>✅ Verify Certificate</Link>
 
                         {/* Mobile Events & Chapters */}
-                        <div>
+                        <div> 
                             <button className="w-full flex justify-between items-center px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setOpenDropdown(openDropdown === 'events-chapters' ? null : 'events-chapters')}>
-                                📅 Events & Chapters <svg className={`w-4 h-4 transition-transform ${openDropdown === 'events-chapters' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                Events & Chapters <svg className={`w-4 h-4 transition-transform ${openDropdown === 'events-chapters' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
                             {openDropdown === 'events-chapters' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">

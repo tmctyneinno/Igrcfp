@@ -149,21 +149,7 @@ community chapter (igrcfp chapter pages to them selve)
 acbm
 
 
-<!--  Igrcfp % npm run serve -->
-<!-- User Profile -->
 
-<!-- Memebership Plan  -->
-<!-- Login failed attempt -->
-<!-- Seesion if user can not user the same account for a different broswer -->
-<!-- Certification Verification link  -->
-<!-- Activity Audit log for User and Admin -->
-
- 
-
-2500 words 
-Footer course (MNot Found)
-
-Policy content
 
 
 php artisan config:clear
@@ -241,3 +227,6 @@ php artisan make:migration create_chapters_table --create=chapters
  
 
 Send a notification email to 33 applicant notifying them if the closure of the igrcfp scholarship
+
+13-July-2025
+Wokring on all the feedback from MD

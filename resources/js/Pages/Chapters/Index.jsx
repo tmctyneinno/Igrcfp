@@ -1,6 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import GuestLayout from "@/Layouts/GuestLayout";
+import { motion } from "framer-motion";
+import { fadeIn } from "@/utils/motionPresets";
+import CallToAction from "@/Pages/components/CallToAction";
 import { 
     MapPin, 
     Users, 
@@ -117,18 +120,18 @@ export default function Index({ chapters, auth }) {
             </Head>
 
             {/* Hero Banner */}
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
+            <section className="w-full bg-[#0A1A2F] pt-28 pb-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <div className="inline-flex items-center bg-blue-100 px-4 py-1.5 justify-center space-x-2 mb-6 rounded-full">
                             <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
                             <span className="font-semibold text-sm tracking-wider text-blue-800 uppercase">Regional Chapters</span>
                         </div>
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                             Regional Chapters of{' '}
-                            <span className="text-blue-900">IGRCFP</span>
+                            <span className="text-white-900">IGRCFP</span>
                         </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
                             Connect with local professionals, attend events, and grow your network 
                             through IGRCFP chapters across regions and countries.
                         </p>
@@ -152,6 +155,29 @@ export default function Index({ chapters, auth }) {
                                 <div className="text-sm text-gray-500 font-medium mt-1">Upcoming Events</div>
                             </div>
                         </div>
+                        {/* Bottom Tagline Bar */}
+                        <motion.div
+                            variants={fadeIn}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="mt-12 pt-4 border-t border-gray-700 flex flex-wrap gap-x-2 gap-y-2 text-xs uppercase tracking-wider text-gray-300"
+                        >
+                            <span>Terrorism Financing</span>
+                            <span>•</span>
+                            <span>KYC & CDD</span>
+                            <span>•</span>
+                            <span>Sanctions Compliance</span>
+                            <span>•</span>
+                            <span>Enterprise Risk Management</span>
+                            <span>•</span>
+                            <span>Regulatory Frameworks</span>
+                            <span>•</span>
+                            <span>ESG Sustainable Finance</span>
+                            <span>•</span>
+                            <span>AI in Compliance</span>
+                        </motion.div>
                     </div>
                 </div>
             </section>
@@ -314,7 +340,7 @@ export default function Index({ chapters, auth }) {
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link
                                     href={route('contact')}
-                                    className="inline-flex items-center px-6 py-3 bg-blue-900 hover:bg-blue-800 text-white rounded-xl font-medium transition-colors shadow-sm"
+                                    className="inline-flex items-center px-6 py-3 bg-[#0A1A2F] hover:bg-blue-800 text-white rounded-xl font-medium transition-colors shadow-sm"
                                 >
                                     <Mail className="w-4 h-4 mr-2" />
                                     Contact Us
@@ -339,38 +365,7 @@ export default function Index({ chapters, auth }) {
             </section>
 
             {/* CTA Section */}
-            <section className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <div className="inline-flex items-center bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full mb-6 border border-white/20">
-                        <Building2 className="w-4 h-4 text-blue-300 mr-2" />
-                        <span className="text-blue-200 font-medium text-sm">Get Involved</span>
-                    </div>
-                    <h2 className="text-3xl font-bold text-white mb-4">
-                        Want to Start a Chapter in Your Region?
-                    </h2>
-                    <p className="text-blue-200 max-w-2xl mx-auto mb-8 text-lg leading-relaxed">
-                        We're always looking for passionate governance, risk, and compliance professionals 
-                        to lead and grow our community. Join us in expanding the IGRCFP network worldwide.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            href={route('contact')}
-                            className="inline-flex items-center px-8 py-3.5 bg-white text-blue-900 hover:bg-blue-50 rounded-xl font-semibold transition-colors shadow-lg"
-                        >
-                            <Mail className="w-5 h-5 mr-2" />
-                            Express Interest
-                            <ChevronRight className="w-5 h-5 ml-2" />
-                        </Link>
-                        <Link
-                            href={route('welcome-to-igrcfp')}
-                            className="inline-flex items-center px-8 py-3.5 border-2 border-white/30 text-white hover:bg-white/10 rounded-xl font-semibold transition-colors"
-                        >
-                            <Building2 className="w-5 h-5 mr-2" />
-                            Learn More About IGRCFP
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <CallToAction/>
         </GuestLayout>
     );
 }

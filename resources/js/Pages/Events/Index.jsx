@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isBefore, parseISO as parseDate } from 'date-fns';
 import HeroSection from '@/Layouts/HeroSection';
 import CallToAction from "@/Pages/components/CallToAction";
 
@@ -11,7 +11,7 @@ export default function Events({ auth, title, description, events }) {
     
     // Get featured and available counts
     const featuredCount = eventsData.filter(e => e.is_featured).length;
-    const availableCount = eventsData.filter(e => e.registration_status === 'available').length;
+    const availableCount = eventsData.filter(e => e.registration_status === 'available' && !isBefore(new Date(e.end_date || e.start_date), new Date())).length;
     const totalCount = eventsData.length;
  
     // Helper function to get image URL for storage/app/public
@@ -66,6 +66,17 @@ export default function Events({ auth, title, description, events }) {
         } catch (error) {
             console.error('Error formatting date:', error);
             return 'Date TBA';
+        }
+    }, []);
+
+    // Check if event is past
+    const isEventPast = useCallback((event) => {
+        const checkDate = event.end_date || event.start_date;
+        if (!checkDate) return false;
+        try {
+            return isBefore(new Date(checkDate), new Date());
+        } catch {
+            return false;
         }
     }, []);
 
@@ -127,6 +138,7 @@ export default function Events({ auth, title, description, events }) {
                             eventsData.map((event, index) => {
                                 const EventCard = ({ event, index }) => {
                                     const [imageLoaded, setImageLoaded] = useState(false);
+                                    const isPast = isEventPast(event);
                                     
                                     return (
                                         <div
@@ -250,29 +262,34 @@ export default function Events({ auth, title, description, events }) {
                                                                         Draft
                                                                     </span>
                                                                 )}
-                                                                {event.is_upcoming && (
+                                                                {event.is_upcoming && !isPast && (
                                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                                         Upcoming
                                                                     </span>
                                                                 )}
-                                                                {event.is_ongoing && (
+                                                                {event.is_ongoing && !isPast && (
                                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                                         Live Now
                                                                     </span>
                                                                 )}
+                                                                {isPast && (
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                                                                        Closed
+                                                                    </span>
+                                                                )}
 
                                                                 {/* Registration Status */}
-                                                                {event.registration_status === 'sold_out' && (
+                                                                {!isPast && event.registration_status === 'sold_out' && (
                                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                                                         Sold Out
                                                                     </span>
                                                                 )}
-                                                                {event.registration_status === 'few_seats' && (
+                                                                {!isPast && event.registration_status === 'few_seats' && (
                                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                                                         Few Seats Left
                                                                     </span>
                                                                 )}
-                                                                {event.registration_status === 'available' && (
+                                                                {!isPast && event.registration_status === 'available' && (
                                                                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                                                                         Available
                                                                     </span>
@@ -287,7 +304,7 @@ export default function Events({ auth, title, description, events }) {
                                                                     title="Share event"
                                                                 >
                                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.368 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                                                                     </svg>
                                                                 </button>
 
@@ -359,7 +376,7 @@ export default function Events({ auth, title, description, events }) {
                             </nav>
                         </div>
                     )}
-                </div>
+                </div> 
             </section>
 
             {/* CTA Section - Compact */}

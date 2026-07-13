@@ -28,7 +28,7 @@ export default function HeroSection({
               className="h-px bg-gray-300"
             />
             <span className="text-sm tracking-widest text-gray-300 uppercase">
-              Professional Body . Global Standards . London, UK
+              Professional Body . Global Standards
             </span>
           </div>
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { format, parseISO } from 'date-fns';
+import CallToAction from "@/Pages/components/CallToAction";
 
 export default function EventShow({ auth, event, relatedEvents }) {
     const getMeetingLink = (url) => {
@@ -119,7 +120,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
                         <div className="inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-6">
                             Event Details
                         </div>
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
+                        <h1 className="text-3xl md:text-5xl lg:text-5xl font-bold text-gray-900 mb-6 tracking-tight">
                             {event.title}
                         </h1>
                         
@@ -431,28 +432,7 @@ export default function EventShow({ auth, event, relatedEvents }) {
             )}
 
             {/* CTA Section */}
-            <section className="py-16 bg-gradient-to-r from-blue-50 to-indigo-50">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Need More Information?</h2>
-                    <p className="text-xl text-gray-600 mb-8">
-                        Have questions about this event? Contact our events team for assistance.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link
-                            href={route('events.index')}
-                            className="inline-flex items-center justify-center px-8 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-all duration-300"
-                        >
-                            View All Events
-                        </Link>
-                        <Link
-                            href={route('contact')}
-                            className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                        >
-                            Contact Us
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <CallToAction />
         </GuestLayout>
     );
 }

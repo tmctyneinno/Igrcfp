@@ -40,7 +40,7 @@ function Footer() {
                         <ul className="space-y-2 text-sm">
                             <li>
                                 <Link href={ route('programmes.grc')} className="hover:text-white transition-colors">
-                                    GRC Foundations
+                                    Governance, Risk & Compliance (GRC)
                                 </Link>
                             </li>
                             <li>
@@ -143,7 +143,7 @@ function Footer() {
                             </li>
                             <li>
                                 <Link href="https://oysterchecks.com/" className="hover:text-white transition-colors">
-                                    Oysterechecks Platform
+                                    Oysterchecks Platform
                                 </Link>
                             </li>
                         </ul>
