@@ -138,7 +138,7 @@ class ScholarshipController extends Controller
         $application->delete();
         return redirect()->route('admin.scholarships.index')
             ->with('success', 'Application deleted successfully!');
-    }
+    } 
 
     public function checkAIContent($id)
     {
@@ -183,7 +183,6 @@ class ScholarshipController extends Controller
 
     /**
      * Detect AI-generated content using Hugging Face's free API
-     * Uses the roberta-base-openai-detector model
      */
     private function detectAIWithHuggingFace($text)
     {
@@ -191,9 +190,9 @@ class ScholarshipController extends Controller
         $truncatedText = substr($text, 0, 512);
         
         try {
-            // Using Hugging Face Inference API (Free tier available)
+            // Using Hugging Face Inference API
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . (env('HUGGINGFACE_API_KEY') ?: 'hf_dummy_token_for_free_tier'),
+                'Authorization' => 'Bearer ' . env('HUGGINGFACE_API_KEY'),
                 'Content-Type' => 'application/json',
             ])->timeout(30)->post('https://api-inference.huggingface.co/models/roberta-base-openai-detector', [
                 'inputs' => $truncatedText
@@ -202,26 +201,47 @@ class ScholarshipController extends Controller
             if ($response->successful()) {
                 $result = $response->json();
                 
+                Log::info('Hugging Face Raw Response', ['result' => $result]); // Debugging log
+                
                 // The model returns probabilities for each class
-                // Usually: [{"label": "Fake", "score": 0.95}, {"label": "Real", "score": 0.05}]
+                // Example: [{"label": "Real", "score": 0.9}, {"label": "Fake", "score": 0.1}]
                 if (is_array($result) && !empty($result)) {
+                    $aiScore = -1; // Initialize as invalid
+                    
                     foreach ($result as $item) {
                         if (isset($item['label']) && isset($item['score'])) {
-                            // "Fake" means AI-generated, "Real" means human-written
-                            if ($item['label'] === 'Fake' || $item['label'] === 'AI') {
-                                return min(max($item['score'], 0), 1);
+                            $label = strtolower($item['label']);
+                            $score = (float) $item['score'];
+                            
+                            // Direct match for AI indicators
+                            if (in_array($label, ['fake', 'ai', 'generated', 'machine'])) {
+                                $aiScore = $score;
+                                break; 
+                            }
+                            
+                            // Indirect match: If it says "Real" or "Human", AI score is 1 - Real Score
+                            if (in_array($label, ['real', 'human', 'original'])) {
+                                $aiScore = 1 - $score;
+                                break;
                             }
                         }
                     }
+                    
+                    // If we still haven't found a valid score, default to 0.5
+                    if ($aiScore < 0 || $aiScore > 1) {
+                        $aiScore = 0.5;
+                    }
+
+                    return min(max($aiScore, 0), 1);
                 }
                 
-                // If we can't parse the result, return middle value
                 return 0.5;
             }
             
             // If API fails, fall back to enhanced heuristic method
             Log::warning('Hugging Face API failed, using fallback detection');
             return $this->detectAIEnhanced($truncatedText);
+            
             
         } catch (\Exception $e) {
             Log::error('Hugging Face API Error', ['error' => $e->getMessage()]);

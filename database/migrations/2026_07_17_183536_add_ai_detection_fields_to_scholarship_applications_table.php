@@ -29,4 +29,4 @@ return new class extends Migration
             $table->dropColumn(['ai_detection_score', 'ai_checked_at']);
         });
     }
-};
+}; 
