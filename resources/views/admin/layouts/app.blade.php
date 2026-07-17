@@ -32,6 +32,8 @@
   <link rel="stylesheet" href="{{ asset('assets/admin/css/lib/slick.css')}}">
   <!-- main css -->
   <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css')}}">
+  <!-- In the <head> section of resources/views/admin/layouts/app.blade.php -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body> 
     @include('admin.layouts.sidebar')

@@ -44,11 +44,32 @@
                         @endforeach
                     </ul>
 
-                    <h6 class="mt-4">Personal Statement</h6>
-                    <div class="bg-light p-3 rounded">{{ $application->personal_statement }}</div>
+                    <h6 class="mt-4 d-flex align-items-center justify-content-between">
+                        <span>Personal Statement</span>
+                        <button 
+                            type="button" 
+                            class="btn btn-sm btn-info" 
+                            id="checkAiBtn"
+                            onclick="checkAIContent()"
+                        >
+                            <i class="fas fa-robot me-1"></i>Check for AI Content
+                        </button>
+                    </h6>
+                    
+                    <!-- AI Detection Result -->
+                    <div id="aiDetectionResult" class="mb-3" style="display: none;">
+                        <div class="alert" id="aiResultAlert">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-spinner fa-spin me-2" id="aiLoadingIcon"></i>
+                                <span id="aiResultText">Analyzing content...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-light p-3 rounded" id="personalStatementText">{{ $application->personal_statement }}</div>
                 </div>
             </div>
-        </div>
+        </div> 
 
         <div class="col-lg-4">
             <div class="card">
@@ -128,5 +149,70 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleRejectionField(); // Initial check
     }
 });
+
+// AI Detection Function
+function checkAIContent() {
+    const personalStatement = document.getElementById('personalStatementText').innerText;
+    const resultDiv = document.getElementById('aiDetectionResult');
+    const resultAlert = document.getElementById('aiResultAlert');
+    const resultText = document.getElementById('aiResultText');
+    const loadingIcon = document.getElementById('aiLoadingIcon');
+    const checkBtn = document.getElementById('checkAiBtn');
+    
+    // Show loading state
+    resultDiv.style.display = 'block';
+    resultAlert.className = 'alert alert-info';
+    resultText.textContent = 'Analyzing content for AI-generated text...';
+    loadingIcon.style.display = 'inline-block';
+    checkBtn.disabled = true;
+    
+    // Send AJAX request to backend
+    fetch('{{ route("admin.scholarships.check-ai", $application->id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            text: personalStatement
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingIcon.style.display = 'none';
+        checkBtn.disabled = false;
+        
+        if (data.success) {
+            const aiProbability = data.ai_probability || 0;
+            const isLikelyAI = aiProbability > 0.6; // 60% threshold
+            
+            if (isLikelyAI) {
+                resultAlert.className = 'alert alert-warning';
+                resultText.innerHTML = `
+                    <strong>⚠️ AI Content Detected!</strong><br>
+                    AI Probability: <strong>${(aiProbability * 100).toFixed(1)}%</strong><br>
+                    <small>This personal statement appears to be AI-generated. Please review carefully.</small>
+                `;
+            } else {
+                resultAlert.className = 'alert alert-success';
+                resultText.innerHTML = `
+                    <strong>✅ Likely Human-Written</strong><br>
+                    AI Probability: <strong>${(aiProbability * 100).toFixed(1)}%</strong><br>
+                    <small>This personal statement appears to be human-written.</small>
+                `;
+            } 
+        } else {
+            resultAlert.className = 'alert alert-danger';
+            resultText.textContent = data.message || 'Failed to analyze content. Please try again.';
+        }
+    })
+    .catch(error => {
+        loadingIcon.style.display = 'none';
+        checkBtn.disabled = false;
+        resultAlert.className = 'alert alert-danger';
+        resultText.textContent = 'Error analyzing content. Please try again.';
+        console.error('AI Detection Error:', error);
+    });
+}
 </script>
 @endsection

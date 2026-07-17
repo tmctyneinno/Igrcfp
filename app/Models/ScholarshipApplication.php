@@ -30,10 +30,16 @@ class ScholarshipApplication extends Model
         'rejection_reason',      // Add this
         'rejected_at',           // Add this
         'accepted_at',           // Add this
-        'user_accepted',         // Add this
+        'user_accepted',    
+        'personal_statement',
+        'ai_detection_score', // Add this
+        'ai_checked_at',      // Add this
+        'status',     // Add this
     ];
 
     protected $casts = [
+        'ai_detection_score' => 'float',
+        'ai_checked_at' => 'datetime',
         'preferred_programmes' => 'array',
         'declaration' => 'boolean',
         'user_accepted' => 'boolean',

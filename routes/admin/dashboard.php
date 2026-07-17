@@ -117,7 +117,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     Route::get('/scholarships/{application}', [ScholarshipController::class, 'show'])->name('scholarships.show');
     Route::post('/scholarships/{application}/status', [ScholarshipController::class, 'updateStatus'])->name('scholarships.update-status');
     Route::delete('/scholarships/{application}', [ScholarshipController::class, 'destroy'])->name('scholarships.destroy');
-   
+   // Add this route for AI detection
+    Route::post('/admin/scholarships/{id}/check-ai', [ScholarshipController::class, 'checkAIContent'])
+        ->name('scholarships.check-ai');
     //--------------------------------------------------------------------------
     // ✅ CHAPTER MANAGEMENT (MOVED INSIDE ADMIN GROUP)
     //--------------------------------------------------------------------------
