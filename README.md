@@ -230,3 +230,6 @@ Send a notification email to 33 applicant notifying them if the closure of the i
 
 13-July-2025
 Wokring on all the feedback from MD
+uploaded Article 
+Uploaded the Research and White paper
+work on the download of document ofr scholarship applicant 
