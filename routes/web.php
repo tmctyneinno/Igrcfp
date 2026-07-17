@@ -112,8 +112,8 @@ Route::get('/course-equivalency', [HomeController::class, 'courseEquivalency'])
 
 Route::get('/partnerships', [HomeController::class, 'partnerships'])
     ->name('partnerships.index');
-Route::get('/scholarship/{slug}', [HomeController::class, 'showNews'])->name('scholarship.show');
-Route::post('/scholarship/apply', [ScholarshipController::class, 'store'])->name('scholarship.apply');
+// Route::get('/scholarship/{slug}', [HomeController::class, 'showNews'])->name('scholarship.show');
+// Route::post('/scholarship/apply', [ScholarshipController::class, 'store'])->name('scholarship.apply');
 // PDF Export Route
 Route::get('/admin/scholarships/{application}/download-pdf', [ScholarshipController::class, 'downloadPdf'])
     ->name('admin.scholarships.download-pdf')
