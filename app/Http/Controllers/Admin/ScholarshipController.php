@@ -140,7 +140,7 @@ class ScholarshipController extends Controller
             ->with('success', 'Application deleted successfully!');
     } 
 
-    public function checkAIContent($id)
+       public function checkAIContent($id)
     {
         try {
             $application = ScholarshipApplication::findOrFail($id);
@@ -153,8 +153,19 @@ class ScholarshipController extends Controller
                 ], 400);
             }
             
-            // Use Hugging Face free AI detection model
-            $aiProbability = $this->detectAIWithHuggingFace($text);
+            // PRIORITY 1: Try Hugging Face (if internet works)
+            // PRIORITY 2: Fall back to Local Heuristic (always works)
+            try {
+                $aiProbability = $this->detectAIWithHuggingFace($text);
+            } catch (\Exception $e) {
+                Log::warning('Hugging Face unreachable, using local heuristic.');
+                $aiProbability = $this->detectAIEnhanced($text);
+            }
+            
+            // If Hugging Face returned 0.5 (default failure), also use heuristic
+            if ($aiProbability == 0.5) {
+                 $aiProbability = $this->detectAIEnhanced($text);
+            }
             
             // SAVE THE RESULT TO DATABASE
             $application->update([
@@ -165,7 +176,7 @@ class ScholarshipController extends Controller
             return response()->json([
                 'success' => true,
                 'ai_probability' => $aiProbability,
-                'message' => 'Analysis complete and saved.'
+                'message' => 'Analysis complete.'
             ]);
             
         } catch (\Exception $e) {
@@ -176,7 +187,7 @@ class ScholarshipController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to analyze content: ' . $e->getMessage()
+                'message' => 'Failed to analyze content.'
             ], 500);
         }
     }
@@ -386,7 +397,7 @@ class ScholarshipController extends Controller
                 // ZeroGPT returns percentage like 85.5 for AI detection
                 return isset($result['ai_percentage']) ? $result['ai_percentage'] / 100 : 0.5;
             }
-            
+             
             return $this->detectAIEnhanced($text);
             
         } catch (\Exception $e) {
