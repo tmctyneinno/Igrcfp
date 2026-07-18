@@ -56,6 +56,7 @@
                             <th>Country</th>
                             <th>Programmes</th>
                             <th width="100">Status</th>
+                            <th width="100">AI Score</th> {{-- New Column --}}
                             <th width="110">Date</th>
                             <th width="160" class="text-center">Actions</th>
                         </tr>
@@ -73,7 +74,7 @@
                                 @foreach($app->preferred_programmes as $prog)
                                     <span class="badge bg-light text-dark me-1 mb-1">{{ $prog }}</span>
                                 @endforeach
-                            </td>
+                            </td> 
                             <td>
                                 <span class="badge bg-{{
                                     $app->status == 'pending' ? 'warning' :
@@ -82,6 +83,31 @@
                                 }}">
                                     {{ ucfirst(str_replace('_', ' ', $app->status)) }}
                                 </span>
+                            </td>
+                            {{-- AI Score Column --}}
+                            <td>
+                                @if($app->ai_detection_score !== null)
+                                    @php
+                                        $score = $app->ai_detection_score;
+                                        $percentage = number_format($score * 100, 0);
+                                        
+                                        if ($score >= 0.7) {
+                                            $badgeClass = 'bg-danger'; // High risk
+                                            $icon = 'fa-robot';
+                                        } elseif ($score >= 0.4) {
+                                            $badgeClass = 'bg-warning text-dark'; // Medium risk
+                                            $icon = 'fa-exclamation-circle';
+                                        } else {
+                                            $badgeClass = 'bg-success'; // Low risk
+                                            $icon = 'fa-user';
+                                        }
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }}" title="Last checked: {{ $app->ai_checked_at?->diffForHumans() }}">
+                                        <i class="fas {{ $icon }} me-1"></i>{{ $percentage }}%
+                                    </span>
+                                @else
+                                    <span class="text-muted small">-</span>
+                                @endif
                             </td>
                             <td>{{ $app->created_at->format('M d, Y') }}</td>
                             <td class="text-nowrap">
@@ -100,6 +126,7 @@
     </div>
 </div>
 @endsection
+
 @push('scripts')
 <script>
     // Auto-dismiss alerts after 5 seconds
