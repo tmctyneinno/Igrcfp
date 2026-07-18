@@ -232,4 +232,14 @@ Send a notification email to 33 applicant notifying them if the closure of the i
 Wokring on all the feedback from MD
 uploaded Article 
 Uploaded the Research and White paper
-work on the download of document ofr scholarship applicant 
+work on the download of document of scholarship applicant 
+
+
+
+AI detection submission assistement
+
+-GRC maga
+Govc &. compliance
+
+php artisan config:clear
+   php artisan config:cache
