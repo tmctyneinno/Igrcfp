@@ -27,7 +27,7 @@ export default function CallToAction({ auth }) {
                         Apply for Membership
                     </Link>
                     <Link
-                        href={route('courses.index')}
+                        href={route('igrcfp.certificates.index')}
                         className="bg-transparent border-2 border-[#0A2463] text-[#0A2463] px-6 py-2.5 rounded-full font-semibold hover:bg-[#0A2463] hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                         Explore Programmes
