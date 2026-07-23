@@ -59,30 +59,50 @@ class BrevoMailService
         }
     }
 
-    protected function sendPayload(array $data): array
-    {
-        $ch = curl_init('https://api.brevo.com/v3/smtp/email');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'accept: application/json',
-            'api-key: ' . $this->apiKey,
-            'content-type: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-
-        if ($httpCode === 201) {
-            return ['success' => true, 'message_id' => json_decode($response)->messageId ?? null];
-        }
-
-        throw new \Exception("Failed to send email: HTTP {$httpCode} - " . ($error ?: $response));
+   protected function sendPayload(array $data): array
+{
+    // Debug: Log the API key to verify it's loaded
+    if (empty($this->apiKey)) {
+        \Log::error('Brevo API key is empty or not loaded from .env');
+        throw new \Exception('Brevo API key is not configured');
     }
+    
+    \Log::info('Sending email via Brevo API', [
+        'api_key_length' => strlen($this->apiKey),
+        'recipients' => $data['to'],
+        'subject' => $data['subject']
+    ]);
+
+    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Accept: application/json',
+        'Content-Type: application/json',
+        'api-key: ' . $this->apiKey
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    if ($httpCode === 201) {
+        return ['success' => true, 'message_id' => json_decode($response)->messageId ?? null];
+    }
+
+    // Log the full error for debugging
+    \Log::error('Brevo API Error', [
+        'http_code' => $httpCode,
+        'response' => $response,
+        'curl_error' => $error,
+        'payload_preview' => json_encode(array_merge($data, ['htmlContent' => '[HIDDEN]']))
+    ]);
+
+    throw new \Exception("Failed to send email: HTTP {$httpCode} - " . ($error ?: $response));
+}
 
     protected function formatRecipients(string|array $recipients): array
     {
