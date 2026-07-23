@@ -635,7 +635,7 @@ class DashboardController extends Controller
             return isset($readModuleIds[$module->id]);
         })->count();
 
-        return [
+        return [ 
             'completed_modules' => $completedModules,
             'total_modules' => $totalModules,
             'module_ids' => $modules->pluck('id')->values()->all(),
@@ -668,9 +668,22 @@ class DashboardController extends Controller
                 $query->where('user_id', auth()->id());
             }])
             ->first();
+        $quizzes = [];
+        $isLockedOut = false;
+        $lockExpiresAt = null;
         
         if ($combinedQuiz) {
             $submission = $combinedQuiz->submissions->first();
+            // Check for Lockout Status
+            if ($submission && !$submission->passed && $submission->locked_until) {
+                if (now()->lessThan($submission->locked_until)) {
+                    $isLockedOut = true;
+                    $lockExpiresAt = $submission->locked_until;
+                } else {
+                    // Lock expired, clear it so they can try again
+                    $submission->update(['locked_until' => null]);
+                }
+            }
             $quizzes = [[
                 'id' => $combinedQuiz->id,
                 'title' => $combinedQuiz->title ?? 'Course Quiz',
@@ -684,6 +697,9 @@ class DashboardController extends Controller
                 'passed' => $submission ? $submission->passed : null,
                 'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
                 'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
+                // Pass lockout data to frontend
+                'is_locked_out' => $isLockedOut,
+                'lock_expires_at' => $lockExpiresAt ? \Carbon\Carbon::parse($lockExpiresAt)->toIso8601String() : null,
             ]];
         } else {
             $quizzes = [];
@@ -884,7 +900,7 @@ class DashboardController extends Controller
             'enrollment' => $enrollment,
             'modules' => $modules, 
             'courseMaterials' => $courseMaterials,
-            'quizzes' => $quizzes,
+            'quizzes' => $quizzes, // Updated with lockout info
             'moduleAssessments' => $moduleAssessments,
             'finalExam' => $finalExam,
             'diplomaAssessment' => $diplomaAssessment,
@@ -1009,8 +1025,9 @@ class DashboardController extends Controller
 
     public function memebership(Request $request)
     {
-        
-         // dd($popularCourses);
+        // dd($popularCourses);
         return Inertia::render('Dashboard/Memebership/Index');
     } 
+
+   
 }

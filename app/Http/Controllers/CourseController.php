@@ -199,95 +199,6 @@ class CourseController extends Controller
         ]); 
     }
  
-        public function enroll(Request $request, Course $course)
-    {
-        // Check if course is published
-        if (!$course->status) {
-            return redirect()->route('courses.index')->with('error', 'Course not available.');
-        }
-
-        // Check if user is logged in
-        if (!$request->user()) {
-            session(['intended_enrollment' => $course->slug]);
-            return redirect()->route('login', [
-                'redirect' => route('courses.enroll', ['course' => $course->slug])
-            ])->with('success', 'Please login to enroll in this course.');
-        }
-
-        // Check if user is already enrolled
-        $existingEnrollment = Enrollment::where('user_id', $request->user()->id)
-            ->where('course_id', $course->id)
-            ->first();
-            
-        if ($existingEnrollment) {
-            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
-                ->with('info', 'You are already enrolled in this course.');
-        }
-
-        $user = $request->user();
-
-        // --- SCHOLARSHIP LOGIC START ---
-        // Define which categories are eligible for scholarships
-        $scholarshipCategories = [
-            'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist' 
-            // Add other certification categories if needed
-        ];
-
-        $isCertificationCourse = in_array($course->igrcfp_category, $scholarshipCategories);
-
-        // Check if user is a scholarship applicant AND the course is a certification
-        if ($user->is_scholarship_applicant && $isCertificationCourse) {
-            // Create enrollment directly without payment/cart
-            $enrollment = $course->enrollments()->create([
-                'user_id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'payment_method' => 'scholarship',
-                'amount' => 0,
-                'status' => 'enrolled',
-                'enrollment_date' => now(),
-            ]);
-
-            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
-                ->with('success', 'Scholarship applied! You have been successfully enrolled in the course.');
-        }
-        // --- SCHOLARSHIP LOGIC END ---
-
-        // Existing logic for non-scholarship users or non-certification courses (Add to cart)
-        $cart = $user->carts()->where('status', 'active')->first();
-        
-        if (!$cart) {
-            $cart = $user->carts()->create([
-                'status' => 'active',
-                'session_id' => session()->getId(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-        
-        $existingItem = $cart->items()->where('course_id', $course->id)->first();
-        
-        if ($existingItem) {
-            return redirect()->route('dashboard.cart.index')->with('info', 'Course is already in your cart.');
-        }
-        
-        $cart->items()->create([
-            'item_type' => 'course',
-            'course_id' => $course->id,
-            'price' => $course->discount_price ?? $course->price,
-            'quantity' => 1,
-        ]);
-        
-        $cart->update([
-            'total_amount' => $cart->items->sum('price'),
-            'item_count' => $cart->items->count(),
-            'updated_at' => now(),
-        ]);
-
-        return redirect()->route('dashboard.cart.index')->with('success', 'Course added to cart successfully!');
-    }
 
     
     public function processEnrollment(Request $request, Course $course)
@@ -473,5 +384,99 @@ class CourseController extends Controller
             ],
         ]);
     }
+
+
+        public function enroll(Request $request, Course $course)
+    {
+        // Check if course is published
+        if (!$course->status) {
+            return redirect()->route('courses.index')->with('error', 'Course not available.');
+        }
+
+        // Check if user is logged in
+        if (!$request->user()) {
+            // If it's a POST request from AJAX, we can't easily redirect to login with Inertia 
+            // without a full page visit, but standard redirect works for GET.
+            session(['intended_enrollment' => $course->slug]);
+            return redirect()->route('login', [
+                'redirect' => route('courses.enroll', ['course' => $course->slug])
+            ])->with('success', 'Please login to enroll in this course.');
+        }
+
+        // Check if user is already enrolled
+        $existingEnrollment = Enrollment::where('user_id', $request->user()->id)
+            ->where('course_id', $course->id)
+            ->first();
+            
+        if ($existingEnrollment) {
+            // For AJAX/Inertia requests, returning a redirect response usually triggers a page visit
+            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
+                ->with('info', 'You are already enrolled in this course.');
+        }
+
+        $user = $request->user();
+
+        // --- SCHOLARSHIP LOGIC START ---
+        // Define eligible categories for scholarship
+        $scholarshipCategories = [
+            'IGRCFP Certificates',
+            'Certified GRC & Financial Crime Specialist' // Added based on previous context
+        ];
+        
+        $isCertificationCourse = in_array($course->igrcfp_category, $scholarshipCategories);
+
+        // Check if user is a scholarship applicant AND course is eligible
+        if ($user->is_scholarship_applicant && $isCertificationCourse) {
+            // Create enrollment directly without payment/cart
+            $enrollment = $course->enrollments()->create([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'payment_method' => 'scholarship',
+                'amount' => 0,
+                'status' => 'enrolled',
+                'enrollment_date' => now(),
+            ]);
+
+            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
+                ->with('success', 'Scholarship applied! You have been successfully enrolled in the course.');
+        }
+        // --- SCHOLARSHIP LOGIC END ---
+
+        // Existing logic for non-scholarship users (Add to cart)
+        $cart = $user->carts()->where('status', 'active')->first();
+        
+        if (!$cart) {
+            $cart = $user->carts()->create([
+                'status' => 'active',
+                'session_id' => session()->getId(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+        
+        $existingItem = $cart->items()->where('course_id', $course->id)->first();
+        
+        if ($existingItem) {
+            return redirect()->route('dashboard.cart.index')->with('info', 'Course is already in your cart.');
+        }
+        
+        $cart->items()->create([
+            'item_type' => 'course',
+            'course_id' => $course->id,
+            'price' => $course->discount_price ?? $course->price,
+            'quantity' => 1,
+        ]);
+        
+        $cart->update([
+            'total_amount' => $cart->items->sum('price'),
+            'item_count' => $cart->items->count(),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('dashboard.cart.index')->with('success', 'Course added to cart successfully!');
+    }
+
 
 }

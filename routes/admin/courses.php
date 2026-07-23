@@ -38,11 +38,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin', 'admin.role:ad
     
     // Course Categories Routes
     Route::resource('course-categories', CourseCategoryController::class);
-    
+     
     // Course Enrollments
     Route::get('/courses/{course}/enrollments', [CourseController::class, 'enrollments'])
         ->name('courses.enrollments')
         ->whereNumber('course');
+    
     
     // Course Reviews/Feedback
     Route::get('/courses/{course}/reviews', [CourseController::class, 'reviews'])

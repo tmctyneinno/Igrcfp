@@ -12,7 +12,7 @@ use App\Models\Notification; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
- 
+  
 class QuizController extends Controller
 {
     /**
@@ -116,7 +116,6 @@ class QuizController extends Controller
         \Log::info('Submit method called', [
             'course' => $course->slug,
             'assessment_id' => $assessmentId,
-            'skip_results' => $request->input('skip_results'),
             'answers' => $request->input('answers')
         ]);
         
@@ -124,7 +123,10 @@ class QuizController extends Controller
         $assessment = $this->findAssessment($assessmentId);
         
         if (!$assessment) {
-            return response()->json(['error' => 'Assessment not found'], 404);
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Assessment not found'], 404);
+            }
+            abort(404, 'Assessment not found');
         }
         
         $enrollment = Enrollment::where('user_id', $user->id)
@@ -132,13 +134,20 @@ class QuizController extends Controller
             ->first();
         
         if (!$enrollment) {
-            return response()->json(['error' => 'Enrollment not found'], 404);
+             if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Enrollment not found'], 404);
+            }
+            abort(404, 'Enrollment not found');
         }
 
         if (!$this->allModulesRead($course, $enrollment)) {
-            return response()->json(['error' => 'Please read all module content before submitting the quiz.'], 403);
+             if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Please read all module content before submitting the quiz.'], 403);
+            }
+            return redirect()->back()->with('error', 'Please read all module content.');
         }
 
+        // Validate essay files if present
         $request->validate([
             'essay_files' => ['nullable', 'array'],
             'essay_files.*' => ['file', 'mimes:pdf,doc,docx,txt,rtf', 'max:20480'],
@@ -183,16 +192,23 @@ class QuizController extends Controller
             ]);
         }
         
+        // Handle Answers (Support both JSON string and Array)
         $answers = $request->input('answers', []);
         if (is_string($answers)) {
             $decodedAnswers = json_decode($answers, true);
             $answers = is_array($decodedAnswers) ? $decodedAnswers : [];
         }
+
+        // Handle Essay Files (if any)
         $essayFiles = $request->file('essay_files', []);
+        
         $questions = $assessment->questions()->get();
         $hasEssayQuestions = $questions->contains('question_type', 'essay');
+        
+        // Determine if this is Part A only submission
         $isPartAOnly = $request->boolean('part_a_only');
         $isSplitPartASubmission = $isPartAOnly && $hasEssayQuestions;
+        
         $requiresManualMarking = !$isPartAOnly && ($assessment->needs_manual_marking || $hasEssayQuestions);
         
         $totalMarks = 0;
@@ -204,6 +220,8 @@ class QuizController extends Controller
         foreach ($questions as $question) {
             $marks = $question->points ?? 1;
             $userAnswer = $answers[$question->id] ?? null;
+            
+            // Check correctness for auto-graded questions
             $isCorrect = $question->isAnswerCorrect($userAnswer);
             $isManualQuestion = in_array($question->question_type, ['essay', 'case_study'], true);
             
@@ -214,7 +232,7 @@ class QuizController extends Controller
                 $pointsEarned = ($isCorrect === true) ? $marks : 0;
             }
             
-            // Store detailed question responses for the submission
+            // Store detailed question responses
             $questionResponses[$question->id] = [
                 'question_id' => $question->id,
                 'question_text' => $question->question_text,
@@ -225,6 +243,7 @@ class QuizController extends Controller
                 'correct' => $isManualQuestion ? null : $isCorrect === true,
             ];
 
+            // Handle File Uploads if present in request
             if ($question->question_type === 'essay' && isset($essayFiles[$question->id])) {
                 $file = $essayFiles[$question->id];
                 $path = $file->store("quiz-essays/{$course->id}/{$assessment->id}/{$user->id}", 'public');
@@ -269,7 +288,6 @@ class QuizController extends Controller
         $isNewSubmission = !$submission;
         
         if ($isNewSubmission) {
-            // Get attempt count for this assessment
             $attemptCount = AssessmentSubmission::where('assessment_id', $assessment->id)
                 ->where('user_id', $user->id)
                 ->count();
@@ -297,7 +315,17 @@ class QuizController extends Controller
         $submission->status = $isSplitPartASubmission
             ? 'in_progress'
             : ($requiresManualMarking ? 'submitted' : 'graded');
-        $submission->answers = $answers;
+        
+        // Merge existing answers if this is Part B submission after Part A
+        $finalAnswers = $answers;
+        if (!$isPartAOnly && $submission->answers) {
+             $prevAnswers = is_string($submission->answers) ? json_decode($submission->answers, true) : $submission->answers;
+             if(is_array($prevAnswers)) {
+                 $finalAnswers = array_merge($prevAnswers, $answers);
+             }
+        }
+
+        $submission->answers = $finalAnswers;
         $submission->question_responses = $questionResponses;
         $submission->score = $earnedMarks;
         $submission->percentage = $score;
@@ -313,12 +341,19 @@ class QuizController extends Controller
             $submission->submission_file_size = $primaryEssayFile['size'];
         }
         
-        // If auto-graded, set graded_at
         if (!$requiresManualMarking) {
             $submission->graded_at = now();
         }
         
         $submission->save();
+
+        // ✅ HANDLE LOCKOUT FOR FAILED QUIZZES
+        // Only apply lock if it's a fully graded failure (not manual review)
+        if (!$passed && !$requiresManualMarking) {
+            $submission->update([
+                'locked_until' => now()->addHours(24)
+            ]);
+        }
         
         // Link attempt to submission
         $attempt->update(['submission_id' => $submission->id]);
@@ -340,11 +375,10 @@ class QuizController extends Controller
             'score' => $score,
             'passed' => $passed,
             'submission_id' => $submission->id,
-            'skip_results' => $request->input('skip_results')
         ]);
         
-        // ✅ ALWAYS return JSON for fetch requests
-        if ($request->expectsJson() || $request->ajax() || $request->wantsJson()) {
+        // ✅ FORCE JSON RESPONSE FOR FETCH REQUESTS
+        if ($request->has('part_a_only') || $request->has('essay_answers') || $request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Quiz submitted successfully!',
@@ -356,7 +390,7 @@ class QuizController extends Controller
             ]);
         }
         
-        // For Inertia requests, return redirect
+        // Fallback for Inertia/Standard requests
         return Inertia::location(route('dashboard.quiz.results', [
             'course' => $course->slug,
             'assessment' => $assessmentId

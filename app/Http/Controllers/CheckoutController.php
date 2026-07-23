@@ -12,7 +12,7 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Stripe\Checkout\Session as StripeSession;
 use Illuminate\Support\Facades\DB;
- 
+  
 class CheckoutController extends Controller
 {
     public function index(Request $request)
@@ -692,7 +692,7 @@ class CheckoutController extends Controller
             ->latest()
             ->take(5)
             ->get();
-
+ 
         return Inertia::render('Dashboard/Checkout/Success', [
             'enrollments' => $enrollments->map(function($enrollment) {
                 return [

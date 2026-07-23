@@ -89,14 +89,14 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                         className="h-full w-full object-cover hover:scale-110 transition-transform duration-300"
                                         onError={(e) => { e.target.src = '/images/default-course.jpg'; }}
                                     />
-                                    <div className="absolute top-3 left-3 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
+                                     <div className="absolute top-3 left-3 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                         {progress}% Complete
                                     </div>
-                                    {progress === 100 && (
+                                   {/* {progress === 100 && (
                                         <div className="absolute top-3 right-3 rounded-full bg-green-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                             ✅ Completed
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 <div className="p-4">

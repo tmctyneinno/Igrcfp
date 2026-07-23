@@ -39,6 +39,7 @@ class AssessmentSubmission extends Model
         'time_spent',
         'remaining_time',
         'attempt_number',
+        'locked_until', 
     ];
 
     protected $casts = [

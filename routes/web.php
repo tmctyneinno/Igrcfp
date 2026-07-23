@@ -56,9 +56,17 @@ Route::get('/courses', [CourseController::class, 'index'])->name('courses.index'
 Route::get('/courses/{slug}', [CourseController::class, 'show'])->name('courses.show'); 
 Route::get('/courses/category/{slug}', [CourseController::class, 'byCategory'])->name('courses.by-category');
 // Course enrollment routes
-Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
-Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
+// Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
+// Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
 
+// OLD CODE (Remove or Comment Out)
+// Route::get('/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])->name('courses.enroll');
+// Route::post('/courses/{course:slug}/enroll', [CourseController::class, 'processEnrollment'])->name('courses.enroll.process');
+
+// NEW CODE (Replace with this)
+// This handles BOTH GET (redirect to login if needed) and POST (Scholarship/Cart logic)
+Route::match(['get', 'post'], '/courses/{course:slug}/enroll', [CourseController::class, 'enroll'])
+    ->name('courses.enroll');
  
 
 Route::middleware('auth')->group(function () {
