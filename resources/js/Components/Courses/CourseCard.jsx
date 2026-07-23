@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext';
- 
+import { CheckCircleIcon } from '@heroicons/react/24/solid'; // Added for icon
+   
 export default function CourseCard({ course, onAddToCart, isInCart, isAdding, isEnrolled }) {
     const { props } = usePage();
     const { removeFromCart } = useCart();
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
-    const [isRemoving, setIsRemoving] = useState(false);
+    
+    // Extract user data from props
+    const authUser = props.auth?.user;
+     
+    // Use truthy check for 1/0 or true/false
+    const isScholarshipApplicant = !!authUser?.is_scholarship_applicant;
+     
+    // Check if course is eligible (passed from backend in index/show methods)
+    // Note: Ensure your backend passes 'is_scholarship_eligible' in the course object for list views
+    const isEligibleCourse = course?.is_scholarship_eligible === true; 
+
+    // Only show scholarship button if BOTH are true
+    const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
+    console.log("canUseScholarship",canUseScholarship);
 
     useEffect(() => {
         setIsCourseInCart(isInCart || false);
@@ -40,7 +54,6 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
         return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
 
-    // Format a number as "2,000.00"
     const formatPrice = (value) => {
         return value.toLocaleString('en-US', {
             minimumFractionDigits: 2,
@@ -51,22 +64,41 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
     const price = parseFloat(course?.price || 0);
     const discountPrice = parseFloat(course?.discount_price || 0);
     const hasDisc = hasDiscount();
-    const discountPercentage = hasDisc && price > 0
-        ? Math.round(((price - discountPrice) / price) * 100)
-        : 0;
+    
+    // Handle Direct Enrollment for Scholarship Applicants
+    const handleScholarshipEnroll = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        router.post(route('courses.enroll', course.slug), {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                window.location.reload(); 
+            },
+            onError: (errors) => {
+                console.error("Enrollment failed", errors);
+            }
+        });
+    };
 
+    // Handle Add to Cart for Regular Users
     const handleAddToCartClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        window.location.href = route('dashboard.cart.index');
-    };
-
-    const handleViewCartClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (typeof route === 'function') {
-            window.location.href = route('dashboard.cart.index');
+        
+        if (!authUser) {
+            router.visit(route('login', { 
+                redirect: route('courses.enroll', course.slug) 
+            }));
+            return;
         }
+
+        router.post(route('courses.enroll', course.slug), {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                 window.location.href = route('dashboard.cart.index');
+            }
+        });
     };
 
     return (
@@ -154,6 +186,15 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         >
                             Continue
                         </Link>
+                    ) : canUseScholarship ? (
+                        /* SCHOLARSHIP APPLICANT BUTTON - PROFESSIONAL STYLE */
+                        <button
+                            onClick={handleScholarshipEnroll}
+                            disabled={isAdding}
+                            className="px-2 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-full hover:bg-emerald-700 transition shadow-sm flex items-center gap-2"
+                        >
+                            Activate Scholarship
+                        </button>
                     ) : isCourseInCart ? (
                         <Link
                             href={route('dashboard.cart.index')}
@@ -162,6 +203,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                             View Cart
                         </Link>
                     ) : (
+                        /* REGULAR USER / GUEST BUTTON */
                         <button
                             onClick={handleAddToCartClick}
                             disabled={isAdding}

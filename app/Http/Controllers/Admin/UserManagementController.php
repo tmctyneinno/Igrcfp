@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
  
 class UserManagementController extends Controller
-{
+{ 
     public function index(Request $request)
     {
         $search = $request->get('search');
         $status = $request->get('status');
+        $scholarship = $request->get('scholarship'); // New filter
         $perPage = $request->get('per_page', 20);
 
         $users = User::query()
@@ -26,6 +27,9 @@ class UserManagementController extends Controller
                 } elseif ($status === 'inactive') {
                     $query->where('status', '!=', 'active');
                 }
+            })
+            ->when($scholarship !== null, function ($query) use ($scholarship) {
+                $query->where('is_scholarship_applicant', $scholarship);
             })
             ->latest()
             ->paginate($perPage);
@@ -134,6 +138,22 @@ class UserManagementController extends Controller
         $status = $user->status === 'active' ? 'activated' : 'deactivated';
         
         return back()->with('success', "User {$status} successfully.");
+    }
+
+    // NEW: Toggle Scholarship Status
+    public function toggleScholarship(Request $request, User $user)
+    {
+        $isScholar = $request->has('is_scholarship_applicant');
+        
+        $user->update([
+            'is_scholarship_applicant' => $isScholar
+        ]);
+
+        $message = $isScholar 
+            ? "Scholarship access granted to {$user->name}." 
+            : "Scholarship access revoked from {$user->name}.";
+
+        return back()->with('success', $message);
     }
 
     public function bulkAction(Request $request)

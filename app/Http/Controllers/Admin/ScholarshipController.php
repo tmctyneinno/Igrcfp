@@ -49,7 +49,7 @@ class ScholarshipController extends Controller
         return view('admin.scholarships.show', compact('application'));
     }
 
-    public function updateStatus(Request $request, ScholarshipApplication $application)
+        public function updateStatus(Request $request, ScholarshipApplication $application)
     {
         // Log the incoming request
         Log::info('Updating scholarship status', [
@@ -62,15 +62,16 @@ class ScholarshipController extends Controller
             'status' => 'required|in:pending,under_review,accepted,rejected',
             'admin_notes' => 'nullable|string',
             'rejection_reason' => 'required_if:status,rejected|nullable|string',
+            'grant_scholarship_access' => 'nullable|boolean', // Add validation for the checkbox
         ]);
         
         $oldStatus = $application->status;
         $newStatus = $request->status;
         
         // Check if status is actually changing
-        if ($oldStatus === $newStatus) {
-            return redirect()->route('admin.scholarships.index')
-                ->with('info', 'Application status is already set to ' . ucfirst(str_replace('_', ' ', $newStatus)));
+        if ($oldStatus === $newStatus && !$request->has('grant_scholarship_access')) {
+             return redirect()->route('admin.scholarships.index')
+                ->with('info', 'No changes detected.');
         }
         
         $updateData = [
@@ -82,44 +83,63 @@ class ScholarshipController extends Controller
         if ($newStatus === 'rejected') {
             $updateData['rejection_reason'] = $request->rejection_reason;
             $updateData['rejected_at'] = now();
-            Log::info('Setting rejection data', [
-                'reason' => $request->rejection_reason,
-                'rejected_at' => now()
-            ]);
         }
         
         // Handle acceptance
         if ($newStatus === 'accepted') {
             $updateData['accepted_at'] = now();
         }
+
+        // Handle Scholarship Access Granting
+        if ($request->has('grant_scholarship_access')) {
+            $user = \App\Models\User::where('email', $application->email)->first();
+            
+            if ($user) {
+                // Update the user's scholarship flag
+                $user->update([
+                    'is_scholarship_applicant' => $request->grant_scholarship_access ? true : false
+                ]);
+                
+                // Also update the application record to reflect this linkage if needed
+                $updateData['user_accepted'] = $request->grant_scholarship_access ? true : false;
+                
+                Log::info('User scholarship status updated', [
+                    'user_id' => $user->id,
+                    'is_scholarship_applicant' => $request->grant_scholarship_access
+                ]);
+            } else {
+                Log::warning('User not found for scholarship access grant', [
+                    'email' => $application->email
+                ]);
+            }
+        }
         
         // Update the application
         $updated = $application->update($updateData);
         
-        Log::info('Application updated', [
-            'application_id' => $application->id,
-            'updated' => $updated,
-            'new_status' => $application->fresh()->status,
-            'update_data' => $updateData
-        ]);
-        
-        // Send notification
-        try {
-            $this->sendStatusChangeNotification(
-                $application, 
-                $this->mailService, 
-                $oldStatus, 
-                $newStatus,
-                $request->rejection_reason
-            );
-        } catch (\Exception $e) {
-            Log::error('Notification sending failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+        // Send notification only if status changed
+        if ($oldStatus !== $newStatus) {
+            try {
+                $this->sendStatusChangeNotification(
+                    $application, 
+                    $this->mailService, 
+                    $oldStatus, 
+                    $newStatus,
+                    $request->rejection_reason
+                );
+            } catch (\Exception $e) {
+                Log::error('Notification sending failed', [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
         }
 
-        $message = 'Application status updated successfully!';
+        $message = 'Application updated successfully!';
+        
+        if ($request->grant_scholarship_access) {
+            $message .= ' User account has been granted scholarship access.';
+        }
         
         if ($newStatus === 'accepted') {
             $message .= ' A scholarship approval email has been sent to the applicant.';
@@ -139,8 +159,8 @@ class ScholarshipController extends Controller
         return redirect()->route('admin.scholarships.index')
             ->with('success', 'Application deleted successfully!');
     } 
-
-       public function checkAIContent($id)
+ 
+    public function checkAIContent($id)
     {
         try {
             $application = ScholarshipApplication::findOrFail($id);

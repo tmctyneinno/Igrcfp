@@ -51,4 +51,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     // User Export
     Route::get('/users/export', [UserManagementController::class, 'export'])
         ->name('users.export');
+    // In your admin routes file
+    Route::post('/users/{user}/toggle-scholarship', [UserManagementController::class, 'toggleScholarship'])
+    ->name('users.toggle-scholarship');
 });

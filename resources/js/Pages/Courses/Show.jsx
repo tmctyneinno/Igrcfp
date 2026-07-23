@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Head, Link} from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react'; // Added router
 import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { useEnrollment } from '@/Contexts/EnrollmentContext';
+// Note: Ensure this path matches your actual context file
+import { useEnrollment } from '@/Contexts/EnrollmentContext'; 
 import { 
   CheckCircleIcon, 
   ClockIcon,  
@@ -17,13 +18,25 @@ import {
   ChevronRightIcon,
   CalendarIcon,
   UserGroupIcon, 
-  ChartBarIcon
+  ChartBarIcon,
+  GiftIcon // Added for scholarship icon
 } from '@heroicons/react/24/outline'; 
 
 export default function CourseShow({ auth, course, isEnrolled }) {
   const [activeTab, setActiveTab] = useState('overview');
-  const { startEnrollment, user } = useEnrollment();
- 
+  const { startEnrollment, user: contextUser } = useEnrollment();
+  const { props } = usePage();
+
+  // Get user from props (more reliable than context for this specific check)
+  const currentUser = auth?.user || props.auth?.user;
+  const isScholarshipApplicant = !!currentUser?.is_scholarship_applicant;
+  
+  // Check if course is eligible for scholarship (passed from backend)
+  const isEligibleCourse = course?.is_scholarship_eligible === true;
+  
+  // Only allow scholarship action if BOTH are true
+  const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
+
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -52,6 +65,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
       ? 'Free'
       : `£${numPrice.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };  
+  
   // Parse prices safely
   const price = parseFloatSafe(course.price);
   const discountPrice = parseFloatSafe(course.discount_price);
@@ -61,16 +75,29 @@ export default function CourseShow({ auth, course, isEnrolled }) {
   const discountPercentage = hasDiscount && price > 0 
     ? Math.round(((price - discountPrice) / price) * 100) 
     : 0;
+    
   const enrolled = Boolean(course?.is_enrolled ?? isEnrolled);
 
-  // Check if arrays exist
+  // Handle Direct Scholarship Enrollment
+  const handleScholarshipEnroll = () => {
+    router.post(route('courses.enroll', course.slug), {}, {
+      preserveScroll: true,
+      onSuccess: () => {
+        window.location.reload();
+      },
+      onError: (errors) => {
+        console.error("Enrollment failed", errors);
+      }
+    });
+  };
+
+  // Parse arrays
   const learningOutcomes = Array.isArray(course.learning_outcomes) ? course.learning_outcomes : [];
   const modules = Array.isArray(course.modules) ? course.modules : [];
   const materials = Array.isArray(course.materials) ? course.materials : [];
 
-  // Get image URLs - added these lines
+  // Get image URLs
   const imageUrl = course.image_url || course.image;
-  // const bannerImageUrl = course.banner_image_url || course.banner_image;
 
   // Tab content
   const tabs = [
@@ -83,7 +110,6 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
   const getCleanDescription = (text) => {
     if (!text) return 'No description available';
-    
     const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
     return cleanText.length > 100 ? cleanText.substring(0, 700) + '...' : cleanText;
   };
@@ -94,21 +120,14 @@ export default function CourseShow({ auth, course, isEnrolled }) {
         <Head title={course.title} />
 
         <div className="relative bg-gradient-to-r from-gray-900 to-blue-900 text-white">
-          {/* Background Banner Image - Added */}
-         
           <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  pt-40 pb-20">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-20">
             <div className="flex flex-col lg:flex-row items-start gap-8">
               {/* Course Title & Basic Info */}
               <div className="lg:w-2/3">
-                {/* Course Image - Added for mobile/tablet view */}
                 {imageUrl && (
                   <div className="lg:hidden mb-6">
-                    <img 
-                      src={imageUrl} 
-                      alt={course.title}
-                      className="w-full h-48 object-cover rounded-lg shadow-lg"
-                    />
+                    <img src={imageUrl} alt={course.title} className="w-full h-48 object-cover rounded-lg shadow-lg" />
                   </div>
                 )}
                 
@@ -147,21 +166,16 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
               {/* Pricing Card */}
               <div className="lg:w-1/3 w-full">
-                {/* Course Image - Added inside pricing card for desktop view */}
                 {imageUrl && (
                   <div className="hidden lg:block mb-4">
-                    <img 
-                      src={imageUrl} 
-                      alt={course.title}
-                      className="w-full h-48 object-cover rounded-lg shadow-lg"
-                    />
+                    <img src={imageUrl} alt={course.title} className="w-full h-48 object-cover rounded-lg shadow-lg" />
                   </div>
                 )}
                 
                 <div className="bg-white rounded-xl shadow-2xl p-6 text-gray-900">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold">Enroll Now</h3>
-                    {hasDiscount && (
+                    <h3 className="text-lg font-bold">Enrollment Options</h3>
+                    {hasDiscount && !canUseScholarship && (
                       <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">
                         {discountPercentage}% OFF
                       </span>
@@ -171,10 +185,22 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   <div className="mb-0">
                     {enrolled ? (
                       <div className="mb-4">
-                        <p className="text-2xl font-bold text-green-700 text-white">You're enrolled</p>
+                        <p className="text-2xl font-bold text-green-700">You're enrolled</p>
                         <p className="text-sm text-gray-600 mt-2">Continue learning from your dashboard.</p>
+                      </div> 
+                    ) : canUseScholarship ? (
+                      /* SCHOLARSHIP PRICING VIEW */
+                      <div className="mb-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <GiftIcon className="h-6 w-6 text-emerald-600" />
+                          <span className="text-lg font-bold text-emerald-800">Scholarship Covered</span>
+                        </div>
+                        <p className="text-sm text-emerald-700 text-black">
+                          Your scholarship application has been approved. You can access this course at no cost.
+                        </p>
                       </div>
                     ) : (
+                      /* REGULAR PRICING VIEW */
                       <div className="mb-0">
                         {hasDiscount ? (
                           <div className="space-y-2">
@@ -190,23 +216,37 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                       </div>
                     )}
                     
-                    <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
-                  </div>
-                  {enrolled ? (
-                      <Link
-                          href={route('dashboard.courses.show', course.slug)}
-                          className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
-                      >
-                          Continue Course
-                      </Link>
-                    ) :(
-                      <button 
-                        onClick={() => startEnrollment(course)}
-                        className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
-                      >
-                        {user ? 'Enroll Now' : 'Sign In to Enroll'}
-                      </button>
+                    {!enrolled && !canUseScholarship && (
+                       <p className="text-sm text-gray-600 mt-2">One-time payment • Lifetime access</p>
                     )}
+                  </div>
+
+                  {/* ACTION BUTTONS */}
+                  {enrolled ? (
+                    <Link
+                        href={route('dashboard.courses.show', course.slug)}
+                        className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
+                    >
+                        Continue Course
+                    </Link>
+                  ) : canUseScholarship ? (
+                    /* SCHOLARSHIP BUTTON */
+                    <button 
+                      onClick={handleScholarshipEnroll}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4 flex items-center justify-center gap-2 shadow-md"
+                    >
+                      <CheckCircleIcon className="h-5 w-5" />
+                      Activate Scholarship
+                    </button>
+                  ) : (
+                    /* REGULAR BUTTON */
+                    <button 
+                      onClick={() => startEnrollment(course)}
+                      className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition duration-200 mb-4"
+                    >
+                      {currentUser ? 'Enroll Now' : 'Sign In to Enroll'}
+                    </button>
+                  )}
                   
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center">
@@ -228,7 +268,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
           </div>
         </div>
 
-        {/* Main Content with Tabs - Rest of the code remains unchanged */}
+        {/* Main Content with Tabs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Tabs Navigation */}
           <div className="border-b border-gray-200 mb-8">
@@ -255,61 +295,26 @@ export default function CourseShow({ auth, course, isEnrolled }) {
             </nav>
           </div>
 
-          {/* Tab Content */}
+          {/* Tab Content Area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content Area */}
             <div className="lg:col-span-2">
-              {/* Overview Tab */} 
-              {activeTab === 'overview' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+               
+               {activeTab === 'overview' && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <div className="prose prose-lg max-w-none">
                     {course.full_description ? (
-                      <div 
-                        className="
-                          prose prose-lg max-w-none
-                          [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                          [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                          [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                          [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
-                          [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
-                          [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
-                          [&_li]:mb-1
-                          [&_strong]:font-bold [&_strong]:text-gray-900
-                          [&_b]:font-bold [&_b]:text-gray-900
-                          [&_em]:italic
-                          [&_i]:italic
-                          [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
-                          [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
-                        "
-                      >
+                      <div className="prose prose-lg max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2 [&_li]:mb-1 [&_strong]:font-bold [&_strong]:text-gray-900 [&_b]:font-bold [&_b]:text-gray-900 [&_em]:italic [&_i]:italic [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600">
                         <div dangerouslySetInnerHTML={{ __html: course.full_description }} />
                       </div>
                     ) : (
                       <div className="text-gray-600">
                         <p className="text-lg mb-6">This comprehensive certification programme is designed to provide you with the essential skills and knowledge needed to excel in your professional field.</p>
-                        
                         <h3 className="text-xl font-bold text-gray-900 mb-4">Programme Highlights</h3>
                         <ul className="space-y-3">
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                            <span>Comprehensive curriculum developed by industry experts</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                            <span>Practical, real-world case studies and applications</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                            <span>Interactive learning with hands-on exercises</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                            <span>Expert-led sessions and mentorship opportunities</span>
-                          </li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Comprehensive curriculum developed by industry experts</span></li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Practical, real-world case studies and applications</span></li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Interactive learning with hands-on exercises</span></li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Expert-led sessions and mentorship opportunities</span></li>
                         </ul>
                       </div>
                     )}
@@ -319,22 +324,12 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
               {/* Curriculum Tab */}
               {activeTab === 'curriculum' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div className="p-6 border-b border-gray-200">
                       <h3 className="text-xl font-bold text-gray-900 mb-2">Course Curriculum</h3>
-                      <p className="text-gray-600">
-                        {isEnrolled 
-                          ? 'Access all modules and learning materials' 
-                          : 'Unlock full access after enrollment'
-                        }
-                      </p>
+                      <p className="text-gray-600">{isEnrolled ? 'Access all modules and learning materials' : 'Unlock full access after enrollment'}</p>
                     </div>
-                    
                     <div className="divide-y divide-gray-200">
                       {modules.length > 0 ? (
                         modules.map((module, index) => (
@@ -346,19 +341,12 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                                 </div>
                                 <div>
                                   <h4 className="font-semibold text-gray-900">{module.title || `Module ${index + 1}`}</h4>
-                                  {module.duration && (
-                                    <p className="text-sm text-gray-500 mt-1">{module.duration}</p>
-                                  )}
+                                  {module.duration && <p className="text-sm text-gray-500 mt-1">{module.duration}</p>}
                                 </div>
                               </div>
                               {enrolled ? (
                                 <div className="flex items-center space-x-2">
-                                  <Link
-                                    href={route('dashboard.courses.show', course.slug)}
-                                    className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-                                  >
-                                    Start
-                                  </Link>
+                                  <Link href={route('dashboard.courses.show', course.slug)} className="text-blue-600 hover:text-blue-800 font-medium text-sm">Start</Link>
                                   <PlayIcon className="h-5 w-5 text-blue-600" />
                                 </div>
                               ) : (
@@ -370,21 +358,15 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                             </div>
                             {module.description && (
                               <div className="mt-4 pl-14">
-                                <div className="text-gray-600 bg-gray-50 p-4 rounded-lg">
-                                  {module.description}
-                                </div>
+                                <div className="text-gray-600 bg-gray-50 p-4 rounded-lg">{module.description}</div>
                               </div>
                             )}
                           </div>
                         ))
                       ) : (
-                        <div className="p-6 text-center text-gray-500">
-                          <p>Curriculum details will be available after enrollment</p>
-                        </div>
+                        <div className="p-6 text-center text-gray-500"><p>Curriculum details will be available after enrollment</p></div>
                       )}
                     </div>
-
-                    {/* Enrollment CTA at Bottom */}
                     {!enrolled && (
                       <div className="p-6 bg-blue-50 border-t border-blue-100">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -392,12 +374,15 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                             <h4 className="font-bold text-gray-900 mb-1">Ready to start learning?</h4>
                             <p className="text-gray-600 text-sm">Enroll today to unlock all {modules.length} modules</p>
                           </div>
-                          <button
-                            onClick={() => startEnrollment(course)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition"
-                          >
-                            {user ? 'Enroll Now' : 'Sign In & Enroll'}
-                          </button>
+                          {canUseScholarship ? (
+                             <button onClick={handleScholarshipEnroll} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                               Activate Scholarship
+                             </button>
+                          ) : (
+                            <button onClick={() => startEnrollment(course)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                              {currentUser ? 'Enroll Now' : 'Sign In & Enroll'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}
@@ -407,37 +392,15 @@ export default function CourseShow({ auth, course, isEnrolled }) {
 
               {/* Outcomes Tab */}
               {activeTab === 'outcomes' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-6">Learning Outcomes</h3>
-                    
                     {learningOutcomes.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         {learningOutcomes.map((outcome, index) => (
                           <div key={index} className="flex items-start p-4 bg-blue-50 rounded-lg">
                             <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                            <div 
-                              className="
-                                prose prose-lg max-w-none
-                                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8
-                                [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6
-                                [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4
-                                [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed
-                                [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
-                                [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2
-                                [&_li]:mb-1
-                                [&_strong]:font-bold [&_strong]:text-gray-900
-                                [&_b]:font-bold [&_b]:text-gray-900
-                                [&_em]:italic
-                                [&_i]:italic
-                                [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline
-                                [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600
-                              "
-                            >
+                            <div className="prose prose-lg max-w-none [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 [&_p]:mb-4 [&_p]:text-gray-700 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_ol]:space-y-2 [&_li]:mb-1 [&_strong]:font-bold [&_strong]:text-gray-900 [&_b]:font-bold [&_b]:text-gray-900 [&_em]:italic [&_i]:italic [&_a]:text-blue-600 [&_a]:hover:text-blue-800 [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-blue-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600">
                               <div dangerouslySetInnerHTML={{ __html: outcome }} />
                             </div>
                           </div>
@@ -445,18 +408,9 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">Master essential skills and techniques required for professional certification</span>
-                        </div>
-                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">Apply theoretical knowledge to practical, real-world scenarios</span>
-                        </div>
-                        <div className="flex items-start p-4 bg-blue-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">Develop critical thinking and problem-solving abilities</span>
-                        </div>
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg"><CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" /><span className="text-gray-700">Master essential skills and techniques required for professional certification</span></div>
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg"><CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" /><span className="text-gray-700">Apply theoretical knowledge to practical, real-world scenarios</span></div>
+                        <div className="flex items-start p-4 bg-blue-50 rounded-lg"><CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" /><span className="text-gray-700">Develop critical thinking and problem-solving abilities</span></div>
                       </div>
                     )}
                   </div>
@@ -464,132 +418,44 @@ export default function CourseShow({ auth, course, isEnrolled }) {
               )}
 
               {/* Audience Tab */}
-              {/* Audience Tab */}
-{activeTab === 'audience' && (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-  >
-    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-2">Who Is This Course For?</h3>
-
-      {/* If custom content exists, use it */}
-      {course.target_audience ? (
-        <div 
-          className="
-            prose prose-lg max-w-none
-            [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-800 [&_h2]:mb-3
-            [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2
-            [&_li]:text-gray-700
-          "
-          dangerouslySetInnerHTML={{ __html: course.target_audience }}
-        />
-      ) : (
-        <>
-          {/* Default structured content if no custom data */}
-          <div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-3">✅ Ideal For</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                <span>Professionals looking to build or upgrade their skills in this field</span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                <span>Students and graduates seeking practical, job-ready knowledge</span>
-              </li>
-              <li className="flex items-start">
-                <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                <span>Anyone preparing for professional certification or career advancement</span>
-              </li>
-              {course.level === 'Beginner' && (
-                <li className="flex items-start">
-                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>Complete newcomers with no prior experience in this subject</span>
-                </li>
+              {activeTab === 'audience' && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Who Is This Course For?</h3>
+                    {course.target_audience ? (
+                      <div className="prose prose-lg max-w-none [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-800 [&_h2]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:text-gray-700" dangerouslySetInnerHTML={{ __html: course.target_audience }} />
+                    ) : (
+                      <>
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-800 mb-3">✅ Ideal For</h4>
+                          <ul className="space-y-3">
+                            <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Professionals looking to build or upgrade their skills in this field</span></li>
+                            <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Students and graduates seeking practical, job-ready knowledge</span></li>
+                            <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" /><span>Anyone preparing for professional certification or career advancement</span></li>
+                          </ul>
+                        </div>
+                        <div className="pt-4 border-t border-gray-100">
+                          <h4 className="text-lg font-semibold text-gray-800 mb-3">📋 Prerequisites</h4>
+                          <ul className="space-y-2 text-gray-700">
+                            {course.prerequisites ? (
+                              <div dangerouslySetInnerHTML={{ __html: course.prerequisites }} />
+                            ) : (
+                              <>
+                                <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" /><span>Basic computer and internet skills</span></li>
+                                <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" /><span>Access to a computer, tablet, or smartphone</span></li>
+                              </>
+                            )}
+                          </ul>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
               )}
-              {course.level === 'Intermediate' && (
-                <li className="flex items-start">
-                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>Learners with basic knowledge looking to deepen their expertise</span>
-                </li>
-              )}
-              {course.level === 'Advanced' && (
-                <li className="flex items-start">
-                  <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>Experienced practitioners aiming to master advanced concepts and leadership skills</span>
-                </li>
-              )}
-            </ul>
-          </div>
-
-          {/* Prerequisites Section */}
-          <div className="pt-4 border-t border-gray-100">
-            <h4 className="text-lg font-semibold text-gray-800 mb-3">📋 Prerequisites</h4>
-            <ul className="space-y-2 text-gray-700">
-              {course.prerequisites ? (
-                <div dangerouslySetInnerHTML={{ __html: course.prerequisites }} />
-              ) : (
-                <>
-                  <li className="flex items-start">
-                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
-                    <span>Basic computer and internet skills</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
-                    <span>Access to a computer, tablet, or smartphone</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
-                    <span>Motivation to learn and complete the course work</span>
-                  </li>
-                  {course.level === 'Advanced' && (
-                    <li className="flex items-start">
-                      <CheckCircleIcon className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" />
-                      <span>Foundational knowledge or experience in this field is recommended</span>
-                    </li>
-                  )}
-                </>
-              )}
-            </ul>
-          </div>
-
-          {/* Who This Is Not For */}
-          <div className="pt-4 border-t border-gray-100">
-            <h4 className="text-lg font-semibold text-gray-800 mb-3">❌ Not Recommended For</h4>
-            <ul className="space-y-2 text-gray-600">
-              <li className="flex items-start">
-                <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
-                <span>Those looking for only theoretical content without practical application</span>
-              </li>
-              {course.level === 'Beginner' && (
-                <li className="flex items-start">
-                  <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
-                  <span>Experienced professionals seeking only advanced, specialized topics</span>
-                </li>
-              )}
-              {course.level === 'Advanced' && (
-                <li className="flex items-start">
-                  <span className="h-5 w-5 inline-flex items-center justify-center text-red-500 mr-3 flex-shrink-0">✕</span>
-                  <span>Complete beginners without prior background in the subject</span>
-                </li>
-              )}
-            </ul>
-          </div>
-        </>
-      )}
-    </div>
-  </motion.div>
-)}
 
               {/* Certification Tab */}
               {activeTab === 'certification' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                   <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <div className="p-6 bg-blue-50 border-b border-blue-100">
                       <div className="flex items-center">
@@ -600,7 +466,6 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                         </div>
                       </div>
                     </div>
-                    
                     <div className="p-6">
                       <div className="mb-6">
                         <h4 className="font-bold text-gray-900 mb-2">Certificate Details</h4>
@@ -625,22 +490,12 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                           </div>
                         </div>
                       </div>
-                      
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <h5 className="font-bold text-gray-900 mb-2">Certificate Benefits</h5>
                         <ul className="space-y-2">
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                            <span>Enhance your professional credibility</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                            <span>Share on LinkedIn and professional networks</span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                            <span>Add to your resume and portfolio</span>
-                          </li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" /><span>Enhance your professional credibility</span></li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" /><span>Share on LinkedIn and professional networks</span></li>
+                          <li className="flex items-start"><CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" /><span>Add to your resume and portfolio</span></li>
                         </ul>
                       </div>
                     </div>
@@ -661,7 +516,7 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   </div>
                   <div className="flex justify-between items-center">
                     <label className="text-sm text-gray-500">Format</label>
-                    <p className="font-medium">{ 'Online, Live, Hybrid'}</p>
+                    <p className="font-medium">{'Online, Live, Hybrid'}</p>
                   </div>
                   <div className="flex justify-between items-center">
                     <label className="text-sm text-gray-500">Duration</label>
@@ -692,19 +547,6 @@ export default function CourseShow({ auth, course, isEnrolled }) {
                   Contact Admissions
                 </button>
               </div>
-
-              {/* Share Card */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Share this Course</h3>
-                <div className="flex space-x-3">
-                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
-                    LinkedIn
-                  </button>
-                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200">
-                    Twitter
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -717,20 +559,28 @@ export default function CourseShow({ auth, course, isEnrolled }) {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 {enrolled ? (
-                      <Link
-                          href={route('dashboard.courses.show', course.slug)}
-                          className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
-                      >
-                          Continue Course
-                      </Link>
-                    ) :(
-                    <button 
-                      onClick={() => startEnrollment(course)}
-                      className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
-                    >
-                      Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
-                    </button>
-                  )}
+                  <Link
+                      href={route('dashboard.courses.show', course.slug)}
+                      className="inline-flex w-full items-center justify-center px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition transform hover:-translate-y-1 mb-4"
+                  >
+                      Continue Course
+                  </Link>
+                ) : canUseScholarship ? (
+                  <button 
+                    onClick={handleScholarshipEnroll}
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg transition duration-200 flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <CheckCircleIcon className="h-5 w-5" />
+                    Activate Scholarship
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => startEnrollment(course)}
+                    className="bg-white text-blue-900 font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition duration-200"
+                  >
+                    Enroll Now - {hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}
+                  </button>
+                )}
               </div>
             </div>
           </div>

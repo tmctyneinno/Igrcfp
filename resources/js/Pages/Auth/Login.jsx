@@ -26,7 +26,7 @@ export default function Login({ status, canResetPassword }) {
     useEffect(() => {
         const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
         console.log('Site Key:', import.meta.env.VITE_RECAPTCHA_SITE_KEY);
- 
+  
         const renderWidget = () => {
             if (recaptchaRef.current && widgetIdRef.current === null && window.grecaptcha) {
                 widgetIdRef.current = window.grecaptcha.render(recaptchaRef.current, {

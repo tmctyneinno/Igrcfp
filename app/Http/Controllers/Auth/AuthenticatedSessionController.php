@@ -19,7 +19,7 @@ use App\Mail\AccountLockedMail;
 use App\Services\BrevoMailService;
 use Inertia\Inertia;
 use Inertia\Response;
-
+ 
 class AuthenticatedSessionController extends Controller
 {
     public function __construct(

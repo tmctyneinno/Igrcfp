@@ -20,6 +20,7 @@
      
     <div class="row gy-4">
         <div class="col-lg-8">
+            {{-- ... [Existing Applicant Details Card] ... --}}
             <div class="card">
                 <div class="card-header"><h6 class="card-title mb-0">Applicant Details</h6></div>
                 <div class="card-body">
@@ -56,8 +57,7 @@
                         </button>
                     </h6>
                     
-                    <!-- AI Detection Result -->
-                    <!-- Show this div if there is a saved score OR if we are currently loading -->
+                    {{-- ... [Existing AI Detection Logic] ... --}}
                     <div id="aiDetectionResult" class="mb-3" style="display: {{ $application->ai_detection_score !== null ? 'block' : 'none' }};">
                         <div class="alert {{ ($application->ai_detection_score ?? 0) > 0.6 ? 'alert-warning' : 'alert-success' }}" id="aiResultAlert">
                             <div class="d-flex align-items-center justify-content-between">
@@ -76,7 +76,6 @@
                                             <i class="far fa-clock me-1"></i> Last checked: {{ $application->ai_checked_at?->diffForHumans() ?? 'Unknown' }}
                                         </div>
                                     @else
-                                        <!-- Loading State Placeholder -->
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-spinner fa-spin me-2" id="aiLoadingIcon"></i>
                                             <span id="aiResultText">Analyzing content...</span>
@@ -94,7 +93,7 @@
 
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-header"><h6 class="card-title mb-0">Update Status</h6></div>
+                <div class="card-header"><h6 class="card-title mb-0">Update Status & Access</h6></div>
                 <div class="card-body">
                     <form action="{{ route('admin.scholarships.update-status', $application->id) }}" method="POST">
                         @csrf
@@ -106,6 +105,19 @@
                                 <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                 <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
                             </select>
+                        </div>
+                        
+                        <!-- SCHOLARSHIP ACCESS CHECKBOX -->
+                        <div class="mb-3 p-3 bg-light border rounded">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="grant_scholarship_access" id="grantScholarshipAccess" value="1" {{ old('grant_scholarship_access', $application->user_accepted) ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold" for="grantScholarshipAccess">
+                                    Grant Course Access
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                If checked, this will mark the associated user account ({{ $application->email }}) as a scholarship applicant, allowing them to enroll in certification courses for free.
+                            </small>
                         </div>
                         
                         <!-- Rejection Reason Field -->

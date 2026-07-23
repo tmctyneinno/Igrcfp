@@ -14,7 +14,7 @@
             <li>-</li>
             <li class="fw-medium">Users</li>
         </ul>
-    </div>
+    </div> 
 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -61,12 +61,18 @@
                         <option value="tutor" {{ request('role') == 'tutor' ? 'selected' : '' }}>Tutor</option>
                         <option value="learner" {{ request('role') == 'learner' ? 'selected' : '' }}>Learner</option>
                     </select>
+                    {{-- New Filter for Scholarship --}}
+                    <select name="scholarship" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px ms-2" onchange="this.form.submit()">
+                        <option value="">All Users</option>
+                        <option value="1" {{ request('scholarship') == '1' ? 'selected' : '' }}>Scholarship Applicants</option>
+                        <option value="0" {{ request('scholarship') == '0' ? 'selected' : '' }}>Non-Scholarship</option>
+                    </select>
                     <select name="enrolled" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px ms-2" onchange="this.form.submit()">
                         <option value="">All Users</option>
                         <option value="1" {{ request('enrolled') == '1' ? 'selected' : '' }}>Enrolled</option>
                         <option value="0" {{ request('enrolled') == '0' ? 'selected' : '' }}>Not Enrolled</option>
                     </select>
-                    @if(request('search') || request('status') || request('role') || request('enrolled') || request('per_page') != 10)
+                    @if(request('search') || request('status') || request('role') || request('scholarship') || request('enrolled') || request('per_page') != 10)
                         <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-outline-secondary ms-2">Clear</a>
                     @endif
                 </form>
@@ -106,6 +112,7 @@
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Phone</th>
+                                <th scope="col" class="text-center">Scholarship</th> {{-- New Column --}}
                                 <th scope="col" class="text-center">Enrollments</th>
                                 <th scope="col" class="text-center">Transactions</th>
                                 <th scope="col" class="text-center">Role</th>
@@ -137,6 +144,20 @@
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->phone ?? 'N/A' }}</td>
+                                
+                                {{-- Scholarship Column --}}
+                                <td class="text-center">
+                                    @if($user->is_scholarship_applicant)
+                                        <span class="badge bg-primary text-white px-12 py-6 radius-8" title="Scholarship Applicant">
+                                            <i class="fas fa-graduation-cap me-1"></i> Yes
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary text-secondary-light px-12 py-6 radius-8">
+                                            No
+                                        </span>
+                                    @endif
+                                </td>
+
                                 <td class="text-center">
                                     @php
                                         $enrollmentCount = $user->enrollments->count();
@@ -145,7 +166,7 @@
                                     @endphp
                                     @if($enrollmentCount > 0)
                                         <a href="{{ route('admin.users.enrollments', $user) }}" class="text-decoration-none">
-                                            <span class="badge bg-success-600 text-white px-12 py-6 radius-8 hover-bg-success-700">
+                                            <span class="badge bg-success text-white px-12 py-6 radius-8 hover-bg-success-700">
                                                 {{ $enrollmentCount }} Course{{ $enrollmentCount != 1 ? 's' : '' }}
                                             </span>
                                             @if($activeEnrollments > 0)
@@ -156,7 +177,7 @@
                                             @endif
                                         </a>
                                     @else
-                                        <span class="badge bg-secondary-600 text-white px-12 py-6 radius-8">
+                                        <span class="badge bg-secondary text-white px-12 py-6 radius-8">
                                             Not Enrolled
                                         </span>
                                     @endif
@@ -168,7 +189,7 @@
                                         $completedTransactions = $user->transactions->where('status', 'completed')->count();
                                     @endphp
                                     @if($transactionCount > 0)
-                                        <span class="badge bg-info-600 text-white px-12 py-6 radius-8">
+                                        <span class="badge bg-info text-white px-12 py-6 radius-8">
                                             {{ $transactionCount }} Transaction{{ $transactionCount != 1 ? 's' : '' }}
                                         </span>
                                         @if($totalSpent > 0)
@@ -178,7 +199,7 @@
                                             <br><small class="text-muted">{{ $completedTransactions }} completed</small>
                                         @endif
                                     @else
-                                        <span class="badge bg-secondary-600 text-white px-12 py-6 radius-8">
+                                        <span class="badge bg-secondary text-white px-12 py-6 radius-8">
                                             No Transactions
                                         </span>
                                     @endif
@@ -227,11 +248,6 @@
                                            title="View Details"> 
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
-                                        <!-- <a href="{{ route('admin.users.edit', $user) }}" 
-                                           class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle text-decoration-none"
-                                           title="Edit"> 
-                                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
-                                        </a> -->
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -247,7 +263,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="11" class="text-center py-4">
+                                <td colspan="12" class="text-center py-4">
                                     <div class="text-muted">No users found.</div>
                                 </td>
                             </tr>
@@ -280,6 +296,8 @@
     .bg-warning-600 { background-color: #d97706 !important; }
     .bg-secondary-600 { background-color: #6b7280 !important; }
     .bg-primary-600 { background-color: #2563eb !important; }
+    .bg-emerald-600 { background-color: #059669 !important; }
+    .bg-secondary-100 { background-color: #f3f4f6 !important; }
 </style>
 @endpush
 

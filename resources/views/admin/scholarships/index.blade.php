@@ -47,7 +47,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover align-middle">
                     <thead>
                         <tr>
                             <th width="60">ID</th>
@@ -56,7 +56,8 @@
                             <th>Country</th>
                             <th>Programmes</th>
                             <th width="100">Status</th>
-                            <th width="100">AI Score</th> {{-- New Column --}}
+                            <th width="100">AI Score</th>
+                            <th width="120" class="text-center">Scholarship Access</th> {{-- New Column --}}
                             <th width="110">Date</th>
                             <th width="160" class="text-center">Actions</th>
                         </tr>
@@ -109,6 +110,20 @@
                                     <span class="text-muted small">-</span>
                                 @endif
                             </td>
+                            
+                            {{-- Scholarship Access Column --}}
+                            <td class="text-center">
+                                @if($app->user_accepted)
+                                    <span class="badge bg-success" title="User account has been granted scholarship access">
+                                        <i class="fas fa-check-circle me-1"></i> Granted
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary" title="Scholarship access not yet granted to user account">
+                                        <i class="fas fa-times-circle me-1"></i> Not Granted
+                                    </span>
+                                @endif
+                            </td>
+
                             <td>{{ $app->created_at->format('M d, Y') }}</td>
                             <td class="text-nowrap">
                                 <div class="d-flex gap-1 justify-content-center">

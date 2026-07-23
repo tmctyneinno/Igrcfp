@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useEnrollment } from '@/Contexts/EnrollmentContext';
@@ -12,7 +12,7 @@ import {
   UsersIcon,
   LockClosedIcon,
   PlayIcon,
-  StarIcon,
+  StarIcon, 
   DocumentTextIcon,
   ArrowDownTrayIcon,
   ChevronRightIcon,
@@ -22,7 +22,8 @@ import {
   ShieldCheckIcon,
   GlobeAltIcon,
   TrophyIcon,
-  PhotoIcon
+  PhotoIcon,
+  GiftIcon // Added for scholarship icon
 } from '@heroicons/react/24/outline';
 import {  
   CheckCircleIcon as CheckCircleSolid 
@@ -31,9 +32,7 @@ import {
 // Utility functions
 const formatPrice = (price) => {
   const amount = Number(price);
-
   if (!amount) return 'Free';
-
   return `£${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2
   }).format(amount)}`;
@@ -53,7 +52,8 @@ const truncateText = (text, length = 160) => {
 };
 
 export default function Show({ course, enrollment, modules = [], auth }) {
-  const { user } = auth;
+  const { props } = usePage();
+  const { user } = auth || props.auth || {};
   const [activeTab, setActiveTab] = useState('overview');
   const [expandedModule, setExpandedModule] = useState(null);
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -72,6 +72,11 @@ export default function Show({ course, enrollment, modules = [], auth }) {
     ? Math.round(((price - discountPrice) / price) * 100)
     : 0;
 
+  // Scholarship Logic
+  const isScholarshipApplicant = !!user?.is_scholarship_applicant;
+  const isEligibleCourse = course?.is_scholarship_eligible === true;
+  const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
+
   // Tab configuration
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BookOpenIcon },
@@ -80,6 +85,32 @@ export default function Show({ course, enrollment, modules = [], auth }) {
     { id: 'audience', label: 'Who It\'s For', icon: UsersIcon },
     { id: 'certification', label: 'Certification', icon: AcademicCapIcon },
   ];
+
+  // Handle Direct Scholarship Enrollment
+  const handleScholarshipEnroll = () => {
+    setIsEnrolling(true);
+    const loadingToast = toast.loading('Activating scholarship...');
+    
+    router.post(route('courses.enroll', course.slug), {}, {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.dismiss(loadingToast);
+        toast.success('Scholarship activated! You are now enrolled.', {
+          icon: '🎓',
+          style: { background: '#10b981', color: '#fff' }
+        });
+        window.location.reload();
+      },
+      onError: (errors) => {
+        toast.dismiss(loadingToast);
+        console.error("Enrollment failed", errors);
+        toast.error('Failed to activate scholarship.', {
+          style: { background: '#ef4444', color: '#fff' }
+        });
+        setIsEnrolling(false);
+      }
+    });
+  };
 
   // Direct enrollment for free courses - follows cart → checkout pattern
   const directEnrollment = (course) => {
@@ -94,13 +125,8 @@ export default function Show({ course, enrollment, modules = [], auth }) {
         
         if (page.props.flash?.success) {
           toast.success('Course added to cart!');
-          
-          // Step 2: Proceed to checkout (same flow as paid courses)
-          // The checkout controller will handle free courses automatically
-          // since total_amount will be 0, it enrolls directly without payment
           router.visit(route('checkout.index'));
         } else if (page.props.flash?.info) {
-          // Course already in cart
           toast.success('Course is already in your cart!');
           router.visit(route('checkout.index'));
         } else {
@@ -138,11 +164,9 @@ export default function Show({ course, enrollment, modules = [], auth }) {
           toast.dismiss(loadingToast);
           
           if (page.props.flash?.success) {
-            // Redirect to checkout
             router.visit(route('checkout.index'));
           } else {
             toast.success('Course added to cart!');
-            // Optional: redirect to cart instead
             router.visit(route('dashboard.cart.index'));
           }
         },
@@ -277,7 +301,7 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                   </div>
                 )}
                 
-                {hasDiscount && (
+                {hasDiscount && !canUseScholarship && (
                   <div className="bg-gradient-to-r from-red-500 to-red-600 text-white text-center py-2 font-bold">
                     {discountPercentage}% OFF - Limited Time Offer
                   </div>
@@ -285,7 +309,18 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                 
                 <div className="p-8">
                   <div className="mb-6">
-                    {hasDiscount ? (
+                    {canUseScholarship ? (
+                      /* SCHOLARSHIP PRICING VIEW */
+                      <div className="mb-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <GiftIcon className="h-6 w-6 text-emerald-600" />
+                          <span className="text-lg font-bold text-emerald-800">Scholarship Covered</span>
+                        </div>
+                        <p className="text-sm text-emerald-700">
+                          Your scholarship application has been approved. You can access this course at no cost.
+                        </p>
+                      </div>
+                    ) : hasDiscount ? (
                       <>
                         <div className="flex items-baseline gap-3 mb-2">
                           <span className="text-4xl font-bold text-gray-900">
@@ -305,9 +340,12 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                         {formatPrice(price)}
                       </span>
                     )}
-                    <p className="text-sm text-gray-500 mt-2">
-                      One-time payment • Lifetime access
-                    </p>
+                    
+                    {!canUseScholarship && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        One-time payment • Lifetime access
+                      </p>
+                    )}
                   </div>
 
                   {isEnrolled ? (
@@ -329,6 +367,20 @@ export default function Show({ course, enrollment, modules = [], auth }) {
                         Continue Learning
                       </Link>
                     </div>
+                  ) : canUseScholarship ? (
+                    /* SCHOLARSHIP BUTTON */
+                    <button
+                      onClick={handleScholarshipEnroll}
+                      disabled={isEnrolling}
+                      className={`w-full text-white font-bold py-3 px-2 rounded-xl transition transform hover:-translate-y-0.5 mb-4 flex items-center justify-center gap-2 ${
+                        isEnrolling 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-emerald-600 hover:bg-emerald-700'
+                      }`}
+                    >
+                      <CheckCircleSolid className="w-5 h-5" />
+                      {isEnrolling ? 'Activating...' : 'Activate Scholarship'}
+                    </button>
                   ) : (
                     <button
                       onClick={() => startEnrollment(course)}
@@ -679,17 +731,33 @@ export default function Show({ course, enrollment, modules = [], auth }) {
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Join thousands of professionals who have transformed their careers with our certification programmes.
             </p>
-            <button
-              onClick={() => startEnrollment(course)}
-              disabled={isEnrolling}
-              className={`text-blue-900 font-bold py-4 px-12 rounded-xl transition transform hover:-translate-y-0.5 text-lg ${
-                isEnrolling 
-                  ? 'bg-gray-300 cursor-not-allowed' 
-                  : 'bg-white hover:bg-gray-100'
-              }`}
-            >
-              {isEnrolling ? 'Enrolling...' : `Enroll Now - ${hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}`}
-            </button>
+            
+            {canUseScholarship ? (
+              <button
+                onClick={handleScholarshipEnroll}
+                disabled={isEnrolling}
+                className={`text-emerald-900 font-bold py-4 px-12 rounded-xl transition transform hover:-translate-y-0.5 text-lg flex items-center justify-center gap-2 mx-auto ${
+                  isEnrolling 
+                    ? 'bg-gray-300 cursor-not-allowed' 
+                    : 'bg-emerald-400 hover:bg-emerald-500'
+                }`}
+              >
+                <CheckCircleSolid className="w-6 h-6" />
+                {isEnrolling ? 'Activating...' : 'Activate Scholarship'}
+              </button>
+            ) : (
+              <button
+                onClick={() => startEnrollment(course)}
+                disabled={isEnrolling}
+                className={`text-blue-900 font-bold py-4 px-12 rounded-xl transition transform hover:-translate-y-0.5 text-lg ${
+                  isEnrolling 
+                    ? 'bg-gray-300 cursor-not-allowed' 
+                    : 'bg-white hover:bg-gray-100'
+                }`}
+              >
+                {isEnrolling ? 'Enrolling...' : `Enroll Now - ${hasDiscount ? formatPrice(discountPrice) : formatPrice(price)}`}
+              </button>
+            )}
           </div>
         </section>
       )}

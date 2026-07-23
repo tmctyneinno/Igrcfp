@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
-  
+   
     public function index(Request $request)
     {
         $query = Course::with('instructor', 'category')
@@ -94,14 +94,33 @@ class CourseController extends Controller
     
     public function show($slug)
     {
-        $course = Course::with(['modules', 'materials', 'category']) // Add 'category' here
-        ->where('slug', $slug)
-        ->firstOrFail();
+        $course = Course::with(['modules', 'materials', 'category'])
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         $isEnrolled = auth()->check()
             ? auth()->user()->courses()->where('course_id', $course->id)->exists()
                 || auth()->user()->enrollments()->where('course_id', $course->id)->exists()
             : false;
+
+        // Check if course is eligible for scholarship
+        $scholarshipCategories = [
+            'IGRCFP Certificates',
+            'Certified GRC & Financial Crime Specialist'
+        ];
+        $isScholarshipEligible = in_array($course->igrcfp_category, $scholarshipCategories);
+
+        // Prepare User Data
+        $userData = null;
+        if (auth()->check()) {
+            $user = auth()->user();
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'is_scholarship_applicant' => $user->is_scholarship_applicant, // <--- ADD THIS
+            ];
+        }
 
         // Format course data for Inertia
         $formattedCourse = [
@@ -168,22 +187,19 @@ class CourseController extends Controller
             }),
             'created_at' => $course->created_at->format('M d, Y'),
             'updated_at' => $course->updated_at->format('M d, Y'),
+            'is_scholarship_eligible' => $isScholarshipEligible,
         ];
         
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
             'auth' => [
-                'user' => auth()->user() ? [
-                    'id' => auth()->user()->id,
-                    'name' => auth()->user()->name,
-                    'email' => auth()->user()->email,
-                ] : null,
+                'user' => $userData,
             ],
             'isEnrolled' => $isEnrolled,
         ]); 
     }
-
-    public function enroll(Request $request, Course $course)
+ 
+        public function enroll(Request $request, Course $course)
     {
         // Check if course is published
         if (!$course->status) {
@@ -192,10 +208,7 @@ class CourseController extends Controller
 
         // Check if user is logged in
         if (!$request->user()) {
-            // Store the intended course in session for redirect after login
             session(['intended_enrollment' => $course->slug]);
-            
-            // Redirect to login with a message and the enrollment redirect
             return redirect()->route('login', [
                 'redirect' => route('courses.enroll', ['course' => $course->slug])
             ])->with('success', 'Please login to enroll in this course.');
@@ -207,15 +220,42 @@ class CourseController extends Controller
             ->first();
             
         if ($existingEnrollment) {
-            // User is already enrolled, redirect to their course
             return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
                 ->with('info', 'You are already enrolled in this course.');
         }
 
-        // User is logged in and not enrolled - Add to cart
         $user = $request->user();
-        
-        // Get or create active cart for user
+
+        // --- SCHOLARSHIP LOGIC START ---
+        // Define which categories are eligible for scholarships
+        $scholarshipCategories = [
+            'IGRCFP Certificates',
+            'Certified GRC & Financial Crime Specialist' 
+            // Add other certification categories if needed
+        ];
+
+        $isCertificationCourse = in_array($course->igrcfp_category, $scholarshipCategories);
+
+        // Check if user is a scholarship applicant AND the course is a certification
+        if ($user->is_scholarship_applicant && $isCertificationCourse) {
+            // Create enrollment directly without payment/cart
+            $enrollment = $course->enrollments()->create([
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'payment_method' => 'scholarship',
+                'amount' => 0,
+                'status' => 'enrolled',
+                'enrollment_date' => now(),
+            ]);
+
+            return redirect()->route('dashboard.courses.show', ['slug' => $course->slug])
+                ->with('success', 'Scholarship applied! You have been successfully enrolled in the course.');
+        }
+        // --- SCHOLARSHIP LOGIC END ---
+
+        // Existing logic for non-scholarship users or non-certification courses (Add to cart)
         $cart = $user->carts()->where('status', 'active')->first();
         
         if (!$cart) {
@@ -227,14 +267,12 @@ class CourseController extends Controller
             ]);
         }
         
-        // Check if course already in cart
         $existingItem = $cart->items()->where('course_id', $course->id)->first();
         
         if ($existingItem) {
             return redirect()->route('dashboard.cart.index')->with('info', 'Course is already in your cart.');
         }
         
-        // Add course to cart
         $cart->items()->create([
             'item_type' => 'course',
             'course_id' => $course->id,
@@ -242,14 +280,12 @@ class CourseController extends Controller
             'quantity' => 1,
         ]);
         
-        // Update cart totals
         $cart->update([
             'total_amount' => $cart->items->sum('price'),
             'item_count' => $cart->items->count(),
             'updated_at' => now(),
         ]);
 
-        // Redirect to cart page with success message
         return redirect()->route('dashboard.cart.index')->with('success', 'Course added to cart successfully!');
     }
 

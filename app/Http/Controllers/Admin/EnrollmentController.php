@@ -181,4 +181,22 @@ class EnrollmentController extends Controller
         
         return redirect()->back()->with('success', 'Enrollment status updated successfully.');
     }
+
+    public function destroy(Enrollment $enrollment)
+    {
+        
+        if ($enrollment->transaction) {
+            // Example: If you want to delete the transaction record as well
+            $enrollment->transaction->delete(); 
+            
+            // Or if you use a refund system:
+            $enrollment->transaction->update(['status' => 'refunded']);
+        }
+
+        // Delete the enrollment
+        $enrollment->delete();
+
+        return redirect()->route('admin.enrollments.index')
+            ->with('success', 'Enrollment deleted successfully.');
+    }
 }

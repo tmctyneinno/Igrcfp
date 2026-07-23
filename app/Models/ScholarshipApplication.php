@@ -36,7 +36,7 @@ class ScholarshipApplication extends Model
         'ai_checked_at',      // Add this
         'status',     // Add this
     ];
-
+ 
     protected $casts = [
         'ai_detection_score' => 'float',
         'ai_checked_at' => 'datetime',

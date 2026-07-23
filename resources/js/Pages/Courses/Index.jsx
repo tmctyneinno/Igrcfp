@@ -11,7 +11,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import HeroSection from '@/Layouts/HeroSection';
 import CallToAction from "@/Pages/components/CallToAction";
 
- 
+  
 export default function Courses({ auth, courses, filters, filterOptions, title, description, igrcfpCategory }) {
     const { url } = usePage(); 
     const [showFilters, setShowFilters] = useState(true);

@@ -333,7 +333,7 @@ function NavBar({ auth }) {
             {isMobileMenuOpen && (
                 <div ref={mobileMenuRef} className="lg:hidden bg-white border-t border-gray-100 shadow-lg fixed left-0 right-0 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 64px)', top: '64px' }}>
                     <div className="px-4 py-3 space-y-1">
-                        <Link href="/" className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>🏠 Home</Link>
+                        <Link href="/" className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}> Home</Link>
 
                         {/* Mobile About */}
                         <div>
@@ -374,8 +374,8 @@ function NavBar({ auth }) {
                             )}
                         </div>
 
-                        <Link href={route('membership')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>💎 Membership</Link>
-                        <Link href={route('certificate.verify.public.index')} className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-green-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>✅ Verify Certificate</Link>
+                        <Link href={route('membership')} className="block px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>Membership</Link>
+                        <Link href={route('certificate.verify.public.index')} className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-green-50 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>Verify Certificate</Link>
 
                         {/* Mobile Events & Chapters */}
                         <div> 
@@ -384,8 +384,8 @@ function NavBar({ auth }) {
                             </button>
                             {openDropdown === 'events-chapters' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">
-                                    <Link href={route('events.index')} className="flex items-center px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>📅 All Events</Link>
-                                    <Link href={route('chapters.index')} className="flex items-center px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>🌍 Regional Chapters</Link>
+                                    <Link href={route('events.index')} className="flex items-center px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>All Events</Link>
+                                    <Link href={route('chapters.index')} className="flex items-center px-3 py-2 text-sm text-gray-600" onClick={() => {setIsMobileMenuOpen(false); setOpenDropdown(null);}}>Regional Chapters</Link>
                                 </div>
                             )}
                         </div>
@@ -393,7 +393,7 @@ function NavBar({ auth }) {
                         {/* Mobile Resources */}
                         <div>
                             <button className="w-full flex justify-between items-center px-3 py-2.5 text-gray-700 hover:bg-blue-50 rounded-lg" onClick={() => setOpenDropdown(openDropdown === 'resources' ? null : 'resources')}>
-                                📖 Resources <svg className={`w-4 h-4 transition-transform ${openDropdown === 'resources' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                Resources <svg className={`w-4 h-4 transition-transform ${openDropdown === 'resources' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                             </button>
                             {openDropdown === 'resources' && (
                                 <div className="ml-4 pl-4 border-l-2 border-gray-200 space-y-1 mt-1">

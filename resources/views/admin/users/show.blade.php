@@ -35,7 +35,7 @@
                 <div class="card-body">
                     <div class="text-center mb-20">
                         <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" 
-                             class=" h-21-px rounded-circle object-fit-cover mb-3">
+                             class="h-21-px rounded-circle object-fit-cover mb-3">
                         <h5 class="mb-1">{{ $user->name }}</h5>
                         <p class="text-secondary-light mb-2">{{ $user->email }}</p>
                         <div class="d-flex justify-content-center gap-2">
@@ -68,6 +68,19 @@
                         <tr>
                             <td class="text-secondary-light">Role:</td>
                             <td class="fw-medium">{{ ucfirst($user->role ?? 'User') }}</td>
+                        </tr>
+                        {{-- NEW: Scholarship Status Row --}}
+                        <tr>
+                            <td class="text-secondary-light">Scholarship:</td>
+                            <td class="fw-medium">
+                                @if($user->is_scholarship_applicant)
+                                    <span class="badge bg-emerald-600 text-white px-8 py-4 radius-4">
+                                        <i class="fas fa-graduation-cap me-1"></i> Active
+                                    </span>
+                                @else
+                                    <span class="text-muted">Not Applicable</span>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td class="text-secondary-light">Joined:</td>
@@ -201,6 +214,33 @@
 
         <!-- Right Column - Details -->
         <div class="col-lg-8">
+            
+            {{-- NEW: Scholarship Management Card --}}
+            <div class="card mb-24">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <h6 class="card-title mb-0">Scholarship Access</h6>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.users.toggle-scholarship', $user) }}" method="POST">
+                        @csrf
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="mb-1 fw-medium">Grant Scholarship Privileges</p>
+                                <p class="text-sm text-secondary-light mb-0">
+                                    If enabled, this user can enroll in certification courses for free without payment.
+                                </p>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="is_scholarship_applicant" id="scholarshipToggle" 
+                                       {{ $user->is_scholarship_applicant ? 'checked' : '' }}
+                                       onchange="this.form.submit()">
+                                <label class="form-check-label" for="scholarshipToggle"></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Enrollments Card -->
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between">
@@ -439,5 +479,6 @@
     .mt-16 { margin-top: 16px; }
     .pt-16 { padding-top: 16px; }
     .icon-2x { font-size: 2rem; }
+    .bg-emerald-600 { background-color: #059669 !important; }
 </style>
-@endpush 
+@endpush
