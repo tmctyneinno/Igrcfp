@@ -146,3 +146,8 @@ Route::post('/research/save-contact', [HomeController::class, 'ResearchSaveConta
 Route::get('/chapters', [ChapterController::class, 'index'])->name('chapters.index');
 Route::get('/chapters/{slug}', [ChapterController::class, 'show'])->name('chapters.show');
 
+
+// In a test route
+Route::get('/test-csrf', function() {
+    return csrf_token();
+});
