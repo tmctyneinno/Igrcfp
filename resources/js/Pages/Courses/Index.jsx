@@ -52,7 +52,7 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
             note: 'Fellowship is a recognition stage based on professional experience, leadership, and contribution to the field.',
         },
     };
-
+ 
     const currentGuidance = igrcfpCategory ? pathwayGuidance[igrcfpCategory] : null;
 
     // Provide default values for filterOptions if undefined

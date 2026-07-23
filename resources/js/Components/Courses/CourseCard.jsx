@@ -15,12 +15,10 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
     const isScholarshipApplicant = !!authUser?.is_scholarship_applicant;
      
     // Check if course is eligible (passed from backend in index/show methods)
-    // Note: Ensure your backend passes 'is_scholarship_eligible' in the course object for list views
     const isEligibleCourse = course?.is_scholarship_eligible === true; 
 
     // Only show scholarship button if BOTH are true
     const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
-    console.log("canUseScholarship",canUseScholarship);
 
     useEffect(() => {
         setIsCourseInCart(isInCart || false);
@@ -162,7 +160,14 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
 
                 {/* Price & Action Row */}
                 <div className="flex items-center justify-between mt-auto">
-                    {enrolled ? (
+                    
+                    {/* PRICE SECTION - Hidden for scholarship users */}
+                    {canUseScholarship ? (
+                        <span className="text-sm font-semibold text-emerald-600 flex items-center gap-1">
+                            <CheckCircleIcon className="w-4 h-4" />
+                            Scholarship Eligible
+                        </span>
+                    ) : enrolled ? (
                         <span className="text-sm font-bold text-green-700">Enrolled</span>
                     ) : price > 0 ? (
                         <div className="flex items-baseline gap-2">
@@ -179,6 +184,7 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         <span className="text-2xl font-bold text-green-600">FREE</span>
                     )}
 
+                    {/* ACTION BUTTONS */}
                     {enrolled ? (
                         <Link
                             href={route('dashboard.courses.show', course.slug)}
@@ -187,13 +193,14 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                             Continue
                         </Link>
                     ) : canUseScholarship ? (
-                        /* SCHOLARSHIP APPLICANT BUTTON - PROFESSIONAL STYLE */
+                        /* SCHOLARSHIP APPLICANT BUTTON */
                         <button
                             onClick={handleScholarshipEnroll}
                             disabled={isAdding}
                             className="px-2 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-full hover:bg-emerald-700 transition shadow-sm flex items-center gap-2"
                         >
-                            Activate Scholarship
+                            <CheckCircleIcon className="w-4 h-4" />
+                            Activate
                         </button>
                     ) : isCourseInCart ? (
                         <Link

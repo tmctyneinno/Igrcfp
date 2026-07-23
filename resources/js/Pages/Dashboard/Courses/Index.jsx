@@ -102,7 +102,7 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                 onFinish: () => {
                     setAddingToCart(prev => ({ ...prev, [course.id]: false }));
                 }
-            });
+            }); 
         } catch (error) {
             console.error('Error:', error);
             setAddingToCart(prev => ({ ...prev, [course.id]: false }));

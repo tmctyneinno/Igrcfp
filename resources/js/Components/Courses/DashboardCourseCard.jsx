@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext';
 import { CheckCircleIcon } from '@heroicons/react/24/solid'; // Added for icon
-    
+     
 export default function DashboardCourseCard({ course, onAddToCart, onScholarshipEnroll, isInCart, isAdding }) { 
     const { props } = usePage(); 
     const { removeFromCart } = useCart();
@@ -92,8 +92,14 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t">
-                    {price > 0 ? (
+                                <div className="flex items-center justify-between pt-1 border-t">
+                    {/* PRICE SECTION - Hidden for scholarship users */}
+                    {canUseScholarship ? (
+                        <span className="text-sm font-semibold text-emerald-600 flex items-center gap-1">
+                            <CheckCircleIcon className="w-4 h-4" />
+                            Scholarship Eligible
+                        </span>
+                    ) : price > 0 ? (
                         <div className="">
                             {hasDisc ? (
                                 <>
