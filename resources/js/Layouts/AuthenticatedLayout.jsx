@@ -4,7 +4,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast'; 
 import AuthenticatedFooter from '@/Layouts/AuthenticatedFooter';
 import { 
   BellIcon, 
@@ -133,7 +133,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                                         }`}
                                     >
-                                        🎓 Certifications & Trainings
+                                         Certifications & Trainings
                                         <ChevronDownIcon className="ml-1 h-4 w-4" />
                                     </button>
                                     
@@ -401,7 +401,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('dashboard.courses.index')} active={route().current('dashboard.courses.index')}>
-                            Courses
+                            Certifications
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('dashboard.my-courses')} active={route().current('dashboard.my-courses')}>
                             My Learning
