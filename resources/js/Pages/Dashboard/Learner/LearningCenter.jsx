@@ -11,7 +11,7 @@ export default function LearningCenter({ enrolledCourses = [] }) {
         const totalHours = enrolledCourses.reduce((sum, course) => {
             return sum + (parseInt(course.duration) || 0);
         }, 0); 
-        
+         
         return {
             totalCourses,
             completedCourses,

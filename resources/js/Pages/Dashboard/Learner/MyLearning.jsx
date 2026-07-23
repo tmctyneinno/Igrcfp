@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
-
+ 
 export default function MyLearning({ enrolledCourses = [] }) {
     const getLevelBadgeColor = (level) => {
         const levelMap = {
@@ -143,7 +143,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
                     <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100"><span className="text-3xl">📚</span></div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">No courses yet</h3>
                     <p className="text-gray-600 mb-6 max-w-md mx-auto">You haven't enrolled in any courses yet. Start your learning journey today!</p>
-                    <Link href={route('courses.index')} className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1">
+                    <Link href={route('dashboard.courses.index')} className="inline-flex items-center px-6 py-3 bg-blue-900 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:-translate-y-1">
                         Browse Courses
                         <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </Link>
