@@ -36,7 +36,7 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
 
     return (   
         <AuthenticatedLayout auth={auth}>   
-            <Head title="Dashboard" />
+            <Head title="Dashboard" /> 
             <LearningCenter enrolledCourses={enrolledCourses} />
             {/* <CourseCategories categories={categories} /> */}
             <MyLearning enrolledCourses={enrolledCourses} />
