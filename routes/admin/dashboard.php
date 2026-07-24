@@ -120,6 +120,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
    // Add this route for AI detection
     Route::post('/admin/scholarships/{id}/check-ai', [ScholarshipController::class, 'checkAIContent'])
         ->name('scholarships.check-ai');
+    Route::patch('/scholarships/{application}/toggle-access', [ScholarshipController::class, 'toggleScholarshipAccess'])
+    ->name('scholarships.toggle-access');
     //--------------------------------------------------------------------------
     // ✅ CHAPTER MANAGEMENT (MOVED INSIDE ADMIN GROUP)
     //--------------------------------------------------------------------------

@@ -9,6 +9,13 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    
+    @if(session('info'))
+        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+            {{ session('info') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Scholarship Application #{{ $application->id }}</h6>
@@ -92,11 +99,14 @@
         </div> 
 
         <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header"><h6 class="card-title mb-0">Update Status & Access</h6></div>
+            <!-- FORM 1: Status Update -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="card-title mb-0">Update Status</h6></div>
                 <div class="card-body">
                     <form action="{{ route('admin.scholarships.update-status', $application->id) }}" method="POST">
                         @csrf
+                        @method('PATCH')
+                        
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select name="status" class="form-select" id="statusSelect">
@@ -105,19 +115,6 @@
                                 <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                 <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
                             </select>
-                        </div>
-                        
-                        <!-- SCHOLARSHIP ACCESS CHECKBOX -->
-                        <div class="mb-3 p-3 bg-light border rounded">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="grant_scholarship_access" id="grantScholarshipAccess" value="1" {{ old('grant_scholarship_access', $application->user_accepted) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-bold" for="grantScholarshipAccess">
-                                    Grant Course Access
-                                </label>
-                            </div>
-                            <small class="text-muted d-block mt-1">
-                                If checked, this will mark the associated user account ({{ $application->email }}) as a scholarship applicant, allowing them to enroll in certification courses for free.
-                            </small>
                         </div>
                         
                         <!-- Rejection Reason Field -->
@@ -142,7 +139,36 @@
                 </div>
             </div>
 
-            <div class="card mt-24">
+            <!-- FORM 2: Grant Access (SEPARATE) -->
+            <div class="card mb-4">
+                <div class="card-header"><h6 class="card-title mb-0">Scholarship Access</h6></div>
+                <div class="card-body">
+                    <form action="{{ route('admin.scholarships.toggle-access', $application->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        
+                        <div class="mb-3 p-3 bg-light border rounded">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="grant_scholarship_access" 
+                                       id="grantScholarshipAccess" 
+                                       value="1" 
+                                       {{ old('grant_scholarship_access', $application->user_accepted) ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold" for="grantScholarshipAccess">
+                                    Grant Course Access
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                If checked, this will mark the associated user account ({{ $application->email }}) as a scholarship applicant, allowing them to enroll in certification courses for free.
+                            </small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">Update Access</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
                 <div class="card-header"><h6 class="card-title mb-0">Actions</h6></div>
                 <div class="card-body">
                     <form action="{{ route('admin.scholarships.destroy', $application->id) }}" method="POST" onsubmit="return confirm('Delete this application?')">

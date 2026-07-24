@@ -49,28 +49,28 @@ class ScholarshipController extends Controller
         return view('admin.scholarships.show', compact('application'));
     }
 
-        public function updateStatus(Request $request, ScholarshipApplication $application)
+    /**
+     * Handles Status Updates ONLY (Status, Notes, Rejection Reason)
+     */
+    public function updateStatus(Request $request, ScholarshipApplication $application)
     {
-        // Log the incoming request
         Log::info('Updating scholarship status', [
             'application_id' => $application->id,
             'request_data' => $request->all()
         ]);
 
-        // Validate the request
         $validated = $request->validate([
             'status' => 'required|in:pending,under_review,accepted,rejected',
             'admin_notes' => 'nullable|string',
             'rejection_reason' => 'required_if:status,rejected|nullable|string',
-            'grant_scholarship_access' => 'nullable|boolean', // Add validation for the checkbox
         ]);
         
         $oldStatus = $application->status;
         $newStatus = $request->status;
         
         // Check if status is actually changing
-        if ($oldStatus === $newStatus && !$request->has('grant_scholarship_access')) {
-             return redirect()->route('admin.scholarships.index')
+        if ($oldStatus === $newStatus && $request->admin_notes === $application->admin_notes) {
+             return redirect()->route('admin.scholarships.show', $application->id)
                 ->with('info', 'No changes detected.');
         }
         
@@ -89,33 +89,9 @@ class ScholarshipController extends Controller
         if ($newStatus === 'accepted') {
             $updateData['accepted_at'] = now();
         }
-
-        // Handle Scholarship Access Granting
-        if ($request->has('grant_scholarship_access')) {
-            $user = \App\Models\User::where('email', $application->email)->first();
-            
-            if ($user) {
-                // Update the user's scholarship flag
-                $user->update([
-                    'is_scholarship_applicant' => $request->grant_scholarship_access ? true : false
-                ]);
-                
-                // Also update the application record to reflect this linkage if needed
-                $updateData['user_accepted'] = $request->grant_scholarship_access ? true : false;
-                
-                Log::info('User scholarship status updated', [
-                    'user_id' => $user->id,
-                    'is_scholarship_applicant' => $request->grant_scholarship_access
-                ]);
-            } else {
-                Log::warning('User not found for scholarship access grant', [
-                    'email' => $application->email
-                ]);
-            }
-        }
         
         // Update the application
-        $updated = $application->update($updateData);
+        $application->update($updateData);
         
         // Send notification only if status changed
         if ($oldStatus !== $newStatus) {
@@ -135,21 +111,64 @@ class ScholarshipController extends Controller
             }
         }
 
-        $message = 'Application updated successfully!';
-        
-        if ($request->grant_scholarship_access) {
-            $message .= ' User account has been granted scholarship access.';
-        }
+        $message = 'Application status updated successfully!';
         
         if ($newStatus === 'accepted') {
-            $message .= ' A scholarship approval email has been sent to the applicant.';
+            $message .= ' A scholarship approval email has been sent.';
         } elseif ($newStatus === 'under_review') {
-            $message .= ' A notification email has been sent to the applicant.';
+            $message .= ' A notification email has been sent.';
         } elseif ($newStatus === 'rejected') {
-            $message .= ' A notification email has been sent to the applicant.';
+            $message .= ' A rejection email has been sent.';
         }
 
-        return redirect()->route('admin.scholarships.index')
+        return redirect()->route('admin.scholarships.show', $application->id)
+            ->with('success', $message);
+    }
+
+    /**
+     * Handles Granting/Revoking Course Access ONLY
+     */
+    public function toggleScholarshipAccess(Request $request, ScholarshipApplication $application)
+    {
+        $validated = $request->validate([
+            'grant_scholarship_access' => 'required|boolean',
+        ]);
+
+        $shouldGrant = (bool) $request->grant_scholarship_access;
+        
+        // Check if value is actually different to avoid unnecessary DB writes
+        if ($shouldGrant === $application->user_accepted) {
+            return redirect()->back()
+                ->with('info', 'Access status is already set to ' . ($shouldGrant ? 'Granted' : 'Revoked') . '.');
+        }
+
+        // Update Application Record
+        $application->update([
+            'user_accepted' => $shouldGrant
+        ]);
+
+        // Update User Record
+        $user = \App\Models\User::where('email', $application->email)->first();
+        
+        if ($user) {
+            $user->update([
+                'is_scholarship_applicant' => $shouldGrant
+            ]);
+             
+            Log::info('User scholarship access toggled via separate form', [
+                'user_id' => $user->id,
+                'email' => $application->email,
+                'access_granted' => $shouldGrant
+            ]);
+        } else {
+            Log::warning('User not found for access toggle', ['email' => $application->email]);
+        }
+
+        $message = $shouldGrant 
+            ? 'Course access has been successfully granted to ' . $application->email 
+            : 'Course access has been revoked from ' . $application->email;
+
+        return redirect()->back()
             ->with('success', $message);
     }
 
@@ -235,7 +254,6 @@ class ScholarshipController extends Controller
                 Log::info('Hugging Face Raw Response', ['result' => $result]); // Debugging log
                 
                 // The model returns probabilities for each class
-                // Example: [{"label": "Real", "score": 0.9}, {"label": "Fake", "score": 0.1}]
                 if (is_array($result) && !empty($result)) {
                     $aiScore = -1; // Initialize as invalid
                     
@@ -283,14 +301,13 @@ class ScholarshipController extends Controller
 
     /**
      * Enhanced heuristic-based AI detection (fallback method)
-     * More sophisticated than the simple version
      */
     private function detectAIEnhanced($text)
     {
         $indicators = 0;
         $totalChecks = 10;
         
-        // 1. Check for overly formal transition words (common in AI)
+        // 1. Check for overly formal transition words
         $formalWords = ['furthermore', 'moreover', 'consequently', 'nevertheless', 'additionally', 'subsequently', 'henceforth'];
         $formalCount = 0;
         foreach ($formalWords as $word) {
@@ -300,7 +317,7 @@ class ScholarshipController extends Controller
         }
         if ($formalCount >= 2) $indicators++;
         
-        // 2. Check sentence length uniformity (AI tends to be more uniform)
+        // 2. Check sentence length uniformity
         $sentences = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
         if (count($sentences) > 3) {
             $lengths = array_map('strlen', $sentences);
@@ -310,7 +327,6 @@ class ScholarshipController extends Controller
             }, $lengths)) / count($lengths);
             $stdDev = sqrt($variance);
             
-            // Low standard deviation suggests AI (too uniform)
             if ($stdDev < 20 && $avgLength > 50) {
                 $indicators++;
             }
@@ -324,25 +340,25 @@ class ScholarshipController extends Controller
             $indicators++;
         }
         
-        // 4. Check for perfect grammar patterns (AI rarely makes typos)
+        // 4. Check for perfect grammar patterns
         $hasTypos = preg_match('/\b(teh|adn|taht|wiht|thier)\b/i', $text);
         if (!$hasTypos && strlen($text) > 200) {
             $indicators++;
         }
         
-        // 5. Check for list-like structures (AI loves bullet points)
+        // 5. Check for list-like structures
         if (preg_match_all('/^\s*[-•*]\s/m', $text) >= 3) {
             $indicators++;
         }
         
-        // 6. Perplexity approximation (simple version)
+        // 6. Perplexity approximation
         $wordCount = count($words);
         $avgWordLength = array_sum(array_map('strlen', $words)) / max($wordCount, 1);
         if ($avgWordLength > 6) {
             $indicators++;
         }
         
-        // 7. Check for hedging language (AI often uses this)
+        // 7. Check for hedging language
         $hedgingWords = ['it is important to note', 'it should be mentioned', 'one might consider', 'it could be argued'];
         foreach ($hedgingWords as $phrase) {
             if (stripos($text, $phrase) !== false) {
@@ -360,7 +376,6 @@ class ScholarshipController extends Controller
                 return pow($l - $paraAvg, 2);
             }, $paraLengths)) / count($paraLengths);
             
-            // Very uniform paragraph lengths suggest AI
             if (sqrt($paraVariance) < 50) {
                 $indicators++;
             }
@@ -377,7 +392,7 @@ class ScholarshipController extends Controller
             $indicators++;
         }
         
-        // 10. Vocabulary diversity (Type-Token Ratio)
+        // 10. Vocabulary diversity
         if ($wordCount > 20) {
             $ttr = count($uniqueWords) / $wordCount;
             if ($ttr < 0.4) {
@@ -385,44 +400,8 @@ class ScholarshipController extends Controller
             }
         }
         
-        // Calculate probability
         $probability = $indicators / $totalChecks;
         
         return min(max($probability, 0), 1);
-    }
-
-    /**
-     * Alternative: Use ZeroGPT API (Free tier available)
-     * Sign up at https://www.zerogpt.com/page/api
-     */
-    private function detectAIWithZeroGPT($text)
-    {
-        $apiKey = env('ZEROGPT_API_KEY');
-        
-        if (empty($apiKey)) {
-            Log::warning('ZeroGPT API key not configured');
-            return $this->detectAIEnhanced($text);
-        }
-        
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json',
-            ])->post('https://api.zerogpt.com/api/detect', [
-                'text' => substr($text, 0, 5000)
-            ]);
-            
-            if ($response->successful()) {
-                $result = $response->json();
-                // ZeroGPT returns percentage like 85.5 for AI detection
-                return isset($result['ai_percentage']) ? $result['ai_percentage'] / 100 : 0.5;
-            }
-             
-            return $this->detectAIEnhanced($text);
-            
-        } catch (\Exception $e) {
-            Log::error('ZeroGPT API Error', ['error' => $e->getMessage()]);
-            return $this->detectAIEnhanced($text);
-        }
     }
 }
