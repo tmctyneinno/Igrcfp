@@ -68,7 +68,7 @@ class HomeController extends Controller
         // Get latest articles
         $latestArticles = Article::where('status', 'published')
             ->latest('published_at')
-            ->take(3)
+            ->take(4)
             ->get()
             ->map(function ($article) {
                 return [
