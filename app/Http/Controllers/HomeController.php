@@ -136,7 +136,7 @@ class HomeController extends Controller
         $latestBlogs = Blog::with('user')
             ->where('status', 'published')
             ->latest()
-            ->take(3)
+            ->take(4)
             ->get()
             ->map(function ($blog) {
                 return [
