@@ -21,7 +21,16 @@ export default function QuizTake({
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState(() => attempt?.answers || {});
     const [essayAnswers, setEssayAnswers] = useState({});
-    const [timeRemaining, setTimeRemaining] = useState(initialTimeRemaining);
+    
+    // Initialize timer from localStorage or initial value
+    const [timeRemaining, setTimeRemaining] = useState(() => {
+        const savedTime = localStorage.getItem(`quiz_timer_${attempt?.id}`);
+        if (savedTime && !isNaN(parseInt(savedTime))) {
+            return parseInt(savedTime);
+        }
+        return initialTimeRemaining;
+    });
+    
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -50,6 +59,18 @@ export default function QuizTake({
         ? Math.round(((currentQuestionIndex + 1) / mcqQuestions.length) * 100) 
         : 100;
 
+    // Format time as HH:MM:SS or MM:SS
+    const formatTime = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        
+        if (hours > 0) {
+            return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    };
+
     // Auto-save effect
     useEffect(() => {
         if (!hasUnsavedChanges || !attempt?.id) return;
@@ -73,6 +94,43 @@ export default function QuizTake({
             console.error('Auto-save failed', error);
         }
     }, [answers, essayAnswers, attempt?.id, hasUnsavedChanges]);
+
+    // Timer countdown effect
+    useEffect(() => {
+        if (partASubmitted || timeRemaining <= 0) return;
+
+        const timer = setInterval(() => {
+            setTimeRemaining(prev => {
+                const newTime = prev - 1;
+                
+                // Save to localStorage for persistence
+                if (attempt?.id) {
+                    localStorage.setItem(`quiz_timer_${attempt.id}`, newTime.toString());
+                }
+                
+                // Auto-submit when time runs out
+                if (newTime <= 0) {
+                    clearInterval(timer);
+                    toast.error('Time is up! Submitting your answers...');
+                    submitPartA();
+                    return 0;
+                }
+                
+                return newTime;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [partASubmitted, timeRemaining, attempt?.id]);
+
+    // Cleanup localStorage when quiz completes
+    useEffect(() => {
+        return () => {
+            if (attempt?.id && (partASubmitted || showCompletionModal)) {
+                localStorage.removeItem(`quiz_timer_${attempt.id}`);
+            }
+        };
+    }, [partASubmitted, showCompletionModal, attempt?.id]);
 
     // Handlers
     const handleAnswer = (questionId, answer) => {
@@ -117,6 +175,11 @@ export default function QuizTake({
             setPartAScore(data.score);
             setHasUnsavedChanges(false);
             
+            // Clear timer storage
+            if (attempt?.id) {
+                localStorage.removeItem(`quiz_timer_${attempt.id}`);
+            }
+            
             // Check if failed and requires lockout
             if (data.score < 50) {
                 setShowLockoutModal(true);
@@ -155,6 +218,11 @@ export default function QuizTake({
             setFinalScore(data.score);
             setFinalManualReview(Boolean(data.manual_review));
             setShowCompletionModal(true);
+            
+            // Clear timer storage
+            if (attempt?.id) {
+                localStorage.removeItem(`quiz_timer_${attempt.id}`);
+            }
         } catch (err) {
             toast.error(err.message);
         } finally {
@@ -181,7 +249,7 @@ export default function QuizTake({
                     <div className="flex items-center gap-4">
                         <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${timeRemaining < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
                             <ClockIcon className="w-5 h-5" />
-                            <span className="font-mono font-bold">{Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}</span>
+                            <span className="font-mono font-bold">{formatTime(timeRemaining)}</span>
                         </div>
                     </div>
                 </div>
