@@ -5,28 +5,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Allow text selection on all elements by default */
+
 html,
 body,
 body * {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-
-/* Only block selection on specific elements like buttons and images */
-button,
-img,
-svg,
-[role="button"] {
-  -webkit-user-select: none;
+  /* -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none;
+  user-select: none; */
 }
 
-/* Inputs and textareas */
 input,
 textarea,
 select,
