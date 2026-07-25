@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
- 
+  
 export default function MyLearning({ enrolledCourses = [] }) {
     const getLevelBadgeColor = (level) => {
         const levelMap = {
@@ -22,6 +22,18 @@ export default function MyLearning({ enrolledCourses = [] }) {
             'Self-Paced': 'bg-gray-100 text-gray-800'
         };
         return formatMap[format] || 'bg-gray-100 text-gray-800';
+    };
+
+    // Helper to determine assessment status label and color
+    const getAssessmentStatus = (course) => {
+        if (course.quiz_status === 'submitted' || course.quiz_status === 'graded') {
+            if (course.quiz_passed) {
+                return { label: 'Quiz Passed', color: 'bg-green-100 text-green-700 border-green-200' };
+            } else {
+                return { label: 'Quiz Submitted', color: 'bg-amber-100 text-amber-700 border-amber-200' };
+            }
+        }
+        return null;
     };
 
     const calculateProgress = (course) => {
@@ -72,6 +84,8 @@ export default function MyLearning({ enrolledCourses = [] }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {enrolledCourses.map((course, index) => {
                         const progress = calculateProgress(course);
+                        const assessmentStatus = getAssessmentStatus(course);
+
                         return (
                             <motion.div
                                 key={course.id}
@@ -92,11 +106,13 @@ export default function MyLearning({ enrolledCourses = [] }) {
                                      <div className="absolute top-3 left-3 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
                                         {progress}% Complete
                                     </div>
-                                   {/* {progress === 100 && (
-                                        <div className="absolute top-3 right-3 rounded-full bg-green-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
-                                            ✅ Completed
+                                    
+                                    {/* NEW: Assessment Status Badge */}
+                                    {assessmentStatus && (
+                                        <div className={`absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-medium border shadow-sm ${assessmentStatus.color}`}>
+                                            {assessmentStatus.label}
                                         </div>
-                                    )} */}
+                                    )}
                                 </div>
 
                                 <div className="p-4">

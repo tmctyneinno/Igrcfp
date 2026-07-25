@@ -533,6 +533,27 @@ class DashboardController extends Controller
                 $course = $enrollment->course;
                 $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
 
+                // --- START: Check Assessment Status ---
+                $quizStatus = 'not_started';
+                $quizPassed = false;
+                
+                // Find the main course quiz (assessment_level = 'quiz')
+                $quiz = $course->assessments()
+                    ->where('assessment_level', 'quiz')
+                    ->first();
+
+                if ($quiz) {
+                    $submission = $quiz->submissions()
+                        ->where('user_id', $enrollment->user_id)
+                        ->latest()
+                        ->first();
+                        
+                    if ($submission) {
+                        $quizStatus = $submission->status; // e.g., 'submitted', 'graded', 'in_progress'
+                        $quizPassed = (bool) $submission->passed;
+                    }
+                }
+
                 return [
                     'enrollment_id' => $enrollment->id,
                     'id' => $course->id,
@@ -548,6 +569,9 @@ class DashboardController extends Controller
                     'completed_modules' => $moduleProgress['completed_modules'],
                     'module_ids' => $moduleProgress['module_ids'],
                     'format' => $course->format,
+                    // Add Assessment Data
+                    'quiz_status' => $quizStatus,
+                    'quiz_passed' => $quizPassed,
                 ];
             });
         
