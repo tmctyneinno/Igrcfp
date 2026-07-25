@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast'; 
 import { 
     BookOpenIcon, 
     ClipboardDocumentCheckIcon, 
@@ -420,21 +420,41 @@ export default function EnrollmentIndex({
 })}
 
                             {/* Project Assessment Section */}
+                                                        {/* Project Assessment / Review Status Section */}
                             {hasPassedQuiz && (
                                 <div className="bg-white rounded-xl border border-gray-200 p-5">
                                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                                         <ClipboardDocumentCheckIcon className="w-5 h-5 text-indigo-600" />
-                                        Project Assessment
+                                        {diplomaAssessment ? 'Project Assessment' : 'Application Status'}
                                     </h3>
-                                    <p className="text-sm text-gray-600 mb-4">
-                                        Your quiz is passed. You can now access the project assessment.
-                                    </p>
-                                    <Link
-                                        href={route('dashboard.quiz.project-assessment', { course: course.slug })}
-                                        className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                                    >
-                                        Open Project Assessment
-                                    </Link>
+
+                                    {diplomaAssessment ? (
+                                        // CASE 1: Project Assessment Exists -> Show Button
+                                        <>
+                                            <p className="text-sm text-gray-600 mb-4">
+                                                Your quiz is passed. You can now access the project assessment.
+                                            </p>
+                                            <Link
+                                                href={route('dashboard.quiz.project-assessment', { course: course.slug })}
+                                                className="w-full flex items-center justify-center gap-2 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                                            >
+                                                Open Project Assessment
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        // CASE 2: No Project Assessment -> Show Under Review Message
+                                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                                            <p className="text-sm text-blue-800 font-medium flex items-start gap-2">
+                                                <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>
+                                                    Your submitted application is currently under review by our team. 
+                                                    You will be notified via email once the application process is complete.
+                                                </span>
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

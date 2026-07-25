@@ -340,7 +340,7 @@ export default function QuizTake({
                         {essayQuestions.length > 0 && (
                             <div className={`bg-white rounded-xl shadow-sm p-6 border transition-all ${
                                 canAccessPartB ? 'border-indigo-200 ring-1 ring-indigo-100' : 'border-gray-200 opacity-75'
-                            }`}>
+                            }`}> 
                                 <div className="mb-6">
                                     <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wide">Part B • Essay Response</span>
                                     <h2 className="text-xl font-bold text-gray-900 mt-1">Essay Assessment</h2>
