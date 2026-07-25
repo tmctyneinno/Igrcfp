@@ -642,7 +642,7 @@ class DashboardController extends Controller
             'progress' => (int) round(($completedModules / $totalModules) * 100),
         ];
     }
- 
+  
     public function showCourse($slug)
     {
         $course = Course::where('slug', $slug)->firstOrFail();
@@ -695,6 +695,10 @@ class DashboardController extends Controller
                 'status' => $submission ? $submission->status : 'not_started',
                 'score' => $submission ? $submission->score : null,
                 'passed' => $submission ? $submission->passed : null,
+                // NEW: Add Submitted Flag
+                // Consider it submitted if status is not 'not_started' or 'in_progress'
+                'submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+                
                 'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
                 'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
                 // Pass lockout data to frontend

@@ -164,7 +164,7 @@ class EnrollmentController extends Controller
         'cancellationRate'
     ));
 }
-
+ 
     public function show(Enrollment $enrollment)
     {
         $enrollment->load(['user', 'course', 'transaction']);

@@ -90,7 +90,7 @@ export default function Show({ course, enrollment, modules = [], auth }) {
   const handleScholarshipEnroll = () => {
     setIsEnrolling(true);
     const loadingToast = toast.loading('Activating scholarship...');
-    
+     
     router.post(route('courses.enroll', course.slug), {}, {
       preserveScroll: true,
       onSuccess: () => {

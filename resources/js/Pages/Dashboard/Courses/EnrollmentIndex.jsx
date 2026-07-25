@@ -371,35 +371,53 @@ export default function EnrollmentIndex({
                         {/* RIGHT COLUMN: SIDEBAR */}
                         <div className="space-y-6">
                             {/* Quiz Section */}
-                            {quizzesWithUnlockStatus.map((quiz) => (
-                                <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
-                                    <h3 className="font-semibold text-gray-900 mb-3">Take Quiz</h3>
-                                    
-                                    {quiz.is_locked_out ? (
-                                        <button 
-                                            onClick={() => setLockedQuiz(quiz)}
-                                            className="w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg cursor-pointer hover:bg-red-100 flex items-center justify-center gap-2 transition"
-                                        >
-                                            <LockClosedIcon className="w-4 h-4" />
-                                            Locked ({quiz.lock_expires_at ? new Date(quiz.lock_expires_at).toLocaleDateString() : ''})
-                                        </button>
-                                    ) : !quiz.unlocked ? (
-                                        <div>
-                                            <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed flex items-center justify-center gap-2">
-                                                🔒 Take Quiz
-                                            </button>
-                                            <p className="mt-2 text-xs text-gray-500 text-center">{quiz.reason}</p>
-                                        </div>
-                                    ) : (
-                                        <button 
-                                            onClick={() => handleStartQuiz(quiz)} 
-                                            className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
-                                        >
-                                            📝 Take Quiz
-                                        </button>
-                                    )}
-                                </div> 
-                            ))}
+                            {/* Quiz Section */}
+{quizzesWithUnlockStatus.map((quiz) => {
+    // Determine if quiz is already submitted/completed
+    const isSubmitted = quiz.submitted === true || quiz.completed === true || quiz.passed === true;
+
+    return (
+        <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <h3 className="font-semibold text-gray-900 mb-3">Take Quiz</h3>
+             
+            {/* STATE 1: ALREADY SUBMITTED */}
+            {isSubmitted ? (
+                <button 
+                    disabled 
+                    className="w-full py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg cursor-default flex items-center justify-center gap-2 font-medium"
+                >
+                    <ClipboardDocumentCheckIcon className="w-4 h-4" />
+                    Assessment Submitted
+                </button>
+            ) : /* STATE 2: LOCKED OUT (COOLDOWN) */
+            quiz.is_locked_out ? (
+                <button 
+                    onClick={() => setLockedQuiz(quiz)}
+                    className="w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg cursor-pointer hover:bg-red-100 flex items-center justify-center gap-2 transition"
+                >
+                    <LockClosedIcon className="w-4 h-4" />
+                    Locked ({quiz.lock_expires_at ? new Date(quiz.lock_expires_at).toLocaleDateString() : ''})
+                </button>
+            ) : /* STATE 3: NOT UNLOCKED YET */
+            !quiz.unlocked ? (
+                <div>
+                    <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed flex items-center justify-center gap-2">
+                        🔒 Take Quiz
+                    </button>
+                    <p className="mt-2 text-xs text-gray-500 text-center">{quiz.reason}</p>
+                </div>
+            ) : /* STATE 4: ACTIVE / AVAILABLE */
+            (
+                <button 
+                    onClick={() => handleStartQuiz(quiz)} 
+                    className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                >
+                    📝 Take Quiz
+                </button>
+            )}
+        </div>
+    );
+})}
 
                             {/* Project Assessment Section */}
                             {hasPassedQuiz && (

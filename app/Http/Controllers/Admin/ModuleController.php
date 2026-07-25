@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ModuleController extends Controller
-{
+{ 
     public function index(Course $course)
     {
         $modules = $course->modules()

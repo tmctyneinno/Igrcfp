@@ -35,6 +35,7 @@ AOS.init({
 //     document.addEventListener('keydown', preventCopyShortcuts);
 // }
 
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({

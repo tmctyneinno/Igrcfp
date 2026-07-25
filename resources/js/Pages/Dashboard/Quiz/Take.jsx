@@ -366,7 +366,7 @@ export default function QuizTake({
                                             <RichTextEditor
                                                 value={essayAnswers[q.id] || ''}
                                                 onChange={(html) => handleEssayChange(q.id, html)}
-                                                disabled={!canAccessPartB}
+                                                // disabled prop removed to allow typing
                                                 placeholder="Write your response here..."
                                             />
                                         </div>
@@ -431,7 +431,7 @@ export default function QuizTake({
                         </button>
                     </div>
                 </div>
-            )}
+            )} 
         </AuthenticatedLayout>
     );
 }
