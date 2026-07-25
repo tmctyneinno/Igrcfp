@@ -197,7 +197,7 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
                         <button
                             onClick={handleAddToCartClick}
                             disabled={isAdding}
-                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-1.5 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isAdding ? (
                                 <span className="flex items-center gap-1.5">
@@ -210,9 +210,9 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
                             ) : (
                                 <span className="flex items-center gap-1.5">
                                     Enroll now
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {/* <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
+                                    </svg> */}
                                 </span>
                             )}
                         </button>
