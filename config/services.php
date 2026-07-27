@@ -52,5 +52,14 @@ return [
     'brevo' => [
         'api_key' => env('BREVO_API_KEY'),
     ],
+    'zerogpt' => [
+        'api_key' => env('ZEROGPT_API_KEY'),
+    ],
+    'huggingface' => [
+        'api_key' => env('HUGGINGFACE_API_KEY'),
+    ],
+    'gptzero' => [
+        'api_key' => env('GPTZERO_API_KEY'),
+    ],
 
 ];

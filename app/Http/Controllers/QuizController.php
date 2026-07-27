@@ -8,6 +8,7 @@ use App\Models\CourseModuleUser;
 use App\Models\Enrollment;
 use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
+use Illuminate\Support\Facades\Http; 
 use App\Models\Notification; // ✅ ADD THIS
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -54,7 +55,7 @@ class QuizController extends Controller
         // Calculate time remaining
         $timeLimit = $assessment->duration * 60;
         $timeRemaining = $this->calculateTimeRemaining($attempt, $timeLimit);
-        
+         
         return Inertia::render('Dashboard/Quiz/Take', [
             'course' => [
                 'id' => $course->id,
@@ -85,7 +86,58 @@ class QuizController extends Controller
             'timeLimit' => $timeLimit,
         ]);
     }
-    
+
+    /**
+     * Check AI score for essay text using ZeroGPT
+     */
+    public function checkAiScore(Request $request)
+    {
+        $request->validate([
+            'text' => 'required|string|min:50',
+        ]);
+
+        $text = $request->input('text');
+        $apiKey = config('services.gptzero.api_key');
+
+        try {
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'x-api-key' => $apiKey,
+            ])->post('https://api.gptzero.me/v2/predict/text', [
+                'document' => $text,
+                'multilingual' => false,
+            ]);
+
+            \Log::info('GPTZero status: ' . $response->status());
+            \Log::info('GPTZero body: ' . $response->body());
+
+            if ($response->successful()) {
+                $result = $response->json();
+
+                // Confirm exact shape from your own log output —
+                // GPTZero typically nests scores under documents[0]
+                $doc = $result['documents'][0] ?? [];
+                $aiPercentage = round(($doc['completely_generated_prob'] ?? 0) * 100, 2);
+
+                return response()->json([
+                    'success' => true,
+                    'ai_percentage' => $aiPercentage,
+                    'raw' => $result, // remove once field name is confirmed
+                ]);
+            }
+
+            throw new \Exception('GPTZero returned status ' . $response->status() . ': ' . $response->body());
+
+        } catch (\Exception $e) {
+            \Log::error('GPTZero API Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to check AI score at this time. Please proceed with submission.'
+            ], 500);
+        }
+    }
+
     /**
      * Auto-save quiz progress
      */
@@ -197,6 +249,21 @@ class QuizController extends Controller
         if (is_string($answers)) {
             $decodedAnswers = json_decode($answers, true);
             $answers = is_array($decodedAnswers) ? $decodedAnswers : [];
+        }
+
+        // NEW: Validate AI Scores if present
+        $aiScores = $request->input('ai_scores', []);
+        $questions = $assessment->questions()->get();
+        $hasEssayQuestions = $questions->contains('question_type', 'essay');
+
+        if ($hasEssayQuestions && !empty($aiScores)) {
+            foreach ($aiScores as $questionId => $scoreData) {
+                if (isset($scoreData['percentage']) && $scoreData['percentage'] > 20) {
+                    return response()->json([
+                        'error' => 'AI Policy Violation: One or more essays have an AI detection score above 20%. Please rewrite your content.'
+                    ], 422);
+                }
+            }
         }
 
         // Handle Essay Files (if any)

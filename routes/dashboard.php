@@ -28,9 +28,9 @@ Route::middleware(['auth', 'verified', 'validate.session'])->group(function () {
     Route::get('/dashboard/index', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('dashboard/my-courses', [DashboardController::class, 'myCourse'])->name('dashboard.my-courses');
-    Route::get('/memebership', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
-    Route::get('/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
-    Route::get('/settings', [DashboardController::class, 'settings'])->name('settings');
+    Route::get('dashboard/memberships', [DashboardController::class, 'memebership'])->name('dashboard.memebership');
+    Route::get('dashboard/notifications/index', [DashboardController::class, 'notifications'])->name('notifications.index');
+    Route::get('dashboard/settings', [DashboardController::class, 'settings'])->name('settings');
 
     // Membership (Blade)
     Route::get('/dashboard/memberships', [MembershipController::class, 'index'])->name('dashboard.memberships.index');
@@ -235,12 +235,10 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ POST ROUTES FIRST
     Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])
         ->name('quiz.submit');
+    Route::post('/quiz/check-ai-score', [QuizController::class, 'checkAiScore'])->name('quiz.check-ai-score');
+    Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])->name('quiz.save');
     
-    Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])
-        ->name('quiz.save');
-    
-    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])
-        ->name('quiz.save-progress');
+    Route::post('/quiz/{attempt}/save-progress', [QuizController::class, 'saveProgress'])->name('quiz.save-progress');
     
     // ✅ ALL SPECIFIC GET ROUTES - MUST COME BEFORE THE GENERAL ONE
     Route::get('/courses/{course:slug}/quiz/results', [QuizController::class, 'results'])

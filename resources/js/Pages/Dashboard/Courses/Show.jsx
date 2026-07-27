@@ -122,7 +122,7 @@ export default function Show({ course, enrollment, modules = [], auth }) {
       preserveState: true,
       onSuccess: (page) => {
         toast.dismiss(loadingToast);
-        
+         
         if (page.props.flash?.success) {
           toast.success('Course added to cart!');
           router.visit(route('checkout.index'));

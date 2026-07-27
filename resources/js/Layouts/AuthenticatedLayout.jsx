@@ -193,8 +193,8 @@ export default function AuthenticatedLayout({ header, children }) {
                                     My Learning
                                 </NavLink> 
                                 <NavLink
-                                    href={route('dashboard.memebership')}
-                                    active={route().current('dashboard.memebership')}
+                                    href={route('dashboard.memberships.index')}
+                                    active={route().current('dashboard.memberships.index')}
                                 >
                                     Membership
                                 </NavLink> 
