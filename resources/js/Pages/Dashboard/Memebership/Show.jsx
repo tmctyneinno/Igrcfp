@@ -4,13 +4,17 @@ import { Head, Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-
 export default function MembershipsIndex({ auth, tiers, activeMembership }) {
 
     const addToCart = (planId) => {
         router.post(route('dashboard.memberships.add-to-cart', planId));
     };
- 
+
+    // Safety check: ensure tiers is an array
+    if (!Array.isArray(tiers)) {
+        return <div>Loading...</div>;
+    }
+  
     return (
         <AuthenticatedLayout auth={auth}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,7 +57,8 @@ export default function MembershipsIndex({ auth, tiers, activeMembership }) {
 
                             {/* Plans Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {tier.plans.length > 0 ? (
+                                {/* Safety check: ensure tier.plans is an array */}
+                                {Array.isArray(tier.plans) && tier.plans.length > 0 ? (
                                     tier.plans.map((plan) => (
                                         <div
                                             key={plan.id}
@@ -70,7 +75,8 @@ export default function MembershipsIndex({ auth, tiers, activeMembership }) {
 
                                                 {/* Benefits List */}
                                                 <ul className="mt-4 space-y-2 text-sm text-gray-600 list-disc list-inside">
-                                                    {(plan.benefits?.length > 0 ? plan.benefits : tier.benefits ?? []).map((benefit, i) => (
+                                                    {/* Safety check: ensure benefits is an array */}
+                                                    {(Array.isArray(plan.benefits) ? plan.benefits : Array.isArray(tier.benefits) ? tier.benefits : []).map((benefit, i) => (
                                                         <li key={i}>{benefit}</li>
                                                     ))}
                                                 </ul>

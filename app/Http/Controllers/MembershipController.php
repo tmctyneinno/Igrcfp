@@ -12,61 +12,61 @@ use Inertia\Inertia;
 
 class MembershipController extends Controller
 {
-    public function index(Request $request)
-    {
-        // Log membership page view
-        ActivityLoggerService::log(
-            ActivityLog::EVENT_UPDATED,
-            'memberships',
-            'Viewed membership plans',
-            "User viewed membership plans page",
-            null,
-            [
-                'user_id' => $request->user()->id,
-                'has_active_membership' => $request->user()->activeMembership() ? true : false
-            ],
-            ActivityLog::SEVERITY_INFO
-        );
+   public function index(Request $request)
+{
+    // Log membership page view
+    ActivityLoggerService::log(
+        ActivityLog::EVENT_UPDATED,
+        'memberships',
+        'Viewed membership plans',
+        "User viewed membership plans page",
+        null,
+        [
+            'user_id' => $request->user()->id,
+            'has_active_membership' => $request->user()->activeMembership() ? true : false
+        ],
+        ActivityLog::SEVERITY_INFO
+    );
 
-        $tiers = MembershipTier::query()
-            ->where('is_active', true)
-            ->with(['plans' => function ($query) {
-                $query->where('is_active', true)->orderBy('price');
-            }])
-            ->orderBy('sort_order')
-            ->get()
-            ->map(function ($tier) {
-                return [
-                    'id' => $tier->id,
-                    'name' => $tier->name,
-                    'description' => $tier->description,
-                    'benefits' => $tier->benefits ?? [],
-                    'plans' => $tier->plans->map(function ($plan) {
-                        return [
-                            'id' => $plan->id,
-                            'name' => $plan->name,
-                            'price' => $plan->price,
-                            'currency' => $plan->currency,
-                            'billing_interval' => $plan->billing_interval,
-                            'benefits' => $plan->benefits ?? [],
-                        ];
-                    })->values(),
-                ];
-            });
+    $tiers = MembershipTier::query()
+        ->where('is_active', true)
+        ->with(['plans' => function ($query) {
+            $query->where('is_active', true)->orderBy('price');
+        }])
+        ->orderBy('sort_order')
+        ->get()
+        ->map(function ($tier) {
+            return [
+                'id' => $tier->id,
+                'name' => $tier->name,
+                'description' => $tier->description,
+                'benefits' => is_array($tier->benefits) ? $tier->benefits : json_decode($tier->benefits ?? '[]', true), // Ensure benefits is an array
+                'plans' => $tier->plans->map(function ($plan) {
+                    return [
+                        'id' => $plan->id,
+                        'name' => $plan->name,
+                        'price' => $plan->price,
+                        'currency' => $plan->currency,
+                        'billing_interval' => $plan->billing_interval,
+                        'benefits' => is_array($plan->benefits) ? $plan->benefits : json_decode($plan->benefits ?? '[]', true), // Ensure benefits is an array
+                    ];
+                })->values()->all(), // Convert to plain array
+            ];
+        })->values()->all(); // Convert outer collection to plain array
 
-        $activeMembership = $request->user()->activeMembership();
+    $activeMembership = $request->user()->activeMembership();
 
-        return Inertia::render('Dashboard/Memebership/Show', [
-            'auth' => [
-                'user' => $request->user(),
-            ],
-            'tiers' => $tiers,
-            'activeMembership' => $activeMembership ? [
-                'id' => $activeMembership->id,
-                'status' => $activeMembership->status,
-            ] : null,
-        ]);
-    }
+    return Inertia::render('Dashboard/Memebership/Show', [
+        'auth' => [
+            'user' => $request->user(),
+        ],
+        'tiers' => $tiers,
+        'activeMembership' => $activeMembership ? [
+            'id' => $activeMembership->id,
+            'status' => $activeMembership->status,
+        ] : null,
+    ]);
+}
 
     public function status(Request $request)
     {
