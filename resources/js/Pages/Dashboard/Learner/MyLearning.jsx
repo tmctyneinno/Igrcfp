@@ -22,7 +22,7 @@ export default function MyLearning({ enrolledCourses = [] }) {
             'Self-Paced': 'bg-gray-100 text-gray-800'
         };
         return formatMap[format] || 'bg-gray-100 text-gray-800';
-    };
+    }; 
 
     // Helper to determine assessment status label and color
     const getAssessmentStatus = (course) => {

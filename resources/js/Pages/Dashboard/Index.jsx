@@ -44,7 +44,7 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
                 initialCourses={popularCourses} 
                 onScholarshipEnroll={handleScholarshipEnroll}
                 authUser={auth?.user}
-            />
+            /> 
         </AuthenticatedLayout>  
     );   
 }

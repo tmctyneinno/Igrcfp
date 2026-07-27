@@ -134,3 +134,4 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
         </GuestLayout>
     );
 }
+ 
