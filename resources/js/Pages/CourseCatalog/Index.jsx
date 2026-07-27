@@ -1,6 +1,8 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
+import HeroSection from '@/Layouts/HeroSection';
+import CallToAction from "@/Pages/components/CallToAction";
 
 const courseSections = [
     {
@@ -18,7 +20,7 @@ const courseSections = [
             'Certificate in Ethics, Conduct & Culture',
             'Certificate in Integrated GRC Frameworks',
         ],
-    },
+    }, 
     {
         title: 'Financial Crime & AML',
         start: 11,
@@ -158,175 +160,118 @@ const deliveryOptions = [
     'Blended learning programmes',
 ];
 
-const sectionStyles = [
-    'from-blue-50 to-white border-blue-100 text-blue-900 bg-blue-900',
-    'from-red-50 to-white border-red-100 text-red-900 bg-red-700',
-    'from-purple-50 to-white border-purple-100 text-purple-900 bg-purple-700',
-    'from-cyan-50 to-white border-cyan-100 text-cyan-900 bg-cyan-700',
-    'from-amber-50 to-white border-amber-100 text-amber-900 bg-amber-700',
-    'from-emerald-50 to-white border-emerald-100 text-emerald-900 bg-emerald-700',
-    'from-slate-50 to-white border-slate-200 text-slate-900 bg-slate-800',
-];
-
-function CourseTable({ section, index }) {
-    const [gradientFrom, gradientTo, borderColor, titleColor, numberBg] = sectionStyles[index].split(' ');
-
-    return (
-        <div className={`rounded-2xl border ${borderColor} bg-gradient-to-r ${gradientFrom} ${gradientTo} p-5 md:p-6 shadow-lg`}>
-            <div className="flex items-start justify-between gap-4 mb-5">
-                <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-gray-500 font-semibold">Course Area</p>
-                    <h2 className={`text-xl md:text-2xl font-bold ${titleColor} mt-1`}>{section.title}</h2>
-                </div>
-                <div className={`${numberBg} text-white rounded-xl px-3 py-2 text-center min-w-16 flex-shrink-0`}>
-                    <div className="text-2xl font-bold">{section.courses.length}</div>
-                    <div className="text-xs uppercase tracking-wide">Courses</div>
-                </div>
-            </div>
-
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                <div className="grid grid-cols-[4rem_1fr] bg-gray-100 border-b border-gray-200 text-sm font-semibold text-gray-700">
-                    <div className="px-4 py-3 border-r border-gray-200">No.</div>
-                    <div className="px-4 py-3">Course</div>
-                </div>
-                <div className="divide-y divide-gray-100">
-                    {section.courses.map((course, index) => (
-                        <div key={course} className="grid grid-cols-[4rem_1fr] hover:bg-gray-50 transition">
-                            <div className="px-4 py-3 text-gray-600 font-semibold border-r border-gray-100">{section.start + index}</div>
-                            <div className="px-4 py-3 text-gray-800">{course}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+const CourseSection = ({ section }) => (
+    <div className=" border border-gray-200 rounded-lg overflow-hidden mb-8 shadow-sm">
+        <div className="bg-gray-200 px-4 py-3 flex items-center justify-between">
+            <h3 className="font-semibold text-gray-800">{section.title}</h3>
+            <span className="text-xs font-medium text-white bg-[#143576] px-2 py-1 rounded border border-gray-300">
+                {section.courses.length} Courses
+            </span>
         </div>
-    );
-}
+        <div className="divide-y divide-gray-100 bg-white">
+            {section.courses.map((course, idx) => (
+                <div key={course} className="px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                    <span className="text-gray-400 mr-3 font-medium">{section.start + idx}.</span>
+                    {course}
+                </div>
+            ))}
+        </div>
+    </div>
+);
 
 export default function CourseCatalog({ auth }) {
-    return (
+    return ( 
         <GuestLayout auth={auth}>
             <Head title="IGRCFP | Course Catalogue" />
+            
+            <HeroSection 
+                title="IGRCFP Course Catalog"
+                description="The Institute of Governance, Risk, Compliance & Financial Crime Prevention"
+            />
 
-            <section className="w-full bg-gradient-to-r from-blue-200 via-white to-blue-200 py-28">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <div className="inline-flex items-center justify-center px-4 py-2 bg-white/70 border border-blue-100 text-blue-900 rounded-full text-xs font-semibold uppercase tracking-[0.18em] mb-5">
-                            Professional Certificate Portfolio
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            IGRCFP Course Catalogue
-                        </h1>
-                        <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-                            Professional Certificates in Governance, Risk, Compliance, Cybersecurity & Financial Crime Prevention
-                        </p>
-                    </div>
+            <header className="py-12 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100">
+                <div className="max-w-5xl mx-auto">
+                    <h1 className="text-2xl font-bold uppercase tracking-wider text-gray-900 mb-3">Course Catalogue</h1>
+                    <p className="text-md text-gray-600 leading-relaxed mb-2">
+                        IGRCFP offers a structured portfolio of specialist certificate programmes designed for professionals working across governance, risk, compliance, financial crime prevention, cybersecurity, digital risk, audit, assurance, ESG, and emerging regulatory environments.
+                    </p>
+                    <p className="text-md text-gray-500 max-w-4xl">
+                        Our courses are developed for professionals who need practical, globally relevant knowledge that can be applied immediately in regulated, complex, and fast-changing organisational settings.
+                    </p>
                 </div>
-            </section>
+            </header>
 
-            <section className="bg-white py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-blue-50 p-6 md:p-8 shadow-sm space-y-5 text-lg leading-8 text-gray-700">
-                        <p>
-                            IGRCFP offers a structured portfolio of specialist certificate programmes designed for professionals working across governance, risk, compliance, financial crime prevention, cybersecurity, digital risk, audit, assurance, ESG, and emerging regulatory environments.
-                        </p>
-                        <p>
-                            Our courses are developed for professionals who need practical, globally relevant knowledge that can be applied immediately in regulated, complex, and fast-changing organisational settings.
-                        </p>
-                    </div>
-                </div>
-            </section>
+            {/* ✅ Fixed: removed extra space, mx-auto properly centers the container */}
+            <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 pl-8">
+                {courseSections.map((section) => (
+                    <CourseSection key={section.title} section={section} />
+                ))}
 
-            <section className="bg-gray-50 py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-9">
-                    <div className="grid gap-8 lg:grid-cols-2">
-                        {courseSections.map((section, index) => (
-                            <CourseTable key={section.title} section={section} index={index} />
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <section className="bg-white py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-3">Learning Pathways</h2>
-                        <div className="w-24 h-1 bg-blue-600 mx-auto"></div>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-6">
+                <section className="mt-16 mb-12">
+                    <h2 className="text-xl font-bold uppercase tracking-wider text-gray-900 mb-6">Learning Pathways</h2>
+                    <div className="grid sm:grid-cols-3 gap-6">
                         {pathways.map((pathway) => (
-                            <div key={pathway.title} className="bg-gray-50 rounded-xl border border-gray-200 p-6 shadow-sm">
-                                <h3 className="text-xl font-bold text-blue-900 mb-3">{pathway.title}</h3>
-                                <p className="text-gray-700 mb-4">{pathway.description}</p>
-                                <p className="font-semibold text-gray-900 mb-3">Recommended courses:</p>
-                                <ul className="space-y-3 text-gray-700">
-                                    {pathway.courses.map((course) => (
-                                        <li key={course} className="flex gap-3">
-                                            <span className="mt-2 h-2 w-2 rounded-full bg-blue-600 flex-shrink-0"></span>
-                                            <span>{course}</span>
+                            <div key={pathway.title} className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm">
+                                <h3 className="font-semibold text-gray-800 mb-2">{pathway.title}</h3>
+                                <p className="text-xs text-gray-600 mb-4">{pathway.description}</p>
+                                <ul className="space-y-1.5 text-xs text-gray-700">
+                                    {pathway.courses.map((c) => (
+                                        <li key={c} className="flex gap-2">
+                                            <span className="text-gray-400">•</span>
+                                            {c}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
                         ))}
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section className="bg-gray-50 py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid md:grid-cols-2 gap-10">
-                        <div className="bg-white rounded-xl border border-gray-200 p-7 shadow-sm">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-5">Why Study with IGRCFP?</h2>
-                            <p className="text-gray-700 mb-4">IGRCFP programmes are:</p>
-                            <ul className="space-y-3 text-gray-700">
-                                {studyReasons.map((reason) => (
-                                    <li key={reason} className="flex gap-3">
-                                        <span className="mt-2 h-2 w-2 rounded-full bg-green-600 flex-shrink-0"></span>
-                                        <span>{reason}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                <section className="grid sm:grid-cols-2 gap-6 mb-12">
+                    <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm">
+                        <h3 className="font-semibold text-gray-800 mb-3">Why Study with IGRCFP?</h3>
+                        <ul className="space-y-2 text-xs text-gray-700">
+                            {studyReasons.map((r) => (
+                                <li key={r} className="flex gap-2">
+                                    <span className="text-gray-400">•</span>
+                                    {r}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm">
+                        <h3 className="font-semibold text-gray-800 mb-3">Delivery Options</h3>
+                        <ul className="space-y-2 text-xs text-gray-700">
+                            {deliveryOptions.map((o) => (
+                                <li key={o} className="flex gap-2">
+                                    <span className="text-gray-400">•</span>
+                                    {o}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
 
-                        <div className="bg-white rounded-xl border border-gray-200 p-7 shadow-sm">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-5">Delivery Options</h2>
-                            <p className="text-gray-700 mb-4">Courses may be delivered through:</p>
-                            <ul className="space-y-3 text-gray-700">
-                                {deliveryOptions.map((option) => (
-                                    <li key={option} className="flex gap-3">
-                                        <span className="mt-2 h-2 w-2 rounded-full bg-blue-600 flex-shrink-0"></span>
-                                        <span>{option}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                <section className="space-y-6">
+                    <div className="border border-gray-200 rounded-lg p-5 bg-white shadow-sm">
+                        <h3 className="font-semibold text-gray-800 mb-3">Certification</h3>
+                        <p className="text-md text-gray-700 leading-relaxed">
+                            Participants who successfully complete the course requirements will receive an IGRCFP Professional Certificate in the relevant subject area.
+                        </p>
+                    </div>
+                    <div className="rounded-lg p-5 bg-[#0A1A2F] text-white shadow-sm">
+                        <h3 className="font-semibold mb-3">Enrolment and Partnerships</h3>
+                        <p className="text-md text-gray-200 mb-3">To register for a course or discuss corporate training:</p>
+                        <div className="space-y-1.5 text-md text-gray-200">
+                            <p><strong>Website:</strong> www.igrcfp.org</p>
+                            <p><strong>Training enquiries:</strong> training@igrcfp.org</p>
+                            <p><strong>Partnership enquiries:</strong> partnerships@igrcfp.org</p>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
-            <section className="bg-white py-16">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid md:grid-cols-2 gap-8">
-                        <div className="rounded-xl border border-blue-100 bg-blue-50 p-7 shadow-sm">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-5">Certification</h2>
-                            <p className="text-gray-700 leading-8">
-                                Participants who successfully complete the course requirements will receive an IGRCFP Professional Certificate in the relevant subject area.
-                            </p>
-                        </div>
-
-                        <div className="rounded-xl bg-gradient-to-r from-blue-600 via-blue-700 to-green-500 p-7 text-white shadow-lg">
-                            <h2 className="text-3xl font-bold mb-5">Enrolment and Partnerships</h2>
-                            <p className="text-blue-50 mb-4">To register for a course or discuss corporate training:</p>
-                            <div className="space-y-2 text-blue-50">
-                                <p><span className="font-semibold">Website:</span> www.igrcfp.org</p>
-                                <p><span className="font-semibold">Training enquiries:</span> training@igrcfp.org</p>
-                                <p><span className="font-semibold">Partnership enquiries:</span> partnerships@igrcfp.org</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <CallToAction />
         </GuestLayout>
     );
 }
