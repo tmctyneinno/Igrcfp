@@ -42,27 +42,29 @@ export default function MembershipsIndex({ auth, tiers, activeMembership }) {
                 )}
 
                 {/* Tiers */}
-                <div className="space-y-10">
+                <div className="space-y-12">
                     {tiers.map((tier) => (
-                        <div key={tier.id}>
+                        <div key={tier.id} className="border-b border-gray-200 pb-10 last:border-0">
 
                             {/* Tier Header */}
-                            <div className="mb-4 flex flex-col gap-1">
-                                <span className="uppercase tracking-widest text-gray-400">Tier</span>
-                                <h3 className="text-l font-semibold text-gray-900">{tier.name} </h3>
+                            <div className="mb-6 flex flex-col gap-1">
+                                <span className="uppercase tracking-widest text-gray-400 text-sm font-semibold">Tier</span>
+                                <h3 className="text-2xl font-bold text-gray-900">{tier.name}</h3>
                                 {tier.description && (
-                                    <p className="text-gray-600 text-sm">{tier.description}</p>
+                                    <p className="text-gray-600 max-w-2xl">{tier.description}</p>
                                 )}
                             </div>
 
-                            {/* Plans Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Plans Row Container */}
+                            {/* Changed from grid to flex row */}
+                            <div className="flex flex-row gap-6 overflow-x-auto pb-4 snap-x">
                                 {/* Safety check: ensure tier.plans is an array */}
                                 {Array.isArray(tier.plans) && tier.plans.length > 0 ? (
                                     tier.plans.map((plan) => (
                                         <div
                                             key={plan.id}
-                                            className="bg-white rounded-2xl shadow-md border border-slate-200 p-6 flex flex-col justify-between"
+                                            // Fixed width for row layout, snap-align for scrolling
+                                            className="min-w-[300px] w-full md:w-[350px] snap-center bg-white rounded-2xl shadow-md border border-slate-200 p-6 flex flex-col justify-between shrink-0"
                                         >
                                             <div>
                                                 <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
@@ -92,7 +94,7 @@ export default function MembershipsIndex({ auth, tiers, activeMembership }) {
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="rounded-xl border border-dashed border-slate-300 p-6 text-gray-500">
+                                    <div className="rounded-xl border border-dashed border-slate-300 p-6 text-gray-500 min-w-[300px]">
                                         No plans available for this tier yet.
                                     </div>
                                 )}
