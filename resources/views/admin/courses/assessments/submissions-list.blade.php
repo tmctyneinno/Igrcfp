@@ -113,6 +113,7 @@
                 <table class="table bordered-table sm-table mb-0">
                     <thead>
                         <tr>
+                            <th scope="col">ID</th>
                             <th scope="col">Student</th>
                             <th scope="col">Assessment</th>
                             <th scope="col">Course</th>
@@ -126,6 +127,7 @@
                     <tbody>
                         @forelse($submissions as $submission)
                         <tr>
+                            <td class="fw-medium text-secondary-light">{{ $loop->iteration + ($submissions->currentPage() - 1) * $submissions->perPage() }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="w-32-px h-32-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center">

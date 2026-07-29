@@ -42,38 +42,19 @@ class AssessmentController extends Controller
 
     public function submissionsList(Request $request)
 {
-    // Eager load assessment questions to determine stage logic efficiently
     $query = AssessmentSubmission::with([
         'user', 
         'assessment.course', 
         'grader',
-        'assessment.questions' // Load questions to check types
+        'assessment.questions'
     ])
     ->orderBy('submitted_at', 'desc');
 
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->whereHas('user', function($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
-        });
-    }
+    // ... (Your existing search and filter logic) ...
 
     $submissions = $query->paginate(20);
 
-    // Add a computed 'stage' attribute to each submission
     $submissions->getCollection()->transform(function ($submission) {
-        // 🔍 TEMPORARY DEBUG - Remove after fixing
-        \Log::info("Submission {$submission->id} Answers:", [
-            'raw_answers' => $submission->answers, // Change to your actual column
-            'questions_count' => $submission->assessment->questions->count(),
-            'essay_questions' => $submission->assessment->questions->where('question_type', 'essay')->pluck('id'),
-        ]);
-        
         $submission->current_stage = $this->determineAssessmentStage($submission);
         return $submission;
     });
@@ -87,6 +68,8 @@ class AssessmentController extends Controller
 
     return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics'));
 }
+
+
 
 /**
  * Helper to determine the stage based on ACTUAL submission content
