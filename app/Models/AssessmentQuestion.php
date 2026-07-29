@@ -14,7 +14,7 @@ class AssessmentQuestion extends Model
 
     // Prevent saving questions from touching parent assessment timestamps
     protected $touches = [];
-
+  
     protected $fillable = [
         'assessment_id',
         'module_id',

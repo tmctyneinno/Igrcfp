@@ -168,7 +168,6 @@ class QuizController extends Controller
         \Log::info('Submit method called', [
             'course' => $course->slug,
             'assessment_id' => $assessmentId,
-            'answers' => $request->input('answers')
         ]);
         
         $user = auth()->user();
@@ -199,7 +198,7 @@ class QuizController extends Controller
             return redirect()->back()->with('error', 'Please read all module content.');
         }
 
-        // Validate essay files if present
+        // Validate essay files if present (Optional, if you still support file uploads)
         $request->validate([
             'essay_files' => ['nullable', 'array'],
             'essay_files.*' => ['file', 'mimes:pdf,doc,docx,txt,rtf', 'max:20480'],
@@ -244,15 +243,26 @@ class QuizController extends Controller
             ]);
         }
         
-        // Handle Answers (Support both JSON string and Array)
+        // Handle MCQ Answers
         $answers = $request->input('answers', []);
         if (is_string($answers)) {
             $decodedAnswers = json_decode($answers, true);
             $answers = is_array($decodedAnswers) ? $decodedAnswers : [];
         }
 
+        // Handle Essay Text Answers (From RichTextEditor)
+        $essayAnswers = $request->input('essay_answers', []);
+        if (is_string($essayAnswers)) {
+            $essayAnswers = json_decode($essayAnswers, true);
+        }
+        if (!is_array($essayAnswers)) {
+            $essayAnswers = [];
+        }
+
         // NEW: Validate AI Scores if present
         $aiScores = $request->input('ai_scores', []);
+        
+        // Get Questions
         $questions = $assessment->questions()->get();
         $hasEssayQuestions = $questions->contains('question_type', 'essay');
 
@@ -269,9 +279,6 @@ class QuizController extends Controller
         // Handle Essay Files (if any)
         $essayFiles = $request->file('essay_files', []);
         
-        $questions = $assessment->questions()->get();
-        $hasEssayQuestions = $questions->contains('question_type', 'essay');
-        
         // Determine if this is Part A only submission
         $isPartAOnly = $request->boolean('part_a_only');
         $isSplitPartASubmission = $isPartAOnly && $hasEssayQuestions;
@@ -286,7 +293,14 @@ class QuizController extends Controller
         
         foreach ($questions as $question) {
             $marks = $question->points ?? 1;
+            
+            // 1. Get MCQ Answer
             $userAnswer = $answers[$question->id] ?? null;
+            
+            // 2. OVERRIDE with Essay Text Answer if applicable
+            if ($question->question_type === 'essay' && isset($essayAnswers[$question->id])) {
+                $userAnswer = $essayAnswers[$question->id];
+            }
             
             // Check correctness for auto-graded questions
             $isCorrect = $question->isAnswerCorrect($userAnswer);
@@ -303,14 +317,14 @@ class QuizController extends Controller
             $questionResponses[$question->id] = [
                 'question_id' => $question->id,
                 'question_text' => $question->question_text,
-                'answer' => $userAnswer,
+                'answer' => $userAnswer, // This now contains the essay text
                 'correct_answer' => $isManualQuestion ? null : $question->correct_answer,
                 'points_earned' => $pointsEarned,
                 'points_possible' => $marks,
                 'correct' => $isManualQuestion ? null : $isCorrect === true,
             ];
 
-            // Handle File Uploads if present in request
+            // Handle File Uploads if present in request (Optional fallback)
             if ($question->question_type === 'essay' && isset($essayFiles[$question->id])) {
                 $file = $essayFiles[$question->id];
                 $path = $file->store("quiz-essays/{$course->id}/{$assessment->id}/{$user->id}", 'public');
@@ -393,7 +407,7 @@ class QuizController extends Controller
         }
 
         $submission->answers = $finalAnswers;
-        $submission->question_responses = $questionResponses;
+        $submission->question_responses = $questionResponses; // Saves the essay text here
         $submission->score = $earnedMarks;
         $submission->percentage = $score;
         $submission->passed = $passed;

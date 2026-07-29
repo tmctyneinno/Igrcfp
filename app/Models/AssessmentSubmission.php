@@ -17,7 +17,7 @@ class AssessmentSubmission extends Model
         'started_at',
         'submitted_at',
         'status',
-        'answers',
+        'answers', 
         'question_responses',
         'score',
         'percentage',

@@ -165,7 +165,6 @@
             @endif
 
             <!-- Part B: Essay Responses -->
-                       <!-- Part B: Essay Responses -->
             @if(isset($essayQuestions) && $essayQuestions->isNotEmpty())
             <div class="card mb-24">
                 <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
@@ -179,10 +178,8 @@
                         @php
                             $q = $item['question'];
                             $r = $item['response'] ?? [];
-                            
-                            // Check for text answer first, then fallback to file
-                            $hasTextAnswer = !empty($r['answer']) && strlen(trim($r['answer'])) > 0;
-                            $hasFile = !empty($r['uploaded_file']);
+                            $answerText = $r['answer'] ?? null;
+                            $hasAnswer = !empty($answerText);
                         @endphp
                         
                         <div class="border rounded-8 p-16 mb-3 last-child-mb-0 bg-light-50">
@@ -190,32 +187,14 @@
                             <p class="fw-semibold mb-3 text-dark">{{ $q->question_text }}</p>
                             
                             <!-- Display Text Content -->
-                            @if($hasTextAnswer)
+                            @if($hasAnswer)
                                 <div class="bg-white border rounded-6 p-16 essay-content">
-                                    {!! $r['answer'] !!}
+                                    {!! $answerText !!}
                                 </div>
-                            @endif
-
-                            <!-- Display File Attachment (if any) -->
-                            @if($hasFile)
-                                <div class="mt-3 pt-3 border-top">
-                                    <p class="small fw-bold text-secondary-light mb-2">Attached Document:</p>
-                                    <div class="d-flex align-items-center gap-3 p-12 bg-white rounded-6 border">
-                                        <iconify-icon icon="solar:file-text-linear" class="text-primary-600 icon-xl"></iconify-icon>
-                                        <div class="flex-grow-1">
-                                            <p class="fw-medium small mb-0">{{ $r['uploaded_file']['name'] ?? 'Document' }}</p>
-                                            <p class="text-xs text-secondary-light mb-0">{{ round(($r['uploaded_file']['size'] ?? 0)/1024, 2) }} KB</p>
-                                        </div>
-                                        <a href="{{ Storage::url($r['uploaded_file']['path']) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                            View File
-                                        </a>
-                                    </div>
+                            @else
+                                <div class="alert alert-warning py-2 mb-0">
+                                    <small><i class="fas fa-exclamation-circle me-1"></i> No text answer was submitted for this question.</small>
                                 </div>
-                            @endif
-
-                            <!-- Empty State -->
-                            @if(!$hasTextAnswer && !$hasFile)
-                                <p class="text-muted small italic mb-0">No response provided for this question.</p>
                             @endif
                         </div>
                     @endforeach
