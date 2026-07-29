@@ -17,7 +17,7 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-
+ 
             {{-- Admin Management - Only for Super Admin and Origin Admin --}}
             @if(auth()->guard('admin')->user()?->isAdmin())
                 <li>
@@ -149,16 +149,32 @@
             <li class="sidebar-separator">
                 <hr class="my-2 mx-3 opacity-25">
             </li>
-            <li class="dropdown">
+            <li class="dropdown {{ request()->routeIs('admin.assessments.*') ? 'active' : '' }}">
                 <a href="javascript:void(0)">
-                    <iconify-icon icon="solar:document-text-outline" class="menu-icon"></iconify-icon>
+                    <iconify-icon icon="solar:clipboard-check-outline" class="menu-icon"></iconify-icon>
                     <span>Assessments</span> 
+                    @php
+                        $pendingSubmissions = \App\Models\AssessmentSubmission::where('status', 'submitted')->count();
+                    @endphp
+                    @if($pendingSubmissions > 0)
+                        <span class="badge bg-warning ms-2">{{ $pendingSubmissions }}</span>
+                    @endif
                 </a>
                 <ul class="sidebar-submenu">
                     <li>
                         <a href="{{ route('admin.assessments.all') }}">
                             <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
                             All Assessments
+                        </a>
+                    </li>
+                    {{-- NEW: Recent Assessment Submissions --}}
+                    <li>
+                        <a href="{{ route('admin.assessments.submissions.list') }}">
+                            <i class="ri-circle-fill circle-icon text-blue-600 w-auto"></i>
+                            Recent Submissions
+                            @if($pendingSubmissions > 0)
+                                <span class="badge bg-warning ms-1">{{ $pendingSubmissions }}</span>
+                            @endif
                         </a>
                     </li>
                     <li>
@@ -168,6 +184,9 @@
                         </a>
                     </li>
                     @if(auth()->guard('admin')->user()?->isAdmin())
+                        <li class="sidebar-separator">
+                            <hr class="my-2 mx-3 opacity-25">
+                        </li>
                         <li>
                             <a href="{{ route('admin.assessments.create.quiz') }}">
                                 <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>

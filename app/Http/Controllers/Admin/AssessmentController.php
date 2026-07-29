@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Services\BrevoMailService;
+use App\Mail\EssayRetryNotification;
+
  
 class AssessmentController extends Controller
 {
@@ -35,6 +38,88 @@ class AssessmentController extends Controller
 
         return view('admin.courses.assessments.index',
             compact('assessments', 'courses', 'statistics'));
+    }
+
+    public function submissionsList(Request $request)
+    {
+        $query = AssessmentSubmission::with(['user', 'assessment.course', 'grader'])
+            ->orderBy('submitted_at', 'desc');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $submissions = $query->paginate(20);
+
+        $statistics = [
+            'total'     => AssessmentSubmission::count(),
+            'pending'   => AssessmentSubmission::where('status', 'submitted')->count(),
+            'graded'    => AssessmentSubmission::where('status', 'graded')->count(),
+            'avg_score' => AssessmentSubmission::whereNotNull('percentage')->avg('percentage'),
+        ];
+
+        return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics'));
+    }
+
+  
+public function notifyEssayRetry(Request $request, AssessmentSubmission $submission, BrevoMailService $mailer)
+{
+    $validated = $request->validate([
+        'question_id' => 'required|exists:assessment_questions,id',
+        'subject'     => 'required|string|max:255',
+        'message'     => 'required|string',
+    ]);
+
+    if (empty($submission->user->email)) {
+        return redirect()->back()->with('error', 'This student has no email address on file.');
+    }
+
+    try {
+        $mailable = new EssayRetryNotification($validated['subject'], $validated['message']);
+
+        $mailer->sendMailable(
+            $submission->user->email,
+            // 'eshanokpe@gmail.com',
+            $mailable,
+            $validated['subject']
+        );
+
+        return redirect()->back()->with('success', 'Notification email sent to student successfully!');
+    } catch (\Exception $e) {
+        \Log::error('Essay retry notification failed: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Error sending email: ' . $e->getMessage());
+    }
+}
+
+    public function deleteSubmission(AssessmentSubmission $submission)
+    {
+        DB::beginTransaction();
+        try {
+            // If submissions can have uploaded files, clean those up too
+            $responses = $submission->question_responses ?? [];
+            foreach ($responses as $response) {
+                if (!empty($response['uploaded_file']['path'])) {
+                    Storage::disk('public')->delete($response['uploaded_file']['path']);
+                }
+            }
+
+            $submission->delete();
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Submission deleted successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Submission deletion failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error deleting submission: ' . $e->getMessage());
+        }
     }
 
     public function all(Request $request)
@@ -448,7 +533,7 @@ class AssessmentController extends Controller
                 $projectQuestions->push($item);
             }
         }
-
+ 
         // Extract Uploaded Files for easy access
         $uploadedFiles = collect($responses)
             ->filter(fn($r) => !empty($r['uploaded_file']['path']))

@@ -180,11 +180,17 @@
                             $r = $item['response'] ?? [];
                             $answerText = $r['answer'] ?? null;
                             $hasAnswer = !empty($answerText);
+                            $explanation = $q->explanation ?? null;
                         @endphp
                         
                         <div class="border rounded-8 p-16 mb-3 last-child-mb-0 bg-light-50">
                             <!-- Question Prompt -->
-                            <p class="fw-semibold mb-3 text-dark">{{ $q->question_text }}</p>
+                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                                <p class="fw-semibold mb-0 text-dark">{{ $q->question_text }}</p>
+                                <span class="badge bg-neutral-200 text-neutral-600 radius-4 px-8 py-4 flex-shrink-0">
+                                    {{ $q->points ?? 0 }} {{ Str::plural('pt', $q->points ?? 0) }}
+                                </span>
+                            </div>
                             
                             <!-- Display Text Content -->
                             @if($hasAnswer)
@@ -192,8 +198,79 @@
                                     {!! $answerText !!}
                                 </div>
                             @else
-                                <div class="alert alert-warning py-2 mb-0">
+                                <div class="alert alert-warning py-2 mb-2">
                                     <small><i class="fas fa-exclamation-circle me-1"></i> No text answer was submitted for this question.</small>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#retryModal{{ $q->id }}">
+                                    <iconify-icon icon="solar:letter-linear" class="me-1"></iconify-icon> Notify Student to Retake
+                                </button>
+
+                                <!-- Retry Notification Modal -->
+                                <div class="modal fade" id="retryModal{{ $q->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <form action="{{ route('admin.assessments.submission.notify-retry', $submission->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="question_id" value="{{ $q->id }}">
+                                                <div class="modal-header">
+                                                    <h6 class="modal-title">Notify Student — Retake Essay Question</h6>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">To</label>
+                                                        <input type="text" class="form-control" value="{{ $submission->user->email ?? '' }}" disabled>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Subject</label>
+                                                        <input type="text" name="subject" class="form-control"
+                                                            value="Action Required: Retake Your Essay Response — {{ $assessment->title }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Message</label>
+                                                        <textarea name="message" class="form-control" rows="12">Hi {{ $submission->user->name ?? 'Student' }},
+
+We recently completed a scheduled system upgrade to improve the assessment experience on the platform. During this process, we identified that your response to one of the essay questions in "{{ $assessment->title }}" was not saved correctly.
+
+We understand this is frustrating, and we want to make sure your effort is properly reflected in your results — so we're giving you the opportunity to submit your answer again.
+
+What you need to do:
+1. Log back into your dashboard
+2. Go to "{{ $assessment->title }}"
+3. Answer the following question again: "{{ $q->question_text }}"
+4. Submit your response
+
+This will only take a few minutes, and your other answers and progress remain safe and unaffected. Please complete this as soon as possible so we can finalize your grading without delay.
+
+If you have any questions or run into issues, just reply to this email and we'll help right away.
+
+Thanks for your patience as we continue improving the platform.
+
+Best regards,
+The Team</textarea>
+                                                    </div>
+                                                    <small class="text-muted">You can edit the subject and message above before sending.</small>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-warning">
+                                                        <iconify-icon icon="solar:letter-linear" class="me-1"></iconify-icon> Send Email
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Model Answer / Explanation (for grader reference) -->
+                            @if(!empty($explanation))
+                                <div class="mt-3 bg-info-focus border border-info-100 rounded-6 p-16">
+                                    <p class="fw-semibold text-info-600 mb-1 small text-uppercase">
+                                        <iconify-icon icon="solar:lightbulb-linear" class="me-1"></iconify-icon>
+                                        Model Answer / Explanation
+                                    </p>
+                                    <p class="mb-0 text-sm">{{ $explanation }}</p>
                                 </div>
                             @endif
                         </div>
@@ -274,14 +351,7 @@
     .icon-2x { font-size: 2rem; }
     /* Ensure sticky works smoothly */
     .sticky-top { position: -webkit-sticky; position: sticky; }
-    
-</style>
-<style>
-    .last-child-mb-0:last-child { margin-bottom: 0; }
-    .icon-xl { font-size: 1.5rem; }
-    .icon-2x { font-size: 2rem; }
-    .sticky-top { position: -webkit-sticky; position: sticky; }
-    
+
     /* Essay Content Styling */
     .essay-content {
         line-height: 1.6;

@@ -100,7 +100,7 @@ class BrevoMailService
         'curl_error' => $error,
         'payload_preview' => json_encode(array_merge($data, ['htmlContent' => '[HIDDEN]']))
     ]);
-
+ 
     throw new \Exception("Failed to send email: HTTP {$httpCode} - " . ($error ?: $response));
 }
 

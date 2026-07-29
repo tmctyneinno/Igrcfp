@@ -7,10 +7,11 @@ use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\AssessmentController;
 use App\Http\Controllers\Admin\ProjectAssessmentController;
 use Illuminate\Support\Facades\Route;
-
+ 
 // Course Management Routes (Protected - admin & super_admin)
 Route::prefix('admin')->name('admin.')->middleware(['auth.admin', 'admin.role:admin,super_admin'])->group(function () {
     // Courses Index
+    
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
      
     // Create Course
@@ -79,33 +80,36 @@ Route::prefix('admin/courses/{course}/modules')->name('admin.courses.modules.')-
 
  
 Route::prefix('admin')->name('admin.')->group(function () {
-    // Main assessments page
     Route::get('/assessments', [AssessmentController::class, 'all'])->name('assessments.all');
     Route::get('/assessments/quizzes', [AssessmentController::class, 'quizzes'])->name('assessments.quizzes');
     Route::get('/assessments/course/{course}', [AssessmentController::class, 'course'])->name('assessments.course');
-    
-    // Separate create pages for each assessment type
+
     Route::get('/assessments/create/quiz', [AssessmentController::class, 'createQuiz'])->name('assessments.create.quiz');
     Route::get('/assessments/create/project-assessment', [ProjectAssessmentController::class, 'index'])->name('assessments.create.project');
     Route::get('/assessments/create/final-exam', [AssessmentController::class, 'createFinalExam'])->name('assessments.create.final');
     Route::get('/assessments/create/diploma', [AssessmentController::class, 'createDiploma'])->name('assessments.create.diploma');
-    
-    // Store route (same for all types)
+
     Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
-     
-    // Other routes
     Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
+
+    // ✅ Move this here — before the {assessment} wildcard
+    Route::get('/assessments/submissions', [AssessmentController::class, 'submissionsList'])->name('assessments.submissions.list');
+
+    // Now the wildcard routes
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');
-    Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update'); 
+    Route::put('/assessments/{assessment}', [AssessmentController::class, 'update'])->name('assessments.update');
     Route::delete('/assessments/{assessment}', [AssessmentController::class, 'destroy'])->name('assessments.destroy');
     Route::post('/assessments/course/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
     Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
     Route::post('/assessments/submission/{submission}/grade', [AssessmentController::class, 'gradeSubmission'])->name('assessments.submission.grade');
     Route::post('/assessments/bulk-delete', [AssessmentController::class, 'bulkDelete'])->name('assessments.bulk-delete');
-    // AJAX endpoint for getting modules by course
     Route::get('/get-modules/{courseId}', [AssessmentController::class, 'getModulesByCourse'])->name('assessments.get-modules');
+    Route::delete('/assessments/submission/{submission}', [AssessmentController::class, 'deleteSubmission'])
+    ->name('assessments.submission.delete');
+    Route::post('/assessments/submission/{submission}/notify-retry', [AssessmentController::class, 'notifyEssayRetry'])
+    ->name('assessments.submission.notify-retry');
 });
 
 // Project Assessment Routes
