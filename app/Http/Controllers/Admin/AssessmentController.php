@@ -67,6 +67,13 @@ class AssessmentController extends Controller
 
     // Add a computed 'stage' attribute to each submission
     $submissions->getCollection()->transform(function ($submission) {
+        // 🔍 TEMPORARY DEBUG - Remove after fixing
+        \Log::info("Submission {$submission->id} Answers:", [
+            'raw_answers' => $submission->answers, // Change to your actual column
+            'questions_count' => $submission->assessment->questions->count(),
+            'essay_questions' => $submission->assessment->questions->where('question_type', 'essay')->pluck('id'),
+        ]);
+        
         $submission->current_stage = $this->determineAssessmentStage($submission);
         return $submission;
     });
@@ -82,40 +89,57 @@ class AssessmentController extends Controller
 }
 
 /**
- * Helper to determine the stage based on submission content
+ * Helper to determine the stage based on ACTUAL submission content
  */
 private function determineAssessmentStage($submission)
 {
-    if (!$submission->assessment || !$submission->assessment->questions) {
+    // 1. Get all questions for this assessment
+    $questions = $submission->assessment->questions ?? collect();
+    
+    $hasMcqQuestions = $questions->contains('question_type', 'mcq');
+    $hasEssayQuestions = $questions->contains('question_type', 'essay');
+
+    // If no questions exist, we can't determine stage
+    if ($questions->isEmpty()) {
         return 'Unknown';
     }
 
-    $hasMcq = $submission->assessment->questions->contains('question_type', 'mcq');
-    $hasEssay = $submission->assessment->questions->contains('question_type', 'essay');
+    // 2. Check actual submitted answers
+    // ⚠️ REPLACE 'answers' WITH YOUR ACTUAL JSON COLUMN NAME
+    $submittedAnswers = $submission->answers ?? []; 
     
-    // Check if essay response exists in the submission data
-    // Assuming submission_data is a JSON column containing answers
-    $submissionData = $submission->submission_data ?? [];
-    $hasEssayResponse = false;
+    // Normalize: ensure it's an array/collection
+    if ($submittedAnswers instanceof \Illuminate\Support\Collection) {
+        $submittedAnswers = $submittedAnswers->toArray();
+    }
 
-    if (is_array($submissionData)) {
-        foreach ($submissionData as $answer) {
-            if (isset($answer['question_type']) && $answer['question_type'] === 'essay' && !empty($answer['answer'])) {
-                $hasEssayResponse = true;
-                break;
-            }
+    // 3. Determine if Essay was actually answered
+    $essayAnswered = false;
+    foreach ($submittedAnswers as $answer) {
+        // Adjust key names based on your actual answer structure
+        $type = $answer['question_type'] ?? ($answer['type'] ?? null);
+        $content = $answer['answer'] ?? ($answer['response'] ?? '');
+        
+        if ($type === 'essay' && !empty(trim(strip_tags($content)))) {
+            $essayAnswered = true;
+            break;
         }
     }
 
-    if ($hasEssay && $hasEssayResponse) {
-        return 'Essay Submitted';
-    } elseif ($hasMcq && !$hasEssay) {
-        return 'Quiz Only';
-    } elseif ($hasMcq && $hasEssay && !$hasEssayResponse) {
-        return 'Quiz Completed'; // Has MCQs but hasn't done Essay yet
+    // 4. Determine Stage
+    if ($hasEssayQuestions && !$essayAnswered) {
+        return 'Quiz Stage';      // Has essay questions but none answered yet
+    }
+    
+    if ($hasEssayQuestions && $essayAnswered) {
+        return 'Essay Stage';     // Essay has been submitted
+    }
+    
+    if ($hasMcqQuestions && !$hasEssayQuestions) {
+        return 'Quiz Only';       // Assessment only has MCQs
     }
 
-    return 'Completed';
+    return 'Completed';           // Fallback
 }
 
    
