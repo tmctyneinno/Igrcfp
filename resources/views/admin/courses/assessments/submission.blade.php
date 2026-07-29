@@ -16,7 +16,7 @@
             Back to Submissions
         </a>
     </div>
-
+ 
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
     @endif
@@ -46,10 +46,6 @@
                         <tr>
                             <th>Course</th>
                             <td>{{ $assessment->course->title ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Candidate ID</th>
-                            <td>{{ $submission->user->candidate_id ?? 'N/A' }}</td>
                         </tr>
                         <tr>
                             <th>Submitted</th>

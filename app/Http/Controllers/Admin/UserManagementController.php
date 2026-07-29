@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Assessment;
+use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
  
@@ -66,15 +68,83 @@ class UserManagementController extends Controller
 
     public function show(User $user)
     {
-        // ✅ Load all relationships needed for the show page
+        // Load relationships
         $user->load([
             'enrollments.course',
             'assessmentSubmissions.assessment.course',
-            'transactions',
-            'completedLessons',
+            'transactions.enrollment.course',
         ]);
+
+        // Calculate Assessment Stage for each enrollment
+        foreach ($user->enrollments as $enrollment) {
+            $enrollment->assessment_stage = $this->getAssessmentStage($enrollment);
+        }
         
         return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Determine the current assessment stage for an enrollment
+     */
+    private function getAssessmentStage($enrollment)
+    {
+        $userId = $enrollment->user_id;
+        $courseId = $enrollment->course_id;
+
+        // 1. Check for Quiz (Part A)
+        $quiz = Assessment::where('course_id', $courseId)
+            ->where('assessment_level', 'quiz')
+            ->first();
+
+        if (!$quiz) {
+            return ['label' => 'No Assessments', 'class' => 'secondary'];
+        }
+
+        $quizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
+            ->where('user_id', $userId)
+            ->latest()
+            ->first();
+
+        // If no quiz attempt yet
+        if (!$quizSubmission) {
+            return ['label' => 'Not Started', 'class' => 'secondary'];
+        }
+
+        // If quiz failed or in progress
+        if (!$quizSubmission->passed) {
+            return ['label' => 'Quiz (Retry)', 'class' => 'warning'];
+        }
+
+        // 2. Check for Essay/Project (Part B)
+        $essayAssessment = Assessment::where('course_id', $courseId)
+            ->whereIn('assessment_level', ['diploma', 'project', 'module_assessment'])
+            ->whereHas('questions', function($q) {
+                $q->where('question_type', 'essay');
+            })
+            ->first();
+
+        if (!$essayAssessment) {
+            return ['label' => 'Quiz Passed', 'class' => 'success'];
+        }
+
+        $essaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
+            ->where('user_id', $userId)
+            ->latest()
+            ->first();
+
+        if (!$essaySubmission) {
+            return ['label' => 'Ready for Essay', 'class' => 'primary'];
+        }
+
+        if ($essaySubmission->status === 'submitted' || $essaySubmission->status === 'in_progress') {
+            return ['label' => 'Essay Under Review', 'class' => 'info'];
+        }
+
+        if ($essaySubmission->status === 'graded') {
+            return ['label' => 'Completed', 'class' => 'success'];
+        }
+
+        return ['label' => 'Quiz Passed', 'class' => 'success'];
     }
 
     public function enrollments(User $user)
