@@ -12,11 +12,12 @@ export default function ModuleList({
     readModules = {},
     moduleReadingProgress = {},
     markModuleRead,
-    updateModuleReadingProgress
-}) { 
+    updateModuleReadingProgress,
+    totalModulesCount = 0,
+    onStartCourseQuiz
+}) {  
     if (!modules || modules.length === 0) {
         return (
-          
             <div className="bg-white rounded-xl shadow-sm p-12 text-center">
                 <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-1">No modules yet</h3>
@@ -47,7 +48,7 @@ export default function ModuleList({
                 const { accessible, reason, previousModuleTitle, previousModuleProgress } = 
                     getModuleAccessibility(moduleIndex);
                 const isPreviousCompleted = moduleIndex === 0 || readModules[modules[moduleIndex - 1].id] === true;
-                
+                 
                 return (
                     <ModuleItem
                         key={module.id}
@@ -67,6 +68,8 @@ export default function ModuleList({
                         moduleReadingProgress={moduleReadingProgress[module.id] || 0}
                         markModuleRead={markModuleRead}
                         updateModuleReadingProgress={updateModuleReadingProgress}
+                        totalModulesCount={totalModulesCount}
+                        onStartCourseQuiz={onStartCourseQuiz}
                     />
                 );
             })}

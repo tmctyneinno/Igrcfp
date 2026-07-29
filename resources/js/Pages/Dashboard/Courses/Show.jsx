@@ -4,7 +4,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useEnrollment } from '@/Contexts/EnrollmentContext';
-import {
+import { 
   CheckCircleIcon,
   ClockIcon,
   BookOpenIcon,

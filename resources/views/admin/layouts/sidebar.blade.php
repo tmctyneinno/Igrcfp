@@ -19,7 +19,7 @@
             </li>
 
             {{-- Admin Management - Only for Super Admin and Origin Admin --}}
-            @if(auth()->guard('admin')->user()->isAdmin())
+            @if(auth()->guard('admin')->user()?->isAdmin())
                 <li>
                     <a href="{{ route('admin.admins.index') }}">
                         <iconify-icon icon="ic:baseline-admin-panel-settings" class="menu-icon"></iconify-icon>
@@ -120,7 +120,7 @@
                     <li>
                         <a href="{{ route('admin.courses.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.courses.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
                         </li>
@@ -134,7 +134,7 @@
                             Categories
                         </a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.course-categories.create') }}">
                                 <i class="ri-circle-fill circle-icon text-success-main w-auto"></i> 
@@ -167,7 +167,7 @@
                             Quiz List
                         </a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.assessments.create.quiz') }}">
                                 <i class="ri-circle-fill circle-icon text-green-600 w-auto"></i>
@@ -255,7 +255,7 @@
             </li>
 
             <!-- Transactions & Reports - Only for admins -->
-            @if(auth()->guard('admin')->user()->isAdmin())
+            @if(auth()->guard('admin')->user()?->isAdmin())
                 <li class="dropdown">
                     <a href="javascript:void(0)">
                         <iconify-icon icon="hugeicons:transaction" class="menu-icon"></iconify-icon>
@@ -286,7 +286,7 @@
             @endif
 
             {{-- Add to your admin sidebar/navigation --}}
-            @if(auth()->guard('admin')->user()->isAdmin())
+            @if(auth()->guard('admin')->user()?->isAdmin())
                 <li class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.activity-logs.index') }}">
                         <iconify-icon icon="solar:history-bold-duotone" class="icon text-xl"></iconify-icon>
@@ -343,7 +343,7 @@
                     <li>
                         <a href="{{ route('admin.blogs.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.blogs.create') }}"><i class="ri-circle-fill circle-icon text-info-main w-auto"></i> Add new</a>
                         </li>
@@ -362,7 +362,7 @@
                     <li>
                         <a href="{{ route('admin.events.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.events.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
                         </li>
@@ -380,7 +380,7 @@
                     <li>
                         <a href="{{ route('admin.articles.index') }}"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> List</a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.articles.create') }}"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> Add new</a>
                         </li>
@@ -411,7 +411,7 @@
                             All Chapters
                         </a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.chapters.create') }}">
                                 <i class="ri-circle-fill circle-icon text-success-main w-auto"></i>
@@ -438,7 +438,7 @@
                             All Documents
                         </a>
                     </li>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <li>
                             <a href="{{ route('admin.research.create') }}">
                                 <i class="ri-circle-fill circle-icon text-success-main w-auto"></i>

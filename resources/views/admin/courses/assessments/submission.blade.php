@@ -6,7 +6,7 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Review Submission</h6>
         <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-primary">
-            <iconify-icon icon="solar:arrow-left-linear" class="me-2"></iconify-icon> Back to Submissions
+             Back to Submissions
         </a>
     </div>
     

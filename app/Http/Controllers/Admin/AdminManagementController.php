@@ -15,10 +15,14 @@ class AdminManagementController extends Controller
     
     public function index()
     {
+        $currentAdmin = auth()->guard('admin')->user();
+
+        abort_unless($currentAdmin, 403);
+
         $admins = Admin::with('createdBy')
-            ->when(auth()->guard('admin')->user()->isOriginAdmin(), function($query) {
-                return $query->where('created_by', auth()->guard('admin')->id())
-                            ->orWhere('id', auth()->guard('admin')->id());
+            ->when($currentAdmin->isOriginAdmin(), function ($query) use ($currentAdmin) {
+                return $query->where('created_by', $currentAdmin->id)
+                            ->orWhere('id', $currentAdmin->id);
             })
             ->latest()
             ->paginate(10);
@@ -136,6 +140,8 @@ class AdminManagementController extends Controller
     private function getAvailableRoles()
     {
         $currentAdmin = auth()->guard('admin')->user();
+
+        abort_unless($currentAdmin, 403);
         
         if ($currentAdmin->isSuperAdmin()) {
             return ['super_admin', 'admin', 'moderator'];
@@ -151,6 +157,10 @@ class AdminManagementController extends Controller
     private function canManageAdmin(Admin $admin)
     {
         $currentAdmin = auth()->guard('admin')->user();
+
+        if (!$currentAdmin) {
+            return false;
+        }
         
         if ($currentAdmin->isSuperAdmin()) {
             return true;

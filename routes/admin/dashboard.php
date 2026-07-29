@@ -133,7 +133,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::delete('/{chapter}/leadership/{leader}', [ChapterController::class, 'destroyLeadership'])->name('leadership.destroy');
         Route::get('/{chapter}/events', [ChapterController::class, 'events'])->name('events');
     });
-
+ 
 });
 
 // Optional: Public Chapters Routes (if you need frontend pages)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Head, Link, router } from '@inertiajs/react'; // Added router for redirect
+import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
 import RichTextEditor from '@/Components/RichTextEditor';
@@ -7,10 +7,8 @@ import QuizSidebar from './QuizSidebar';
 import { 
     ClockIcon, ChevronLeftIcon, ChevronRightIcon, FlagIcon, 
     CheckCircleIcon, TrophyIcon, SparklesIcon, XCircleIcon, ArrowRightIcon,
-    LockClosedIcon // Added for lock icon
+    LockClosedIcon, InformationCircleIcon 
 } from '@heroicons/react/24/outline';
-
-const isDev = process.env.NODE_ENV === 'development';
 
 export default function QuizTake({ 
     course, assessment, enrollment, attempt, 
@@ -19,10 +17,16 @@ export default function QuizTake({
 }) {
     // State
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState(() => attempt?.answers || {});
+    
+    // Initialize answers from attempt or empty object
+    const [answers, setAnswers] = useState(() => {
+        const saved = attempt?.answers;
+        return typeof saved === 'string' ? JSON.parse(saved) : (saved || {});
+    });
+    
     const [essayAnswers, setEssayAnswers] = useState({});
     
-    // Initialize timer from localStorage or initial value
+    // Initialize timer
     const [timeRemaining, setTimeRemaining] = useState(() => {
         const savedTime = localStorage.getItem(`quiz_timer_${attempt?.id}`);
         if (savedTime && !isNaN(parseInt(savedTime))) {
@@ -36,12 +40,16 @@ export default function QuizTake({
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     
     // Part A/B Logic State
-    const [partASubmitted, setPartASubmitted] = useState(false);
-    const [partAScore, setPartAScore] = useState(null);
+    const [partASubmitted, setPartASubmitted] = useState(() => {
+        return Boolean(attempt?.part_a_submitted) || attempt?.status === 'completed' || attempt?.status === 'submitted';
+    });
+    
+    // Initialize score from attempt if available
+    const [partAScore, setPartAScore] = useState(attempt?.score || null);
     
     // Modals
     const [showCompletionModal, setShowCompletionModal] = useState(false);
-    const [showLockoutModal, setShowLockoutModal] = useState(false); // New state for lockout
+    const [showLockoutModal, setShowLockoutModal] = useState(false);
     
     const [finalScore, setFinalScore] = useState(null);
     const [finalManualReview, setFinalManualReview] = useState(false);
@@ -52,19 +60,18 @@ export default function QuizTake({
     const essayQuestions = allQuestions.filter(q => q.type === 'essay');
     const currentQuestion = mcqQuestions[currentQuestionIndex];
     
-    // Validation Logic: Can access Part B only if Part A submitted AND Score >= 50%
-    const canAccessPartB = partASubmitted && partAScore !== null && partAScore >= 50;
-    const isPartALocked = essayQuestions.length > 0 && partASubmitted;
+    // Validation Logic
+    const canAccessPartB = (partASubmitted && partAScore !== null && partAScore >= 50) || mcqQuestions.length === 0;
+    const isPartALocked = partASubmitted;
+    
     const progress = mcqQuestions.length > 0 
         ? Math.round(((currentQuestionIndex + 1) / mcqQuestions.length) * 100) 
         : 100;
 
-    // Format time as HH:MM:SS or MM:SS
     const formatTime = (seconds) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const secs = seconds % 60;
-        
         if (hours > 0) {
             return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
@@ -102,20 +109,15 @@ export default function QuizTake({
         const timer = setInterval(() => {
             setTimeRemaining(prev => {
                 const newTime = prev - 1;
-                
-                // Save to localStorage for persistence
                 if (attempt?.id) {
                     localStorage.setItem(`quiz_timer_${attempt.id}`, newTime.toString());
                 }
-                
-                // Auto-submit when time runs out
                 if (newTime <= 0) {
                     clearInterval(timer);
                     toast.error('Time is up! Submitting your answers...');
                     submitPartA();
                     return 0;
                 }
-                
                 return newTime;
             });
         }, 1000);
@@ -123,7 +125,7 @@ export default function QuizTake({
         return () => clearInterval(timer);
     }, [partASubmitted, timeRemaining, attempt?.id]);
 
-    // Cleanup localStorage when quiz completes
+    // Cleanup localStorage
     useEffect(() => {
         return () => {
             if (attempt?.id && (partASubmitted || showCompletionModal)) {
@@ -175,12 +177,10 @@ export default function QuizTake({
             setPartAScore(data.score);
             setHasUnsavedChanges(false);
             
-            // Clear timer storage
             if (attempt?.id) {
                 localStorage.removeItem(`quiz_timer_${attempt.id}`);
             }
             
-            // Check if failed and requires lockout
             if (data.score < 50) {
                 setShowLockoutModal(true);
             } else {
@@ -197,7 +197,7 @@ export default function QuizTake({
         if (!canAccessPartB) {
             toast.error("You must score at least 50% in Part A to submit Part B.");
             return;
-        }
+        } 
 
         const emptyEssays = essayQuestions.filter(q => !essayAnswers[q.id] || essayAnswers[q.id].length < 10).length;
         if (emptyEssays > 0 && !confirm(`${emptyEssays} essays are empty. Submit anyway?`)) return;
@@ -219,7 +219,6 @@ export default function QuizTake({
             setFinalManualReview(Boolean(data.manual_review));
             setShowCompletionModal(true);
             
-            // Clear timer storage
             if (attempt?.id) {
                 localStorage.removeItem(`quiz_timer_${attempt.id}`);
             }
@@ -230,7 +229,6 @@ export default function QuizTake({
         }
     };
 
-    // Handle Redirect from Lockout Modal
     const handleLockoutRedirect = () => {
         router.visit(route('dashboard.courses.show', course.slug));
     };
@@ -247,10 +245,12 @@ export default function QuizTake({
                         <h1 className="text-xl font-bold text-gray-900">{assessment.title}</h1>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${timeRemaining < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-                            <ClockIcon className="w-5 h-5" />
-                            <span className="font-mono font-bold">{formatTime(timeRemaining)}</span>
-                        </div>
+                        {!partASubmitted && (
+                            <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${timeRemaining < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+                                <ClockIcon className="w-5 h-5" />
+                                <span className="font-mono font-bold">{formatTime(timeRemaining)}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -275,7 +275,7 @@ export default function QuizTake({
                     <div className="max-w-3xl mx-auto space-y-6">
                         
                         {/* PART 2: QUESTION & ANSWER (Part A) */}
-                        {mcqQuestions.length > 0 && (
+                        {mcqQuestions.length > 0 && !partASubmitted && (
                             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
                                 <div className="flex justify-between items-start mb-4">
                                     <span className="text-sm font-semibold text-blue-600 uppercase tracking-wide">
@@ -292,7 +292,7 @@ export default function QuizTake({
                                     {currentQuestion?.options?.map((option, idx) => (
                                         <label key={idx} className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition ${
                                             answers[currentQuestion?.id] === option ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'
-                                        } ${isPartALocked ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                        }`}>
                                             <input
                                                 type="radio"
                                                 name={`q-${currentQuestion?.id}`}
@@ -345,29 +345,59 @@ export default function QuizTake({
                                     <span className="text-sm font-semibold text-indigo-700 uppercase tracking-wide">Part B • Essay Response</span>
                                     <h2 className="text-xl font-bold text-gray-900 mt-1">Essay Assessment</h2>
                                     
+                                    {/* Status Messages */}
                                     {!canAccessPartB && partASubmitted && partAScore < 50 && (
                                         <div className="mt-3 p-3 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">
                                             <strong>Access Denied:</strong> You scored {partAScore}% in Part A. A minimum of 50% is required to attempt the essay.
                                         </div>
                                     )}
-                                    {!partASubmitted && (
+                                    {!partASubmitted && mcqQuestions.length > 0 && (
                                         <div className="mt-3 p-3 bg-amber-50 text-amber-700 rounded-lg text-sm border border-amber-100">
                                             Please submit Part A first to unlock this section.
+                                        </div>
+                                    )}
+                                    {partASubmitted && partAScore >= 50 && (
+                                        <div className="mt-3 p-3 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100">
+                                            <strong>Part A Passed:</strong> You scored {partAScore}%. You may now complete your essay.
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="space-y-8">
                                     {essayQuestions.map((q, idx) => (
-                                        <div key={q.id} className="space-y-2">
-                                            <label className="block text-sm font-medium text-gray-700">
-                                                Essay Prompt {idx + 1}: {q.text}
-                                            </label>
+                                        <div key={q.id} className="space-y-4">
+                                            {/* Question Header with Points */}
+                                            <div className="flex justify-between items-start">
+                                                <label className="block text-lg font-medium text-gray-900">
+                                                    Essay Prompt {idx + 1}
+                                                </label>
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                    {q.points} Points
+                                                </span>
+                                            </div>
+
+                                            {/* Question Text */}
+                                            <div className="prose prose-sm max-w-none text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                                {q.text}
+                                            </div>
+
+                                            {/* Explanation (if available) */}
+                                            {q.explanation && (
+                                                <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                                    <InformationCircleIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-blue-800 mb-1">Guidance:</p>
+                                                        <p className="text-sm text-blue-700">{q.explanation}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Rich Text Editor */}
                                             <RichTextEditor
                                                 value={essayAnswers[q.id] || ''}
                                                 onChange={(html) => handleEssayChange(q.id, html)}
-                                                // disabled prop removed to allow typing
-                                                placeholder="Write your response here..."
+                                                disabled={!canAccessPartB}
+                                                placeholder={canAccessPartB ? "Write your response here..." : "Complete Part A to unlock"}
                                             />
                                         </div>
                                     ))}

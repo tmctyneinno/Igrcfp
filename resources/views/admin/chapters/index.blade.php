@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Chapters Management</h5>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <a href="{{ route('admin.chapters.create') }}" class="btn btn-primary">
                             <i class="ri-add-line me-1"></i> Add New Chapter
                         </a>
@@ -80,7 +80,7 @@
                                             <a href="{{ route('chapters.show', $chapter->slug) }}" target="_blank" class="btn btn-sm btn-outline-success me-1" title="View Public Page">
                                                 <i class="ri-external-link-line"></i>
                                             </a>
-                                            @if(auth()->guard('admin')->user()->isAdmin())
+                                            @if(auth()->guard('admin')->user()?->isAdmin())
                                                 <form action="{{ route('admin.chapters.destroy', $chapter) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this chapter? This action cannot be undone.')">
                                                     @csrf
                                                     @method('DELETE')

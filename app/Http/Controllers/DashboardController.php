@@ -39,7 +39,7 @@ class DashboardController extends Controller
         $scholarshipCategories = [
             'IGRCFP Certificates',
             'Certified GRC & Financial Crime Specialist'
-        ];
+        ]; 
 
         // Get course categories with course counts
         $categories = CourseCategory::where('is_active', true)
@@ -667,279 +667,303 @@ class DashboardController extends Controller
         ];
     }
   
-    public function showCourse($slug)
-    {
-        $course = Course::where('slug', $slug)->firstOrFail();
-        
-        // Define scholarship eligible categories
-        $scholarshipCategories = [
-            'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
-        ];
-        
-        // Check if course is eligible for scholarship
-        $isScholarshipEligible = in_array($course->igrcfp_category, $scholarshipCategories);
-     
-        $enrollment = Enrollment::where('user_id', auth()->id())
-            ->where('course_id', $course->id)
-            ->whereIn('status', ['enrolled', 'active', 'completed'])
-            ->first();
+   public function showCourse($slug)
+{
+    $course = Course::where('slug', $slug)->firstOrFail();
+    
+    // Define scholarship eligible categories
+    $scholarshipCategories = [
+        'IGRCFP Certificates',
+        'Certified GRC & Financial Crime Specialist'
+    ];
+    
+    // Check if course is eligible for scholarship
+    $isScholarshipEligible = in_array($course->igrcfp_category, $scholarshipCategories);
+ 
+    $enrollment = Enrollment::where('user_id', auth()->id())
+        ->where('course_id', $course->id)
+        ->whereIn('status', ['enrolled', 'active', 'completed'])
+        ->first();
 
-        // Get the COMBINED course quiz (one assessment that contains all module questions)
-        $combinedQuiz = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'quiz')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->first();
-        $quizzes = [];
-        $isLockedOut = false;
-        $lockExpiresAt = null;
+    // Get the COMBINED course quiz (one assessment that contains all module questions)
+    $combinedQuiz = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'quiz')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->first();
         
-        if ($combinedQuiz) {
-            $submission = $combinedQuiz->submissions->first();
-            // Check for Lockout Status
-            if ($submission && !$submission->passed && $submission->locked_until) {
-                if (now()->lessThan($submission->locked_until)) {
-                    $isLockedOut = true;
-                    $lockExpiresAt = $submission->locked_until;
-                } else {
-                    // Lock expired, clear it so they can try again
-                    $submission->update(['locked_until' => null]);
-                }
+    $quizzes = [];
+    $isLockedOut = false;
+    $lockExpiresAt = null;
+    
+    if ($combinedQuiz) {
+        $submission = $combinedQuiz->submissions->first();
+        
+        // Check for Lockout Status
+        if ($submission && !$submission->passed && $submission->locked_until) {
+            if (now()->lessThan($submission->locked_until)) {
+                $isLockedOut = true;
+                $lockExpiresAt = $submission->locked_until;
+            } else {
+                // Lock expired, clear it so they can try again
+                $submission->update(['locked_until' => null]);
             }
-            $quizzes = [[
-                'id' => $combinedQuiz->id,
-                'title' => $combinedQuiz->title ?? 'Course Quiz',
-                'description' => $combinedQuiz->description,
-                'duration' => $combinedQuiz->duration,
-                'questions_count' => $combinedQuiz->questions()->count(),
-                'total_marks' => $combinedQuiz->total_marks,
-                'passing_score' => $combinedQuiz->passing_score,
-                'status' => $submission ? $submission->status : 'not_started',
-                'score' => $submission ? $submission->score : null,
-                'passed' => $submission ? $submission->passed : null,
-                // NEW: Add Submitted Flag
-                // Consider it submitted if status is not 'not_started' or 'in_progress'
-                'submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
-                
-                'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
-                'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
-                // Pass lockout data to frontend
-                'is_locked_out' => $isLockedOut,
-                'lock_expires_at' => $lockExpiresAt ? \Carbon\Carbon::parse($lockExpiresAt)->toIso8601String() : null,
-            ]];
-        } else {
-            $quizzes = [];
         }
 
-        $moduleAssessments = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'module_assessment')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->orderBy('created_at')
-            ->get()
-            ->map(function($assessment) {
-                $submission = $assessment->submissions->first();
-                return [
-                    'id' => $assessment->id,
-                    'title' => $assessment->title,
-                    'description' => $assessment->description,
-                    'duration' => $assessment->duration,
-                    'questions_count' => $assessment->questions()->count(),
-                    'total_marks' => $assessment->total_marks,
-                    'passing_score' => $assessment->passing_score,
-                    'status' => $submission ? $submission->status : 'not_started',
-                    'score' => $submission ? $submission->score : null,
-                    'passed' => $submission ? $submission->passed : null,
-                    'due_date' => $assessment->due_date,
-                    'requires_identity_verification' => $assessment->requires_identity_verification,
-                ];
-            });
+        // Check if quiz has essay questions
+        $hasEssayQuestions = $combinedQuiz->questions()
+            ->where('question_type', 'essay')
+            ->exists();
 
-        $finalExam = Assessment::where('course_id', $course->id)
-            ->where('assessment_level', 'final_exam')
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->first();
+        $quizzes = [[
+            'id' => $combinedQuiz->id,
+            'title' => $combinedQuiz->title ?? 'Course Quiz',
+            'description' => $combinedQuiz->description,
+            'duration' => $combinedQuiz->duration,
+            'questions_count' => $combinedQuiz->questions()->count(),
+            'total_marks' => $combinedQuiz->total_marks,
+            'passing_score' => $combinedQuiz->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            // ✅ FIX: use percentage (matches attempt->score in QuizController),
+            // not submission->score which holds raw earned marks (e.g. 14 vs 70%)
+            'score' => $submission ? $submission->percentage : null,
+            'passed' => $submission ? $submission->passed : null,
+            
+            // NEW: Flags for UI Logic
+            'submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+            'has_essay_questions' => $hasEssayQuestions,
+            'essay_submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+            
+            'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
+            'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
+            'is_locked_out' => $isLockedOut,
+            'lock_expires_at' => $lockExpiresAt ? \Carbon\Carbon::parse($lockExpiresAt)->toIso8601String() : null,
+        ]];
+    } else {
+        $quizzes = [];
+    }
 
-        if ($finalExam) {
-            $submission = $finalExam->submissions->first();
-            $finalExam = [
-                'id' => $finalExam->id,
-                'title' => $finalExam->title,
-                'description' => $finalExam->description,
-                'duration' => $finalExam->duration,
-                'questions_count' => $finalExam->questions()->count(),
-                'total_marks' => $finalExam->total_marks,
-                'passing_score' => $finalExam->passing_score,
+    // Module Assessments
+    $moduleAssessments = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'module_assessment')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->orderBy('created_at')
+        ->get()
+        ->map(function($assessment) {
+            $submission = $assessment->submissions->first();
+            return [
+                'id' => $assessment->id,
+                'title' => $assessment->title,
+                'description' => $assessment->description,
+                'duration' => $assessment->duration,
+                'questions_count' => $assessment->questions()->count(),
+                'total_marks' => $assessment->total_marks,
+                'passing_score' => $assessment->passing_score,
                 'status' => $submission ? $submission->status : 'not_started',
-                'score' => $submission ? $submission->score : null,
+                // ✅ FIX: percentage, not raw earned marks
+                'score' => $submission ? $submission->percentage : null,
                 'passed' => $submission ? $submission->passed : null,
-                'due_date' => $finalExam->due_date,
-                'requires_identity_verification' => $finalExam->requires_identity_verification,
+                'due_date' => $assessment->due_date,
+                'requires_identity_verification' => $assessment->requires_identity_verification,
             ];
-        } else {
-            $finalExam = null;
-        }
+        });
 
-        $diplomaAssessment = Assessment::where('course_id', $course->id)
-            ->whereIn('assessment_level', ['diploma', 'project'])
-            ->with(['submissions' => function($query) {
-                $query->where('user_id', auth()->id());
-            }])
-            ->first();
+    // Final Exam
+    $finalExam = Assessment::where('course_id', $course->id)
+        ->where('assessment_level', 'final_exam')
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->first();
 
-        if ($diplomaAssessment) {
-            $submission = $diplomaAssessment->submissions->first();
-            $diplomaAssessment = [
-                'id' => $diplomaAssessment->id,
-                'title' => $diplomaAssessment->title,
-                'description' => $diplomaAssessment->description,
-                'project_brief' => $diplomaAssessment->project_brief,
-                'total_marks' => $diplomaAssessment->total_marks,
-                'passing_score' => $diplomaAssessment->passing_score,
-                'status' => $submission ? $submission->status : 'not_started',
-                'score' => $submission ? $submission->score : null,
-                'passed' => $submission ? $submission->passed : null,
-                'graded_at' => $submission && $submission->graded_at ? $submission->graded_at->format('Y-m-d H:i:s') : null,
-                'due_date' => $diplomaAssessment->due_date,
-                'requires_identity_verification' => $diplomaAssessment->requires_identity_verification,
-                'needs_manual_marking' => $diplomaAssessment->needs_manual_marking,
-            ];
-        } else {
-            $diplomaAssessment = null;
-        }
-
-        $quizPassed = $combinedQuiz ? (bool) ($quizzes[0]['passed'] ?? false) : true;
-        $moduleAssessmentsPassed = $moduleAssessments->isEmpty()
-            ? true
-            : $moduleAssessments->every(fn ($assessment) => (bool) ($assessment['passed'] ?? false));
-        $finalExamPassed = $finalExam ? (bool) ($finalExam['passed'] ?? false) : true;
-        $projectAssessmentPassed = $diplomaAssessment
-            ? (($diplomaAssessment['status'] ?? null) === 'graded' && (bool) ($diplomaAssessment['passed'] ?? false))
-            : false;
-        $diplomaPassed = $projectAssessmentPassed;
-        $assessmentsPassed = $moduleAssessmentsPassed && $finalExamPassed && $diplomaPassed;
-
-        $examResults = [
-            'quiz_passed' => $quizPassed,
-            'module_assessments_passed' => $moduleAssessmentsPassed,
-            'final_exam_passed' => $finalExamPassed,
-            'diploma_passed' => $diplomaPassed,
-            'assessments_passed' => $assessmentsPassed,
-            'all_passed' => $quizPassed && $assessmentsPassed,
-            'certificate_eligible' => $quizPassed && $assessmentsPassed,
-            'project_assessment_required' => (bool) $diplomaAssessment,
-            'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
-            'project_assessment_passed' => $projectAssessmentPassed,
+    if ($finalExam) {
+        $submission = $finalExam->submissions->first();
+        $finalExam = [
+            'id' => $finalExam->id,
+            'title' => $finalExam->title,
+            'description' => $finalExam->description,
+            'duration' => $finalExam->duration,
+            'questions_count' => $finalExam->questions()->count(),
+            'total_marks' => $finalExam->total_marks,
+            'passing_score' => $finalExam->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            // ✅ FIX: percentage, not raw earned marks
+            'score' => $submission ? $submission->percentage : null,
+            'passed' => $submission ? $submission->passed : null,
+            'due_date' => $finalExam->due_date,
+            'requires_identity_verification' => $finalExam->requires_identity_verification,
         ];
+    } else {
+        $finalExam = null;
+    }
 
-        $certification = [
-            'can_display_card' => $projectAssessmentPassed && (($quizPassed && $assessmentsPassed) || (bool) $enrollment?->certificate_generated),
-            'project_assessment_required' => (bool) $diplomaAssessment,
-            'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
-            'project_assessment_passed' => $projectAssessmentPassed,
-            'certificate_eligible' => $quizPassed && $assessmentsPassed,
+    // Diploma/Project Assessment
+    $diplomaAssessment = Assessment::where('course_id', $course->id)
+        ->whereIn('assessment_level', ['diploma', 'project'])
+        ->with(['submissions' => function($query) {
+            $query->where('user_id', auth()->id());
+        }])
+        ->first();
+
+    if ($diplomaAssessment) {
+        $submission = $diplomaAssessment->submissions->first();
+        $diplomaAssessment = [
+            'id' => $diplomaAssessment->id,
+            'title' => $diplomaAssessment->title,
+            'description' => $diplomaAssessment->description,
+            'project_brief' => $diplomaAssessment->project_brief,
+            'total_marks' => $diplomaAssessment->total_marks,
+            'passing_score' => $diplomaAssessment->passing_score,
+            'status' => $submission ? $submission->status : 'not_started',
+            // ✅ FIX: percentage, not raw earned marks
+            'score' => $submission ? $submission->percentage : null,
+            'passed' => $submission ? $submission->passed : null,
+            'submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+            'graded_at' => $submission && $submission->graded_at ? $submission->graded_at->format('Y-m-d H:i:s') : null,
+            'due_date' => $diplomaAssessment->due_date,
+            'requires_identity_verification' => $diplomaAssessment->requires_identity_verification,
+            'needs_manual_marking' => $diplomaAssessment->needs_manual_marking,
         ];
-   
-        $moduleReadingStatuses = $enrollment
-            ? CourseModuleUser::where('enrollment_id', $enrollment->id)
-                ->where('user_id', auth()->id())
-                ->get()
-                ->keyBy('course_module_id')
-            : collect();
+    } else {
+        $diplomaAssessment = null;
+    }
 
-        $modules = $course->modules()
-            ->with(['lessons' => function($query) use ($enrollment) {
-                if ($enrollment) {
-                    $query->withCompletionStatus(auth()->id(), $enrollment->id);
-                }
-            }])
-            ->orderBy('module_number')
+    // Calculate Pass Statuses
+    $quizPassed = $combinedQuiz ? (bool) ($quizzes[0]['passed'] ?? false) : true;
+    $moduleAssessmentsPassed = $moduleAssessments->isEmpty()
+        ? true
+        : $moduleAssessments->every(fn ($assessment) => (bool) ($assessment['passed'] ?? false));
+    $finalExamPassed = $finalExam ? (bool) ($finalExam['passed'] ?? false) : true;
+    $projectAssessmentPassed = $diplomaAssessment
+        ? (($diplomaAssessment['status'] ?? null) === 'graded' && (bool) ($diplomaAssessment['passed'] ?? false))
+        : false;
+    $diplomaPassed = $projectAssessmentPassed;
+    $assessmentsPassed = $moduleAssessmentsPassed && $finalExamPassed && $diplomaPassed;
+
+    $examResults = [
+        'quiz_passed' => $quizPassed,
+        'module_assessments_passed' => $moduleAssessmentsPassed,
+        'final_exam_passed' => $finalExamPassed,
+        'diploma_passed' => $diplomaPassed,
+        'assessments_passed' => $assessmentsPassed,
+        'all_passed' => $quizPassed && $assessmentsPassed,
+        'certificate_eligible' => $quizPassed && $assessmentsPassed,
+        'project_assessment_required' => (bool) $diplomaAssessment,
+        'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
+        'project_assessment_passed' => $projectAssessmentPassed,
+    ];
+
+    $certification = [
+        'can_display_card' => $projectAssessmentPassed && (($quizPassed && $assessmentsPassed) || (bool) $enrollment?->certificate_generated),
+        'project_assessment_required' => (bool) $diplomaAssessment,
+        'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
+        'project_assessment_passed' => $projectAssessmentPassed,
+        'certificate_eligible' => $quizPassed && $assessmentsPassed,
+    ];
+
+    $moduleReadingStatuses = $enrollment
+        ? CourseModuleUser::where('enrollment_id', $enrollment->id)
+            ->where('user_id', auth()->id())
             ->get()
-            ->map(function ($module) use ($moduleReadingStatuses) {
-                $readingStatus = $moduleReadingStatuses->get($module->id);
-                $isRead = (bool) ($readingStatus?->read ?? false);
+            ->keyBy('course_module_id')
+        : collect();
 
-                return [
-                    'id' => $module->id,
-                    'title' => $module->title,
-                    'module_number' => $module->module_number,
-                    'course_outline' => $module->course_outline,
-                    'learning_objectives' => $module->learning_objectives,
-                    'full_content' => $module->full_content,
-                    'reading_content' => filled($module->full_content) ? $module->full_content : $module->course_outline,
-                    'estimated_hours' => $module->estimated_hours,
-                    'reading_progress' => $isRead ? 100 : (int) ($readingStatus?->reading_progress ?? 0),
-                    'read' => $isRead,
-                    'read_at' => optional($readingStatus?->read_at)->toIso8601String(),
-                    'lessons' => $module->lessons->map(function ($lesson) {
-                        return [
-                            'id' => $lesson->id,
-                            'title' => $lesson->title,
-                            'description' => $lesson->description,
-                            'duration' => $lesson->duration,
-                            'lesson_type' => $lesson->lesson_type ?? 'reading',
-                            'content' => $lesson->content,
-                            'completed' => (bool) ($lesson->completed ?? false),
-                        ];
-                    })->toArray(),
-                ];
-            });
+    $modules = $course->modules()
+        ->with(['lessons' => function($query) use ($enrollment) {
+            if ($enrollment) {
+                $query->withCompletionStatus(auth()->id(), $enrollment->id);
+            }
+        }])
+        ->orderBy('module_number')
+        ->get()
+        ->map(function ($module) use ($moduleReadingStatuses) {
+            $readingStatus = $moduleReadingStatuses->get($module->id);
+            $isRead = (bool) ($readingStatus?->read ?? false);
 
-        $courseMaterials = $course->materials()
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn ($material) => $this->formatCourseMaterial($material))
-            ->toArray();
-
-        // Prepare User Data for Frontend
-        $userData = null;
-        if (auth()->check()) {
-            $user = auth()->user();
-            $userData = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'is_scholarship_applicant' => $user->is_scholarship_applicant,
+            return [
+                'id' => $module->id,
+                'title' => $module->title,
+                'module_number' => $module->module_number,
+                'course_outline' => $module->course_outline,
+                'learning_objectives' => $module->learning_objectives,
+                'full_content' => $module->full_content,
+                'reading_content' => filled($module->full_content) ? $module->full_content : $module->course_outline,
+                'estimated_hours' => $module->estimated_hours,
+                'reading_progress' => $isRead ? 100 : (int) ($readingStatus?->reading_progress ?? 0),
+                'read' => $isRead,
+                'read_at' => optional($readingStatus?->read_at)->toIso8601String(),
+                'lessons' => $module->lessons->map(function ($lesson) {
+                    return [
+                        'id' => $lesson->id,
+                        'title' => $lesson->title,
+                        'description' => $lesson->description,
+                        'duration' => $lesson->duration,
+                        'lesson_type' => $lesson->lesson_type ?? 'reading',
+                        'content' => $lesson->content,
+                        'completed' => (bool) ($lesson->completed ?? false),
+                    ];
+                })->toArray(),
             ];
-        }
+        });
 
-        if (!$enrollment) {
-            return Inertia::render('Dashboard/Courses/Show', [
-                'course' => array_merge($course->toArray(), ['is_scholarship_eligible' => $isScholarshipEligible]),
-                'enrollment' => $enrollment,
-                'modules' => $course->modules()->with('lessons')->get(),
-                'quizzes' => $quizzes,
-                'moduleAssessments' => $moduleAssessments,
-                'finalExam' => $finalExam,
-                'diplomaAssessment' => $diplomaAssessment,
-                'examResults' => $examResults,
-                'certification' => $certification,
-                'auth' => ['user' => $userData]
-            ]); 
-        }
+    // Calculate Total Modules Count
+    $totalModulesCount = $modules->count();
 
-        return Inertia::render('Dashboard/Courses/EnrollmentIndex', [
+    $courseMaterials = $course->materials()
+        ->orderBy('sort_order')
+        ->get()
+        ->map(fn ($material) => $this->formatCourseMaterial($material))
+        ->toArray();
+
+    // Prepare User Data for Frontend
+    $userData = null;
+    if (auth()->check()) {
+        $user = auth()->user();
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'is_scholarship_applicant' => $user->is_scholarship_applicant,
+        ];
+    }
+
+    if (!$enrollment) {
+        return Inertia::render('Dashboard/Courses/Show', [
             'course' => array_merge($course->toArray(), ['is_scholarship_eligible' => $isScholarshipEligible]),
             'enrollment' => $enrollment,
-            'modules' => $modules, 
-            'courseMaterials' => $courseMaterials,
-            'quizzes' => $quizzes, // Updated with lockout info
+            'modules' => $course->modules()->with('lessons')->get(),
+            'quizzes' => $quizzes,
             'moduleAssessments' => $moduleAssessments,
             'finalExam' => $finalExam,
             'diplomaAssessment' => $diplomaAssessment,
-            'candidate' => [
-                'certificate_id' => $enrollment->certificate_number ?? auth()->user()->candidate_id,
-            ],
             'examResults' => $examResults,
             'certification' => $certification,
-            'auth' => ['user' => $userData]
-        ]);
+            'auth' => ['user' => $userData],
+            'totalModulesCount' => $totalModulesCount
+        ]); 
     }
+
+    return Inertia::render('Dashboard/Courses/EnrollmentIndex', [
+        'course' => array_merge($course->toArray(), ['is_scholarship_eligible' => $isScholarshipEligible]),
+        'enrollment' => $enrollment,
+        'modules' => $modules, 
+        'courseMaterials' => $courseMaterials,
+        'quizzes' => $quizzes, // Updated with lockout info and essay flags
+        'moduleAssessments' => $moduleAssessments,
+        'finalExam' => $finalExam,
+        'diplomaAssessment' => $diplomaAssessment,
+        'candidate' => [
+            'certificate_id' => $enrollment->certificate_number ?? auth()->user()->candidate_id,
+        ],
+        'examResults' => $examResults,
+        'certification' => $certification,
+        'auth' => ['user' => $userData],
+        'totalModulesCount' => $totalModulesCount
+    ]);
+}
 
     public function downloadCourseMaterial(CourseMaterial $material)
     {

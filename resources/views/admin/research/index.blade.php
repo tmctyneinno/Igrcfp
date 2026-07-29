@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Research & White Papers</h4>
-                    @if(auth()->guard('admin')->user()->isAdmin())
+                    @if(auth()->guard('admin')->user()?->isAdmin())
                         <a href="{{ route('admin.research.create') }}" class="btn btn-primary">
                             <i class="ri-upload-line me-1"></i> Upload New
                         </a>
@@ -114,7 +114,7 @@
                                                 <a href="{{ Storage::url($doc->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                     <i class="ri-eye-line"></i>
                                                 </a>
-                                                @if(auth()->guard('admin')->user()->isAdmin())
+                                                @if(auth()->guard('admin')->user()?->isAdmin())
                                                     <a href="{{ route('admin.research.edit', $doc->id) }}" class="btn btn-sm btn-outline-warning">
                                                         <i class="ri-pencil-line"></i>
                                                     </a>

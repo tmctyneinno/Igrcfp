@@ -5,12 +5,13 @@ import {
     ChevronUpIcon, 
     LockClosedIcon,
     CheckCircleIcon,
-    ArrowRightIcon
+    ArrowRightIcon, 
+    TrophyIcon 
 } from '@heroicons/react/24/outline';
 import MaterialList from './MaterialList';
 import LessonList from './LessonList';
 import ModuleReadingContent from './ModuleReadingContent';
-
+  
 export default function ModuleItem({ 
     module, 
     moduleIndex, 
@@ -27,12 +28,17 @@ export default function ModuleItem({
     isModuleRead = false,
     moduleReadingProgress = 0,
     markModuleRead,
-    updateModuleReadingProgress
+    updateModuleReadingProgress,
+    totalModulesCount = 0,
+    onStartCourseQuiz // NEW: Callback function from parent
 }) { 
     const completedLessons = module.lessons?.filter(l => l.completed).length || 0;
     const totalLessons = module.lessons?.length || 0;
     const isCompleted = isModuleRead;
     const hasReadingContent = Boolean(module.reading_content || module.full_content);
+
+    // Check if this is the very last module
+    const isLastModule = totalModulesCount > 0 && (moduleIndex + 1) === totalModulesCount;
 
     const handleModuleClick = () => {
         if (isAccessible) {
@@ -174,7 +180,6 @@ export default function ModuleItem({
                             
                             <button
                                 onClick={() => {
-                                    // Scroll to previous module or expand it
                                     document.getElementById(`module-${module.module_number - 1}`)?.scrollIntoView({ 
                                         behavior: 'smooth' 
                                     });
@@ -245,14 +250,38 @@ export default function ModuleItem({
 
                             {/* Module Completion Celebration */}
                             {isCompleted && (
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                                    <CheckCircleIcon className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                                    <h4 className="font-semibold text-green-800 mb-1">
-                                        Module Read!
-                                    </h4>
-                                    <p className="text-sm text-green-600">
-                                        Great job! You can now proceed to Module {module.module_number + 1}.
-                                    </p>
+                                <div className={`border rounded-lg p-4 text-center ${
+                                    isLastModule 
+                                        ? 'bg-indigo-50 border-indigo-200' 
+                                        : 'bg-green-50 border-green-200'
+                                }`}>
+                                    {isLastModule ? (
+                                        <>
+                                            <TrophyIcon className="w-8 h-8 text-indigo-500 mx-auto mb-2" />
+                                            <h4 className="font-semibold text-indigo-800 mb-1">
+                                                Course Content Completed!
+                                            </h4>
+                                            <p className="text-sm text-indigo-600 mb-3">
+                                                You have read all modules. You are now eligible to take the final assessment.
+                                            </p>
+                                            <button 
+                                                onClick={onStartCourseQuiz} // Use the prop
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-medium"
+                                            >
+                                                Start Course Exam <ArrowRightIcon className="w-4 h-4" />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CheckCircleIcon className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                                            <h4 className="font-semibold text-green-800 mb-1">
+                                                Module Read!
+                                            </h4>
+                                            <p className="text-sm text-green-600">
+                                                Great job! You can now proceed to Module {module.module_number + 1}.
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </div>

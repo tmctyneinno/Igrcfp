@@ -87,7 +87,7 @@
                             </tbody>
                         </table>
                     </div>
-
+ 
                     <div class="mt-16 pt-16 border-top">
                         <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-primary w-100">
                              Edit Profile
@@ -243,7 +243,7 @@
                                     </td>
 
                                     <td>
-                                        @if($enrollment->certificate_generated)
+                                        @if($enrollment->certificate_generated) 
                                             <a href="{{ route('admin.certificates.download', $enrollment->id) }}" class="text-success-600 hover-text-success-700" title="Download Certificate">
                                                 <iconify-icon icon="solar:document-text-linear" class="icon-xl"></iconify-icon>
                                             </a>

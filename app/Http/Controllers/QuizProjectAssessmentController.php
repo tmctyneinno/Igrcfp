@@ -60,9 +60,15 @@ class QuizProjectAssessmentController extends Controller
         // Otherwise, redirect to the regular quiz take page
         return redirect()->route('dashboard.quiz.take', [
             'course' => $course->slug,
-            'assessment' => $assessment->id
+            'assessment' => $assessment->id,
+            'attempt' => [
+                'id' => $attempt->id,
+                'status' => $attempt->status, // IMPORTANT: Pass status (e.g., 'completed', 'in_progress')
+                'score' => $attempt->score,   // IMPORTANT: Pass score so Part B can check if >= 50%
+                'answers' => json_decode($attempt->answers, true) ?? [],
+            ],
         ]);
-    }
+    } 
 
     /**
      * Show the project submission page

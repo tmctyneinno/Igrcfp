@@ -20,6 +20,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     
     Route::post('/users', [UserManagementController::class, 'store'])
         ->name('users.store');
+
+    Route::post('/users', [CertificateController::class, 'download'])
+        ->name('certificates.download');
     
     // Edit User
     Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])

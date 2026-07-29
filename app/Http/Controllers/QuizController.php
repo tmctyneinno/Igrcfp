@@ -9,26 +9,27 @@ use App\Models\Enrollment;
 use App\Models\AssessmentSubmission;
 use App\Models\AssessmentAttempt;
 use Illuminate\Support\Facades\Http; 
-use App\Models\Notification; // ✅ ADD THIS
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
   
 class QuizController extends Controller
 {
-    /**
+    
+        /**
      * Take a quiz (initialize or continue)
      */
     public function take(Course $course, $assessmentId)
     {
         $user = auth()->user();
-        
+
         $assessment = $this->findAssessment($assessmentId);
-        
+    
         if (!$assessment) {
             abort(404, 'Assessment not found');
         }
-        
+
         // Verify enrollment
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)
@@ -39,23 +40,38 @@ class QuizController extends Controller
             return redirect()->route('dashboard.courses.show', $course->slug)
                 ->with('error', 'Please read all module content before taking the quiz.');
         }
-        
+
+        // ✅ If the user already has a fully completed attempt for this assessment,
+        // send them to results instead of starting/showing a new attempt.
+        $completedAttempt = AssessmentAttempt::where('user_id', $user->id)
+            ->where('assessment_id', $assessment->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->where('status', 'completed')
+            ->exists();
+
+        if ($completedAttempt) {
+            return redirect()->route('dashboard.quiz.results', [
+                'course' => $course->slug,
+                'assessment' => $assessment->id,
+            ])->with('info', 'You have already completed this quiz.');
+        }
+
         // Get or create attempt for THIS assessment
         $attempt = $this->getOrCreateAttempt($user->id, $assessment->id, $enrollment->id);
-        
+
         // Get ALL questions for this assessment
         $allQuestions = $assessment->questions()
-            ->select('id', 'question_text', 'question_type', 'options', 'points', 'correct_answer', 'module_id')
+            ->select('*') // Select all columns to get explanation, points, etc.
             ->inRandomOrder()
             ->get()
             ->map(function ($question) {
                 return $this->formatQuestion($question);
             });
-        
+
         // Calculate time remaining
         $timeLimit = $assessment->duration * 60;
         $timeRemaining = $this->calculateTimeRemaining($attempt, $timeLimit);
-         
+
         return Inertia::render('Dashboard/Quiz/Take', [
             'course' => [
                 'id' => $course->id,
@@ -78,6 +94,8 @@ class QuizController extends Controller
             'attempt' => [
                 'id' => $attempt->id,
                 'status' => $attempt->status,
+                'score' => $attempt->score,
+                'part_a_submitted' => !is_null($attempt->score),
                 'answers' => json_decode($attempt->answers, true) ?? [],
             ],
             'modules' => [],
@@ -85,6 +103,28 @@ class QuizController extends Controller
             'timeRemaining' => $timeRemaining,
             'timeLimit' => $timeLimit,
         ]);
+    }
+
+    /**
+     * Format a question for frontend display
+     */
+    private function formatQuestion($question)
+    {
+        $options = $question->options;
+        if (is_string($options)) {
+            $options = json_decode($options, true);
+        }
+        
+        return [
+            'id' => $question->id,
+            'text' => $question->question_text, // Explicitly map question_text to text
+            'type' => $question->question_type,
+            'options' => $options ?? [],
+            'points' => $question->points ?? 1, // Include points
+            'explanation' => $question->explanation, // Include explanation
+            'correct_answer' => $question->correct_answer,
+            'module_id' => $question->module_id,
+        ];
     }
 
     /**
@@ -159,7 +199,7 @@ class QuizController extends Controller
             'timestamp' => now()->toIso8601String(),
         ]);
     }
-    
+
     /**
      * Submit a completed quiz (ONE quiz at a time)
      */
@@ -748,7 +788,8 @@ class QuizController extends Controller
             ],
         ]);
     }
-    
+
+
     /**
      * Continue a quiz (alias for take)
      */
@@ -757,14 +798,14 @@ class QuizController extends Controller
         return $this->take($course, $assessmentId);
     }
     
-    // ==================== HELPER METHODS ====================
     
-    /**
-     * Get or create an attempt for a quiz
-     */
-    private function getOrCreateAttempt($userId, $assessmentId, $enrollmentId)
-    {
-        // Check for existing in-progress attempt
+
+    private function findAssessment($assessmentId) {
+        if (is_numeric($assessmentId)) return Assessment::find($assessmentId);
+        return Assessment::where('slug', $assessmentId)->first();
+    }
+
+    private function getOrCreateAttempt($userId, $assessmentId, $enrollmentId) {
         $attempt = AssessmentAttempt::where('user_id', $userId)
             ->where('assessment_id', $assessmentId)
             ->where('enrollment_id', $enrollmentId)
@@ -772,21 +813,16 @@ class QuizController extends Controller
             ->first();
         
         if ($attempt) {
-            // Reuse existing attempt
-            $attempt->update([
-                'status' => 'in_progress',
-                'started_at' => $attempt->started_at ?? now(),
-            ]);
+            $attempt->update(['status' => 'in_progress', 'started_at' => $attempt->started_at ?? now()]);
             return $attempt;
         }
         
-        // Create new attempt with proper attempt number
         $lastAttempt = AssessmentAttempt::where('user_id', $userId)
             ->where('assessment_id', $assessmentId)
             ->where('enrollment_id', $enrollmentId)
             ->orderBy('attempt_number', 'desc')
             ->first();
-        
+            
         $attemptNumber = $lastAttempt ? $lastAttempt->attempt_number + 1 : 1;
         
         return AssessmentAttempt::create([
@@ -799,78 +835,14 @@ class QuizController extends Controller
             'answers' => json_encode([]),
         ]);
     }
-    
-    /**
-     * Calculate remaining time for a quiz
-     */
-    private function calculateTimeRemaining($attempt, $timeLimit)
-    {
-        if (!$attempt->started_at) {
-            return $timeLimit;
-        }
-        
+
+    private function calculateTimeRemaining($attempt, $timeLimit) {
+        if (!$attempt->started_at) return $timeLimit;
         $elapsed = now()->diffInSeconds($attempt->started_at);
         return max(0, $timeLimit - $elapsed);
     }
-    
-    /**
-     * Format a question for frontend display
-     */
-    private function formatQuestion($question)
-    {
-        $options = $question->options;
-        if (is_string($options)) {
-            $options = json_decode($options, true);
-        }
-        
-        return [
-            'id' => $question->id,
-            'text' => $question->question_text,
-            'type' => $question->question_type,
-            'options' => $options ?? [],
-            'marks' => $question->points ?? $question->marks ?? 1,
-            'correct_answer' => $question->correct_answer,
-            'module_id' => $question->module_id,
-        ];
-    }
-    
-    /**
-     * Score a quiz submission
-     */
-    private function scoreQuiz($assessment, $answers)
-    {
-        $questions = $assessment->questions()->get();
-        
-        $totalMarks = 0;
-        $earnedMarks = 0;
-        $correctAnswers = 0;
-        
-        foreach ($questions as $question) {
-            $marks = $question->points ?? 1;
-            $totalMarks += $marks;
-            
-            $userAnswer = $answers[$question->id] ?? null;
-            $isCorrect = $question->isAnswerCorrect($userAnswer);
-            
-            if ($isCorrect === true) {
-                $earnedMarks += $marks;
-                $correctAnswers++;
-            }
-        }
-        
-        $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
-        $passed = $score >= ($assessment->passing_score ?? 70);
-        
-        return [
-            'score' => $score,
-            'earned_marks' => $earnedMarks,
-            'total_marks' => $totalMarks,
-            'correct_answers' => $correctAnswers,
-            'passed' => $passed,
-        ];
-    }
-    
-    /**
+
+      /**
      * Get all modules with their questions for the sidebar
      */
     private function getModulesWithQuestions($course, $assessment)
@@ -952,43 +924,16 @@ class QuizController extends Controller
             ->values()
             ->toArray();
     }
-    
-    /**
-     * Find assessment by ID or module ID
-     */
-    private function findAssessment($assessmentId)
-    {
-        if (is_numeric($assessmentId)) {
-            return Assessment::find($assessmentId);
-        }
-        
-        if (str_starts_with($assessmentId, 'module-')) {
-            $moduleId = (int) str_replace('module-', '', $assessmentId);
-            
-            return Assessment::where('module_id', $moduleId)
-                ->where('assessment_level', 'quiz')
-                ->first();
-        }
-        
-        return Assessment::find($assessmentId);
-    }
 
-    private function allModulesRead(Course $course, Enrollment $enrollment): bool
-    {
+    private function allModulesRead(Course $course, Enrollment $enrollment): bool {
         $modules = $course->modules()->get(['id']);
-
-        if ($modules->isEmpty()) {
-            return true;
-        }
-
+        if ($modules->isEmpty()) return true;
         $readModuleIds = CourseModuleUser::where('enrollment_id', $enrollment->id)
             ->where('user_id', $enrollment->user_id)
             ->where('read', true)
             ->pluck('course_module_id')
             ->all();
-
         $readModuleIds = array_flip($readModuleIds);
-
         return $modules->every(function ($module) use ($readModuleIds) {
             return isset($readModuleIds[$module->id]);
         });
