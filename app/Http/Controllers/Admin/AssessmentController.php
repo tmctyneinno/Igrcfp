@@ -41,35 +41,84 @@ class AssessmentController extends Controller
     }
 
     public function submissionsList(Request $request)
-    {
-        $query = AssessmentSubmission::with(['user', 'assessment.course', 'grader'])
-            ->orderBy('submitted_at', 'desc');
+{
+    // Eager load assessment questions to determine stage logic efficiently
+    $query = AssessmentSubmission::with([
+        'user', 
+        'assessment.course', 
+        'grader',
+        'assessment.questions' // Load questions to check types
+    ])
+    ->orderBy('submitted_at', 'desc');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('user', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        $submissions = $query->paginate(20);
-
-        $statistics = [
-            'total'     => AssessmentSubmission::count(),
-            'pending'   => AssessmentSubmission::where('status', 'submitted')->count(),
-            'graded'    => AssessmentSubmission::where('status', 'graded')->count(),
-            'avg_score' => AssessmentSubmission::whereNotNull('percentage')->avg('percentage'),
-        ];
-
-        return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics'));
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
 
-  
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->whereHas('user', function($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+        });
+    }
+
+    $submissions = $query->paginate(20);
+
+    // Add a computed 'stage' attribute to each submission
+    $submissions->getCollection()->transform(function ($submission) {
+        $submission->current_stage = $this->determineAssessmentStage($submission);
+        return $submission;
+    });
+
+    $statistics = [
+        'total'     => AssessmentSubmission::count(),
+        'pending'   => AssessmentSubmission::where('status', 'submitted')->count(),
+        'graded'    => AssessmentSubmission::where('status', 'graded')->count(),
+        'avg_score' => AssessmentSubmission::whereNotNull('percentage')->avg('percentage'),
+    ];
+
+    return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics'));
+}
+
+/**
+ * Helper to determine the stage based on submission content
+ */
+private function determineAssessmentStage($submission)
+{
+    if (!$submission->assessment || !$submission->assessment->questions) {
+        return 'Unknown';
+    }
+
+    $hasMcq = $submission->assessment->questions->contains('question_type', 'mcq');
+    $hasEssay = $submission->assessment->questions->contains('question_type', 'essay');
+    
+    // Check if essay response exists in the submission data
+    // Assuming submission_data is a JSON column containing answers
+    $submissionData = $submission->submission_data ?? [];
+    $hasEssayResponse = false;
+
+    if (is_array($submissionData)) {
+        foreach ($submissionData as $answer) {
+            if (isset($answer['question_type']) && $answer['question_type'] === 'essay' && !empty($answer['answer'])) {
+                $hasEssayResponse = true;
+                break;
+            }
+        }
+    }
+
+    if ($hasEssay && $hasEssayResponse) {
+        return 'Essay Submitted';
+    } elseif ($hasMcq && !$hasEssay) {
+        return 'Quiz Only';
+    } elseif ($hasMcq && $hasEssay && !$hasEssayResponse) {
+        return 'Quiz Completed'; // Has MCQs but hasn't done Essay yet
+    }
+
+    return 'Completed';
+}
+
+   
 public function notifyEssayRetry(Request $request, AssessmentSubmission $submission, BrevoMailService $mailer)
 {
     $validated = $request->validate([

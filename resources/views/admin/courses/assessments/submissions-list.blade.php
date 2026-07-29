@@ -116,6 +116,7 @@
                             <th scope="col">Student</th>
                             <th scope="col">Assessment</th>
                             <th scope="col">Course</th>
+                            <th scope="col">Stage</th> 
                             <th scope="col">Submitted At</th>
                             <th scope="col">Score</th>
                             <th scope="col">Status</th>
@@ -143,6 +144,23 @@
                             <td>
                                 <span class="text-sm">{{ $submission->assessment->course->title ?? 'N/A' }}</span>
                             </td>
+                            <td>
+            @php
+                $stage = $submission->current_stage ?? 'Unknown';
+                $badgeClass = 'bg-neutral-100 text-neutral-600';
+                
+                if (str_contains($stage, 'Quiz')) {
+                    $badgeClass = 'bg-primary-100 text-primary-600';
+                } elseif (str_contains($stage, 'Essay')) {
+                    $badgeClass = 'bg-info-100 text-info-600';
+                } elseif ($stage === 'Completed') {
+                    $badgeClass = 'bg-success-100 text-success-600';
+                }
+            @endphp
+            <span class="badge {{ $badgeClass }} radius-4 px-8 py-4">
+                {{ $stage }}
+            </span>
+        </td>
                             <td>
                                 {{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y H:i') : 'N/A' }}
                             </td>
@@ -182,7 +200,7 @@
                                     </form> -->
                                 </div>
                             </td>
-                        </tr>
+                        </tr> 
                         @empty
                         <tr>
                             <td colspan="7" class="text-center py-4">
