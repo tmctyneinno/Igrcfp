@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Course;
 use App\Models\CourseModule;
-use App\Models\AssessmentQuestion;
+use App\Models\AssessmentQuestion; 
 use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -419,11 +419,49 @@ class AssessmentController extends Controller
         return view('admin.courses.assessments.submissions',
             compact('assessment', 'submissions'));
     }
-
-    public function viewSubmission(AssessmentSubmission $submission)
+ 
+        public function viewSubmission(AssessmentSubmission $submission)
     {
         $submission->load(['user', 'assessment.course', 'assessment.questions', 'grader']);
-        return view('admin.courses.assessments.submission', compact('submission'));
+        
+        $assessment = $submission->assessment;
+        $responses = $submission->question_responses ?? [];
+        
+        // Categorize Questions
+        $mcqQuestions = collect();
+        $essayQuestions = collect();
+        $projectQuestions = collect(); // For case studies or specific project prompts
+        
+        foreach ($assessment->questions as $question) {
+            $response = $responses[$question->id] ?? null;
+            $item = [
+                'question' => $question,
+                'response' => $response
+            ];
+
+            if (in_array($question->question_type, ['multiple_choice', 'true_false', 'short_answer'])) {
+                $mcqQuestions->push($item);
+            } elseif ($question->question_type === 'essay') {
+                $essayQuestions->push($item);
+            } else {
+                // Treat case_study or others as Project/Manual
+                $projectQuestions->push($item);
+            }
+        }
+
+        // Extract Uploaded Files for easy access
+        $uploadedFiles = collect($responses)
+            ->filter(fn($r) => !empty($r['uploaded_file']['path']))
+            ->map(fn($r) => $r['uploaded_file']);
+
+        return view('admin.courses.assessments.submission', compact(
+            'submission', 
+            'assessment', 
+            'mcqQuestions', 
+            'essayQuestions', 
+            'projectQuestions', 
+            'uploadedFiles'
+        ));
     }
 
     public function gradeSubmission(Request $request, AssessmentSubmission $submission)

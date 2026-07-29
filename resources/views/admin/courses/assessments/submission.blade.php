@@ -1,215 +1,315 @@
 @extends('admin.layouts.app')
 
 @section('content')
-@php
-    $assessment = $submission->assessment;
-    $responses = $submission->question_responses ?? [];
-    $uploadedFiles = collect($responses)
-        ->filter(fn($response) => !empty($response['uploaded_file']['path']))
-        ->map(fn($response) => $response['uploaded_file']);
-@endphp
-
 <div class="dashboard-main-body">
+    <!-- Header -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Review Submission</h6>
         <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-primary">
-            Back to Submissions
+            <iconify-icon icon="solar:arrow-left-linear" class="me-2"></iconify-icon> Back to Submissions
         </a>
     </div>
- 
+    
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
     @endif
 
     <div class="row gy-4">
-        <div class="col-lg-5">
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">Student Details</h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="w-45-px h-45-px bg-primary-100 rounded-circle d-flex align-items-center justify-content-center">
-                            <span class="text-primary-600 fw-semibold">{{ strtoupper(substr($submission->user->name ?? 'U', 0, 1)) }}</span>
-                        </div>
-                        <div>
-                            <p class="fw-semibold mb-0">{{ $submission->user->name ?? 'Unknown' }}</p>
-                            <p class="text-sm text-secondary-light mb-0">{{ $submission->user->email ?? '' }}</p>
-                        </div>
+        <!-- Left Column: Student Info & Grading (STICKY) -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 20px; z-index: 10;">
+                
+                <!-- Student Details Card -->
+                <div class="card mb-24">
+                    <div class="card-header border-bottom bg-base py-16 px-24">
+                        <h6 class="card-title mb-0">Student Details</h6>
                     </div>
+                    <div class="card-body p-24">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            @php
+                                $avatar = $submission->user->profile_picture ?? $submission->user->avatar;
+                                $hasAvatar = $avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($avatar);
+                            @endphp
+                            
+                            @if($hasAvatar)
+                                <img src="{{ Storage::url($avatar) }}" class="w-50-px h-50-px rounded-circle object-fit-cover">
+                            @else
+                                <div class="w-50-px h-50-px bg-primary-100 rounded-circle d-flex align-items-center justify-content-center">
+                                    <span class="text-primary-600 fw-semibold">{{ strtoupper(substr($submission->user->name ?? 'U', 0, 1)) }}</span>
+                                </div>
+                            @endif
 
-                    <table class="table table-bordered mb-0">
-                        <tr>
-                            <th>Assessment</th>
-                            <td>{{ $assessment->title }}</td>
-                        </tr>
-                        <tr>
-                            <th>Course</th>
-                            <td>{{ $assessment->course->title ?? 'N/A' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Submitted</th>
-                            <td>{{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y H:i') : 'Not submitted' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>{{ ucfirst(str_replace('_', ' ', $submission->status)) }}</td>
-                        </tr>
-                        <tr>
-                            <th>Auto Score</th>
-                            <td>
-                                @if($submission->percentage !== null)
-                                    {{ number_format($submission->percentage, 1) }}%
-                                    @if($submission->score !== null)
-                                        <span class="text-secondary-light">({{ $submission->score }}/{{ $assessment->total_marks }})</span>
+                            <div>
+                                <p class="fw-semibold mb-0">{{ $submission->user->name ?? 'Unknown' }}</p>
+                                <p class="text-sm text-secondary-light mb-0">{{ $submission->user->email ?? '' }}</p>
+                            </div>
+                        </div>
+
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <td class="text-secondary-light ps-0">Assessment:</td>
+                                <td class="fw-medium text-end pe-0">{{ $assessment->title }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary-light ps-0">Course:</td>
+                                <td class="fw-medium text-end pe-0">{{ $assessment->course->title ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary-light ps-0">Submitted:</td>
+                                <td class="fw-medium text-end pe-0">{{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y H:i') : 'Not submitted' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary-light ps-0">Status:</td>
+                                <td class="text-end pe-0">
+                                    <span class="badge bg-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-100 text-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-600 radius-4 px-8 py-4">
+                                        {{ ucfirst(str_replace('_', ' ', $submission->status)) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-secondary-light ps-0">Auto Score:</td>
+                                <td class="fw-medium text-end pe-0">
+                                    @if($submission->percentage !== null)
+                                        {{ number_format($submission->percentage, 1) }}%
+                                        <span class="text-secondary-light small">({{ $submission->score }}/{{ $assessment->total_marks }})</span>
+                                    @else
+                                        N/A
                                     @endif
-                                @else
-                                    N/A
-                                @endif
-                            </td>
-                        </tr>
-                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card mt-24" id="grade">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">Grade Student</h6>
+                <!-- Grading Form Card -->
+                <div class="card" id="grade">
+                    <div class="card-header border-bottom bg-base py-16 px-24">
+                        <h6 class="card-title mb-0">Grade Student</h6>
+                    </div>
+                    <div class="card-body p-24">
+                        @if($submission->status === 'graded')
+                            <div class="alert alert-success mb-3">
+                                <p class="mb-1"><strong>Graded by:</strong> {{ $submission->grader->name ?? 'Admin' }}</p>
+                                <p class="mb-0"><strong>Date:</strong> {{ $submission->graded_at?->format('M d, Y H:i') }}</p>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('admin.assessments.submission.grade', $submission->id) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Final Score <span class="text-danger">*</span></label>
+                                <input
+                                    type="number"
+                                    name="score"
+                                    class="form-control"
+                                    step="0.01"
+                                    min="0"
+                                    max="{{ $assessment->total_marks ?? 100 }}"
+                                    value="{{ old('score', $submission->score) }}"
+                                    required
+                                >
+                                <small class="text-muted">Maximum score: {{ $assessment->total_marks ?? 100 }}</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Feedback</label>
+                                <textarea name="feedback" class="form-control" rows="5" placeholder="Provide detailed feedback to the student...">{{ old('feedback', $submission->feedback) }}</textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                Submit Grade
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-body">
-                    @if($submission->status === 'graded')
-                        <div class="alert alert-success">
-                            This submission was graded by {{ $submission->grader->name ?? 'an admin' }}
-                            on {{ $submission->graded_at?->format('M d, Y H:i') }}.
-                        </div>
-                    @endif
 
-                    <form action="{{ route('admin.assessments.submission.grade', $submission->id) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Score <span class="text-danger">*</span></label>
-                            <input
-                                type="number"
-                                name="score"
-                                class="form-control"
-                                step="0.01"
-                                min="0"
-                                max="{{ $assessment->total_marks ?? 100 }}"
-                                value="{{ old('score', $submission->score) }}"
-                                required
-                            >
-                            <small class="text-muted">Maximum score: {{ $assessment->total_marks ?? 100 }}</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Feedback</label>
-                            <textarea name="feedback" class="form-control" rows="5" placeholder="Provide feedback to the student...">{{ old('feedback', $submission->feedback) }}</textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            Submit Grade
-                        </button>
-                    </form>
-                </div>
-            </div>
+            </div> <!-- End Sticky Wrapper -->
         </div>
 
-        <div class="col-lg-7">
-            <div class="card">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">Part B Uploaded Document</h6>
+        <!-- Right Column: Submission Content -->
+        <div class="col-lg-8">
+            
+            <!-- Part A: Quiz / MCQ Responses -->
+            @if(isset($mcqQuestions) && $mcqQuestions->isNotEmpty())
+            <div class="card mb-24">
+                <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+                    <h6 class="card-title mb-0 text-primary-600">
+                        <iconify-icon icon="solar:test-tube-minimalistic-linear" class="me-2"></iconify-icon> Part A: Quiz Responses
+                    </h6>
+                    <span class="badge bg-primary-100 text-primary-600">{{ $mcqQuestions->count() }} Questions</span>
                 </div>
-                <div class="card-body">
-                    @if($uploadedFiles->isNotEmpty())
+                <div class="card-body p-24">
+                    <div class="row g-3">
+                        @foreach($mcqQuestions as $item)
+                            @php
+                                $q = $item['question'];
+                                $r = $item['response'] ?? [];
+                                $isCorrect = $r['correct'] ?? false;
+                            @endphp
+                            <div class="col-md-6">
+                                <div class="p-16 border rounded-8 {{ $isCorrect ? 'border-success-200 bg-success-50' : 'border-danger-200 bg-danger-50' }}">
+                                    <p class="fw-medium mb-2 small text-uppercase text-secondary-light">Question {{ $loop->iteration }}</p>
+                                    <p class="mb-2">{{ Str::limit($q->question_text, 80) }}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="small"><strong>Answer:</strong> {{ $r['answer'] ?? 'N/A' }}</span>
+                                        <span class="badge {{ $isCorrect ? 'bg-success-600' : 'bg-danger-600' }} text-white">
+                                            {{ $isCorrect ? 'Correct' : 'Incorrect' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Part B: Essay Responses -->
+                       <!-- Part B: Essay Responses -->
+            @if(isset($essayQuestions) && $essayQuestions->isNotEmpty())
+            <div class="card mb-24">
+                <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+                    <h6 class="card-title mb-0 text-info-600">
+                        <iconify-icon icon="solar:pen-new-square-linear" class="me-2"></iconify-icon> Part B: Essay Responses
+                    </h6>
+                    <span class="badge bg-info-100 text-info-600">{{ $essayQuestions->count() }} Essays</span>
+                </div>
+                <div class="card-body p-24">
+                    @foreach($essayQuestions as $item)
+                        @php
+                            $q = $item['question'];
+                            $r = $item['response'] ?? [];
+                            
+                            // Check for text answer first, then fallback to file
+                            $hasTextAnswer = !empty($r['answer']) && strlen(trim($r['answer'])) > 0;
+                            $hasFile = !empty($r['uploaded_file']);
+                        @endphp
+                        
+                        <div class="border rounded-8 p-16 mb-3 last-child-mb-0 bg-light-50">
+                            <!-- Question Prompt -->
+                            <p class="fw-semibold mb-3 text-dark">{{ $q->question_text }}</p>
+                            
+                            <!-- Display Text Content -->
+                            @if($hasTextAnswer)
+                                <div class="bg-white border rounded-6 p-16 essay-content">
+                                    {!! $r['answer'] !!}
+                                </div>
+                            @endif
+
+                            <!-- Display File Attachment (if any) -->
+                            @if($hasFile)
+                                <div class="mt-3 pt-3 border-top">
+                                    <p class="small fw-bold text-secondary-light mb-2">Attached Document:</p>
+                                    <div class="d-flex align-items-center gap-3 p-12 bg-white rounded-6 border">
+                                        <iconify-icon icon="solar:file-text-linear" class="text-primary-600 icon-xl"></iconify-icon>
+                                        <div class="flex-grow-1">
+                                            <p class="fw-medium small mb-0">{{ $r['uploaded_file']['name'] ?? 'Document' }}</p>
+                                            <p class="text-xs text-secondary-light mb-0">{{ round(($r['uploaded_file']['size'] ?? 0)/1024, 2) }} KB</p>
+                                        </div>
+                                        <a href="{{ Storage::url($r['uploaded_file']['path']) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            View File
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Empty State -->
+                            @if(!$hasTextAnswer && !$hasFile)
+                                <p class="text-muted small italic mb-0">No response provided for this question.</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Part C: Project / Case Study -->
+            @if((isset($projectQuestions) && $projectQuestions->isNotEmpty()) || (isset($uploadedFiles) && $uploadedFiles->isNotEmpty()))
+            <div class="card mb-24">
+                <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+                    <h6 class="card-title mb-0 text-warning-600">
+                        <iconify-icon icon="solar:document-text-linear" class="me-2"></iconify-icon> Project / Case Study Submission
+                    </h6>
+                </div>
+                <div class="card-body p-24">
+                    @if(isset($uploadedFiles) && $uploadedFiles->isNotEmpty())
                         @foreach($uploadedFiles as $file)
                             <div class="d-flex align-items-center gap-3 p-16 bg-light rounded-8 mb-3">
-                                <div class="w-50-px h-50-px bg-primary-100 rounded-circle d-flex align-items-center justify-content-center">
-                                    <iconify-icon icon="solar:file-text-outline" class="text-primary-600 icon-2x"></iconify-icon>
+                                <div class="w-50-px h-50-px bg-warning-100 rounded-circle d-flex align-items-center justify-content-center">
+                                    <iconify-icon icon="solar:folder-with-files-linear" class="text-warning-600 icon-2x"></iconify-icon>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <p class="fw-medium mb-1">{{ $file['name'] ?? 'Essay document' }}</p>
+                                    <p class="fw-medium mb-1">{{ $file['name'] ?? 'Project Document' }}</p>
                                     <p class="text-sm text-secondary-light mb-0">
-                                        {{ !empty($file['size']) ? round($file['size'] / 1024, 2) . ' KB' : 'File size unavailable' }}
+                                        {{ !empty($file['size']) ? round($file['size'] / 1024, 2) . ' KB' : 'Size unavailable' }}
                                     </p>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ $file['url'] ?? \Illuminate\Support\Facades\Storage::url($file['path']) }}" target="_blank" class="btn btn-outline-primary">
-                                        <iconify-icon icon="solar:eye-outline" class="me-1"></iconify-icon>
-                                        View
+                                    <a href="{{ Storage::url($file['path']) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <iconify-icon icon="solar:eye-linear" class="me-1"></iconify-icon> View
                                     </a>
-                                    <a href="{{ $file['url'] ?? \Illuminate\Support\Facades\Storage::url($file['path']) }}" download class="btn btn-outline-success">
-                                        <iconify-icon icon="solar:download-outline" class="me-1"></iconify-icon>
-                                        Download
+                                    <a href="{{ Storage::url($file['path']) }}" download class="btn btn-outline-success btn-sm">
+                                        <iconify-icon icon="solar:download-linear" class="me-1"></iconify-icon> Download
                                     </a>
                                 </div>
                             </div>
                         @endforeach
                     @elseif($submission->submission_file_path)
-                        <div class="d-flex align-items-center gap-3 p-16 bg-light rounded-8">
-                            <div class="w-50-px h-50-px bg-primary-100 rounded-circle d-flex align-items-center justify-content-center">
-                                <iconify-icon icon="solar:file-text-outline" class="text-primary-600 icon-2x"></iconify-icon>
+                         <div class="d-flex align-items-center gap-3 p-16 bg-light rounded-8">
+                            <div class="w-50-px h-50-px bg-warning-100 rounded-circle d-flex align-items-center justify-content-center">
+                                <iconify-icon icon="solar:folder-with-files-linear" class="text-warning-600 icon-2x"></iconify-icon>
                             </div>
                             <div class="flex-grow-1">
-                                <p class="fw-medium mb-1">{{ $submission->submission_file_name ?? 'Essay document' }}</p>
-                                <p class="text-sm text-secondary-light mb-0">{{ $submission->formatted_file_size }}</p>
+                                <p class="fw-medium mb-1">{{ $submission->submission_file_name ?? 'Main Submission' }}</p>
                             </div>
-                            <div class="d-flex gap-2">
-                                <a href="{{ $submission->submission_file_url }}" target="_blank" class="btn btn-outline-primary">
-                                    <iconify-icon icon="solar:eye-outline" class="me-1"></iconify-icon>
-                                    View
-                                </a>
-                                <a href="{{ $submission->submission_file_url }}" download class="btn btn-outline-success">
-                                    <iconify-icon icon="solar:download-outline" class="me-1"></iconify-icon>
-                                    Download
-                                </a>
-                            </div>
+                            <a href="{{ Storage::url($submission->submission_file_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">View File</a>
                         </div>
                     @else
-                        <p class="text-muted mb-0">No Part B document was uploaded for this submission.</p>
+                        <p class="text-muted mb-0">No specific project files were uploaded.</p>
+                    @endif
+                    
+                    @if(isset($projectQuestions) && $projectQuestions->isNotEmpty())
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="fw-semibold mb-3">Project Prompts & Responses</h6>
+                            @foreach($projectQuestions as $item)
+                                <div class="mb-3">
+                                    <p class="fw-medium small text-secondary-light mb-1">{{ $item['question']->question_text }}</p>
+                                    <p class="mb-0">{{ $item['response']['answer'] ?? 'No text response provided.' }}</p>
+                                </div>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
             </div>
+            @endif
 
-            <div class="card mt-24">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">Question Responses</h6>
-                </div>
-                <div class="card-body">
-                    @forelse($assessment->questions as $question)
-                        @php
-                            $response = $responses[$question->id] ?? [];
-                            $isManual = in_array($question->question_type, ['essay', 'case_study'], true);
-                        @endphp
-                        <div class="border rounded-8 p-16 mb-3">
-                            <div class="d-flex justify-content-between gap-3 mb-2">
-                                <p class="fw-semibold mb-0">{{ $question->question_text }}</p>
-                                <span class="badge bg-{{ $isManual ? 'warning' : 'secondary' }}-600 text-white">
-                                    {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}
-                                </span>
-                            </div>
-                            @if(!$isManual)
-                                <p class="mb-1"><strong>Answer:</strong> {{ $response['answer'] ?? 'No answer' }}</p>
-                                <p class="mb-0">
-                                    <strong>Points:</strong>
-                                    {{ $response['points_earned'] ?? 0 }}/{{ $response['points_possible'] ?? $question->points }}
-                                </p>
-                            @elseif(!empty($response['uploaded_file']))
-                                <p class="mb-0">
-                                    <strong>Uploaded:</strong>
-                                    <a href="{{ $response['uploaded_file']['url'] ?? \Illuminate\Support\Facades\Storage::url($response['uploaded_file']['path']) }}" target="_blank">
-                                        {{ $response['uploaded_file']['name'] ?? 'Essay document' }}
-                                    </a>
-                                </p>
-                            @else
-                                <p class="text-muted mb-0">No uploaded document for this essay question.</p>
-                            @endif
-                        </div>
-                    @empty
-                        <p class="text-muted mb-0">No questions found for this assessment.</p>
-                    @endforelse
-                </div>
-            </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .last-child-mb-0:last-child { margin-bottom: 0; }
+    .icon-xl { font-size: 1.5rem; }
+    .icon-2x { font-size: 2rem; }
+    /* Ensure sticky works smoothly */
+    .sticky-top { position: -webkit-sticky; position: sticky; }
+    
+</style>
+<style>
+    .last-child-mb-0:last-child { margin-bottom: 0; }
+    .icon-xl { font-size: 1.5rem; }
+    .icon-2x { font-size: 2rem; }
+    .sticky-top { position: -webkit-sticky; position: sticky; }
+    
+    /* Essay Content Styling */
+    .essay-content {
+        line-height: 1.6;
+        color: #333;
+    }
+    .essay-content p { margin-bottom: 1rem; }
+    .essay-content ul, .essay-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+    .essay-content h1, .essay-content h2, .essay-content h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
+</style>
+@endpush
