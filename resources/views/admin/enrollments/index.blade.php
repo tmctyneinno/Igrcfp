@@ -30,9 +30,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
-
-    <!-- Summary Cards -->
-    <div class="row gy-4 mb-24">
+ 
+    <!-- Standard Summary Cards -->
+    <div class="row gy-4 mb-4">
         <div class="col-xl-3 col-sm-6">
             <div class="card h-100 p-0 radius-12 overflow-hidden">
                 <div class="card-body p-24">
@@ -45,9 +45,6 @@
                             <iconify-icon icon="mingcute:user-star-line" class="icon text-2xl text-primary-600"></iconify-icon>
                         </div>
                     </div>
-                    <div class="mt-24">
-                        <span class="text-secondary-light text-sm fw-normal">Total revenue: ${{ number_format($summary['total_revenue'] ?? 0, 2) }}</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -56,16 +53,13 @@
                 <div class="card-body p-24">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div class="">
-                            <span class="mb-0 fw-medium text-secondary-light text-md">Pending</span>
-                            <h6 class="fw-semibold mb-0 mt-2 text-warning-main">{{ $summary['pending'] ?? 0 }}</h6>
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Pending Payment</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-warning-main">{{ $summary['pending_payment'] ?? 0 }}</h6>
                         </div>
                         <div class="w-50-px h-50-px bg-warning-50 rounded-circle d-flex justify-content-center align-items-center">
                             <iconify-icon icon="mdi:hourglass-empty" class="icon text-2xl text-warning-600"></iconify-icon>
                         </div>
                     </div>
-                    <div class="mt-24">
-                        <span class="text-secondary-light text-sm fw-normal">Awaiting confirmation</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -74,15 +68,12 @@
                 <div class="card-body p-24">
                     <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
                         <div class="">
-                            <span class="mb-0 fw-medium text-secondary-light text-md">Completed</span>
-                            <h6 class="fw-semibold mb-0 mt-2 text-success-main">{{ $summary['completed'] ?? 0 }}</h6>
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Active Enrolled</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-success-main">{{ $summary['enrolled'] ?? 0 }}</h6>
                         </div>
                         <div class="w-50-px h-50-px bg-success-50 rounded-circle d-flex justify-content-center align-items-center">
                             <iconify-icon icon="mdi:check-circle" class="icon text-2xl text-success-600"></iconify-icon>
                         </div>
-                    </div>
-                    <div class="mt-24">
-                        <span class="text-secondary-light text-sm fw-normal">Successfully enrolled</span>
                     </div>
                 </div>
             </div>
@@ -99,8 +90,85 @@
                             <iconify-icon icon="mdi:cancel" class="icon text-2xl text-danger-600"></iconify-icon>
                         </div>
                     </div>
-                    <div class="mt-24">
-                        <span class="text-secondary-light text-sm fw-normal">Cancelled/Refunded</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Assessment Stage Summary Cards -->
+    <h6 class="fw-semibold mb-3 mt-4">Assessment Progress Overview</h6>
+    <div class="row gy-4 mb-24">
+        <div class="col-xl-3 col-sm-6">
+            <div class="card h-100 p-0 radius-12 overflow-hidden border-start border-4 border-secondary">
+                <div class="card-body p-24">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div class="">
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Not Started / Quiz</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-secondary">{{ $stageCounts['not_started'] ?? 0 }}</h6>
+                        </div>
+                        <div class="w-50-px h-50-px bg-secondary-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:book-bookmark-line-duotone" class="icon text-2xl text-secondary-600"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <span class="text-secondary-light text-xs fw-normal">Haven't passed Part A</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-sm-6">
+            <div class="card h-100 p-0 radius-12 overflow-hidden border-start border-4 border-primary">
+                <div class="card-body p-24">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div class="">
+                            <span class="mb-0 fw-medium text-secondary-light text-md">At Quiz Stage</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-primary">{{ $stageCounts['quiz_stage'] ?? 0 }}</h6>
+                        </div>
+                        <div class="w-50-px h-50-px bg-primary-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:test-tube-minimalistic-line-duotone" class="icon text-2xl text-primary-600"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <span class="text-secondary-light text-xs fw-normal">Passed Part A, Retaking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card h-100 p-0 radius-12 overflow-hidden border-start border-4 border-info">
+                <div class="card-body p-24">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div class="">
+                            <span class="mb-0 fw-medium text-secondary-light text-md">At Essay Stage</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-info">{{ $stageCounts['essay_stage'] ?? 0 }}</h6>
+                        </div>
+                        <div class="w-50-px h-50-px bg-info-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:pen-new-square-line-duotone" class="icon text-2xl text-info-600"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <span class="text-secondary-light text-xs fw-normal">Writing or Under Review</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card h-100 p-0 radius-12 overflow-hidden border-start border-4 border-success">
+                <div class="card-body p-24">
+                    <div class="d-flex align-items-center flex-wrap gap-2 justify-content-between">
+                        <div class="">
+                            <span class="mb-0 fw-medium text-secondary-light text-md">Completed</span>
+                            <h6 class="fw-semibold mb-0 mt-2 text-success">{{ $stageCounts['completed'] ?? 0 }}</h6>
+                        </div>
+                        <div class="w-50-px h-50-px bg-success-50 rounded-circle d-flex justify-content-center align-items-center">
+                            <iconify-icon icon="solar:medal-ribbons-star-line-duotone" class="icon text-2xl text-success-600"></iconify-icon>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <span class="text-secondary-light text-xs fw-normal">All Assessments Passed</span>
                     </div>
                 </div>
             </div>
@@ -186,6 +254,7 @@
                                 <th scope="col">Payment Status</th>
                                 <th scope="col">Enrollment Status</th>
                                 <th scope="col">Progress</th>
+                                <th scope="col">Assessment Stage</th>
                                 <th scope="col" class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -202,11 +271,11 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="flex-shrink-0 me-12">
+                                        <!-- <div class="flex-shrink-0 me-12">
                                             <img src="{{ asset('storage/' . ($enrollment->user->avatar ?? 'default-avatar.jpeg')) }}" 
                                                  alt="{{ $enrollment->user->name }}" 
                                                  class="w-40-px h-40-px rounded-circle object-fit-cover">
-                                        </div> 
+                                        </div>  -->
                                         <div class="flex-grow-1">
                                             <h6 class="text-md mb-0 fw-medium">{{ $enrollment->user->name }}</h6>
                                             <span class="text-sm text-secondary-light">{{ $enrollment->user->email }}</span>
@@ -227,7 +296,6 @@
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column">
-                                        
                                         <span class="fw-medium">${{ number_format($enrollment->amount ?? 0, 2) }}</span>
                                         @if($enrollment->transaction)
                                             <small class="text-muted">Ref: {{ substr($enrollment->transaction->reference, -8) }}</small>
@@ -266,6 +334,25 @@
                                         </div>
                                         <span class="text-xs">{{ $enrollment->progress ?? 0 }}%</span>
                                     </div>
+                                </td>
+                                <td>
+                                    @php
+                                        $stage = $enrollment->assessment_stage_label ?? 'Unknown';
+                                        $badgeClass = 'bg-secondary';
+                                        
+                                        if (str_contains($stage, 'Quiz')) {
+                                            $badgeClass = 'bg-primary';
+                                        } elseif (str_contains($stage, 'Essay')) {
+                                            $badgeClass = 'bg-info';
+                                        } elseif (str_contains($stage, 'Completed')) {
+                                            $badgeClass = 'bg-success';
+                                        } elseif (str_contains($stage, 'Ready')) {
+                                            $badgeClass = 'bg-warning text-dark';
+                                        }
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }} px-12 py-6">
+                                        {{ $stage }}
+                                    </span>
                                 </td>
                                 <td class="text-center"> 
                                     <div class="d-flex align-items-center gap-10 justify-content-center">
@@ -336,7 +423,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">
+                                <td colspan="10" class="text-center py-4">
                                     <div class="text-muted">
                                         <iconify-icon icon="mingcute:user-star-line" class="icon-3x mb-2"></iconify-icon>
                                         <p>No enrollments found.</p>

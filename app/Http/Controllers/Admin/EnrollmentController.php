@@ -1,31 +1,120 @@
 <?php
-// app/Http/Controllers/Admin/EnrollmentController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
+use App\Models\Assessment;
+use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class EnrollmentController extends Controller
 {
     public function index()
     {
+        // Load relationships efficiently
         $enrollments = Enrollment::with(['user', 'course'])
             ->latest()
             ->paginate(15);
-        // Get summary data for cards
+
+        // Initialize Stage Counters
+        $stageCounts = [
+            'not_started' => 0,
+            'quiz_stage' => 0,
+            'essay_stage' => 0,
+            'completed' => 0,
+        ];
+
+        // Enrich enrollments with Assessment Stage and Count them
+        $enrollments->getCollection()->transform(function ($enrollment) use (&$stageCounts) {
+            $stageInfo = $this->getAssessmentStageDetailed($enrollment);
+            $enrollment->assessment_stage_label = $stageInfo['label'];
+            $enrollment->assessment_stage_key = $stageInfo['key'];
+            
+            // Increment counter
+            if (isset($stageCounts[$stageInfo['key']])) {
+                $stageCounts[$stageInfo['key']]++;
+            }
+            
+            return $enrollment;
+        });
+
+        // Get standard summary data
         $summary = [
             'total' => Enrollment::count(),
-            'pending' => Enrollment::where('status', 'pending_payment')->count(),
+            'pending_payment' => Enrollment::where('status', 'pending_payment')->count(),
             'enrolled' => Enrollment::where('status', 'enrolled')->count(),
-            'completed' => Enrollment::where('status', 'completed')->count(),
+            'completed_enrollment' => Enrollment::where('status', 'completed')->count(),
             'cancelled' => Enrollment::where('status', 'cancelled')->count(),
-        ];
+        ]; 
             
-        return view('admin.enrollments.index', compact('enrollments','summary'));
+        return view('admin.enrollments.index', compact('enrollments', 'summary', 'stageCounts'));
     }
+
+    /**
+     * Determine the current assessment stage for an enrollment
+     */
+    private function getAssessmentStageDetailed($enrollment)
+    {
+        $userId = $enrollment->user_id;
+        $courseId = $enrollment->course_id;
+
+        // 1. Check for Quiz (Part A)
+        $quiz = Assessment::where('course_id', $courseId)
+            ->where('assessment_level', 'quiz')
+            ->first();
+
+        if (!$quiz) {
+            return ['label' => 'No Assessments', 'key' => 'not_started'];
+        }
+
+        $quizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
+            ->where('user_id', $userId)
+            ->latest()
+            ->first();
+
+        // If no quiz attempt yet
+        if (!$quizSubmission) {
+            return ['label' => 'Not Started', 'key' => 'not_started'];
+        }
+
+        // If quiz failed or in progress
+        if (!$quizSubmission->passed) {
+            return ['label' => 'Quiz (Failed/Retry)', 'key' => 'quiz_stage'];
+        }
+
+        // 2. Check for Essay/Project (Part B)
+        $essayAssessment = Assessment::where('course_id', $courseId)
+            ->whereIn('assessment_level', ['diploma', 'project', 'module_assessment'])
+            ->whereHas('questions', function($q) {
+                $q->where('question_type', 'essay');
+            })
+            ->first();
+
+        if (!$essayAssessment) {
+            return ['label' => 'Quiz Passed', 'key' => 'completed'];
+        }
+
+        $essaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
+            ->where('user_id', $userId)
+            ->latest()
+            ->first();
+
+        if (!$essaySubmission) {
+            return ['label' => 'Ready for Essay', 'key' => 'essay_stage'];
+        }
+
+        if ($essaySubmission->status === 'submitted' || $essaySubmission->status === 'in_progress') {
+            return ['label' => 'Essay Under Review', 'key' => 'essay_stage'];
+        }
+
+        if ($essaySubmission->status === 'graded') {
+            return ['label' => 'Assessment Completed', 'key' => 'completed'];
+        }
+
+        return ['label' => 'Quiz Passed', 'key' => 'quiz_stage'];
+    }
+    
 
     public function export(Request $request)
     {

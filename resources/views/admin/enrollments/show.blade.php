@@ -1,4 +1,4 @@
-@extends('admin.layouts.app') {{-- Adjust this to your actual admin layout --}}
+@extends('admin.layouts.app')
 
 @section('title', 'Enrollment Details')
 
@@ -78,13 +78,24 @@
                 <div class="card-body">
                     @if($enrollment->course)
                     <div class="d-flex align-items-start">
-                        @if($enrollment->course->image_url)
-                            <img src="{{ Storage::url($enrollment->course->image_url) }}" alt="{{ $enrollment->course->title }}" class="rounded me-3" style="width: 100px; height: 100px; object-fit: cover;">
-                        @else
-                            <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                        {{-- CORRECTED IMAGE LOGIC --}}
+                        @php
+                            // Check if image_url exists and if the file physically exists in storage
+                            $courseImage = $enrollment->course->image_url;
+                            $hasCourseImage = $courseImage && \Illuminate\Support\Facades\Storage::disk('public')->exists($courseImage);
+                        @endphp
+
+                        @if($hasCourseImage)
+                            <img src="{{ Storage::url($courseImage) }}" 
+                                 alt="{{ $enrollment->course->title }}" 
+                                 class="rounded me-3 shadow-sm" 
+                                 style="width: 100px; height: 100px; object-fit: cover;">
+                        @else 
+                            <div class="bg-light border rounded me-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
                                 <i class="fas fa-book text-muted fa-2x"></i>
                             </div>
                         @endif
+                        
                         <div>
                             <h5 class="mb-1">{{ $enrollment->course->title }}</h5>
                             <p class="text-muted mb-2">{{ Str::limit($enrollment->course->short_description, 150) }}</p>
@@ -111,13 +122,24 @@
                 <div class="card-body text-center">
                     @if($enrollment->user)
                         <div class="mb-3">
-                            @if($enrollment->user->profile_picture)
-                                <img src="{{ Storage::url($enrollment->user->profile_picture) }}" class="rounded-circle mb-2" width="80" height="80" style="object-fit: cover;">
+                            {{-- CORRECTED USER IMAGE LOGIC --}}
+                            @php
+                                $userAvatar = $enrollment->user->profile_picture ?? $enrollment->user->avatar; // Check both fields
+                                $hasUserImage = $userAvatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($userAvatar);
+                            @endphp
+
+                            @if($hasUserImage)
+                                <img src="{{ Storage::url($userAvatar) }}" 
+                                     class="rounded-circle mb-2 shadow-sm" 
+                                     width="80" 
+                                     height="80" 
+                                     style="object-fit: cover;">
                             @else
-                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px; font-size: 2rem;">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2 shadow-sm" style="width: 80px; height: 80px; font-size: 2rem;">
                                     {{ substr($enrollment->user->name, 0, 1) }}
                                 </div>
                             @endif
+                            
                             <h5 class="mb-1">{{ $enrollment->user->name }}</h5>
                             <p class="text-muted small mb-0">{{ $enrollment->user->email }}</p>
                             @if($enrollment->user->phone)
@@ -197,16 +219,14 @@
         </div>
     </div>
 </div>
-
+ 
 <!-- Delete Confirmation Modal Script -->
 <script>
 function confirmDelete(id) {
     if(confirm('Are you sure you want to delete this enrollment? This action cannot be undone.')) {
-        // You can implement an AJAX delete or a form submission here
-        // For now, assuming you have a destroy route
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/admin/enrollments/' + id; // Adjust route prefix if needed
+        form.action = '{{ route("admin.enrollments.destroy", ":id") }}'.replace(':id', id);
         form.innerHTML = '@csrf @method("DELETE")';
         document.body.appendChild(form);
         form.submit();

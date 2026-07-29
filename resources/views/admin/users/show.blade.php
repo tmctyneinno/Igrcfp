@@ -245,7 +245,7 @@
             <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h6 class="card-title mb-0">Course Enrollments ({{ $user->enrollments->count() }})</h6>
-                </div>
+                </div>  
                 <div class="card-body p-0">
                     @if($user->enrollments->count() > 0)
                     <div class="table-responsive">
@@ -475,7 +475,7 @@
     .h-30-px { height: 30px; }
     .rounded-8 { border-radius: 8px; }
     .object-fit-cover { object-fit: cover; }
-    .mb-20 { margin-bottom: 20px; }
+    .mb-20 { margin-bottom: 20px; } 
     .mt-16 { margin-top: 16px; }
     .pt-16 { padding-top: 16px; }
     .icon-2x { font-size: 2rem; }
