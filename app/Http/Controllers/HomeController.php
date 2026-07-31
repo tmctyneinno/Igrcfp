@@ -17,11 +17,12 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
 use App\Models\Article;
- 
+
 class HomeController extends Controller
 {
     public function index()
     {
+        // 1. Featured Courses Logic (Keep as is)
         $featuredCourses = Course::published()
             ->withCount('modules')
             ->where('is_featured', true)
@@ -30,7 +31,7 @@ class HomeController extends Controller
             ->take(4)
             ->get();
  
-        // Get 4 random courses from the remaining
+        // 2. Random Courses Logic (Keep as is)
         $randomCourses = Course::published()
             ->withCount('modules')
             ->whereNotIn('id', $featuredCourses->pluck('id'))
@@ -38,34 +39,53 @@ class HomeController extends Controller
             ->take(4)
             ->get();
 
-        // Define scholarship eligible categories
-        $scholarshipCategories = [
-            'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
-        ];
-
-        // Merge and shuffle the collections
+        // Merge and shuffle for the Certification section
         $courses = $featuredCourses->merge($randomCourses)
             ->shuffle()
-            ->map(function ($course) use ($scholarshipCategories) {
+            ->map(function ($course) {
                 return [
                     'id' => $course->id,
                     'title' => $course->title,
                     'slug' => $course->slug,
                     'short_description' => $course->short_description,
-                    'banner_image' => $course->banner_image, 
-                    'image_url' => $course->image_url, 
+                    'banner_image' => $course->banner_image ? asset('storage/' . $course->banner_image) : null,
+                    'image_url' => $course->image_url ? asset('storage/' . $course->image_url) : null,
                     'level' => $course->level,
                     'duration' => $course->duration,
                     'price' => $course->price,
                     'discount_price' => $course->discount_price,
                     'modules_count' => $course->modules_count,
-                    // Check if this course is eligible for scholarship
-                    'is_scholarship_eligible' => in_array($course->igrcfp_category, $scholarshipCategories),
+                    'is_scholarship_eligible' => (bool) $course->is_scholarship_eligible,
                 ];
             });
 
-        // Get latest articles
+        // 3. Dynamic Course Categories for CourseCatalogue
+        // We group by the category column and count the items
+        $categoryGroups = Course::published()
+            ->select('igrcfp_category')
+            ->groupBy('igrcfp_category')
+            ->get()
+            ->map(function ($group) {
+                // Count how many courses are in this specific category
+                $count = Course::published()
+                    ->where('igrcfp_category', $group->igrcfp_category)
+                    ->count();
+                
+                // Get one sample course title for the "e.g." text
+                $sampleCourse = Course::published()
+                    ->where('igrcfp_category', $group->igrcfp_category)
+                    ->value('title');
+
+                return [
+                    'name' => $group->igrcfp_category,
+                    'count' => $count,
+                    'sampleCourse' => $sampleCourse ?? 'View Courses',
+                    'icon' => '🏛️', // You can customize this later
+                    'color' => 'blue'
+                ];
+            });
+
+        // 4. Articles, Events, and Blogs (Keep your existing logic)
         $latestArticles = Article::where('status', 'published')
             ->latest('published_at')
             ->take(4)
@@ -151,7 +171,6 @@ class HomeController extends Controller
                 ];
             });
 
-
         return Inertia::render('Welcome', [
             'canLogin' => \Route::has('login'),
             'canRegister' => \Route::has('register'),
@@ -160,8 +179,10 @@ class HomeController extends Controller
             'featuredArticles' => $featuredArticles,
             'homepageEvents' => $homepageEvents,
             'latestBlogs' => $latestBlogs,
+            'courseCategories' => $categoryGroups, // Pass the dynamic categories here
         ]);
     }
+
  
     public function welcomeToIGRCFP()
     {
@@ -827,7 +848,7 @@ class HomeController extends Controller
         // ✅ If fails: Inertia handles this automatically
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
-        }
+        } 
 
         // ✅ Save to database
         ResearchContact::create($validator->validated());

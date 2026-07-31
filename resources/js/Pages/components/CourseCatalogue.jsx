@@ -4,11 +4,15 @@ import { fadeLeft, scaleIn } from "@/utils/motionPresets";
 import React from "react";
 
 export default function CourseCatalogue({ courseCategories }) {
+    // Fallback if no categories are found
+    if (!courseCategories || courseCategories.length === 0) {
+        return null;
+    }
+
     return (
         <section className="bg-gray-50 py-16">
             <div className="max-w-7xl mx-auto px-6">
-                {/* Header */}
-                <motion.div
+                <motion.div 
                     variants={fadeLeft}
                     initial="hidden"
                     whileInView="visible"
@@ -37,7 +41,6 @@ export default function CourseCatalogue({ courseCategories }) {
                     </Link>
                 </motion.div>
 
-                {/* Categories Grid */}
                 <motion.div
                     variants={scaleIn}
                     initial="hidden"
@@ -52,7 +55,7 @@ export default function CourseCatalogue({ courseCategories }) {
                             transition={{ delay: index * 0.1 }}
                         >
                             <Link
-                                href={route('course.catalog.index')}
+                                href={route('course.catalog.index', { category: category.name })}
                                 className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200"
                             >
                                 <div className="flex items-start justify-between mb-4">

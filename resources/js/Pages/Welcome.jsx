@@ -15,8 +15,9 @@ import MembershipPathways from "@/Pages/components/MembershipPathways";
 import Articles from "@/Pages/components/Articles";
 import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
-import CourseCatalogue from "@/Pages/components/CourseCatalogue";import PartnersSlider from '@/Pages/About/PartnersSlider'; 
-   
+import CourseCatalogue from "@/Pages/components/CourseCatalogue";
+import PartnersSlider from '@/Pages/About/PartnersSlider'; 
+    
  
 export default function Welcome({ auth, courses, latestArticles = [], featuredArticles = [], homepageEvents = [], latestBlogs = [] }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -69,7 +70,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
         }
     ];
 
-
+ 
     return (
          <GuestLayout auth={auth} forceWhiteNavbar>
             <Head title="IGRCFP - Professional Learning Platform" />
@@ -106,7 +107,7 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
              
             {/* <WhatWeOffer auth={auth} /> */}
 
-            <CourseCatalogue courseCategories={courseCategories}/>
+             <CourseCatalogue courseCategories={courseCategories}/>
  
             <Certification courses={courses} />
 
