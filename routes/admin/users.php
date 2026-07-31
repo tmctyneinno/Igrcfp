@@ -57,4 +57,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     // In your admin routes file
     Route::post('/users/{user}/toggle-scholarship', [UserManagementController::class, 'toggleScholarship'])
     ->name('users.toggle-scholarship');
+    
+    Route::get('/users/{user}/scholarship-courses', [UserManagementController::class, 'scholarshipCourses'])
+        ->name('users.scholarship-courses');
+    Route::post('/users/{user}/scholarship-courses', [UserManagementController::class, 'updateScholarshipCourses'])
+        ->name('users.update-scholarship-courses');
+
 });

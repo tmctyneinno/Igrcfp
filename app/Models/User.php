@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\CustomResetPasswordNotification;
-  
+   
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -625,5 +625,24 @@ public function getCompletedAssessmentsAttribute()
     public function chapters()
     {
         return $this->belongsToMany(Chapter::class);
+    }
+
+
+    // Add to fillable if needed, but pivot is managed via sync/attach
+    // Add relationship:
+    public function scholarshipCourses()
+    {
+        return $this->belongsToMany(Course::class, 'scholarship_courses')
+            ->withPivot('assigned_at', 'assigned_by')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if user has scholarship access to a specific course
+     */
+    public function hasScholarshipAccess(Course|int $course): bool
+    {
+        $courseId = $course instanceof Course ? $course->id : $course;
+        return $this->scholarshipCourses()->where('courses.id', $courseId)->exists();
     }
 } 

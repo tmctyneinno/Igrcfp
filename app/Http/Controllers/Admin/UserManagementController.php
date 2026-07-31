@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ScholarshipCourseAssignedMail;
 use App\Models\User;
+use App\Models\Course;
 use App\Models\Assessment;
 use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
- 
+  
 class UserManagementController extends Controller
 { 
     public function index(Request $request)
@@ -254,4 +256,77 @@ class UserManagementController extends Controller
 
         return back()->with('success', $message);
     }
-}
+
+ 
+    public function scholarshipCourses(User $user, Request $request)
+    {
+        $assignedCourseIds = $user->scholarshipCourses()->pluck('courses.id')->toArray();
+        
+        $search = $request->get('search');
+        $categoryFilter = $request->get('category');
+
+        // Define eligible categories for reference
+        $eligibleCategories = [
+            'IGRCFP Certificates',
+            'Certified GRC & Financial Crime Specialist'
+        ]; 
+
+        $query = Course::published()
+            ->whereIn('igrcfp_category', $eligibleCategories);
+
+        // Filter by Search Term (Title or Category)
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('igrcfp_category', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by Specific Category
+        if ($categoryFilter) {
+            $query->where('igrcfp_category', $categoryFilter);
+        }
+
+        $availableCourses = $query->orderBy('title')->get();
+
+        return view('admin.users.scholarship-courses', compact(
+            'user', 
+            'availableCourses', 
+            'assignedCourseIds', 
+            'eligibleCategories',
+            'search',
+            'categoryFilter'
+        ));
+    }
+
+    public function updateScholarshipCourses(Request $request, User $user)
+    {
+        $request->validate([
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'exists:courses,id',
+        ]);
+
+        $newCourseIds = $request->input('course_ids', []);
+        $currentCourseIds = $user->scholarshipCourses()->pluck('courses.id')->toArray();
+        
+        // Find newly added courses
+        $newlyAssigned = array_diff($newCourseIds, $currentCourseIds);
+
+        // Sync with extra pivot data
+        $syncData = [];
+        foreach ($newCourseIds as $courseId) {
+            $syncData[$courseId] = ['assigned_by' => auth()->id()];
+        }
+        $user->scholarshipCourses()->sync($syncData);
+
+        // Send emails ONLY for newly assigned courses
+        foreach ($newlyAssigned as $courseId) {
+            $course = Course::find($courseId);
+            if ($course) {
+                Mail::to($user->email)->queue(new ScholarshipCourseAssignedMail($user, $course));
+            }
+        }
+        return back()->with('success', 'Scholarship courses updated successfully. Notifications sent for new assignments.');
+    }
+
+} 

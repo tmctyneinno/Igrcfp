@@ -38,7 +38,6 @@ class DashboardController extends Controller
         // Define scholarship eligible categories
         $scholarshipCategories = [
             'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
         ]; 
 
         // Get course categories with course counts
@@ -401,7 +400,6 @@ class DashboardController extends Controller
         // Define scholarship eligible categories
         $scholarshipCategories = [
             'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
         ];
 
         // Transform courses for the frontend
@@ -674,7 +672,6 @@ class DashboardController extends Controller
     // Define scholarship eligible categories
     $scholarshipCategories = [
         'IGRCFP Certificates',
-        'Certified GRC & Financial Crime Specialist'
     ];
     
     // Check if course is eligible for scholarship

@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="dashboard-main-body">
+<!-- ADDED pb-5 to ensure bottom padding so footer doesn't overlap -->
+<div class="dashboard-main-body pb-5">
     <!-- Breadcrumb & Header -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">User Details</h6>
@@ -28,11 +29,15 @@
         </div>
     @endif
 
-    <div class="row gy-4">
+    <!-- ADDED h-100 to row to ensure columns stretch equally if needed -->
+    <div class="row gy-4 h-100">
+        
         <!-- Left Column: Profile & Stats -->
-        <div class="col-lg-4">
+        <!-- ADDED d-flex flex-column to allow internal stretching -->
+        <div class="col-lg-4 d-flex flex-column">
+            
             <!-- Profile Card -->
-            <div class="card h-100">
+            <div class="card">
                 <div class="card-header border-bottom bg-base py-16 px-24">
                     <h6 class="card-title mb-0">Profile Information</h6>
                 </div>
@@ -47,7 +52,7 @@
                             <img src="{{ Storage::url($avatarPath) }}" alt="{{ $user->name }}" 
                                  class="w-100-px h-100-px rounded-circle object-fit-cover mb-3 border border-2 border-light">
                         @else
-                            <div class="w-50-px h-50-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center mx-auto mb-3 border border-2 border-light">
+                            <div class="w-100-px h-100-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center mx-auto mb-3 border border-2 border-light">
                                 <span class="text-primary-600 fw-bold fs-4">{{ substr($user->name, 0, 1) }}</span>
                             </div>
                         @endif
@@ -96,22 +101,25 @@
                 </div>
             </div>
 
-            <!-- Scholarship Card -->
-            <div class="card mt-24 border-emerald-200">
-                <div class="card-header bg-emerald-50 border-bottom border-emerald-100 py-16 px-24 d-flex align-items-center justify-content-between">
+            <!-- Scholarship Management Card -->
+            <!-- ADDED mt-24 and mb-4 for spacing -->
+            <div class="card mt-24 border-emerald-200 mb-4">
+                <div class="card-header bg-emerald-50 border-bottom border-emerald-100 py-16 px-24">
                     <h6 class="card-title mb-0 text-emerald-700">Scholarship Access</h6>
                 </div>
                 <div class="card-body p-24">
+                    
+                    <!-- 1. Global Category Access Toggle -->
                     <form action="{{ route('admin.users.toggle-scholarship', $user) }}" method="POST">
                         @csrf
-                        <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center justify-content-between mb-16 pb-16 border-bottom border-neutral-100">
                             <div>
-                                <p class="mb-1 fw-medium">Grant Privileges</p>
-                                <p class="text-sm text-secondary-light mb-0">
-                                    Enable free enrollment for certification courses.
+                                <p class="mb-1 fw-medium text-dark">Global Category Access</p>
+                                <p class="text-xs text-secondary-light mb-0">
+                                    Grants free enrollment for all eligible certification categories.
                                 </p>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch ms-3">
                                 <input class="form-check-input" type="checkbox" name="is_scholarship_applicant" id="scholarshipToggle" 
                                        {{ $user->is_scholarship_applicant ? 'checked' : '' }}
                                        onchange="this.form.submit()">
@@ -119,6 +127,36 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- 2. Individual Course Assignments -->
+                    <div class="mt-16">
+                        <div class="d-flex align-items-center justify-content-between mb-12">
+                            <p class="fw-medium text-dark mb-0">Individual Course Assignments</p>
+                            <a href="{{ route('admin.users.scholarship-courses', $user) }}" 
+                               class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                <iconify-icon icon="solar:pen-new-square-linear" class="icon"></iconify-icon>
+                                Manage
+                            </a>
+                        </div>
+                        
+                        @if(isset($user->scholarshipCourses) && $user->scholarshipCourses->count() > 0)
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($user->scholarshipCourses as $sc)
+                                    <span class="badge bg-emerald-100 text-emerald-700 radius-4 px-10 py-5 text-xs fw-normal border border-emerald-200">
+                                        {{ Str::limit($sc->title, 25) }}
+                                    </span>
+                                @endforeach
+                            </div>
+                            <p class="text-xs text-secondary-light mt-2 mb-0">
+                                {{ $user->scholarshipCourses->count() }} course(s) assigned individually.
+                            </p>
+                        @else
+                            <p class="text-xs text-secondary-light fst-italic mb-0">
+                                No individual courses assigned. Use "Manage" to assign specific courses.
+                            </p>
+                        @endif
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -184,7 +222,7 @@
                                     <th>Date</th>
                                     <th>Progress</th>
                                     <th>Status</th>
-                                    <th>Assessment Stage</th> {{-- NEW COLUMN --}}
+                                    <th>Assessment Stage</th>
                                     <th>Certificate</th>
                                 </tr>
                             </thead>
@@ -232,7 +270,7 @@
                                         </span>
                                     </td>
                                     
-                                    {{-- NEW: Assessment Stage Cell --}}
+                                    {{-- Assessment Stage Cell --}}
                                     <td>
                                         @php
                                             $stage = $enrollment->assessment_stage ?? ['label' => 'Unknown', 'class' => 'secondary'];
@@ -242,7 +280,7 @@
                                         </span>
                                     </td>
 
-                                    <td>
+                                    <td> 
                                         @if($enrollment->certificate_generated) 
                                             <a href="{{ route('admin.certificates.download', $enrollment->id) }}" class="text-success-600 hover-text-success-700" title="Download Certificate">
                                                 <iconify-icon icon="solar:document-text-linear" class="icon-xl"></iconify-icon>
@@ -349,6 +387,7 @@
     /* Custom Badge Colors */
     .bg-emerald-50 { background-color: #ecfdf5 !important; }
     .border-emerald-100 { border-color: #d1fae5 !important; }
+    .border-emerald-200 { border-color: #a7f3d0 !important; }
     .text-emerald-700 { color: #047857 !important; }
 </style>
 @endpush

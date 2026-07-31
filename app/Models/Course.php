@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class Course extends Model
 {
     use SoftDeletes;
- 
+  
     protected $fillable = [
         'title',
         'slug',
@@ -305,9 +305,16 @@ public function finalExam()
     return $this->hasOne(Assessment::class)->where('assessment_level', 'final_exam');
 }
 
-public function diplomaAssessment()
-{
-    return $this->hasOne(Assessment::class)->where('assessment_level', 'diploma');
-}
+    public function diplomaAssessment()
+    {
+        return $this->hasOne(Assessment::class)->where('assessment_level', 'diploma');
+    }
+
+    public function scholarshipUsers()
+    {
+        return $this->belongsToMany(User::class, 'scholarship_courses')
+            ->withPivot('assigned_at', 'assigned_by')
+            ->withTimestamps();
+    }
    
 }

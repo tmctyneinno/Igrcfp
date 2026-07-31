@@ -203,7 +203,7 @@
                                             No Transactions
                                         </span>
                                     @endif
-                                </td>
+                                </td> 
                                 <td class="text-center">
                                     @php
                                         $roleColors = [

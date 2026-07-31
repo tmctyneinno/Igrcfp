@@ -106,7 +106,6 @@ class CourseController extends Controller
         // Check if course is eligible for scholarship
         $scholarshipCategories = [
             'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
         ];
         $isScholarshipEligible = in_array($course->igrcfp_category, $scholarshipCategories);
 
@@ -420,7 +419,6 @@ class CourseController extends Controller
         // Define eligible categories for scholarship
         $scholarshipCategories = [
             'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist' // Added based on previous context
         ];
         
         $isCertificationCourse = in_array($course->igrcfp_category, $scholarshipCategories);
@@ -468,7 +466,7 @@ class CourseController extends Controller
             'price' => $course->discount_price ?? $course->price,
             'quantity' => 1,
         ]);
-        
+         
         $cart->update([
             'total_amount' => $cart->items->sum('price'),
             'item_count' => $cart->items->count(),

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ScholarshipApplication extends Model
 {
     use HasFactory;
-
+ 
     protected $fillable = [
         'post_id',
         'full_name',
