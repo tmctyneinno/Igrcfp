@@ -12,6 +12,8 @@ Route::prefix('v1')->group(function () {
     // --- PUBLIC ENDPOINT (No Authentication Required) ---
     // Anyone can access this list without a token or login
     Route::get('/courses', [CourseController::class, 'index']); 
+    Route::get('/courses/{course}', [CourseController::class, 'show']); // <--- Add this for public details
+ 
  
     // --- PROTECTED ENDPOINTS (Requires Authentication) ---
     Route::middleware(['auth:sanctum'])->group(function () {
