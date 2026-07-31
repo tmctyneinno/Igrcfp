@@ -24,5 +24,5 @@ class CourseResource extends JsonResource
             // Include related modules if they are loaded
             'modules' => ModuleResource::collection($this->whenLoaded('modules')),
         ];
-    }
+    } 
 }
