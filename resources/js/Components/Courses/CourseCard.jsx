@@ -1,30 +1,21 @@
+// resources/js/components/Courses/CourseCard.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext';
-import { CheckCircleIcon } from '@heroicons/react/24/solid'; // Added for icon
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
    
-export default function CourseCard({ course, onAddToCart, isInCart, isAdding, isEnrolled }) {
+export default function CourseCard({ course, scholarshipCourseIds = [] }) {
     const { props } = usePage();
     const { removeFromCart } = useCart();
-    const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
-    
-    // Extract user data from props
+    const [isCourseInCart, setIsCourseInCart] = useState(false);
+     
     const authUser = props.auth?.user;
      
-    // Use truthy check for 1/0 or true/false
-    const isScholarshipApplicant = !!authUser?.is_scholarship_applicant;
-     
-    // Check if course is eligible (passed from backend in index/show methods)
-    const isEligibleCourse = course?.is_scholarship_eligible === true; 
-
-    // Only show scholarship button if BOTH are true
-    const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
-
-    useEffect(() => {
-        setIsCourseInCart(isInCart || false);
-    }, [isInCart]);
-
-    const enrolled = Boolean(course?.is_enrolled ?? isEnrolled);
+    // LOGIC CHANGE:
+    // Instead of checking category eligibility, we check if the course ID 
+    // exists in the scholarshipCourseIds array passed from the parent.
+    const isIndividuallyAssigned = scholarshipCourseIds.includes(course?.id);
 
     useEffect(() => {
         if (props.cart?.items && course?.id) {
@@ -63,7 +54,9 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
     const discountPrice = parseFloat(course?.discount_price || 0);
     const hasDisc = hasDiscount();
     
-    // Handle Direct Enrollment for Scholarship Applicants
+    const enrolled = Boolean(course?.is_enrolled);
+
+    // Handle Direct Enrollment for Scholarship Users
     const handleScholarshipEnroll = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -161,11 +154,12 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                 {/* Price & Action Row */}
                 <div className="flex items-center justify-between mt-auto">
                     
-                    {/* PRICE SECTION - Hidden for scholarship users */}
-                    {canUseScholarship ? (
+                    {/* PRICE SECTION */}
+                    {/* Show Scholarship Label ONLY if individually assigned */}
+                    {isIndividuallyAssigned ? (
                         <span className="text-sm font-semibold text-emerald-600 flex items-center gap-1">
                             <CheckCircleIcon className="w-4 h-4" />
-                            Scholarship Eligible
+                            Scholarship Assigned
                         </span>
                     ) : enrolled ? (
                         <span className="text-sm font-bold text-green-700">Enrolled</span>
@@ -192,11 +186,10 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         >
                             Continue
                         </Link>
-                    ) : canUseScholarship ? (
-                        /* SCHOLARSHIP APPLICANT BUTTON */
+                    ) : isIndividuallyAssigned ? (
+                        /* SCHOLARSHIP BUTTON (Only for assigned courses) */
                         <button
                             onClick={handleScholarshipEnroll}
-                            disabled={isAdding}
                             className="px-2 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-full hover:bg-emerald-700 transition shadow-sm flex items-center gap-2"
                         >
                             <CheckCircleIcon className="w-4 h-4" />
@@ -213,29 +206,13 @@ export default function CourseCard({ course, onAddToCart, isInCart, isAdding, is
                         /* REGULAR USER / GUEST BUTTON */
                         <button
                             onClick={handleAddToCartClick}
-                            disabled={isAdding}
-                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-2 py-2 bg-slate-400 text-white text-sm font-medium rounded-full hover:bg-slate-500 transition"
                         >
-                            {isAdding ? (
-                                <span className="flex items-center gap-1.5">
-                                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8z"></path>
-                                    </svg>
-                                    Adding...
-                                </span>
-                            ) : (
-                                <span className="flex items-center gap-1.5">
-                                    Enroll now
-                                    {/* <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg> */}
-                                </span>
-                            )}
+                            Enroll now
                         </button>
                     )}
                 </div>
             </div>
         </div>
     );
-} 
+}

@@ -61,29 +61,31 @@
                 <input type="hidden" name="search" value="{{ $search }}">
                 <input type="hidden" name="category" value="{{ $categoryFilter }}">
 
-                <div class="row g-3">
+                <div class="row g-3" id="course-list">
                     @forelse($availableCourses as $course)
                         <div class="col-md-6 col-lg-4">
-                            <div class="form-check card p-16 h-100 cursor-pointer transition-all {{ in_array($course->id, $assignedCourseIds) ? 'border-primary-600 bg-primary-50 shadow-sm' : 'border-neutral-200 hover-border-primary-300' }}" 
-                                 onclick="toggleCheckbox('course_{{ $course->id }}')">
+                            <!-- Added 'course-card' class for JS targeting -->
+                            <div class="course-card card p-16 h-100 cursor-pointer transition-all {{ in_array($course->id, $assignedCourseIds) ? 'border-primary-600 bg-primary-50 shadow-sm' : 'border-neutral-200' }}">
                                 
-                                <input class="form-check-input position-static mt-1 me-2" type="checkbox" 
-                                       name="course_ids[]" 
-                                       value="{{ $course->id }}" 
-                                       id="course_{{ $course->id }}"
-                                       {{ in_array($course->id, $assignedCourseIds) ? 'checked' : '' }}>
-                                
-                                <label class="form-check-label w-100 pt-1" for="course_{{ $course->id }}">
-                                    <span class="fw-medium d-block text-dark">{{ $course->title }}</span>
-                                    <span class="badge bg-neutral-100 text-neutral-600 radius-4 px-6 py-2 text-xs mt-1 d-inline-block">
-                                        {{ $course->igrcfp_category }}
-                                    </span>
-                                    <div class="small text-muted d-block mt-2">
-                                        <iconify-icon icon="solar:layer-linear" class="icon-xs me-1"></iconify-icon> {{ $course->level }} 
-                                        <span class="mx-1">•</span> 
-                                        <iconify-icon icon="solar:clock-circle-linear" class="icon-xs me-1"></iconify-icon> {{ $course->duration }}
-                                    </div>
-                                </label>
+                                <div class="d-flex align-items-start">
+                                    <input class="form-check-input mt-1 me-3" type="checkbox" 
+                                           name="course_ids[]" 
+                                           value="{{ $course->id }}" 
+                                           id="course_{{ $course->id }}"
+                                           {{ in_array($course->id, $assignedCourseIds) ? 'checked' : '' }}>
+                                    
+                                    <label class="form-check-label w-100" for="course_{{ $course->id }}">
+                                        <span class="fw-medium d-block text-dark">{{ $course->title }}</span>
+                                        <span class="badge bg-neutral-100 text-neutral-600 radius-4 px-6 py-2 text-xs mt-1 d-inline-block">
+                                            {{ $course->igrcfp_category }}
+                                        </span>
+                                        <div class="small text-muted d-block mt-2">
+                                            <iconify-icon icon="solar:layer-linear" class="icon-xs me-1"></iconify-icon> {{ $course->level }} 
+                                            <span class="mx-1">•</span> 
+                                            <iconify-icon icon="solar:clock-circle-linear" class="icon-xs me-1"></iconify-icon> {{ $course->duration }}
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     @empty
@@ -112,32 +114,69 @@
 </div>
 @endsection
 
-@push('scripts')
-<script>
-    function toggleCheckbox(id) {
-        const checkbox = document.getElementById(id);
-        // Prevent double-toggling if clicking directly on the checkbox input
-        if (event.target.type !== 'checkbox') {
-            checkbox.checked = !checkbox.checked;
-        }
-        
-        // Visual feedback logic
-        const card = checkbox.closest('.card');
-        if (checkbox.checked) {
-            card.classList.add('border-primary-600', 'bg-primary-50', 'shadow-sm');
-            card.classList.remove('border-neutral-200');
-        } else {
-            card.classList.remove('border-primary-600', 'bg-primary-50', 'shadow-sm');
-            card.classList.add('border-neutral-200');
-        }
-    }
-</script>
-@endpush
-
 @push('styles')
 <style>
     .cursor-pointer { cursor: pointer; }
     .transition-all { transition: all 0.2s ease-in-out; }
-    .hover-border-primary-300:hover { border-color: #93c5fd !important; }
+    
+    /* Custom State Styles */
+    .course-card.selected {
+        background-color: #eff6ff !important; /* bg-primary-50 equivalent */
+        border-color: #2563eb !important;     /* border-primary-600 equivalent */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .course-card:not(.selected) {
+        background-color: #fff;
+        border-color: #e5e7eb; /* border-neutral-200 */
+    }
+    
+    .course-card:hover:not(.selected) {
+        border-color: #93c5fd; /* hover effect */
+        background-color: #f9fafb;
+    }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.course-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Find the checkbox inside this card
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            
+            // If the click was directly on the checkbox, let it behave normally
+            // but still update the style. If it was on the card, toggle manually.
+            if (e.target !== checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+            
+            // Trigger change event to ensure any other listeners catch it
+            checkbox.dispatchEvent(new Event('change'));
+            
+            // Update Visual Style
+            updateCardStyle(this, checkbox.checked);
+        });
+    });
+
+    // Initial style check for pre-checked items
+    cards.forEach(card => {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        updateCardStyle(card, checkbox.checked);
+    });
+});
+
+function updateCardStyle(card, isChecked) {
+    if (isChecked) {
+        card.classList.add('selected');
+        card.classList.remove('border-neutral-200');
+    } else {
+        card.classList.remove('selected');
+        card.classList.add('border-neutral-200');
+    }
+}
+</script>
 @endpush

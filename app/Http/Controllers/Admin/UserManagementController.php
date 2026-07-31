@@ -9,10 +9,20 @@ use App\Models\Course;
 use App\Models\Assessment;
 use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use App\Services\BrevoMailService; // Import the Service
   
 class UserManagementController extends Controller
 { 
+    protected $brevoService;
+
+    // Inject the Brevo Service via Constructor
+    public function __construct(BrevoMailService $brevoService)
+    {
+        $this->brevoService = $brevoService;
+    }
+
     public function index(Request $request)
     {
         $search = $request->get('search');
@@ -268,9 +278,9 @@ class UserManagementController extends Controller
         // Define eligible categories for reference
         $eligibleCategories = [
             'IGRCFP Certificates',
-            'Certified GRC & Financial Crime Specialist'
+            // 'Certified GRC & Financial Crime Specialist'
         ]; 
-
+ 
         $query = Course::published()
             ->whereIn('igrcfp_category', $eligibleCategories);
 
@@ -299,7 +309,7 @@ class UserManagementController extends Controller
         ));
     }
 
-    public function updateScholarshipCourses(Request $request, User $user)
+   public function updateScholarshipCourses(Request $request, User $user)
     {
         $request->validate([
             'course_ids' => 'nullable|array',
@@ -307,10 +317,13 @@ class UserManagementController extends Controller
         ]);
 
         $newCourseIds = $request->input('course_ids', []);
-        $currentCourseIds = $user->scholarshipCourses()->pluck('courses.id')->toArray();
+        
+        // Ensure consistent types for comparison (string vs int issues)
+        $currentCourseIds = $user->scholarshipCourses()->pluck('courses.id')->map(fn($id) => (string)$id)->toArray();
+        $newCourseIdsString = array_map('strval', $newCourseIds);
         
         // Find newly added courses
-        $newlyAssigned = array_diff($newCourseIds, $currentCourseIds);
+        $newlyAssigned = array_diff($newCourseIdsString, $currentCourseIds);
 
         // Sync with extra pivot data
         $syncData = [];
@@ -319,14 +332,35 @@ class UserManagementController extends Controller
         }
         $user->scholarshipCourses()->sync($syncData);
 
-        // Send emails ONLY for newly assigned courses
+        // Send emails ONLY for newly assigned courses using Brevo
+        $emailsSent = 0;
         foreach ($newlyAssigned as $courseId) {
             $course = Course::find($courseId);
             if ($course) {
-                Mail::to($user->email)->queue(new ScholarshipCourseAssignedMail($user, $course));
+                try {
+                    $mailable = new ScholarshipCourseAssignedMail($user, $course);
+                    
+                    // Use your custom Brevo service
+                    $this->brevoService->sendMailable(
+                        $user->email, 
+                        $mailable, 
+                        'Scholarship Course Assigned: ' . $course->title
+                    );
+                    
+                    $emailsSent++;
+                } catch (\Exception $e) {
+                    Log::error('Failed to send scholarship email via Brevo: ' . $e->getMessage());
+                }
             }
         }
-        return back()->with('success', 'Scholarship courses updated successfully. Notifications sent for new assignments.');
+
+        $message = 'Scholarship courses updated successfully.';
+        if ($emailsSent > 0) {
+            $message .= " {$emailsSent} notification(s) sent.";
+        }
+
+        return back()->with('success', $message);
     }
+
 
 } 

@@ -2,16 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { useCart } from '@/contexts/CartContext';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-
-export default function DashboardCourseCard({ course, onAddToCart, onScholarshipEnroll, isInCart, isAdding, isEnrolled }) {
+ 
+export default function DashboardCourseCard({ 
+    course, 
+    onAddToCart, 
+    onScholarshipEnroll, 
+    isInCart, 
+    isAdding, 
+    isEnrolled,
+    scholarshipCourseIds = [] // Receive the list of assigned IDs
+}) {
     const { props } = usePage();
     const { removeFromCart } = useCart();
     const [isCourseInCart, setIsCourseInCart] = useState(isInCart || false);
     
     const authUser = props.auth?.user;
-    const isScholarshipApplicant = !!authUser?.is_scholarship_applicant;
-    const isEligibleCourse = course?.is_scholarship_eligible === true;
-    const canUseScholarship = isScholarshipApplicant && isEligibleCourse;
+    
+    // 1. Check if this specific course ID is in the assigned scholarship list
+    const isIndividuallyAssigned = scholarshipCourseIds.includes(course?.id);
+
+    // 2. Fallback to global category logic if individual list is empty or for backward compatibility
+    const isGlobalScholarshipApplicant = !!authUser?.is_scholarship_applicant;
+    const isEligibleCategory = course?.is_scholarship_eligible === true;
+    
+    // User can use scholarship if they are individually assigned OR (Globally eligible AND Category matches)
+    const canUseScholarship = isIndividuallyAssigned || (isGlobalScholarshipApplicant && isEligibleCategory);
 
     useEffect(() => {
         setIsCourseInCart(isInCart || false);
@@ -60,11 +75,16 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
         e.preventDefault();
         e.stopPropagation();
         
-        router.post(route('courses.enroll', course.slug), {}, {
-            preserveScroll: true,
-            onSuccess: () => window.location.reload(),
-            onError: (errors) => console.error("Enrollment failed", errors)
-        });
+        // Use the prop function if provided, otherwise fallback to router
+        if (onScholarshipEnroll) {
+            onScholarshipEnroll(course);
+        } else {
+            router.post(route('courses.enroll', course.slug), {}, {
+                preserveScroll: true,
+                onSuccess: () => window.location.reload(),
+                onError: (errors) => console.error("Enrollment failed", errors)
+            });
+        }
     };
 
     const handleAddToCartClick = (e) => {
@@ -91,7 +111,7 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
             className="bg-white rounded-[24px] shadow-md shadow-blue-100 border border-blue-100 hover:shadow-lg hover:shadow-blue-200/70 transition-shadow duration-300 h-full flex flex-col overflow-hidden"
             data-aos="fade-up"
         >
-            {/* Image */}
+            {/* Image */} 
             <Link href={route('dashboard.courses.show', course?.slug)} className="block h-48 overflow-hidden relative shrink-0">
                 <img
                     src={course?.image_url || '/images/fallback-course.jpg'}
@@ -210,9 +230,6 @@ export default function DashboardCourseCard({ course, onAddToCart, onScholarship
                             ) : (
                                 <span className="flex items-center gap-1.5">
                                     Enroll now
-                                    {/* <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg> */}
                                 </span>
                             )}
                         </button>

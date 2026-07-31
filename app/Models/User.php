@@ -645,4 +645,6 @@ public function getCompletedAssessmentsAttribute()
         $courseId = $course instanceof Course ? $course->id : $course;
         return $this->scholarshipCourses()->where('courses.id', $courseId)->exists();
     }
+
+    
 } 

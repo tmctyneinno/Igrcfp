@@ -7,8 +7,8 @@ import DashboardCourseCard from '@/components/Courses/DashboardCourseCard';
 import FilterSidebar from '@/components/Courses/FilterSidebar';
 import SearchBar from '@/components/Courses/SearchBar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-   
-export default function Courses({ auth, courses, filters, filterOptions }) {
+    
+export default function Index({ auth, courses, filters, filterOptions }) {
     const { addToCart, cartItems, refreshCart } = useCart();
     const { props } = usePage();
     const [addingToCart, setAddingToCart] = useState({});
@@ -18,6 +18,9 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
     const [showFilters, setShowFilters] = useState(true);
     const [selectedFilters, setSelectedFilters] = useState(filters);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+    // 1. Extract scholarship course IDs from auth user
+    const scholarshipCourseIds = auth?.user?.scholarship_course_ids || [];
 
     // Sync cart items
     useEffect(() => {
@@ -252,13 +255,14 @@ export default function Courses({ auth, courses, filters, filterOptions }) {
                                         <motion.div key={course.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.05 }}>
                                             <DashboardCourseCard   
                                                 course={course}  
+                                                scholarshipCourseIds={scholarshipCourseIds} // 2. PASS THE IDS HERE
                                                 onAddToCart={handleAddToCart}
-                                                onScholarshipEnroll={handleScholarshipEnroll} // Pass new handler
+                                                onScholarshipEnroll={handleScholarshipEnroll}
                                                 isInCart={isInCart(course.id)}
                                                 isAdding={addingToCart[course.id]}
                                             /> 
                                         </motion.div>
-                                    ))} 
+                                    ))}  
                                 </div>
                             ) : (
                                 <div className="text-center py-16 bg-white rounded-xl">

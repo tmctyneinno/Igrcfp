@@ -27,18 +27,63 @@ class DashboardController extends Controller
         $enrollmentRedirect = session('enrollment_redirect');
         
         if ($enrollmentRedirect) {
-            // Clear it from session after passing to frontend
             session()->forget('enrollment_redirect');
-            
             return inertia('Dashboard/Index', [
                 'enrollmentRedirect' => $enrollmentRedirect,
             ]);
         }
 
-        // Define scholarship eligible categories
-        $scholarshipCategories = [
-            'IGRCFP Certificates',
-        ]; 
+        $user = auth()->user();
+        $enrolledCourseIds = [];
+        $scholarshipCourseIds = [];
+        $unenrolledScholarshipCourses = collect();
+
+        if ($user) {
+            // 1. Get Enrolled IDs
+            $enrolledCourseIds = array_unique(array_merge(
+                $user->courses()->pluck('courses.id')->toArray(),
+                $user->enrollments()->pluck('course_id')->toArray()
+            ));
+
+            // 2. Get Individual Scholarship Course IDs
+            $scholarshipCourseIds = $user->scholarshipCourses()
+                ->pluck('courses.id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
+            // 3. Get Scholarship Courses NOT yet enrolled in (To display in My Learning as "Ready to Start")
+            $unenrolledScholarshipCourses = Course::published()
+                ->whereIn('id', $scholarshipCourseIds)
+                ->whereNotIn('id', $enrolledCourseIds)
+                ->with('category')
+                ->withCount('modules')
+                ->get()
+                ->map(function ($course) {
+                    return [
+                        'id' => $course->id,
+                        'title' => $course->title,
+                        'slug' => $course->slug,
+                        'short_description' => $course->short_description,
+                        'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                        'image_url' => $course->image_url,
+                        'level' => $course->level,
+                        'duration' => $course->duration,
+                        'price' => $course->price,
+                        'discount_price' => $course->discount_price,
+                        'modules_count' => $course->modules_count,
+                        'format' => $course->format,
+                        'is_enrolled' => false,
+                        'progress' => 0,
+                        'completed_modules' => 0,
+                        'category' => $course->category ? [
+                            'id' => $course->category->id,
+                            'name' => $course->category->name,
+                            'slug' => $course->category->slug,
+                            'icon' => $course->category->icon,
+                        ] : null,
+                    ];
+                });
+        }
 
         // Get course categories with course counts
         $categories = CourseCategory::where('is_active', true)
@@ -58,7 +103,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get available courses with category
+        // Get available courses (General)
         $courses = Course::published()
             ->with('category')
             ->withCount('modules')
@@ -67,7 +112,7 @@ class DashboardController extends Controller
             ->orderBy('sort_order', 'asc')
             ->take(6)
             ->get()
-            ->map(function ($course) use ($scholarshipCategories) {
+            ->map(function ($course) {
                 return [
                     'id' => $course->id,
                     'title' => $course->title,
@@ -86,14 +131,11 @@ class DashboardController extends Controller
                         'slug' => $course->category->slug,
                         'icon' => $course->category->icon,
                     ] : null,
-                    // Check if this course is eligible for scholarship
-                    'is_scholarship_eligible' => in_array($course->igrcfp_category, $scholarshipCategories),
                 ];
             });
         
-        // Get user's enrolled courses - Check if user is authenticated first
-        $user = auth()->user();
-        $enrolledCourses = collect(); // Empty collection by default
+        // Get user's enrolled courses
+        $enrolledCourses = collect(); 
         
         if ($user) {
             $enrolledCourses = Enrollment::where('user_id', $user->id)
@@ -103,12 +145,10 @@ class DashboardController extends Controller
                 ->take(4)
                 ->get()
                 ->map(function ($enrollment) {
-                    // Check if course exists
-                    if (!$enrollment->course) {
-                        return null;
-                    }
+                    if (!$enrollment->course) return null;
                     
                     $course = $enrollment->course;
+                    // Note: You might need to ensure calculateEnrollmentModuleProgress is accessible or inline it
                     $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
 
                     return [
@@ -135,16 +175,8 @@ class DashboardController extends Controller
                         ] : null,
                     ];
                 })
-                ->filter() // Remove null values
-                ->values(); // Reset array keys
-        }
-
-        $enrolledCourseIds = [];
-        if ($user) {
-            $enrolledCourseIds = array_unique(array_merge(
-                $user->courses()->pluck('courses.id')->toArray(),
-                $user->enrollments()->pluck('course_id')->toArray()
-            ));
+                ->filter()
+                ->values();
         }
         
         // Get popular courses
@@ -152,26 +184,13 @@ class DashboardController extends Controller
             ->with('category')
             ->where('is_popular', 1)
             ->select([
-                'id',
-                'title',
-                'slug',
-                'short_description',
-                'banner_image',
-                'image',
-                'level',
-                'format',
-                'duration',
-                'price',
-                'discount_price',
-                'is_featured',
-                'rating',
-                'category_id',
-                'igrcfp_category' // Added to check eligibility
+                'id', 'title', 'slug', 'short_description', 'banner_image', 'image',
+                'level', 'format', 'duration', 'price', 'discount_price', 'is_featured', 'rating', 'category_id'
             ])
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get()
-            ->map(function ($course) use ($enrolledCourseIds, $scholarshipCategories) {
+            ->map(function ($course) use ($enrolledCourseIds) {
                 return [
                     'id' => $course->id,
                     'title' => $course->title,
@@ -193,8 +212,6 @@ class DashboardController extends Controller
                         'slug' => $course->category->slug,
                         'icon' => $course->category->icon,
                     ] : null,
-                    // Check if this course is eligible for scholarship
-                    'is_scholarship_eligible' => in_array($course->igrcfp_category, $scholarshipCategories),
                 ];
             });
         
@@ -214,22 +231,24 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_scholarship_applicant' => $user->is_scholarship_applicant,
+                'scholarship_course_ids' => $scholarshipCourseIds, // Pass IDs
             ];
         }
-        
+         
         return Inertia::render('Dashboard/Index', [
             'auth' => [
                 'user' => $userData, 
             ],
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
+            'unenrolledScholarshipCourses' => $unenrolledScholarshipCourses, // Pass new data
             'popularCourses' => $popularCourses,
             'categories' => $categories,
             'stats' => $stats,
         ]);
     }
-
-    public function courses(Request $request, string $programme)
+  
+        public function courses(Request $request, string $programme)
     {
         $programmeConfig = [
             'certificates' => [
@@ -271,7 +290,8 @@ class DashboardController extends Controller
         $query = Course::published()
             ->where('igrcfp_category', $currentProgramme['category'])
             ->withCount('modules');
-        \Log::info('query:', ['query' => $query]);
+        
+        \Log::info('query:', ['query' => $query->toSql()]);
 
         // Search
         if ($request->has('search') && !empty($request->search)) {
@@ -281,7 +301,7 @@ class DashboardController extends Controller
                 ->orWhere('short_description', 'like', "%{$searchTerm}%")
                 ->orWhere('full_description', 'like', "%{$searchTerm}%");
             });
-        }
+        } 
 
         // Filter by level
         if ($request->has('level') && !empty($request->level)) {
@@ -379,6 +399,7 @@ class DashboardController extends Controller
         $courses = $query->paginate(20)->withQueryString();
 
         $enrolledCourseIds = [];
+        $scholarshipCourseIds = []; // Initialize empty array
         $currentUser = null;
 
         if (auth()->check()) {
@@ -388,22 +409,24 @@ class DashboardController extends Controller
                 $user->enrollments()->pluck('course_id')->toArray()
             ));
             
+            // Get INDIVIDUAL Scholarship Course IDs assigned to this user
+            $scholarshipCourseIds = $user->scholarshipCourses()
+                ->pluck('courses.id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+            
             // Prepare user data for frontend
             $currentUser = [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_scholarship_applicant' => $user->is_scholarship_applicant,
+                'scholarship_course_ids' => $scholarshipCourseIds, // Pass the IDs
             ];
         }
 
-        // Define scholarship eligible categories
-        $scholarshipCategories = [
-            'IGRCFP Certificates',
-        ];
-
         // Transform courses for the frontend
-        $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds, $scholarshipCategories) {
+        $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
             // Handle instructor relationship if it exists
             $instructorData = null;
             if (isset($course->instructor) && $course->instructor) {
@@ -429,14 +452,10 @@ class DashboardController extends Controller
                 'is_featured' => $course->is_featured,
                 'is_popular' => $course->is_popular,
                 'format' => $course->format,
-                'instructor' => isset($course->instructor) ? [
-                    'name' => $course->instructor->name,
-                    'avatar' => $course->instructor->avatar ?? null
-                ] : null,
+                'instructor' => $instructorData,
                 'created_at' => $course->created_at->format('M d, Y'),
                 'is_enrolled' => in_array($course->id, $enrolledCourseIds),
-                // Check if this course is eligible for scholarship
-                'is_scholarship_eligible' => in_array($course->igrcfp_category, $scholarshipCategories),
+                // Removed is_scholarship_eligible based on category
             ];
         });
  

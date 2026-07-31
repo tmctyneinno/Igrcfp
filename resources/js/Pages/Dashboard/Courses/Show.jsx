@@ -466,7 +466,7 @@ export default function Show({ course, enrollment, modules = [], auth }) {
             })}
           </nav>
         </div>
-
+ 
         {/* Tab Content */}
         <AnimatePresence mode="wait">
           <motion.div

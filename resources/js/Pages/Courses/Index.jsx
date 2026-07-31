@@ -18,6 +18,9 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
     const [selectedFilters, setSelectedFilters] = useState(filters || {});
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
  
+    // 1. Extract the scholarship course IDs from the authenticated user object
+    const scholarshipCourseIds = auth?.user?.scholarship_course_ids || [];
+
     const pathwayGuidance = {
         'IGRCFP Certificates': {
             heading: 'IGRCFP CERTIFICATES',
@@ -130,7 +133,7 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
             value && value !== '' && value !== false && key !== 'sort_field' && key !== 'sort_direction'
         ).length;
     };
-
+ 
     return (
         <GuestLayout auth={auth}> 
             <Head title={title ? `IGRCFP | ${title}` : 'IGRCFP | Courses'} />
@@ -369,7 +372,11 @@ export default function Courses({ auth, courses, filters, filterOptions, title, 
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
                                         >
-                                            <CourseCard course={course} />
+                                            {/* 2. PASS THE IDS HERE */}
+                                            <CourseCard 
+                                                course={course} 
+                                                scholarshipCourseIds={scholarshipCourseIds} 
+                                            />
                                         </motion.div>
                                     ))} 
                                 </div>

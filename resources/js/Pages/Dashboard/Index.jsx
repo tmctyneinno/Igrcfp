@@ -7,9 +7,12 @@ import CourseCategories from '@/Pages/Dashboard/Learner/CourseCategories';
 import { useCartCount } from '@/contexts/CartContext'; 
 import toast from 'react-hot-toast';
 
-export default function Dashboard({ auth, courses, enrolledCourses, popularCourses, categories }) {
+export default function Index({ auth, courses, enrolledCourses, unenrolledScholarshipCourses, popularCourses, categories }) {
     const { cartCount, cartItems } = useCartCount(); 
- 
+  
+    // Extract scholarship IDs from auth user
+    const scholarshipCourseIds = auth?.user?.scholarship_course_ids || [];
+
     // Handle Direct Scholarship Enrollment
     const handleScholarshipEnroll = async (course) => {
         try {
@@ -38,13 +41,20 @@ export default function Dashboard({ auth, courses, enrolledCourses, popularCours
         <AuthenticatedLayout auth={auth}>   
             <Head title="Dashboard" /> 
             <LearningCenter enrolledCourses={enrolledCourses} />
-            {/* <CourseCategories categories={categories} /> */}
-            <MyLearning enrolledCourses={enrolledCourses} />
+            
+            {/* Pass scholarshipCourseIds and handler */}
+            <MyLearning 
+                enrolledCourses={enrolledCourses} 
+                unenrolledScholarshipCourses={unenrolledScholarshipCourses || []}
+                scholarshipCourseIds={scholarshipCourseIds}
+                onScholarshipEnroll={handleScholarshipEnroll}
+            /> 
+            
             <MostPopular 
                 initialCourses={popularCourses} 
                 onScholarshipEnroll={handleScholarshipEnroll}
                 authUser={auth?.user}
-            /> 
+            />  
         </AuthenticatedLayout>  
     );   
 }

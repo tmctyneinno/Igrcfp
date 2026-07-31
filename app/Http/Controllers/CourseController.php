@@ -106,7 +106,7 @@ class CourseController extends Controller
         // Check if course is eligible for scholarship
         $scholarshipCategories = [
             'IGRCFP Certificates',
-        ];
+        ]; 
         $isScholarshipEligible = in_array($course->igrcfp_category, $scholarshipCategories);
 
         // Prepare User Data
@@ -188,7 +188,7 @@ class CourseController extends Controller
             'updated_at' => $course->updated_at->format('M d, Y'),
             'is_scholarship_eligible' => $isScholarshipEligible,
         ];
-        
+         
         return Inertia::render('Courses/Show', [
             'course' => $formattedCourse,
             'auth' => [

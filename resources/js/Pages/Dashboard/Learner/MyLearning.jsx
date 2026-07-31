@@ -1,15 +1,22 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
+import DashboardCourseCard from '@/components/Courses/DashboardCourseCard'; // Import the card
   
-export default function MyLearning({ enrolledCourses = [] }) {
+export default function MyLearning({ 
+    enrolledCourses = [], 
+    unenrolledScholarshipCourses = [],
+    scholarshipCourseIds = [], // Receive the IDs
+    onScholarshipEnroll 
+}) {
+    
     const getLevelBadgeColor = (level) => {
         const levelMap = {
             'Beginner': 'bg-blue-100 text-blue-800',
             'Intermediate': 'bg-amber-100 text-amber-800',
             'Advanced': 'bg-emerald-100 text-emerald-800',
             'Expert': 'bg-purple-100 text-purple-800'
-        };   
+        };    
         return levelMap[level] || 'bg-blue-100 text-blue-800';
     }; 
   
@@ -24,18 +31,6 @@ export default function MyLearning({ enrolledCourses = [] }) {
         return formatMap[format] || 'bg-gray-100 text-gray-800';
     }; 
 
-    // Helper to determine assessment status label and color
-    const getAssessmentStatus = (course) => {
-        if (course.quiz_status === 'submitted' || course.quiz_status === 'graded') {
-            if (course.quiz_passed) {
-                return { label: 'Quiz Passed', color: 'bg-green-100 text-green-700 border-green-200' };
-            } else {
-                return { label: 'Quiz Submitted', color: 'bg-amber-100 text-amber-700 border-amber-200' };
-            }
-        }
-        return null;
-    };
-
     const calculateProgress = (course) => {
         if (course.completed_modules !== undefined && course.modules_count > 0) {
             return Math.min(100, Math.max(0, Math.round((course.completed_modules / course.modules_count) * 100)));
@@ -46,7 +41,6 @@ export default function MyLearning({ enrolledCourses = [] }) {
     const getCleanDescription = (course) => {
         const text = course?.short_description || course?.description;
         if (!text) return 'No description available';
-        
         const cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
         return cleanText.length > 100 ? cleanText.substring(0, 60) + '...' : cleanText;
     };
@@ -69,92 +63,111 @@ export default function MyLearning({ enrolledCourses = [] }) {
                     </div>
                     <h2 className="text-3xl font-bold text-gray-900 mt-2">My Courses</h2> 
                     <p className="text-gray-600 mt-3 max-w-2xl">
-                        Continue your learning journey. Track your progress and pick up where you left off.
+                        Continue your learning journey or activate your assigned scholarship courses.
                     </p>
                 </div>
 
-                {enrolledCourses.length > 0 && (
+                {(enrolledCourses.length > 0 || unenrolledScholarshipCourses.length > 0) && (
                     <Link href={route('dashboard.courses.index')} className="mt-6 md:mt-0 text-blue-950 font-semibold hover:text-blue-700 transition">
                         View All Courses →
                     </Link>
                 )}
             </div>
 
-            {enrolledCourses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {enrolledCourses.map((course, index) => {
-                        const progress = calculateProgress(course);
-                        const assessmentStatus = getAssessmentStatus(course);
+            {/* SECTION 1: ENROLLED COURSES */}
+            {enrolledCourses.length > 0 && (
+                <div className="mb-12">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                        In Progress
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {enrolledCourses.map((course, index) => {
+                            const progress = calculateProgress(course);
+                            return (
+                                <motion.div
+                                    key={`enrolled-${course.id}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                                    className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
+                                >
+                                    <div className="h-48 w-full overflow-hidden relative">
+                                        <img
+                                            src={course.image_url || course.banner_image || '/images/default-course.jpg'}
+                                            alt={course.title}
+                                            className="h-full w-full object-cover hover:scale-110 transition-transform duration-300"
+                                            onError={(e) => { e.target.src = '/images/default-course.jpg'; }}
+                                        />
+                                         <div className="absolute top-3 left-3 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
+                                            {progress}% Complete
+                                        </div>
+                                    </div>
 
-                        return (
+                                    <div className="p-4">
+                                        <Link href={route('dashboard.courses.show', course.slug || course.id)}>
+                                            <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2 h-14">{course.title}</h4>
+                                        </Link>
+                                        <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">{getCleanDescription(course)}</p>
+
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            {course.level && <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getLevelBadgeColor(course.level)}`}>{course.level}</span>}
+                                            {course.format && <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getFormatBadgeColor(course.format)}`}>{course.format}</span>}
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                                <span>Progress</span>
+                                                <span className="font-medium">{progress}%</span>
+                                            </div>
+                                            <div className="h-2 w-full rounded-full bg-gray-200">
+                                                <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5, delay: 0.2 }} className="h-2 rounded-full bg-blue-900" />
+                                            </div>
+                                        </div>
+
+                                        <Link href={route('dashboard.courses.show', course.slug || course.id)} className="block w-full rounded-lg bg-blue-900 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 transition-colors duration-200 transform hover:-translate-y-1">
+                                            {progress === 0 ? '🚀 Start Learning' : progress === 100 ? '🔄 Review Course' : '▶️ Continue Learning'}
+                                        </Link>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* SECTION 2: UNENROLLED SCHOLARSHIP COURSES */}
+            {unenrolledScholarshipCourses.length > 0 && (
+                <div className="mb-12">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Assigned Scholarship Courses (Ready to Activate)
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {unenrolledScholarshipCourses.map((course, index) => (
                             <motion.div
-                                key={course.id}
+                                key={`scholarship-${course.id}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-2"
-                                data-aos="fade-up"
-                                data-aos-delay={index * 150}
                             >
-                                <div className="h-48 w-full overflow-hidden relative">
-                                    <img
-                                        src={course.image_url || course.banner_image || '/images/default-course.jpg'}
-                                        alt={course.title}
-                                        className="h-full w-full object-cover hover:scale-110 transition-transform duration-300"
-                                        onError={(e) => { e.target.src = '/images/default-course.jpg'; }}
-                                    />
-                                     <div className="absolute top-3 left-3 rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
-                                        {progress}% Complete
-                                    </div>
-                                    
-                                    {/* NEW: Assessment Status Badge */}
-                                    {assessmentStatus && (
-                                        <div className={`absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-medium border shadow-sm ${assessmentStatus.color}`}>
-                                            {assessmentStatus.label}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="p-4">
-                                    <Link href={route('dashboard.courses.show', course.slug || course.id)}>
-                                        <h4 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-900 transition line-clamp-2 h-14">{course.title}</h4>
-                                    </Link>
-                                    <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">{getCleanDescription(course)}</p>
-
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {course.level && <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getLevelBadgeColor(course.level)}`}>{course.level}</span>}
-                                        {course.format && <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getFormatBadgeColor(course.format)}`}>{course.format}</span>}
-                                        {course.category && (
-                                            <Link href={route('dashboard.courses.by-category', { slug: course.category.slug })} className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200 transition">
-                                                {course.category.name}
-                                            </Link>
-                                        )}
-                                    </div>
-
-                                    <div className="flex items-center justify-between mb-3 text-sm text-gray-500">
-                                        {course.duration && <span className="flex items-center gap-1">⏱️ {course.duration}</span>}
-                                        {course.modules_count > 0 && <span className="flex items-center gap-1">📚 {course.modules_count} {course.modules_count === 1 ? 'module' : 'modules'}</span>}
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                            <span>Progress</span>
-                                            <span className="font-medium">{progress}%</span>
-                                        </div>
-                                        <div className="h-2 w-full rounded-full bg-gray-200">
-                                            <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.5, delay: 0.2 }} className="h-2 rounded-full bg-blue-900" />
-                                        </div>
-                                    </div>
-
-                                    <Link href={route('dashboard.courses.show', course.slug || course.id)} className="block w-full rounded-lg bg-blue-900 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 transition-colors duration-200 transform hover:-translate-y-1">
-                                        {progress === 0 ? '🚀 Start Learning' : progress === 100 ? '🔄 Review Course' : '▶️ Continue Learning'}
-                                    </Link>
-                                </div>
+                                {/* Use the DashboardCourseCard which handles the "Activate" logic */}
+                                <DashboardCourseCard 
+                                    course={course}
+                                    scholarshipCourseIds={scholarshipCourseIds} // PASS THE IDS HERE
+                                    onScholarshipEnroll={onScholarshipEnroll}
+                                    isInCart={false}
+                                    isAdding={false}
+                                    isEnrolled={false}
+                                />
                             </motion.div>
-                        );
-                    })}
+                        ))}
+                    </div>
                 </div>
-            ) : (
+            )}
+
+            {/* EMPTY STATE */}
+            {enrolledCourses.length === 0 && unenrolledScholarshipCourses.length === 0 && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-16 bg-white rounded-xl shadow-md">
                     <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100"><span className="text-3xl">📚</span></div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">No courses yet</h3>

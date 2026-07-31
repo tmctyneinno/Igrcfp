@@ -50,12 +50,12 @@
 
                         @if($hasAvatar)
                             <img src="{{ Storage::url($avatarPath) }}" alt="{{ $user->name }}" 
-                                 class="w-100-px h-100-px rounded-circle object-fit-cover mb-3 border border-2 border-light">
+                                 class="w-50-px h-50-px rounded-circle object-fit-cover mb-3 border border-2 border-light">
                         @else
-                            <div class="w-100-px h-100-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center mx-auto mb-3 border border-2 border-light">
+                            <div class="w-50-px h-50-px rounded-circle bg-primary-100 d-flex align-items-center justify-content-center mx-auto mb-3 border border-2 border-light">
                                 <span class="text-primary-600 fw-bold fs-4">{{ substr($user->name, 0, 1) }}</span>
                             </div>
-                        @endif
+                        @endif 
 
                         <h5 class="mb-1">{{ $user->name }}</h5>
                         <p class="text-secondary-light mb-2">{{ $user->email }}</p>
@@ -142,7 +142,7 @@
                         @if(isset($user->scholarshipCourses) && $user->scholarshipCourses->count() > 0)
                             <div class="d-flex flex-wrap gap-2">
                                 @foreach($user->scholarshipCourses as $sc)
-                                    <span class="badge bg-emerald-100 text-emerald-700 radius-4 px-10 py-5 text-xs fw-normal border border-emerald-200">
+                                    <span class="badge bg-primary-100 text-black radius-4 px-10 py-3 text-xs fw-normal border border-primary-200">
                                         {{ Str::limit($sc->title, 25) }}
                                     </span>
                                 @endforeach
