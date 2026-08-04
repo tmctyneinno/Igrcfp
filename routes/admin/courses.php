@@ -91,7 +91,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::post('/assessments/store', [AssessmentController::class, 'store'])->name('assessments.store');
     Route::get('/create', [AssessmentController::class, 'createQuiz'])->name('assessments.create');
-
+ 
     // ✅ Move this here — before the {assessment} wildcard
     Route::get('/assessments/submissions', [AssessmentController::class, 'submissionsList'])->name('assessments.submissions.list');
 

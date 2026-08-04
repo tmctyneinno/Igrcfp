@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ChapterController;
 use App\Http\Controllers\Admin\ScholarshipController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use Illuminate\Support\Facades\Route; 
  
 // Admin Dashboard Routes (Protected)
@@ -20,6 +21,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     Route::get('/dashboard/stats', [AdminDashboardController::class, 'stats'])->name('dashboard.stats');
     Route::get('/dashboard/activities', [AdminDashboardController::class, 'activities'])->name('dashboard.activities');
     Route::post('/dashboard/quick-action', [AdminDashboardController::class, 'quickAction'])->name('dashboard.quick-action');
+
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/recent', [AdminNotificationController::class, 'recent'])->name('recent');
+        Route::post('/{notification}/read', [AdminNotificationController::class, 'markAsRead'])->name('mark-read');
+        Route::post('/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+    });
 
     // Event Management
     Route::prefix('events')->name('events.')->group(function () {

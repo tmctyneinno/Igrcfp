@@ -66,6 +66,11 @@ class Admin extends Authenticatable
         return $this->belongsTo(Admin::class, 'created_by');
     }
 
+    public function adminNotifications()
+    {
+        return $this->hasMany(AdminNotification::class);
+    }
+
     // Helper method to get role badge color
     public function getRoleBadgeClass()
     {

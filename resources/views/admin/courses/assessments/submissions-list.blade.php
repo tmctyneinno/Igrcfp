@@ -93,17 +93,35 @@
     <div class="card h-100 p-0 radius-12">
         <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center flex-wrap gap-3 justify-content-between">
             <div class="d-flex align-items-center flex-wrap gap-3">
+                <!-- Search Form -->
                 <form class="navbar-search" method="GET">
                     <input type="text" class="bg-base h-40-px w-auto" name="search" placeholder="Search student..." value="{{ request('search') }}">
                     <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
                 </form>
                 
-                <form method="GET" class="d-inline">
+                <!-- Filters Form -->
+                <form method="GET" class="d-flex gap-2">
+                    <!-- Preserve search term in other filters -->
+                    <input type="hidden" name="search" value="{{ request('search') }}">
+                    
+                    <select name="course_id" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
+                        <option value="">All Courses</option>
+                        @foreach($courses as $course)
+                            <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                                {{ Str::limit($course->title, 30) }}
+                            </option>
+                        @endforeach
+                    </select>
+
                     <select name="status" class="form-select form-select-sm w-auto ps-12 py-6 radius-12 h-40-px" onchange="this.form.submit()">
                         <option value="">All Statuses</option>
                         <option value="submitted" {{ request('status') == 'submitted' ? 'selected' : '' }}>Submitted (Pending)</option>
                         <option value="graded" {{ request('status') == 'graded' ? 'selected' : '' }}>Graded</option>
                     </select>
+
+                    @if(request()->hasAny(['search', 'course_id', 'status']))
+                        <a href="{{ route('admin.assessments.submissions.list') }}" class="btn btn-sm btn-outline-secondary">Clear</a>
+                    @endif
                 </form>
             </div>
         </div>
@@ -120,10 +138,11 @@
                             <th scope="col">Stage</th> 
                             <th scope="col">Submitted At</th>
                             <th scope="col">Score</th>
+                            <th scope="col">Grade</th> {{-- NEW COLUMN --}}
                             <th scope="col">Status</th>
                             <th scope="col" class="text-center">Action</th>
                         </tr>
-                    </thead>
+                    </thead> 
                     <tbody>
                         @forelse($submissions as $submission)
                         <tr>
@@ -175,6 +194,22 @@
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
+                            
+                            {{-- NEW: Grade Column --}}
+                            <td>
+                                @if($submission->grade_label)
+                                    @php
+                                        $grade = $submission->grade_label;
+                                        $gradeColor = 'bg-' . $grade['class'] . '-100 text-' . $grade['class'] . '-600';
+                                    @endphp
+                                    <span class="badge {{ $gradeColor }} radius-4 px-8 py-4 font-weight-bold">
+                                        {{ $grade['label'] }}
+                                    </span>
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
+
                             <td>
                                 <span class="badge bg-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-100 text-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-600 radius-4 px-8 py-4">
                                     {{ ucfirst($submission->status) }}
@@ -187,25 +222,12 @@
                                        title="View & Grade">
                                         <iconify-icon icon="majesticons:eye-line"></iconify-icon>
                                     </a>
-
-                                    <!-- <form action="{{ route('admin.assessments.submission.delete', $submission->id) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Are you sure you want to delete this submission? This cannot be undone.');"
-                                          class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="bg-danger-focus bg-hover-danger-200 text-danger-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle border-0"
-                                                title="Delete Submission">
-                                            <iconify-icon icon="mingcute:delete-2-line"></iconify-icon>
-                                        </button>
-                                    </form> -->
                                 </div>
                             </td>
                         </tr> 
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="10" class="text-center py-4">
                                 <p class="text-muted mb-0">No submissions found.</p>
                             </td>
                         </tr>

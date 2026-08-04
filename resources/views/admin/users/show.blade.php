@@ -106,7 +106,7 @@
             <div class="card mt-24 border-emerald-200 mb-4">
                 <div class="card-header bg-emerald-50 border-bottom border-emerald-100 py-16 px-24">
                     <h6 class="card-title mb-0 text-emerald-700">Scholarship Access</h6>
-                </div>
+                </div> 
                 <div class="card-body p-24">
                     
                     <!-- 1. Global Category Access Toggle -->
@@ -145,7 +145,7 @@
                                     <span class="badge bg-primary-100 text-black radius-4 px-10 py-3 text-xs fw-normal border border-primary-200">
                                         {{ Str::limit($sc->title, 25) }}
                                     </span>
-                                @endforeach
+                                @endforeach 
                             </div>
                             <p class="text-xs text-secondary-light mt-2 mb-0">
                                 {{ $user->scholarshipCourses->count() }} course(s) assigned individually.

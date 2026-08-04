@@ -216,7 +216,7 @@
                                     <span class="badge bg-{{ $roleColor }}-600 text-white px-12 py-6 radius-8">
                                         {{ ucfirst($user->role ?? 'Learner') }}
                                     </span>
-                                </td>
+                                </td> 
                                 <td class="text-center">
                                     @php
                                         $statusColors = [

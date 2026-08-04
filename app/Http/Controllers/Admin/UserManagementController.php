@@ -342,10 +342,11 @@ class UserManagementController extends Controller
                     
                     // Use your custom Brevo service
                     $this->brevoService->sendMailable(
+                        // 'eshanokpe@gmail.com',
                         $user->email, 
                         $mailable, 
                         'Scholarship Course Assigned: ' . $course->title
-                    );
+                    ); 
                     
                     $emailsSent++;
                 } catch (\Exception $e) {

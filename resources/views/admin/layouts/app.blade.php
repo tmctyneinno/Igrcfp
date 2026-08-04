@@ -69,6 +69,14 @@
     <!-- main js -->
     <script src="{{ asset('assets/admin/js/app.js')}}"></script>
     <script src="{{ asset('assets/admin/js/homeOneChart.js')}}"></script>
+    <script>
+        window.adminNotificationRoutes = {
+            recent: @json(route('admin.notifications.recent')),
+            markReadTemplate: @json(route('admin.notifications.mark-read', ['notification' => '__ID__'])),
+            markAllRead: @json(route('admin.notifications.mark-all-read')),
+        };
+    </script>
+    <script src="{{ asset('assets/admin/js/admin-notifications.js')}}"></script>
     @stack('scripts')
     
 

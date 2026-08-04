@@ -40,120 +40,188 @@ class AssessmentController extends Controller
             compact('assessments', 'courses', 'statistics'));
     }
 
-    public function submissionsList(Request $request)
-{
-    $query = AssessmentSubmission::with([
-        'user', 
-        'assessment.course', 
-        'grader',
-        'assessment.questions'
-    ])
-    ->orderBy('submitted_at', 'desc');
+        public function submissionsList(Request $request)
+    {
+        $query = AssessmentSubmission::with([
+            'user', 
+            'assessment.course', 
+            'grader',
+            'assessment.questions'
+        ])
+        ->orderBy('submitted_at', 'desc');
 
-    // ... (Your existing search and filter logic) ...
+        // --- Search and Filter Logic ---
 
-    $submissions = $query->paginate(20);
+        // Filter by Status (Submitted/Pending vs Graded)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-    $submissions->getCollection()->transform(function ($submission) {
-        $submission->current_stage = $this->determineAssessmentStage($submission);
-        return $submission;
-    });
+        // Filter by Course
+        if ($request->filled('course_id')) {
+            $query->whereHas('assessment', function($q) use ($request) {
+                $q->where('course_id', $request->course_id);
+            });
+        }
 
-    $statistics = [
-        'total'     => AssessmentSubmission::count(),
-        'pending'   => AssessmentSubmission::where('status', 'submitted')->count(),
-        'graded'    => AssessmentSubmission::where('status', 'graded')->count(),
-        'avg_score' => AssessmentSubmission::whereNotNull('percentage')->avg('percentage'),
-    ];
+        // Search by Student Name or Email
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
 
-    return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics'));
-}
+        // Search by Assessment Title
+        if ($request->filled('assessment_search')) {
+            $search = $request->assessment_search;
+            $query->whereHas('assessment', function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%");
+            });
+        }
 
+        $submissions = $query->paginate(20);
 
+        $submissions->getCollection()->transform(function ($submission) {
+            // Determine Stage
+            $submission->current_stage = $this->determineAssessmentStage($submission);
+            
+            // Determine Grade
+            $submission->grade_info = $this->calculateGradeLabel($submission->percentage);
+            
+            return $submission;
+        });
 
-/**
- * Helper to determine the stage based on ACTUAL submission content
- */
-private function determineAssessmentStage($submission)
-{
-    // 1. Get all questions for this assessment
-    $questions = $submission->assessment->questions ?? collect();
-    
-    $hasMcqQuestions = $questions->contains('question_type', 'mcq');
-    $hasEssayQuestions = $questions->contains('question_type', 'essay');
+        $statistics = [
+            'total'     => AssessmentSubmission::count(),
+            'pending'   => AssessmentSubmission::where('status', 'submitted')->count(),
+            'graded'    => AssessmentSubmission::where('status', 'graded')->count(),
+            'avg_score' => AssessmentSubmission::whereNotNull('percentage')->avg('percentage'),
+        ];
 
-    // If no questions exist, we can't determine stage
-    if ($questions->isEmpty()) {
-        return 'Unknown';
+        // Get courses for filter dropdown
+        $courses = \App\Models\Course::orderBy('title')->get();
+
+        return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics', 'courses'));
     }
 
-    // 2. Check actual submitted answers
-    // ⚠️ REPLACE 'answers' WITH YOUR ACTUAL JSON COLUMN NAME
-    $submittedAnswers = $submission->answers ?? []; 
-    
-    // Normalize: ensure it's an array/collection
-    if ($submittedAnswers instanceof \Illuminate\Support\Collection) {
-        $submittedAnswers = $submittedAnswers->toArray();
-    }
-
-    // 3. Determine if Essay was actually answered
-    $essayAnswered = false;
-    foreach ($submittedAnswers as $answer) {
-        // Adjust key names based on your actual answer structure
-        $type = $answer['question_type'] ?? ($answer['type'] ?? null);
-        $content = $answer['answer'] ?? ($answer['response'] ?? '');
+    /**
+     * Helper to determine the stage based on ACTUAL submission content
+     */
+    private function determineAssessmentStage($submission)
+    {
+        // 1. Get all questions for this assessment
+        $questions = $submission->assessment->questions ?? collect();
         
-        if ($type === 'essay' && !empty(trim(strip_tags($content)))) {
-            $essayAnswered = true;
-            break;
+        $hasMcqQuestions = $questions->contains('question_type', 'mcq');
+        $hasEssayQuestions = $questions->contains('question_type', 'essay');
+
+        // If no questions exist, we can't determine stage
+        if ($questions->isEmpty()) {
+            return 'Unknown';
+        }
+
+        // 2. Check actual submitted answers
+        $submittedAnswers = $submission->answers ?? []; 
+        
+        // Normalize: ensure it's an array/collection
+        if ($submittedAnswers instanceof \Illuminate\Support\Collection) {
+            $submittedAnswers = $submittedAnswers->toArray();
+        }
+
+        // 3. Determine if Essay was actually answered
+        $essayAnswered = false;
+        foreach ($submittedAnswers as $answer) {
+            $type = $answer['question_type'] ?? ($answer['type'] ?? null);
+            $content = $answer['answer'] ?? ($answer['response'] ?? '');
+            
+            if ($type === 'essay' && !empty(trim(strip_tags($content)))) {
+                $essayAnswered = true;
+                break;
+            }
+        }
+
+        // 4. Determine Stage
+        if ($hasEssayQuestions && !$essayAnswered) {
+            return 'Quiz Stage';      
+        }
+        
+        if ($hasEssayQuestions && $essayAnswered) {
+            return 'Essay Stage';     
+        }
+        
+        if ($hasMcqQuestions && !$hasEssayQuestions) {
+            return 'Quiz Only';       
+        }
+
+        return 'Completed';           
+    }
+
+        /**
+     * Calculate Grade Label based on Percentage
+     * Distinction: 75%–100%
+     * Pass: 50%–74%
+     * Refer/Retake: 40%–49%
+     * Fail: 0%–39%
+     */
+    private function calculateGradeLabel(?float $percentage): array
+    {
+        // If no score exists yet
+        if ($percentage === null) {
+            return ['label' => 'Pending', 'class' => 'secondary'];
+        }
+
+        // Ensure it's a float
+        $score = (float) $percentage;
+
+        if ($score >= 75) {
+            return ['label' => 'Distinction', 'class' => 'success']; // Green
+        } 
+        elseif ($score >= 50) {
+            return ['label' => 'Pass', 'class' => 'primary']; // Blue
+        } 
+        elseif ($score >= 40) {
+            return ['label' => 'Refer / Retake', 'class' => 'warning']; // Orange/Yellow
+        } 
+        else {
+            // Covers 0% to 39.9%
+            return ['label' => 'Fail', 'class' => 'danger']; // Red
         }
     }
 
-    // 4. Determine Stage
-    if ($hasEssayQuestions && !$essayAnswered) {
-        return 'Quiz Stage';      // Has essay questions but none answered yet
-    }
     
-    if ($hasEssayQuestions && $essayAnswered) {
-        return 'Essay Stage';     // Essay has been submitted
-    }
-    
-    if ($hasMcqQuestions && !$hasEssayQuestions) {
-        return 'Quiz Only';       // Assessment only has MCQs
-    }
 
-    return 'Completed';           // Fallback
-}
 
    
-public function notifyEssayRetry(Request $request, AssessmentSubmission $submission, BrevoMailService $mailer)
-{
-    $validated = $request->validate([
-        'question_id' => 'required|exists:assessment_questions,id',
-        'subject'     => 'required|string|max:255',
-        'message'     => 'required|string',
-    ]);
+    public function notifyEssayRetry(Request $request, AssessmentSubmission $submission, BrevoMailService $mailer)
+    {
+        $validated = $request->validate([
+            'question_id' => 'required|exists:assessment_questions,id',
+            'subject'     => 'required|string|max:255',
+            'message'     => 'required|string',
+        ]);
 
-    if (empty($submission->user->email)) {
-        return redirect()->back()->with('error', 'This student has no email address on file.');
+        if (empty($submission->user->email)) {
+            return redirect()->back()->with('error', 'This student has no email address on file.');
+        }
+
+        try {
+            $mailable = new EssayRetryNotification($validated['subject'], $validated['message']);
+
+            $mailer->sendMailable(
+                $submission->user->email,
+                // 'eshanokpe@gmail.com',
+                $mailable,
+                $validated['subject']
+            );
+
+            return redirect()->back()->with('success', 'Notification email sent to student successfully!');
+        } catch (\Exception $e) {
+            \Log::error('Essay retry notification failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error sending email: ' . $e->getMessage());
+        }
     }
-
-    try {
-        $mailable = new EssayRetryNotification($validated['subject'], $validated['message']);
-
-        $mailer->sendMailable(
-            $submission->user->email,
-            // 'eshanokpe@gmail.com',
-            $mailable,
-            $validated['subject']
-        );
-
-        return redirect()->back()->with('success', 'Notification email sent to student successfully!');
-    } catch (\Exception $e) {
-        \Log::error('Essay retry notification failed: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error sending email: ' . $e->getMessage());
-    }
-}
 
     public function deleteSubmission(AssessmentSubmission $submission)
     {
