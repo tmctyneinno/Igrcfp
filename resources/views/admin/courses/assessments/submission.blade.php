@@ -6,14 +6,24 @@
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Review Submission</h6>
         <div class="d-flex gap-2">
-            <!-- NEW: Export Button -->
+            <!-- NEW: Reject Enrollment Button -->
+            @if(!$submission->enrollment?->certificate_generated) {{-- Only allow rejection if not certified --}}
+            <button type="button" class="btn btn-outline-danger d-flex align-items-center gap-2" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#rejectEnrollmentModal">
+                <iconify-icon icon="solar:user-remove-linear"></iconify-icon>
+                Reject Enrollment
+            </button>
+            @endif
+
+            <!-- Export Button -->
             <a href="{{ route('admin.assessments.submission.export', $submission->encoded_id) }}" 
-               class="btn btn-outline-danger d-flex align-items-center gap-2">
+               class="btn btn-outline-primary d-flex align-items-center gap-2">
                 <iconify-icon icon="solar:document-text-linear"></iconify-icon>
                 Export PDF
             </a>
             
-            <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-primary">
+            <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-secondary">
                  Back to Submissions
             </a>
         </div>
@@ -21,6 +31,10 @@
     
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}</div>
     @endif
 
     <div class="row gy-4">
@@ -80,7 +94,6 @@
                                 <td class="fw-medium text-end pe-0">
                                     @if($submission->percentage !== null)
                                         @php
-                                            // Calculate actual earned marks from percentage
                                             $earnedMarks = ($submission->percentage / 100) * ($assessment->total_marks ?? 100);
                                         @endphp
                                         
@@ -235,7 +248,7 @@
                         @endforeach
                     </div>
                 </div>
-            </div>
+            </div> 
             @endif
 
             <!-- Part B: Essay Responses -->
@@ -304,24 +317,24 @@
                                                         <label class="form-label fw-semibold">Message</label>
                                                         <textarea name="message" class="form-control" rows="12">Hi {{ $submission->user->name ?? 'Student' }},
 
-                    We recently completed a scheduled system upgrade to improve the assessment experience on the platform. During this process, we identified that your response to one of the essay questions in "{{ $assessment->title }}" was not saved correctly.
+We recently completed a scheduled system upgrade to improve the assessment experience on the platform. During this process, we identified that your response to one of the essay questions in "{{ $assessment->title }}" was not saved correctly.
 
-                    We understand this is frustrating, and we want to make sure your effort is properly reflected in your results — so we're giving you the opportunity to submit your answer again.
+We understand this is frustrating, and we want to make sure your effort is properly reflected in your results — so we're giving you the opportunity to submit your answer again.
 
-                    What you need to do:
-                    1. Log back into your dashboard
-                    2. Go to "{{ $assessment->title }}"
-                    3. Answer the following question again: "{{ $q->question_text }}"
-                    4. Submit your response
+What you need to do:
+1. Log back into your dashboard
+2. Go to "{{ $assessment->title }}"
+3. Answer the following question again: "{{ $q->question_text }}"
+4. Submit your response
 
-                    This will only take a few minutes, and your other answers and progress remain safe and unaffected. Please complete this as soon as possible so we can finalize your grading without delay.
+This will only take a few minutes, and your other answers and progress remain safe and unaffected. Please complete this as soon as possible so we can finalize your grading without delay.
 
-                    If you have any questions or run into issues, just reply to this email and we'll help right away.
+If you have any questions or run into issues, just reply to this email and we'll help right away.
 
-                    Thanks for your patience as we continue improving the platform.
+Thanks for your patience as we continue improving the platform.
 
-                    Best regards,
-                    The Team</textarea>
+Best regards,
+The Team</textarea>
                                                     </div>
                                                     <small class="text-muted">You can edit the subject and message above before sending.</small>
                                                 </div>
@@ -416,6 +429,34 @@
         </div>
     </div>
 </div>
+
+<!-- Reject Enrollment Modal -->
+<div class="modal fade" id="rejectEnrollmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('admin.enrollments.reject', $submission->enrollment) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h6 class="modal-title">Reject Course Enrollment</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to remove <strong>{{ $submission->user->name }}</strong> from <strong>{{ $assessment->course->title }}</strong>?</p>
+                    <p class="text-sm text-muted">This will delete their enrollment record and send them an email notification.</p>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label fw-semibold">Reason for Rejection</label>
+                        <textarea name="reason" class="form-control" rows="3" placeholder="e.g., Not assigned to this scholarship course..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('styles')
@@ -435,7 +476,6 @@
     .essay-content ul, .essay-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
     .essay-content h1, .essay-content h2, .essay-content h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
 </style>
-
 @endpush
 
 @push('scripts')

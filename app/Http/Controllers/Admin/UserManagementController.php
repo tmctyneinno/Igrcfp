@@ -385,7 +385,8 @@ class UserManagementController extends Controller
             $mailable = new CourseEnrollmentRejectedMail($user, $course, $reason);
             
             $this->brevoService->sendMailable(
-                $user->email, 
+                // $user->email, 
+                'eshanokpe@gmail.com', 
                 $mailable, 
                 'Enrollment Update: ' . $course->title
             );

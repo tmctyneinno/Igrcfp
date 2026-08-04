@@ -26,7 +26,7 @@
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    @endif
+    @endif 
 
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -135,11 +135,10 @@
                             <th scope="col">ID</th>
                             <th scope="col">Student</th>
                             <th scope="col">Assessment</th>
-                            <!-- <th scope="col">Course</th> -->
                             <th scope="col">Stage</th> 
                             <th scope="col">Submitted At</th>
                             <th scope="col">Score</th>
-                            <th scope="col">Grade</th> {{-- NEW COLUMN --}}
+                            <th scope="col">Grade</th>
                             <th scope="col">Status</th>
                             <th scope="col" class="text-center">Action</th>
                         </tr>
@@ -163,9 +162,6 @@
                                 <span class="fw-medium">{{ $submission->assessment->title ?? 'N/A' }}</span>
                                 <p class="text-xs text-secondary-light mb-0">{{ ucfirst($submission->assessment->assessment_level ?? '') }}</p>
                             </td>
-                            <!-- <td>
-                                <span class="text-sm">{{ $submission->assessment->course->title ?? 'N/A' }}</span>
-                            </td> -->
                             <td>
                                 @php
                                     $stage = $submission->current_stage ?? 'Unknown';
@@ -190,26 +186,35 @@
                             {{-- Score Column --}}
                             <td>
                                 @if($submission->percentage !== null)
-                                    <span class="fw-bold {{ $submission->passed ? 'text-success-600' : 'text-danger-600' }}">
-                                        {{ number_format($submission->percentage, 1) }}%
+                                    @php
+                                        $percentage = (float) $submission->percentage;
+                                        $scoreClass = 'text-danger-600';
+
+                                        if ($percentage > 75) {
+                                            $scoreClass = 'text-success-600';
+                                        } elseif ($percentage >= 50 && $percentage <= 75) {
+                                            $scoreClass = 'text-primary-600';
+                                        } elseif ($percentage >= 40 && $percentage <= 49) {
+                                            $scoreClass = 'text-warning-600';
+                                        }
+                                    @endphp
+                                    <span class="fw-bold {{ $scoreClass }}">
+                                        {{ number_format($percentage, 1) }}%
                                     </span>
                                 @else
                                     <span class="text-muted">—</span>
                                 @endif
                             </td>
                             
-                            {{-- NEW: Grade Column --}}
+                            {{-- Grade Column --}}
                             <td>
                                 @if(isset($submission->grade_info))
                                     @php
                                         $label = $submission->grade_info['label'];
                                         $class = $submission->grade_info['class'];
-                                        
-                                        // Map class to specific bootstrap colors
                                         $bgClass = 'bg-' . $class . '-100';
                                         $textClass = 'text-' . $class . '-600';
                                     @endphp
-                                    
                                     <span class="badge {{ $bgClass }} {{ $textClass }} radius-4 px-8 py-4 fw-bold">
                                         {{ $label }}
                                     </span>
@@ -230,12 +235,53 @@
                                        title="View & Grade">
                                         <iconify-icon icon="majesticons:eye-line"></iconify-icon>
                                     </a>
+
+                                    <!-- NEW: Reject Enrollment Button -->
+                                    @if(!$submission->enrollment?->certificate_generated)
+                                    <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle border-0"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#rejectModalList{{ $submission->id }}"
+                                            title="Reject Enrollment">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-x">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                            <line x1="17" y1="8" x2="23" y2="14"></line>
+                                            <line x1="23" y1="8" x2="17" y2="14"></line>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Reject Modal for List View -->
+                                    <div class="modal fade" id="rejectModalList{{ $submission->id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form action="{{ route('admin.enrollments.reject', $submission->enrollment) }}" method="POST">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <h6 class="modal-title">Reject Enrollment</h6>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Remove <strong>{{ $submission->user->name }}</strong> from <strong>{{ $submission->assessment->course->title ?? 'this course' }}</strong>?</p>
+                                                        <div class="mb-3 mt-3">
+                                                            <label class="form-label">Reason</label>
+                                                            <textarea name="reason" class="form-control" rows="2" placeholder="Not assigned..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                             </td>
                         </tr> 
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center py-4">
+                            <td colspan="9" class="text-center py-4">
                                 <p class="text-muted mb-0">No submissions found.</p>
                             </td>
                         </tr>
