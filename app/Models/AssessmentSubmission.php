@@ -3,13 +3,16 @@
 
 namespace App\Models;
 
+use App\Traits\HashableId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AssessmentSubmission extends Model
 {
+    use HasFactory, HashableId;
     protected $table = 'assessment_submissions';
- 
+  
     protected $fillable = [
         'assessment_id',
         'user_id',
@@ -40,6 +43,7 @@ class AssessmentSubmission extends Model
         'remaining_time',
         'attempt_number',
         'locked_until', 
+        'grader_id',   // <--- Add this
     ];
 
     protected $casts = [
@@ -68,6 +72,8 @@ class AssessmentSubmission extends Model
         return $this->belongsTo(Assessment::class);
     }
 
+    
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -78,9 +84,13 @@ class AssessmentSubmission extends Model
         return $this->belongsTo(Enrollment::class);
     }
 
+    // public function grader()
+    // {
+    //     return $this->belongsTo(User::class, 'graded_by');
+    // }
     public function grader()
     {
-        return $this->belongsTo(User::class, 'graded_by');
+        return $this->belongsTo(User::class, 'grader_id');
     }
 
     public function attempt()

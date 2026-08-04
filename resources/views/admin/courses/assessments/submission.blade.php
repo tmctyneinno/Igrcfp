@@ -5,9 +5,18 @@
     <!-- Header -->
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">Review Submission</h6>
-        <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-primary">
-             Back to Submissions
-        </a>
+        <div class="d-flex gap-2">
+            <!-- NEW: Export Button -->
+            <a href="{{ route('admin.assessments.submission.export', $submission->encoded_id) }}" 
+               class="btn btn-outline-danger d-flex align-items-center gap-2">
+                <iconify-icon icon="solar:document-text-linear"></iconify-icon>
+                Export PDF
+            </a>
+            
+            <a href="{{ route('admin.assessments.submissions', $assessment->id) }}" class="btn btn-outline-primary">
+                 Back to Submissions
+            </a>
+        </div>
     </div>
     
     @if(session('success'))
@@ -66,14 +75,21 @@
                                     </span>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr> 
                                 <td class="text-secondary-light ps-0">Auto Score:</td>
                                 <td class="fw-medium text-end pe-0">
                                     @if($submission->percentage !== null)
+                                        @php
+                                            // Calculate actual earned marks from percentage
+                                            $earnedMarks = ($submission->percentage / 100) * ($assessment->total_marks ?? 100);
+                                        @endphp
+                                        
                                         {{ number_format($submission->percentage, 1) }}%
-                                        <span class="text-secondary-light small">({{ $submission->score }}/{{ $assessment->total_marks }})</span>
+                                        <span class="text-secondary-light small">
+                                            ({{ number_format($earnedMarks, 1) }}/{{ $assessment->total_marks ?? 100 }} pts)
+                                        </span>
                                     @else
-                                        N/A
+                                        <span class="text-muted">N/A</span>
                                     @endif
                                 </td>
                             </tr>
@@ -83,8 +99,13 @@
 
                 <!-- Grading Form Card -->
                 <div class="card" id="grade">
-                    <div class="card-header border-bottom bg-base py-16 px-24">
+                    <div class="card-header border-bottom bg-base py-16 px-24 d-flex justify-content-between align-items-center">
                         <h6 class="card-title mb-0">Grade Student</h6>
+                        @if($essayQuestions->isNotEmpty())
+                            <span class="badge bg-warning-100 text-warning-600 radius-4 px-8 py-4">
+                                Manual Grading Required
+                            </span>
+                        @endif
                     </div>
                     <div class="card-body p-24">
                         @if($submission->status === 'graded')
@@ -96,28 +117,81 @@
 
                         <form action="{{ route('admin.assessments.submission.grade', $submission->id) }}" method="POST">
                             @csrf
+                            
+                            <!-- 1. Auto-Graded Score (MCQ Only) -->
+                            <div class="mb-3 p-16 bg-light rounded-8 border border-neutral-200">
+                                <label class="form-label small fw-bold text-secondary-light mb-1">Part A: Auto-Graded (Quiz)</label>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold text-dark">
+                                        {{ number_format($autoScore, 1) }} / {{ $mcqTotalPoints }} pts
+                                    </span>
+                                    <span class="badge bg-primary-100 text-primary-600">Locked</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. Manual Essay Grading Inputs -->
+                            @if($essayQuestions->isNotEmpty())
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold text-dark">Part B: Essay Scores (Manual)</label>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-borderless mb-0">
+                                            <thead>
+                                                <tr class="text-secondary-light small">
+                                                    <th>Question</th>
+                                                    <th class="text-end">Max Pts</th>
+                                                    <th class="text-end">Awarded</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($essayQuestions as $index => $item)
+                                                    <tr>
+                                                        <td class="ps-0">
+                                                            <small class="d-block text-truncate" style="max-width: 150px;" title="{{ $item['question']->question_text }}">
+                                                                Q{{ $index + 1 }}: {{ Str::limit($item['question']->question_text, 30) }}
+                                                            </small>
+                                                        </td>
+                                                        <td class="text-end text-muted">{{ $item['max_points'] }}</td>
+                                                        <td class="pe-0">
+                                                            <input type="number" 
+                                                                name="essay_scores[{{ $item['question']->id }}]" 
+                                                                class="form-control form-control-sm text-end essay-score-input" 
+                                                                min="0" 
+                                                                max="{{ $item['max_points'] }}" 
+                                                                step="0.5"
+                                                                value="{{ old('essay_scores.' . $item['question']->id) }}"
+                                                                placeholder="0">
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- 3. Final Total Score Calculation -->
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Final Score <span class="text-danger">*</span></label>
-                                <input
-                                    type="number"
-                                    name="score"
-                                    class="form-control"
-                                    step="0.01"
-                                    min="0"
-                                    max="{{ $assessment->total_marks ?? 100 }}"
-                                    value="{{ old('score', $submission->score) }}"
-                                    required
-                                >
-                                <small class="text-muted">Maximum score: {{ $assessment->total_marks ?? 100 }}</small>
+                                <label class="form-label fw-semibold">Final Total Score <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" name="final_score" id="final_score_input"
+                                        class="form-control fw-bold"
+                                        step="0.01" min="0" max="{{ $assessment->total_marks ?? 100 }}"
+                                        value="{{ old('final_score', $autoScore) }}"
+                                        required>
+                                    <span class="input-group-text bg-light">/ {{ $assessment->total_marks ?? 100 }}</span>
+                                </div>
+                                <small class="text-muted d-block mt-1">
+                                    <i class="fas fa-info-circle"></i> Auto-score ({{ number_format($autoScore, 1) }}) + Manual Essays. Max: {{ $assessment->total_marks }}.
+                                </small>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Feedback</label>
-                                <textarea name="feedback" class="form-control" rows="5" placeholder="Provide detailed feedback to the student...">{{ old('feedback', $submission->feedback) }}</textarea>
+                                <textarea name="feedback" class="form-control" rows="5" placeholder="Provide detailed feedback...">{{ old('feedback', $submission->feedback) }}</textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">
-                                Submit Grade
+                                Submit Final Grade
                             </button>
                         </form>
                     </div>
@@ -230,24 +304,24 @@
                                                         <label class="form-label fw-semibold">Message</label>
                                                         <textarea name="message" class="form-control" rows="12">Hi {{ $submission->user->name ?? 'Student' }},
 
-We recently completed a scheduled system upgrade to improve the assessment experience on the platform. During this process, we identified that your response to one of the essay questions in "{{ $assessment->title }}" was not saved correctly.
+                    We recently completed a scheduled system upgrade to improve the assessment experience on the platform. During this process, we identified that your response to one of the essay questions in "{{ $assessment->title }}" was not saved correctly.
 
-We understand this is frustrating, and we want to make sure your effort is properly reflected in your results — so we're giving you the opportunity to submit your answer again.
+                    We understand this is frustrating, and we want to make sure your effort is properly reflected in your results — so we're giving you the opportunity to submit your answer again.
 
-What you need to do:
-1. Log back into your dashboard
-2. Go to "{{ $assessment->title }}"
-3. Answer the following question again: "{{ $q->question_text }}"
-4. Submit your response
+                    What you need to do:
+                    1. Log back into your dashboard
+                    2. Go to "{{ $assessment->title }}"
+                    3. Answer the following question again: "{{ $q->question_text }}"
+                    4. Submit your response
 
-This will only take a few minutes, and your other answers and progress remain safe and unaffected. Please complete this as soon as possible so we can finalize your grading without delay.
+                    This will only take a few minutes, and your other answers and progress remain safe and unaffected. Please complete this as soon as possible so we can finalize your grading without delay.
 
-If you have any questions or run into issues, just reply to this email and we'll help right away.
+                    If you have any questions or run into issues, just reply to this email and we'll help right away.
 
-Thanks for your patience as we continue improving the platform.
+                    Thanks for your patience as we continue improving the platform.
 
-Best regards,
-The Team</textarea>
+                    Best regards,
+                    The Team</textarea>
                                                     </div>
                                                     <small class="text-muted">You can edit the subject and message above before sending.</small>
                                                 </div>
@@ -361,4 +435,58 @@ The Team</textarea>
     .essay-content ul, .essay-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
     .essay-content h1, .essay-content h2, .essay-content h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
 </style>
+
+@endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const essayInputs = document.querySelectorAll('.essay-score-input');
+        const finalScoreInput = document.getElementById('final_score_input');
+        
+        // Get values from PHP
+        let autoScore = parseFloat("{{ $autoScore ?? 0 }}");
+        const maxTotalMarks = parseFloat("{{ $assessment->total_marks ?? 100 }}");
+
+        if (isNaN(autoScore)) autoScore = 0;
+
+        function calculateTotal() {
+            let manualTotal = 0;
+            
+            // Sum all manual essay inputs
+            essayInputs.forEach(input => {
+                let val = parseFloat(input.value);
+                if (isNaN(val)) val = 0;
+                
+                // Optional: Enforce max points per question in JS too
+                const maxPts = parseFloat(input.max);
+                if (val > maxPts) {
+                    val = maxPts;
+                    input.value = maxPts; // Correct the input visually
+                }
+                
+                manualTotal += val;
+            });
+            
+            let calculatedTotal = autoScore + manualTotal;
+
+            // Ensure total doesn't exceed max marks
+            if (calculatedTotal > maxTotalMarks) {
+                calculatedTotal = maxTotalMarks;
+            }
+
+            // Update the final score input
+            finalScoreInput.value = calculatedTotal.toFixed(2);
+        }
+
+        // Attach listeners
+        essayInputs.forEach(input => {
+            input.addEventListener('input', calculateTotal);
+            input.addEventListener('change', calculateTotal);
+        });
+        
+        // Initial calculation
+        calculateTotal();
+    });
+</script>
 @endpush

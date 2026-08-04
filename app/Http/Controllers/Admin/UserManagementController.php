@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use App\Services\BrevoMailService; // Import the Service
+use App\Mail\CourseEnrollmentRejectedMail;
+use App\Models\Enrollment;
+use Illuminate\Support\Facades\Log;
   
 class UserManagementController extends Controller
 { 
@@ -363,5 +366,36 @@ class UserManagementController extends Controller
         return back()->with('success', $message);
     }
 
+   
+    public function rejectEnrollment(Request $request, Enrollment $enrollment)
+    {
+        $request->validate([
+            'reason' => 'nullable|string|max:500'
+        ]);
+
+        $user = $enrollment->user;
+        $course = $enrollment->course;
+        $reason = $request->input('reason', 'You were not assigned to this course via the scholarship program.');
+
+        try {
+            // 1. Delete the enrollment
+            $enrollment->delete();
+
+            // 2. Send Email Notification using Brevo Service
+            $mailable = new CourseEnrollmentRejectedMail($user, $course, $reason);
+            
+            $this->brevoService->sendMailable(
+                $user->email, 
+                $mailable, 
+                'Enrollment Update: ' . $course->title
+            );
+
+            return back()->with('success', "Student removed from course and notified.");
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send rejection email via Brevo: ' . $e->getMessage());
+            return back()->with('error', "Student removed, but failed to send notification email: " . $e->getMessage());
+        }
+    }
 
 } 

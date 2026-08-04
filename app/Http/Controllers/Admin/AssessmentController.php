@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\BrevoMailService;
 use App\Mail\EssayRetryNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 
  
 class AssessmentController extends Controller
@@ -73,21 +74,14 @@ class AssessmentController extends Controller
             });
         }
 
-        // Search by Assessment Title
-        if ($request->filled('assessment_search')) {
-            $search = $request->assessment_search;
-            $query->whereHas('assessment', function($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%");
-            });
-        }
-
         $submissions = $query->paginate(20);
 
+        // Transform data to add Stage and Grade info
         $submissions->getCollection()->transform(function ($submission) {
-            // Determine Stage
+            // 1. Determine Stage (Quiz/Essay/etc)
             $submission->current_stage = $this->determineAssessmentStage($submission);
             
-            // Determine Grade
+            // 2. Calculate Grade Label based on Score
             $submission->grade_info = $this->calculateGradeLabel($submission->percentage);
             
             return $submission;
@@ -111,26 +105,21 @@ class AssessmentController extends Controller
      */
     private function determineAssessmentStage($submission)
     {
-        // 1. Get all questions for this assessment
         $questions = $submission->assessment->questions ?? collect();
         
         $hasMcqQuestions = $questions->contains('question_type', 'mcq');
         $hasEssayQuestions = $questions->contains('question_type', 'essay');
 
-        // If no questions exist, we can't determine stage
         if ($questions->isEmpty()) {
             return 'Unknown';
         }
 
-        // 2. Check actual submitted answers
         $submittedAnswers = $submission->answers ?? []; 
         
-        // Normalize: ensure it's an array/collection
         if ($submittedAnswers instanceof \Illuminate\Support\Collection) {
             $submittedAnswers = $submittedAnswers->toArray();
         }
 
-        // 3. Determine if Essay was actually answered
         $essayAnswered = false;
         foreach ($submittedAnswers as $answer) {
             $type = $answer['question_type'] ?? ($answer['type'] ?? null);
@@ -142,7 +131,6 @@ class AssessmentController extends Controller
             }
         }
 
-        // 4. Determine Stage
         if ($hasEssayQuestions && !$essayAnswered) {
             return 'Quiz Stage';      
         }
@@ -158,7 +146,7 @@ class AssessmentController extends Controller
         return 'Completed';           
     }
 
-        /**
+    /**
      * Calculate Grade Label based on Percentage
      * Distinction: 75%–100%
      * Pass: 50%–74%
@@ -629,61 +617,155 @@ class AssessmentController extends Controller
             compact('assessment', 'submissions'));
     }
  
-        public function viewSubmission(AssessmentSubmission $submission)
+       public function viewSubmission($encodedId)
     {
-        $submission->load(['user', 'assessment.course', 'assessment.questions', 'grader']);
+        // 1. Decode the ID using the Hashids trait
+        $id = AssessmentSubmission::decodeId($encodedId);
+    
+        if (!$id) {
+            abort(404, 'Invalid submission link.');
+        }
+
+        // 2. Fetch the submission with necessary relationships
+        $submission = AssessmentSubmission::with([
+            'user', 
+            'assessment.course', 
+            'assessment.questions', 
+            'grader'
+        ])->findOrFail($id);
         
         $assessment = $submission->assessment;
         $responses = $submission->question_responses ?? [];
         
-        // Categorize Questions
+        // 3. Categorize Questions & Calculate Auto-Score
         $mcqQuestions = collect();
         $essayQuestions = collect();
-        $projectQuestions = collect(); // For case studies or specific project prompts
+        $projectQuestions = collect(); 
+        
+        $autoScore = 0;       // Raw points earned from MCQs
+        $mcqTotalPoints = 0;  // Total possible points from MCQs
         
         foreach ($assessment->questions as $question) {
             $response = $responses[$question->id] ?? null;
+            $points = $question->points ?? 0;
+            
             $item = [
                 'question' => $question,
-                'response' => $response
+                'response' => $response,
+                'max_points' => $points
             ];
 
+            // Calculate Auto-Score for MCQs/Short Answers
             if (in_array($question->question_type, ['multiple_choice', 'true_false', 'short_answer'])) {
+                $mcqTotalPoints += $points;
+                if (($response['correct'] ?? false)) {
+                    $autoScore += $points;
+                }
                 $mcqQuestions->push($item);
+                
             } elseif ($question->question_type === 'essay') {
                 $essayQuestions->push($item);
             } else {
-                // Treat case_study or others as Project/Manual
                 $projectQuestions->push($item);
             }
         }
  
-        // Extract Uploaded Files for easy access
+        // 4. Extract Uploaded Files for easy access
         $uploadedFiles = collect($responses)
-            ->filter(fn($r) => !empty($r['uploaded_file']['path']))
+            ->filter(fn($r) => isset($r['uploaded_file']['path']) && !empty($r['uploaded_file']['path']))
             ->map(fn($r) => $r['uploaded_file']);
 
+        // 5. Return View with Correct Data
         return view('admin.courses.assessments.submission', compact(
             'submission', 
             'assessment', 
             'mcqQuestions', 
             'essayQuestions', 
             'projectQuestions', 
-            'uploadedFiles'
+            'uploadedFiles',
+            'autoScore',      // Pass raw MCQ points (e.g., 15)
+            'mcqTotalPoints'  // Pass total possible MCQ points (e.g., 20)
         ));
     }
 
     public function gradeSubmission(Request $request, AssessmentSubmission $submission)
     {
         $validated = $request->validate([
-            'score'    => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
-            'feedback' => 'nullable|string',
+            'final_score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
+            'feedback'    => 'nullable|string',
+            'essay_scores' => 'nullable|array', // Optional: if you want to save individual essay scores
         ]);
 
-        $submission->markAsGraded($validated['score'], $validated['feedback'], auth()->id());
+        // Save the final score
+        $submission->score = $validated['final_score'];
+        
+        // Recalculate percentage based on total marks
+        $totalMarks = $submission->assessment->total_marks ?? 100;
+        $submission->percentage = ($validated['final_score'] / $totalMarks) * 100;
+        
+        $submission->passed = $submission->percentage >= ($submission->assessment->passing_score ?? 50);
+        $submission->status = 'graded';
+        $submission->feedback = $validated['feedback'];
+        $submission->grader_id = auth()->id();
+        $submission->graded_at = now();
+        
+        // Optional: Save individual essay scores in a JSON column if you have one
+        // $submission->manual_breakdown = $validated['essay_scores'];
 
-        return redirect()->route('admin.assessments.submissions', $submission->assessment_id)
-            ->with('success', 'Submission graded successfully!');
+        $submission->save();
+
+        return redirect()->back()->with('success', 'Submission graded successfully!');
+    }
+
+
+    public function exportSubmissionPdf($encodedId)
+    {
+        // Decode ID (using your existing Hashids logic)
+        $id = AssessmentSubmission::decodeId($encodedId);
+        if (!$id) abort(404);
+
+        $submission = AssessmentSubmission::with([
+            'user', 
+            'assessment.course', 
+            'assessment.questions', 
+            'grader'
+        ])->findOrFail($id);
+        
+        $assessment = $submission->assessment;
+        $responses = $submission->question_responses ?? [];
+        
+        // Re-use your categorization logic
+        $mcqQuestions = collect();
+        $essayQuestions = collect();
+        $projectQuestions = collect(); 
+        
+        foreach ($assessment->questions as $question) {
+            $response = $responses[$question->id] ?? null;
+            $item = ['question' => $question, 'response' => $response];
+
+            if (in_array($question->question_type, ['multiple_choice', 'true_false', 'short_answer'])) {
+                $mcqQuestions->push($item);
+            } elseif ($question->question_type === 'essay') {
+                $essayQuestions->push($item);
+            } else {
+                $projectQuestions->push($item);
+            }
+        }
+
+        $uploadedFiles = collect($responses)
+            ->filter(fn($r) => isset($r['uploaded_file']['path']) && !empty($r['uploaded_file']['path']))
+            ->map(fn($r) => $r['uploaded_file']);
+
+        // Load the PDF-specific view
+        $pdf = Pdf::loadView('admin.courses.assessments.submission-pdf', compact(
+            'submission', 'assessment', 'mcqQuestions', 'essayQuestions', 'projectQuestions', 'uploadedFiles'
+        ));
+
+        // Professional PDF Settings
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+        return $pdf->download('Submission_' . $submission->user->name . '_' . $assessment->slug . '.pdf');
     }
 
     public function bulkDelete(Request $request)

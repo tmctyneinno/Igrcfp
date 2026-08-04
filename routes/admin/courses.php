@@ -94,7 +94,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
  
     // ✅ Move this here — before the {assessment} wildcard
     Route::get('/assessments/submissions', [AssessmentController::class, 'submissionsList'])->name('assessments.submissions.list');
-
+    Route::get('/assessments/submissions/{submission}/export-pdf', [AssessmentController::class, 'exportSubmissionPdf'])->name('assessments.submission.export');
+    
     // Now the wildcard routes
     Route::get('/assessments/{assessment}', [AssessmentController::class, 'show'])->name('assessments.show');
     Route::get('/assessments/{assessment}/edit', [AssessmentController::class, 'edit'])->name('assessments.edit');

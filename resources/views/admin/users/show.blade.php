@@ -29,6 +29,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <!-- ADDED h-100 to row to ensure columns stretch equally if needed -->
     <div class="row gy-4 h-100">
         
@@ -108,7 +115,7 @@
                     <h6 class="card-title mb-0 text-emerald-700">Scholarship Access</h6>
                 </div> 
                 <div class="card-body p-24">
-                    
+                     
                     <!-- 1. Global Category Access Toggle -->
                     <form action="{{ route('admin.users.toggle-scholarship', $user) }}" method="POST">
                         @csrf
@@ -207,7 +214,7 @@
                 </div>
             </div>
 
-            <!-- Enrollments Table WITH ASSESSMENT STAGE -->
+            <!-- Enrollments Table WITH ASSESSMENT STAGE & REJECT ACTION -->
             <div class="card mb-24">
                 <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
                     <h6 class="card-title mb-0">Course Enrollments</h6>
@@ -224,6 +231,7 @@
                                     <th>Status</th>
                                     <th>Assessment Stage</th>
                                     <th>Certificate</th>
+                                    <th class="text-center">Action</th> {{-- NEW COLUMN --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -287,6 +295,53 @@
                                             </a>
                                         @else
                                             <span class="text-muted">—</span>
+                                        @endif
+                                    </td>
+
+                                    {{-- NEW: Action Column with Reject Button --}}
+                                    <td class="text-center">
+                                        @if(!$enrollment->certificate_generated)
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger reject-action-btn d-inline-flex align-items-center justify-content-center"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#rejectModal{{ $enrollment->id }}"
+                                                    title="Reject Enrollment">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-x">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                                    <line x1="17" y1="8" x2="23" y2="14"></line>
+                                                    <line x1="23" y1="8" x2="17" y2="14"></line>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Reject Modal -->
+                                            <div class="modal fade" id="rejectModal{{ $enrollment->id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('admin.enrollments.reject', $enrollment) }}" method="POST">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h6 class="modal-title">Reject Enrollment</h6>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Are you sure you want to remove <strong>{{ $user->name }}</strong> from <strong>{{ $enrollment->course->title ?? 'this course' }}</strong>?</p>
+                                                                <p class="text-sm text-muted">An email notification will be sent to the student.</p>
+                                                                <div class="mb-3 mt-3">
+                                                                    <label class="form-label fw-semibold">Reason for Rejection (Optional)</label>
+                                                                    <textarea name="reason" class="form-control" rows="3" placeholder="e.g., Not assigned to this scholarship course..."></textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="text-muted small">Locked</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -389,5 +444,26 @@
     .border-emerald-100 { border-color: #d1fae5 !important; }
     .border-emerald-200 { border-color: #a7f3d0 !important; }
     .text-emerald-700 { color: #047857 !important; }
+
+    .reject-action-btn {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        background-color: transparent !important;
+    }
+
+    .reject-action-btn:hover,
+    .reject-action-btn:focus,
+    .reject-action-btn:active {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        background-color: rgba(220, 53, 69, 0.08) !important;
+    }
+
+    .reject-action-btn iconify-icon,
+    .reject-action-btn .iconify-icon {
+        color: #dc3545 !important;
+        fill: #dc3545 !important;
+        stroke: #dc3545 !important;
+    }
 </style>
 @endpush

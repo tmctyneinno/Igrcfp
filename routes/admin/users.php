@@ -62,5 +62,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         ->name('users.scholarship-courses');
     Route::post('/users/{user}/scholarship-courses', [UserManagementController::class, 'updateScholarshipCourses'])
         ->name('users.update-scholarship-courses');
-
+    Route::post('/enrollments/{enrollment}/reject', [UserManagementController::class, 'rejectEnrollment'])
+    ->name('enrollments.reject');
 });

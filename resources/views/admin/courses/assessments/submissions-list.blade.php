@@ -35,6 +35,7 @@
         </div>
     @endif
 
+    <!-- Statistics Cards -->
     <div class="row gy-4 mb-24">
         <div class="col-xxl-3 col-sm-6">
             <div class="card shadow-none border bg-gradient-start-1 h-100">
@@ -134,7 +135,7 @@
                             <th scope="col">ID</th>
                             <th scope="col">Student</th>
                             <th scope="col">Assessment</th>
-                            <th scope="col">Course</th>
+                            <!-- <th scope="col">Course</th> -->
                             <th scope="col">Stage</th> 
                             <th scope="col">Submitted At</th>
                             <th scope="col">Score</th>
@@ -162,9 +163,9 @@
                                 <span class="fw-medium">{{ $submission->assessment->title ?? 'N/A' }}</span>
                                 <p class="text-xs text-secondary-light mb-0">{{ ucfirst($submission->assessment->assessment_level ?? '') }}</p>
                             </td>
-                            <td>
+                            <!-- <td>
                                 <span class="text-sm">{{ $submission->assessment->course->title ?? 'N/A' }}</span>
-                            </td>
+                            </td> -->
                             <td>
                                 @php
                                     $stage = $submission->current_stage ?? 'Unknown';
@@ -185,6 +186,8 @@
                             <td>
                                 {{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y H:i') : 'N/A' }}
                             </td>
+                            
+                            {{-- Score Column --}}
                             <td>
                                 @if($submission->percentage !== null)
                                     <span class="fw-bold {{ $submission->passed ? 'text-success-600' : 'text-danger-600' }}">
@@ -197,16 +200,21 @@
                             
                             {{-- NEW: Grade Column --}}
                             <td>
-                                @if($submission->grade_label)
+                                @if(isset($submission->grade_info))
                                     @php
-                                        $grade = $submission->grade_label;
-                                        $gradeColor = 'bg-' . $grade['class'] . '-100 text-' . $grade['class'] . '-600';
+                                        $label = $submission->grade_info['label'];
+                                        $class = $submission->grade_info['class'];
+                                        
+                                        // Map class to specific bootstrap colors
+                                        $bgClass = 'bg-' . $class . '-100';
+                                        $textClass = 'text-' . $class . '-600';
                                     @endphp
-                                    <span class="badge {{ $gradeColor }} radius-4 px-8 py-4 font-weight-bold">
-                                        {{ $grade['label'] }}
+                                    
+                                    <span class="badge {{ $bgClass }} {{ $textClass }} radius-4 px-8 py-4 fw-bold">
+                                        {{ $label }}
                                     </span>
                                 @else
-                                    <span class="text-muted">—</span>
+                                    <span class="text-muted small">—</span>
                                 @endif
                             </td>
 
@@ -217,7 +225,7 @@
                             </td>
                             <td class="text-center">
                                 <div class="d-flex align-items-center justify-content-center gap-2">
-                                    <a href="{{ route('admin.assessments.submission.view', $submission->id) }}" 
+                                    <a href="{{ route('admin.assessments.submission.view', $submission->encoded_id ) }}" 
                                        class="bg-info-focus bg-hover-info-200 text-info-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle"
                                        title="View & Grade">
                                         <iconify-icon icon="majesticons:eye-line"></iconify-icon>
