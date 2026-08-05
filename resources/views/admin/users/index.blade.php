@@ -203,7 +203,7 @@
                                             No Transactions
                                         </span>
                                     @endif
-                                </td> 
+                                </td>  
                                 <td class="text-center">
                                     @php
                                         $roleColors = [
@@ -248,6 +248,22 @@
                                            title="View Details"> 
                                             <iconify-icon icon="majesticons:eye-line" class="icon text-xl"></iconify-icon>
                                         </a>
+                                        <!-- NEW: Impersonate Button -->
+                                        @php
+                                            $currentAdmin = auth()->guard('admin')->user();
+                                        @endphp
+
+                                        @if($currentAdmin && $currentAdmin->isAdmin() && $user->id !== $currentAdmin->id)
+                                        <form action="{{ route('admin.users.impersonate', $user) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" 
+                                                    class="bg-warning-focus bg-hover-warning-200 text-warning-600 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle border-0" 
+                                                    title="Impersonate User"
+                                                    onclick="return confirm('Are you sure you want to impersonate {{ $user->name }}?')"> 
+                                                <iconify-icon icon="solar:user-id-linear" class="icon text-xl"></iconify-icon>
+                                            </button>
+                                        </form>
+                                        @endif
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')

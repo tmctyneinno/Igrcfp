@@ -4,10 +4,16 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\Auth\AdminRegisterController;
 use App\Http\Controllers\Admin\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\AdminResetPasswordController;
+use App\Http\Controllers\Admin\ImpersonationController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Authentication Routes (Public)
 Route::prefix('admin')->name('admin.')->group(function () {
+    Route::post('/admin/users/{user}/impersonate', [ImpersonationController::class, 'impersonate'])
+    ->name('users.impersonate');
+
+    Route::get('/admin/stop-impersonate', [ImpersonationController::class, 'stopImpersonate'])
+        ->name('stop-impersonate');
     // Login Routes
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])
         ->name('login')

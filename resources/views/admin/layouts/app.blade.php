@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- CSRF Token --> 
+   <!-- CSRF Token -->  
     <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>IGRCFP Admin</title>
   <link rel="shortcut icon" href="{{asset('assets/images/favicon.png')}}" type="image/png">      
@@ -36,6 +36,26 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body> 
+
+    {{-- START: IMPERSONATION BANNER --}}
+    @if(session('impersonator_id'))
+        @php
+            // When impersonating, we are logged in via 'web' guard as the user
+            $impersonatedUser = Auth::guard('web')->user();
+        @endphp
+        
+        @if($impersonatedUser)
+            <div class="bg-warning text-dark py-2 px-4 text-center fw-bold sticky-top" style="z-index: 9999; position: relative;">
+                <i class="fas fa-user-secret me-2"></i>
+                You are currently impersonating <strong>{{ $impersonatedUser->name }}</strong> ({{ $impersonatedUser->email }}).
+                <a href="{{ route('admin.stop-impersonate') }}" class="ms-3 text-dark underline fw-bold">
+                    <i class="fas fa-sign-out-alt me-1"></i> Stop Impersonating
+                </a>
+            </div>
+        @endif
+    @endif
+    {{-- END: IMPERSONATION BANNER --}}
+
     @include('admin.layouts.sidebar')
    
 

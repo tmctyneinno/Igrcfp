@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateSessionToken
-{
+{ 
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {

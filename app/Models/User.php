@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\CustomResetPasswordNotification;
-   
+    
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -644,6 +644,11 @@ public function getCompletedAssessmentsAttribute()
     {
         $courseId = $course instanceof Course ? $course->id : $course;
         return $this->scholarshipCourses()->where('courses.id', $courseId)->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 
     

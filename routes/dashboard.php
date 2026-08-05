@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified', 'validate.session'])->group(function () {
     Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('payment.stripe.success');
     // Route::get('/payment/stripe/success', [CheckoutController::class, 'stripeSuccess'])->name('stripe.success');
     Route::get('dashboard/payment/stripe/cancel', [CheckoutController::class, 'stripeCancel'])->name('payment.stripe.cancel');
-
+ 
     // Certificate routes
     Route::get('dashboard/certificates/generate/{enrollment}', [CertificateController::class, 'generate'])->name('dashboard.certificates.generate');
     Route::get('dashboard/certificates/preview/{enrollment}', [CertificateController::class, 'preview'])->name('dashboard.certificates.preview');
