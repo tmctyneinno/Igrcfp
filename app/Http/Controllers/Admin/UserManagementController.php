@@ -405,11 +405,11 @@ class UserManagementController extends Controller
             // 2. Send Email Notification using Brevo Service
             $mailable = new CourseEnrollmentRejectedMail($user, $course, $reason);
             
-            $this->brevoService->sendMailable(
-                $user->email, 
-                $mailable, 
-                'Enrollment Update: ' . $course->title
-            );
+            // $this->brevoService->sendMailable(
+            //     $user->email, 
+            //     $mailable, 
+            //     'Enrollment Update: ' . $course->title
+            // );
 
             return back()->with('success', "Student removed from course and notified.");
 
