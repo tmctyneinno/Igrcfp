@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "@inertiajs/react";
 import { motion } from 'framer-motion';
 import DashboardCourseCard from '@/components/Courses/DashboardCourseCard'; // Import the card
-  
+   
 export default function MyLearning({ 
     enrolledCourses = [], 
     unenrolledScholarshipCourses = [],
@@ -150,7 +150,7 @@ export default function MyLearning({
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                            >
+                            > 
                                 {/* Use the DashboardCourseCard which handles the "Activate" logic */}
                                 <DashboardCourseCard 
                                     course={course}

@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 
 export default function Index({ auth, courses, enrolledCourses, unenrolledScholarshipCourses, popularCourses, categories }) {
     const { cartCount, cartItems } = useCartCount(); 
-  
+   
     // Extract scholarship IDs from auth user
     const scholarshipCourseIds = auth?.user?.scholarship_course_ids || [];
 
@@ -43,7 +43,7 @@ export default function Index({ auth, courses, enrolledCourses, unenrolledSchola
             <LearningCenter enrolledCourses={enrolledCourses} />
             
             {/* Pass scholarshipCourseIds and handler */}
-            <MyLearning 
+            <MyLearning   
                 enrolledCourses={enrolledCourses} 
                 unenrolledScholarshipCourses={unenrolledScholarshipCourses || []}
                 scholarshipCourseIds={scholarshipCourseIds}
@@ -54,7 +54,7 @@ export default function Index({ auth, courses, enrolledCourses, unenrolledSchola
                 initialCourses={popularCourses} 
                 onScholarshipEnroll={handleScholarshipEnroll}
                 authUser={auth?.user}
-            />  
+            />   
         </AuthenticatedLayout>  
     );   
 }

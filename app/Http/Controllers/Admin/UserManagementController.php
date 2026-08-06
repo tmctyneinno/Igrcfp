@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Services\BrevoMailService; // Import the Service
 use App\Mail\CourseEnrollmentRejectedMail;
 use App\Models\Enrollment;
+use App\Models\CourseModuleUser;
 use Illuminate\Support\Facades\Log;
   
 class UserManagementController extends Controller
@@ -312,7 +313,7 @@ class UserManagementController extends Controller
         ));
     }
 
-   public function updateScholarshipCourses(Request $request, User $user)
+    public function updateScholarshipCourses(Request $request, User $user)
     {
         $request->validate([
             'course_ids' => 'nullable|array',
@@ -321,36 +322,56 @@ class UserManagementController extends Controller
 
         $newCourseIds = $request->input('course_ids', []);
         
-        // Ensure consistent types for comparison (string vs int issues)
-        $currentCourseIds = $user->scholarshipCourses()->pluck('courses.id')->map(fn($id) => (string)$id)->toArray();
+        // Ensure consistent types for comparison
+        $currentCourseIds = $user->scholarshipCourses()
+            ->pluck('courses.id')
+            ->map(fn($id) => (string)$id)
+            ->toArray();
         $newCourseIdsString = array_map('strval', $newCourseIds);
         
+        // ✅ Find courses being REMOVED (before sync)
+        $removedCourseIds = array_diff($currentCourseIds, $newCourseIdsString);
+
         // Find newly added courses
         $newlyAssigned = array_diff($newCourseIdsString, $currentCourseIds);
 
-        // Sync with extra pivot data
+        // Sync scholarship pivot with extra data
         $syncData = [];
         foreach ($newCourseIds as $courseId) {
             $syncData[$courseId] = ['assigned_by' => auth()->id()];
         }
         $user->scholarshipCourses()->sync($syncData);
 
-        // Send emails ONLY for newly assigned courses using Brevo
+        // ✅ CRITICAL: Clean up enrollments & progress for removed courses
+        if (!empty($removedCourseIds)) {
+            $removedIntIds = array_map('intval', $removedCourseIds);
+
+            // Delete enrollments
+            Enrollment::where('user_id', $user->id)
+                ->whereIn('course_id', $removedIntIds)
+                ->delete();
+
+            // Clean up course_user pivot
+            $user->courses()->detach($removedIntIds);
+
+            // Clean up module/lesson progress
+            CourseModuleUser::where('user_id', $user->id)
+                ->whereHas('module', fn($q) => $q->whereIn('course_id', $removedIntIds))
+                ->delete();
+        }
+
+        // Send emails ONLY for newly assigned courses
         $emailsSent = 0;
         foreach ($newlyAssigned as $courseId) {
             $course = Course::find($courseId);
             if ($course) {
                 try {
                     $mailable = new ScholarshipCourseAssignedMail($user, $course);
-                    
-                    // Use your custom Brevo service
-                    $this->brevoService->sendMailable(
-                        // 'eshanokpe@gmail.com',
-                        $user->email, 
-                        $mailable, 
-                        'Scholarship Course Assigned: ' . $course->title
-                    ); 
-                    
+                    // $this->brevoService->sendMailable(
+                    //     $user->email, 
+                    //     $mailable, 
+                    //     'Scholarship Course Assigned: ' . $course->title
+                    // ); 
                     $emailsSent++;
                 } catch (\Exception $e) {
                     Log::error('Failed to send scholarship email via Brevo: ' . $e->getMessage());
@@ -366,7 +387,7 @@ class UserManagementController extends Controller
         return back()->with('success', $message);
     }
 
-   
+    
     public function rejectEnrollment(Request $request, Enrollment $enrollment)
     {
         $request->validate([
@@ -385,8 +406,7 @@ class UserManagementController extends Controller
             $mailable = new CourseEnrollmentRejectedMail($user, $course, $reason);
             
             $this->brevoService->sendMailable(
-                // $user->email, 
-                'eshanokpe@gmail.com', 
+                $user->email, 
                 $mailable, 
                 'Enrollment Update: ' . $course->title
             );

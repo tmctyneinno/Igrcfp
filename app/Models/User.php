@@ -628,14 +628,17 @@ public function getCompletedAssessmentsAttribute()
     }
 
 
-    // Add to fillable if needed, but pivot is managed via sync/attach
-    // Add relationship:
+   /**
+     * Courses assigned to user via scholarship
+     */
+    
     public function scholarshipCourses()
     {
         return $this->belongsToMany(Course::class, 'scholarship_courses')
             ->withPivot('assigned_at', 'assigned_by')
             ->withTimestamps();
     }
+    
 
     /**
      * Check if user has scholarship access to a specific course
@@ -645,7 +648,7 @@ public function getCompletedAssessmentsAttribute()
         $courseId = $course instanceof Course ? $course->id : $course;
         return $this->scholarshipCourses()->where('courses.id', $courseId)->exists();
     }
-
+ 
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

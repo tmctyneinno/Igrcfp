@@ -244,3 +244,5 @@ php artisan config:clear
    php artisan config:cache
    # Option A: Fast-forward only (if possible)
 git pull --ff-only origin main
+
+php artisan tinker

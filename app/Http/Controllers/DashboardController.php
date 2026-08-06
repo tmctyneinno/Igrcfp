@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\CourseCategory;
 use App\Models\Course;
-
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -18,14 +17,14 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Event;
 use Inertia\Inertia;
- 
+
 class DashboardController extends Controller
-{ 
+{
     public function index()
-    { 
+    {
         // Pass enrollment redirect to frontend if it exists
         $enrollmentRedirect = session('enrollment_redirect');
-        
+
         if ($enrollmentRedirect) {
             session()->forget('enrollment_redirect');
             return inertia('Dashboard/Index', [
@@ -38,21 +37,21 @@ class DashboardController extends Controller
         $scholarshipCourseIds = [];
         $unenrolledScholarshipCourses = collect();
 
-        if ($user) {
-            // 1. Get Enrolled IDs
-            $enrolledCourseIds = array_unique(array_merge(
-                $user->courses()->pluck('courses.id')->toArray(),
-                $user->enrollments()->pluck('course_id')->toArray()
-            ));
-
-            // 2. Get Individual Scholarship Course IDs
+       if ($user) {
+            // 1. Get Scholarship Course IDs
             $scholarshipCourseIds = $user->scholarshipCourses()
                 ->pluck('courses.id')
                 ->map(fn($id) => (int)$id)
                 ->toArray();
 
-            // 3. Get Scholarship Courses NOT yet enrolled in (To display in My Learning as "Ready to Start")
-            $unenrolledScholarshipCourses = Course::published()
+            // 2. Get ACTUAL enrolled course IDs (only courses with enrollment records)
+            $enrolledCourseIds = $user->enrollments()
+                ->pluck('course_id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
+            // 3. Get Scholarship Courses NOT yet enrolled in (Ready to Activate)
+            $unenrolledScholarshipCourses = Course::query()
                 ->whereIn('id', $scholarshipCourseIds)
                 ->whereNotIn('id', $enrolledCourseIds)
                 ->with('category')
@@ -133,52 +132,66 @@ class DashboardController extends Controller
                     ] : null,
                 ];
             });
-        
-        // Get user's enrolled courses
-        $enrolledCourses = collect(); 
-        
+
+        // Get user's enrolled courses (ONLY paid or scholarship-assigned)
+        $enrolledCourses = collect();
+
+        // Get user's enrolled courses (ONLY paid or activated scholarship courses)
+        $enrolledCourses = collect();
+
         if ($user) {
+            // Valid enrolled = has enrollment record AND (has payment OR is scholarship-assigned)
+            $validEnrolledCourseIds = Enrollment::where('user_id', $user->id)
+                ->where(function ($query) use ($scholarshipCourseIds) {
+                    $query->whereHas('transaction', function ($q) {
+                        $q->whereIn('status', ['completed', 'approved', 'paid']);
+                    })->orWhereIn('course_id', $scholarshipCourseIds);
+                })
+                ->pluck('course_id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
             $enrolledCourses = Enrollment::where('user_id', $user->id)
-                ->with(['course' => function($query) {
-                   $query->withCount('modules')->with('category');
+                ->whereIn('course_id', $validEnrolledCourseIds)
+                ->with(['course' => function ($query) {
+                    $query->withCount('modules')->with('category');
                 }])
                 ->take(4)
                 ->get()
                 ->map(function ($enrollment) {
                     if (!$enrollment->course) return null;
-                    
+
                     $course = $enrollment->course;
-                    // Note: You might need to ensure calculateEnrollmentModuleProgress is accessible or inline it
                     $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
 
-                    return [
-                        'enrollment_id' => $enrollment->id,
-                        'id' => $course->id,
-                        'title' => $course->title,
-                        'slug' => $course->slug,
-                        'short_description' => $course->short_description,
-                        'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
-                        'image_url' => $course->image_url,
-                        'level' => $course->level,
-                        'duration' => $course->duration,
-                        'progress' => $moduleProgress['progress'],
-                        'modules_count' => $moduleProgress['total_modules'],
-                        'completed_modules' => $moduleProgress['completed_modules'],
-                        'module_ids' => $moduleProgress['module_ids'],
-                        'format' => $course->format,
-                        'status' => $enrollment->status ?? 'enrolled',
-                        'category' => $course->category ? [
-                            'id' => $course->category->id,
-                            'name' => $course->category->name,
-                            'slug' => $course->category->slug,
-                            'icon' => $course->category->icon,
-                        ] : null,
-                    ];
-                })
-                ->filter()
-                ->values();
-        }
-        
+            return [
+                'enrollment_id' => $enrollment->id,
+                'id' => $course->id,
+                'title' => $course->title,
+                'slug' => $course->slug,
+                'short_description' => $course->short_description,
+                'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                'image_url' => $course->image_url,
+                'level' => $course->level,
+                'duration' => $course->duration,
+                'progress' => $moduleProgress['progress'],
+                'modules_count' => $moduleProgress['total_modules'],
+                'completed_modules' => $moduleProgress['completed_modules'],
+                'module_ids' => $moduleProgress['module_ids'],
+                'format' => $course->format,
+                'status' => $enrollment->status ?? 'enrolled',
+                'category' => $course->category ? [
+                    'id' => $course->category->id,
+                    'name' => $course->category->name,
+                    'slug' => $course->category->slug,
+                    'icon' => $course->category->icon,
+                ] : null,
+            ];
+        })
+        ->filter()
+        ->values();
+    }
+
         // Get popular courses
         $popularCourses = Course::published()
             ->with('category')
@@ -214,7 +227,7 @@ class DashboardController extends Controller
                     ] : null,
                 ];
             });
-        
+
         // Calculate stats
         $stats = [
             'total_courses' => $enrolledCourses->count(),
@@ -231,24 +244,172 @@ class DashboardController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_scholarship_applicant' => $user->is_scholarship_applicant,
-                'scholarship_course_ids' => $scholarshipCourseIds, // Pass IDs
+                'scholarship_course_ids' => $scholarshipCourseIds,
             ];
         }
-         
+
         return Inertia::render('Dashboard/Index', [
             'auth' => [
-                'user' => $userData, 
+                'user' => $userData,
             ],
             'courses' => $courses,
             'enrolledCourses' => $enrolledCourses,
-            'unenrolledScholarshipCourses' => $unenrolledScholarshipCourses, // Pass new data
+            'unenrolledScholarshipCourses' => $unenrolledScholarshipCourses,
             'popularCourses' => $popularCourses,
             'categories' => $categories,
             'stats' => $stats,
         ]);
     }
-  
-        public function courses(Request $request, string $programme)
+
+    public function myCourse(Request $request)
+    {
+        // Pass enrollment redirect to frontend if it exists
+        $enrollmentRedirect = session('enrollment_redirect');
+
+        if ($enrollmentRedirect) {
+            session()->forget('enrollment_redirect');
+            return inertia('Dashboard/MyLearning', [
+                'enrollmentRedirect' => $enrollmentRedirect,
+            ]);
+        }
+
+        // Get available courses
+        $courses = Course::published()
+            ->withCount('modules')
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('is_popular', 'desc')
+            ->orderBy('sort_order', 'asc')
+            ->take(6)
+            ->get()
+            ->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'title' => $course->title,
+                    'slug' => $course->slug,
+                    'short_description' => $course->short_description,
+                    'banner_image' => $course->banner_image,
+                    'image_url' => $course->image_url,
+                    'level' => $course->level,
+                    'duration' => $course->duration,
+                    'price' => $course->price,
+                    'discount_price' => $course->discount_price,
+                    'modules_count' => $course->modules_count,
+                ];
+            });
+
+        // Get user's enrolled courses (ONLY paid or scholarship-assigned)
+        $user = auth()->user();
+        $enrolledCourses = collect();
+
+        if ($user) {
+            $scholarshipCourseIds = $user->scholarshipCourses()
+                ->pluck('courses.id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
+            $paidEnrollmentIds = Enrollment::where('user_id', $user->id)
+                ->whereHas('transaction', function ($query) {
+                    $query->whereIn('status', ['completed', 'approved', 'paid']);
+                })
+                ->pluck('course_id')
+                ->map(fn($id) => (int)$id)
+                ->toArray();
+
+            $validCourseIds = array_unique(array_merge($paidEnrollmentIds, $scholarshipCourseIds));
+
+            $enrolledCourses = $user->enrollments()
+                ->whereIn('course_id', $validCourseIds)
+                ->with(['course' => function ($query) {
+                    $query->withCount('modules');
+                }])
+                ->take(4)
+                ->get()
+                ->map(function ($enrollment) {
+                    if (!$enrollment->course) return null;
+
+                    $course = $enrollment->course;
+                    $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
+
+                    // Check Assessment Status
+                    $quizStatus = 'not_started';
+                    $quizPassed = false;
+
+                    $quiz = $course->assessments()
+                        ->where('assessment_level', 'quiz')
+                        ->first();
+
+                    if ($quiz) {
+                        $submission = $quiz->submissions()
+                            ->where('user_id', $enrollment->user_id)
+                            ->latest()
+                            ->first();
+
+                        if ($submission) {
+                            $quizStatus = $submission->status;
+                            $quizPassed = (bool) $submission->passed;
+                        }
+                    }
+
+                    return [
+                        'enrollment_id' => $enrollment->id,
+                        'id' => $course->id,
+                        'title' => $course->title,
+                        'slug' => $course->slug,
+                        'short_description' => $course->short_description,
+                        'banner_image' => $course->banner_image ? Storage::url($course->banner_image) : null,
+                        'image_url' => $course->image_url,
+                        'level' => $course->level,
+                        'duration' => $course->duration,
+                        'progress' => $moduleProgress['progress'],
+                        'modules_count' => $moduleProgress['total_modules'],
+                        'completed_modules' => $moduleProgress['completed_modules'],
+                        'module_ids' => $moduleProgress['module_ids'],
+                        'format' => $course->format,
+                        'quiz_status' => $quizStatus,
+                        'quiz_passed' => $quizPassed,
+                    ];
+                })
+                ->filter()
+                ->values();
+        }
+
+        $popularCourses = Course::published()
+            ->where('is_popular', 1)
+            ->select([
+                'id', 'title', 'slug', 'short_description', 'banner_image', 'image',
+                'level', 'format', 'duration', 'price', 'discount_price', 'is_featured', 'rating'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get()
+            ->map(function ($course) {
+                $course->image = $course->image ? Storage::url($course->image) : null;
+                $course->banner_image = $course->banner_image ? Storage::url($course->banner_image) : null;
+                return $course;
+            });
+
+        // Prepare User Data for Frontend
+        $userData = null;
+        if ($user) {
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'is_scholarship_applicant' => $user->is_scholarship_applicant,
+            ];
+        }
+
+        return Inertia::render('Dashboard/MyLearning', [
+            'auth' => [
+                'user' => $userData,
+            ],
+            'courses' => $courses,
+            'enrolledCourses' => $enrolledCourses,
+            'popularCourses' => $popularCourses,
+        ]);
+    }
+
+    public function courses(Request $request, string $programme)
     {
         $programmeConfig = [
             'certificates' => [
@@ -500,144 +661,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function myCourse(Request $request)
-    {
-        // Pass enrollment redirect to frontend if it exists
-        $enrollmentRedirect = session('enrollment_redirect');
-        
-        if ($enrollmentRedirect) {
-            // Clear it from session after passing to frontend
-            session()->forget('enrollment_redirect');
-            
-            return inertia('Dashboard/Index', [
-                'enrollmentRedirect' => $enrollmentRedirect,
-            ]);
-        }
-        
-        // Get available courses
-        $courses = Course::published()
-            ->withCount('modules')
-            ->orderBy('is_featured', 'desc')
-            ->orderBy('is_popular', 'desc')
-            ->orderBy('sort_order', 'asc')
-            ->take(6)
-            ->get()
-            ->map(function ($course) {
-                return [
-                    'id' => $course->id,
-                    'title' => $course->title,
-                    'slug' => $course->slug,
-                    'short_description' => $course->short_description,
-                    'banner_image' => $course->banner_image, 
-                    'image_url' => $course->image_url, 
-                    'level' => $course->level,
-                    'duration' => $course->duration,
-                    'price' => $course->price,
-                    'discount_price' => $course->discount_price,
-                    'modules_count' => $course->modules_count,
-                ];
-            });
-          
-        // Get user's enrolled courses (you'll need to adjust based on your enrollment logic)
-        $user = auth()->user();
-        $enrolledCourses = $user->enrollments()
-            ->with(['course' => function($query) {
-                $query->withCount('modules');
-            }]) 
-            ->take(4)
-            ->get()
-            ->map(function ($enrollment) {
-                $course = $enrollment->course;
-                $moduleProgress = $this->calculateEnrollmentModuleProgress($enrollment);
-
-                // --- START: Check Assessment Status ---
-                $quizStatus = 'not_started';
-                $quizPassed = false;
-                
-                // Find the main course quiz (assessment_level = 'quiz')
-                $quiz = $course->assessments()
-                    ->where('assessment_level', 'quiz')
-                    ->first();
-
-                if ($quiz) {
-                    $submission = $quiz->submissions()
-                        ->where('user_id', $enrollment->user_id)
-                        ->latest()
-                        ->first();
-                        
-                    if ($submission) {
-                        $quizStatus = $submission->status; // e.g., 'submitted', 'graded', 'in_progress'
-                        $quizPassed = (bool) $submission->passed;
-                    }
-                }
-
-                return [
-                    'enrollment_id' => $enrollment->id,
-                    'id' => $course->id,
-                    'title' => $course->title,
-                    'slug' => $course->slug,
-                    'short_description' => $course->short_description,
-                    'banner_image' => $course->banner_image, 
-                    'image_url' => $course->image_url, 
-                    'level' => $course->level,
-                    'duration' => $course->duration,
-                    'progress' => $moduleProgress['progress'],
-                    'modules_count' => $moduleProgress['total_modules'],
-                    'completed_modules' => $moduleProgress['completed_modules'],
-                    'module_ids' => $moduleProgress['module_ids'],
-                    'format' => $course->format,
-                    // Add Assessment Data
-                    'quiz_status' => $quizStatus,
-                    'quiz_passed' => $quizPassed,
-                ];
-            });
-        
-        $popularCourses = Course::published()
-            ->where('is_popular', 1)
-            ->select([
-                'id',
-                'title',
-                'slug',
-                'short_description',
-                'banner_image',
-                'image',
-                'level',
-                'format',
-                'duration',
-                'price',
-                'discount_price',
-                'is_featured',
-                'rating'
-            ])
-            ->orderBy('created_at', 'desc')
-            ->take(4)
-            ->get()
-            ->map(function ($course) {
-            // Manually add the accessor values
-            $course->image = $course->image? Storage::url($course->image) : null;
-            $course->banner_image = $course->banner_image ? Storage::url($course->banner_image) : null;
-            return $course;
-        });
-
-        // Prepare User Data for Frontend
-        $userData = null;
-        if ($user) {
-            $userData = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'is_scholarship_applicant' => $user->is_scholarship_applicant,
-            ];
-        }
-
-        return Inertia::render('Dashboard/MyLearning', [
-            'auth' => [
-                'user' => $userData,
-            ],
-            'courses' => $courses,
-            'enrolledCourses' => $enrolledCourses,
-        ]);
-    } 
+   
 
     private function calculateEnrollmentModuleProgress(Enrollment $enrollment): array
     {
