@@ -235,10 +235,10 @@
                             @endphp
                             <div class="col-md-6">
                                 <div class="p-16 border rounded-8 {{ $isCorrect ? 'border-success-200 bg-success-50' : 'border-danger-200 bg-danger-50' }}">
-                                    <p class="fw-medium mb-2 small text-uppercase text-secondary-light">Question {{ $loop->iteration }}</p>
-                                    <p class="mb-2">{{ Str::limit($q->question_text, 80) }}</p>
+                                    <p class="fw-medium mb-2 small text-uppercase text-secondary-light"><b>Question {{ $loop->iteration }}</b></p>
+                                    <p class="mb-2">{!! Str::limit($q->question_text, 80) !!}</p>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <span class="small"><strong>Answer:</strong> {{ $r['answer'] ?? 'N/A' }}</span>
+                                        <span class="small"><strong>Answer:</strong> {!! $r['answer'] ?? 'N/A' !!}</span>
                                         <span class="badge {{ $isCorrect ? 'bg-success-600' : 'bg-danger-600' }} text-white">
                                             {{ $isCorrect ? 'Correct' : 'Incorrect' }}
                                         </span>
@@ -272,11 +272,12 @@
                         
                         <div class="border rounded-8 p-16 mb-3 last-child-mb-0 bg-light-50">
                             <!-- Question Prompt -->
+                            <span class="mb-2 badge bg-neutral-200 text-neutral-600 radius-4 px-8 py-4 flex-shrink-0">
+                                {{ $q->points ?? 0 }} {{ Str::plural('pt', $q->points ?? 0) }}
+                            </span>
                             <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
-                                <p class="fw-semibold mb-0 text-dark">{{ $q->question_text }}</p>
-                                <span class="badge bg-neutral-200 text-neutral-600 radius-4 px-8 py-4 flex-shrink-0">
-                                    {{ $q->points ?? 0 }} {{ Str::plural('pt', $q->points ?? 0) }}
-                                </span>
+                                <p class="fw-semibold mb-0 text-dark">{!! $q->question_text !!}</p>
+                                
                             </div>
                             
                             <!-- Display Text Content -->
@@ -357,7 +358,7 @@ The Team</textarea>
                                         <iconify-icon icon="solar:lightbulb-linear" class="me-1"></iconify-icon>
                                         Model Answer / Explanation
                                     </p>
-                                    <p class="mb-0 text-sm">{{ $explanation }}</p>
+                                    <p class="mb-0 text-sm">{!! $explanation !!}</p>
                                 </div>
                             @endif
                         </div>
