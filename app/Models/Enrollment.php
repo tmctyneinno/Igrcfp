@@ -37,6 +37,9 @@ class Enrollment extends Model
         'final_grade',
         'notes',
         'progress',
+        'quiz_failed_attempts',
+        'quiz_locked_until',
+        'quiz_permanently_locked',
     ];
 
     protected $casts = [
@@ -48,6 +51,8 @@ class Enrollment extends Model
         'certificate_status_updated_at'  => 'datetime',
         'certificate_verified'           => 'boolean',
         'amount'                         => 'decimal:2',
+        'quiz_locked_until'              => 'datetime',
+        'quiz_permanently_locked'        => 'boolean',
     ];
 
     // ─── Certificate Status Constants ─────────────────────────────────
@@ -210,9 +215,18 @@ class Enrollment extends Model
      */
     public function hasCertificate(): bool
     {
-        return $this->certificate_generated 
-            && $this->certificate_number 
+        return $this->hasIssuedCertificate()
             && $this->certificate_status === self::CERT_STATUS_ACTIVE;
+    }
+
+    /**
+     * A certificate is issued only when its record has a number and issue date.
+     */
+    public function hasIssuedCertificate(): bool
+    {
+        return (bool) $this->certificate_generated
+            && !empty($this->certificate_number)
+            && $this->certificate_generated_date !== null;
     }
 
     /**

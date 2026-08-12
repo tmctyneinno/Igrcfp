@@ -4,7 +4,10 @@ export default function LearningCenter({ enrolledCourses = [] }) {
     // Calculate dynamic stats
     const calculateStats = () => {
         const totalCourses = enrolledCourses.length;
-        const completedCourses = enrolledCourses.filter(course => course.progress === 100).length;
+        // Reading every module does not complete a course. A course is only
+        // complete after all assessments are passed and its certificate has
+        // actually been generated for the learner.
+        const completedCourses = enrolledCourses.filter(course => course.certificate_generated === true).length;
         const ongoingCourses = totalCourses - completedCourses;
         
         // Calculate total hours (assuming each course has duration in hours)
@@ -17,7 +20,7 @@ export default function LearningCenter({ enrolledCourses = [] }) {
             completedCourses,
             ongoingCourses,
             totalHours,
-            certificates: completedCourses // Assuming each completed course gives a certificate
+            certificates: enrolledCourses.filter(course => course.certificate_generated === true).length
         };
     };
 

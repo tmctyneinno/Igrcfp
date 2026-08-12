@@ -180,6 +180,7 @@ class DashboardController extends Controller
                 'module_ids' => $moduleProgress['module_ids'],
                 'format' => $course->format,
                 'status' => $enrollment->status ?? 'enrolled',
+                'certificate_generated' => (bool) $enrollment->certificate_generated,
                 'category' => $course->category ? [
                     'id' => $course->category->id,
                     'name' => $course->category->name,
@@ -734,21 +735,18 @@ class DashboardController extends Controller
         ->first();
         
     $quizzes = [];
-    $isLockedOut = false;
-    $lockExpiresAt = null;
+    $isPermanentlyLocked = (bool) ($enrollment?->quiz_permanently_locked ?? false);
+    $lockExpiresAt = $enrollment?->quiz_locked_until;
+    $isLockedOut = $isPermanentlyLocked || ($lockExpiresAt && now()->lessThan($lockExpiresAt));
     
     if ($combinedQuiz) {
         $submission = $combinedQuiz->submissions->first();
         
-        // Check for Lockout Status
-        if ($submission && !$submission->passed && $submission->locked_until) {
-            if (now()->lessThan($submission->locked_until)) {
-                $isLockedOut = true;
-                $lockExpiresAt = $submission->locked_until;
-            } else {
-                // Lock expired, clear it so they can try again
-                $submission->update(['locked_until' => null]);
-            }
+        // Clear an expired temporary lock. Permanent locks stay in effect.
+        if (!$isPermanentlyLocked && $lockExpiresAt && now()->greaterThanOrEqualTo($lockExpiresAt)) {
+            $enrollment->update(['quiz_locked_until' => null]);
+            $lockExpiresAt = null;
+            $isLockedOut = false;
         }
 
         // Check if quiz has essay questions
@@ -779,6 +777,8 @@ class DashboardController extends Controller
             'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
             'is_locked_out' => $isLockedOut,
             'lock_expires_at' => $lockExpiresAt ? \Carbon\Carbon::parse($lockExpiresAt)->toIso8601String() : null,
+            'is_permanently_locked' => $isPermanentlyLocked,
+            'failed_attempts' => (int) ($enrollment?->quiz_failed_attempts ?? 0),
         ]];
     } else {
         $quizzes = [];

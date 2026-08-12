@@ -10,6 +10,7 @@ class AssessmentAttempt extends Model
         'user_id',
         'assessment_id',
         'enrollment_id',
+        'attempt_number',
         'status',
         'started_at',
         'completed_at',

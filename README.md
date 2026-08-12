@@ -145,104 +145,15 @@ scholarships@igrcfp.org
 
 7042043220
 
-community chapter (igrcfp chapter pages to them selve)
-acbm
 
 
+column for completed the Quiz and Essay 
+column for the grade for quiz and Essay (write or attrachment)
 
+onces a student has completed both they 
 
-php artisan config:clear
-php artisan cache:clear
-php artisan tinker
-
-use App\Services\BrevoMailService;
-
-$mailer = new BrevoMailService();
-$mailer->sendOTP('eshanokpe@gmail.com', '123456');
-
-
-WOrk on the UI
-Work on the Nav Items
-Work on the 
-Work on the blog on the dashboard
-Work on the news on the dashboard
-
-Board of Trustees
-correct courses title
-
-Trendy Courses that make people employable
-Trendy Courses That Boost Employability
-In-Demand Courses That Lead to Jobs 
-
-
-Community & chapter still working on it
-Uploading of ccourses content
-(Scholarship June 1 - 15)
-
-
-<!-- sustaniable finane  -->
-<!-- data protection -->
-AI data tech
-<!-- Effective user techolou -->
-<!-- cybersecurity and awareness -->
-change in expectation
-<!-- effective risk mana assessemnt -->
-impact tech in GRC
-building and leading change in GRC
-impact leadership
-materclass
-company materclas
-board leadership series
-coorporate govrenacl
-<!-- problem  -->
-business
-<!-- marhet and sale  -->
-insurance
-public safe and security
-<!-- detecing and preventive -->
-introduction to operational management(move and leave)
-business contunity
-risk register and asessment
-risk assessment
-intorduction to risk management
-
-
-systemctl reload nginx
-
-Uderwriting
-Strategic Risk Management 
-Risk-Based Approach to AML & CFT
-Risk Appetite
-
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OTPMail;
-
-Mail::to('eshanokpe@gmail.com')->send(new OTPMail('123456'));
-
-ns1.tynesideinnovation.com
-ns2.tynesideinnovation.com
-php artisan make:migration create_chapters_table --create=chapters
- php artisan db:seed
+next to the student the student series number in another color 
  
+Attempt column (1 attempt out of 3 attempt) - 2 3days
 
-Send a notification email to 33 applicant notifying them if the closure of the igrcfp scholarship
-
-13-July-2025
-Wokring on all the feedback from MD
-uploaded Article 
-Uploaded the Research and White paper
-work on the download of document of scholarship applicant 
-
-
-
-AI detection submission assistement
-
--GRC maga
-Govc &. compliance
-
-php artisan config:clear
-   php artisan config:cache
-   # Option A: Fast-forward only (if possible)
-git pull --ff-only origin main
-
-php artisan tinker
+column that combine both the aggrrgiated score

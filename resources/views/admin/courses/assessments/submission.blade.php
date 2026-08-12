@@ -190,7 +190,7 @@
                                         class="form-control fw-bold"
                                         step="0.01" min="0" max="{{ $assessment->total_marks ?? 100 }}"
                                         value="{{ old('final_score', $autoScore) }}"
-                                        required>
+                                        readonly required>
                                     <span class="input-group-text bg-light">/ {{ $assessment->total_marks ?? 100 }}</span>
                                 </div>
                                 <small class="text-muted d-block mt-1">

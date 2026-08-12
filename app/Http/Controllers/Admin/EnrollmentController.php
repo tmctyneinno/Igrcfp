@@ -68,19 +68,26 @@ class EnrollmentController extends Controller
             return ['label' => 'No Assessments', 'key' => 'not_started'];
         }
 
+        // Once a learner has passed, a later retake must not move them back
+        // to the quiz stage.
         $quizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
             ->where('user_id', $userId)
+            ->where('passed', true)
+            ->where('percentage', '>=', 50)
             ->latest()
             ->first();
 
-        // If no quiz attempt yet
+        // If no passing attempt exists, use the latest attempt to distinguish
+        // between an unstarted assessment and one that needs a retry.
         if (!$quizSubmission) {
-            return ['label' => 'Not Started', 'key' => 'not_started'];
-        }
+            $latestQuizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
+                ->where('user_id', $userId)
+                ->latest()
+                ->first();
 
-        // If quiz failed or in progress
-        if (!$quizSubmission->passed) {
-            return ['label' => 'Quiz (Failed/Retry)', 'key' => 'quiz_stage'];
+            return $latestQuizSubmission
+                ? ['label' => 'Quiz (Failed/Retry)', 'key' => 'quiz_stage']
+                : ['label' => 'Not Started', 'key' => 'not_started'];
         }
 
         // 2. Check for Essay/Project (Part B)
@@ -93,6 +100,18 @@ class EnrollmentController extends Controller
 
         if (!$essayAssessment) {
             return ['label' => 'Quiz Passed', 'key' => 'completed'];
+        }
+
+        $passedEssaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
+            ->where('user_id', $userId)
+            ->where('status', 'graded')
+            ->where('passed', true)
+            ->where('percentage', '>=', 50)
+            ->latest()
+            ->first();
+
+        if ($passedEssaySubmission) {
+            return ['label' => 'Assessment Completed', 'key' => 'completed'];
         }
 
         $essaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
@@ -109,7 +128,7 @@ class EnrollmentController extends Controller
         }
 
         if ($essaySubmission->status === 'graded') {
-            return ['label' => 'Assessment Completed', 'key' => 'completed'];
+            return ['label' => 'Essay (Failed/Retry)', 'key' => 'essay_stage'];
         }
 
         return ['label' => 'Quiz Passed', 'key' => 'quiz_stage'];

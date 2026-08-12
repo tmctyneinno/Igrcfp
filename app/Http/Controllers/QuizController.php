@@ -36,17 +36,28 @@ class QuizController extends Controller
             ->whereIn('status', ['enrolled', 'active', 'completed'])
             ->firstOrFail();
 
+        if ($enrollment->quiz_permanently_locked) {
+            return redirect()->route('dashboard.courses.show', $course->slug)
+                ->with('error', 'This course is permanently locked after six unsuccessful quiz attempts.');
+        }
+
+        if ($enrollment->quiz_locked_until?->isFuture()) {
+            return redirect()->route('dashboard.courses.show', $course->slug)
+                ->with('error', 'This quiz is temporarily locked. Please try again after '. $enrollment->quiz_locked_until->format('M j, Y g:i A') .'.');
+        }
+
         if (!$this->allModulesRead($course, $enrollment)) {
             return redirect()->route('dashboard.courses.show', $course->slug)
                 ->with('error', 'Please read all module content before taking the quiz.');
         }
 
-        // ✅ If the user already has a fully completed attempt for this assessment,
-        // send them to results instead of starting/showing a new attempt.
+        // A passed quiz cannot be restarted. Failed quizzes remain eligible for
+        // a new attempt so the learner can use the retake action from results.
         $completedAttempt = AssessmentAttempt::where('user_id', $user->id)
             ->where('assessment_id', $assessment->id)
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
+            ->where('passed', true)
             ->exists();
 
         if ($completedAttempt) {
@@ -249,6 +260,7 @@ class QuizController extends Controller
             ->where('assessment_id', $assessment->id)
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'in_progress')
+            ->latest()
             ->first();
         
         if (!$attempt) {
@@ -468,12 +480,28 @@ class QuizController extends Controller
         
         $submission->save();
 
-        // ✅ HANDLE LOCKOUT FOR FAILED QUIZZES
-        // Only apply lock if it's a fully graded failure (not manual review)
-        if (!$passed && !$requiresManualMarking) {
-            $submission->update([
-                'locked_until' => now()->addHours(24)
+        // Course-level retry policy: failures 1–2 and 4–5 lock for 24 hours;
+        // failure 3 locks for 3 days; failure 6 permanently locks the course.
+        if ($isPartAOnly && $score < 50) {
+            $failedAttempts = AssessmentAttempt::where('assessment_id', $assessment->id)
+                ->where('user_id', $user->id)
+                ->where('enrollment_id', $enrollment->id)
+                ->whereNotNull('score')
+                ->where('score', '<', 50)
+                ->count();
+
+            $permanentlyLocked = $failedAttempts >= 6;
+            $lockedUntil = $permanentlyLocked
+                ? null
+                : now()->addDays($failedAttempts === 3 ? 3 : 1);
+
+            $enrollment->update([
+                'quiz_failed_attempts' => $failedAttempts,
+                'quiz_locked_until' => $lockedUntil,
+                'quiz_permanently_locked' => $permanentlyLocked,
             ]);
+
+            $submission->update(['locked_until' => $lockedUntil]);
         }
         
         // Link attempt to submission
@@ -508,6 +536,9 @@ class QuizController extends Controller
                 'manual_review' => $requiresManualMarking,
                 'part_a_submitted' => $isSplitPartASubmission,
                 'submission_id' => $submission->id,
+                'failed_attempts' => $enrollment->quiz_failed_attempts,
+                'locked_until' => $enrollment->quiz_locked_until?->toIso8601String(),
+                'permanently_locked' => $enrollment->quiz_permanently_locked,
             ]);
         }
         
@@ -810,9 +841,14 @@ class QuizController extends Controller
             ->where('assessment_id', $assessmentId)
             ->where('enrollment_id', $enrollmentId)
             ->whereIn('status', ['not_started', 'in_progress'])
+            ->latest()
             ->first();
         
-        if ($attempt) {
+        // Resume an untouched quiz or a passed Part A so the learner can
+        // continue to Part B. A scored failure must start a fresh attempt;
+        // otherwise Part A remains hidden because the old score marks it as
+        // already submitted.
+        if ($attempt && ($attempt->score === null || (float) $attempt->score >= 50)) {
             $attempt->update(['status' => 'in_progress', 'started_at' => $attempt->started_at ?? now()]);
             return $attempt;
         }

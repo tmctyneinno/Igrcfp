@@ -149,8 +149,11 @@ export default function ModuleQuiz({ enrollment, module, assessment, attempt }) 
 
     const formatTime = (seconds) => {
         if (!seconds && seconds !== 0) return '--:--';
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
+        const totalSeconds = Number.isFinite(Number(seconds))
+            ? Math.max(0, Math.floor(Number(seconds)))
+            : 0;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 

@@ -137,9 +137,13 @@
                             <th scope="col">Assessment</th>
                             <th scope="col">Stage</th> 
                             <th scope="col">Submitted At</th>
-                            <th scope="col">Score</th>
+                            <th scope="col">Quiz Score</th>
+                            <th scope="col">Essay Score</th>
+                            <th scope="col">Final Score</th>
+                            <th scope="col">Certificate</th>
                             <th scope="col">Grade</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Retry Lock</th>
                             <th scope="col" class="text-center">Action</th>
                         </tr>
                     </thead> 
@@ -169,11 +173,9 @@
                                     
                                     if ($stage === 'Quiz Stage') {
                                         $badgeClass = 'bg-primary-100 text-primary-600';
-                                    } elseif ($stage === 'Essay Stage') {
+                                    } elseif (in_array($stage, ['Ready for Essay', 'Essay Stage', 'Essay Under Review'])) {
                                         $badgeClass = 'bg-info-100 text-info-600';
-                                    } elseif ($stage === 'Quiz Only') {
-                                        $badgeClass = 'bg-warning-100 text-warning-600';
-                                    } elseif ($stage === 'Completed') {
+                                    } elseif (in_array($stage, ['Quiz Passed', 'Completed'])) {
                                         $badgeClass = 'bg-success-100 text-success-600';
                                     }
                                 @endphp
@@ -183,38 +185,79 @@
                                 {{ $submission->submitted_at ? $submission->submitted_at->format('M d, Y H:i') : 'N/A' }}
                             </td>
                             
-                            {{-- Score Column --}}
+                            {{-- Quiz score: Part A automatically graded marks --}}
                             <td>
-                                @if($submission->percentage !== null)
-                                    @php
-                                        $percentage = (float) $submission->percentage;
-                                        $scoreClass = 'text-danger-600';
-
-                                        if ($percentage > 75) {
-                                            $scoreClass = 'text-success-600';
-                                        } elseif ($percentage >= 50 && $percentage <= 75) {
-                                            $scoreClass = 'text-primary-600';
-                                        } elseif ($percentage >= 40 && $percentage <= 49) {
-                                            $scoreClass = 'text-warning-600';
-                                        }
-                                    @endphp
-                                    <span class="fw-bold {{ $scoreClass }}">
-                                        {{ number_format($percentage, 1) }}%
+                                @php($scores = $submission->score_breakdown ?? [])
+                                @if(($scores['quiz_total'] ?? 0) > 0)
+                                    <span class="fw-bold text-primary-600">
+                                        {{ number_format($scores['quiz_earned'], 1) }} / {{ number_format($scores['quiz_total'], 1) }}
                                     </span>
                                 @else
                                     <span class="text-muted">—</span>
+                                @endif
+                            </td>
+
+                            {{-- Essay score: Part B manually graded marks --}}
+                            <td>
+                                @if(($scores['essay_total'] ?? 0) > 0)
+                                    @if($scores['essay_earned'] !== null)
+                                        <span class="fw-bold text-info-600">
+                                            {{ number_format($scores['essay_earned'], 1) }} / {{ number_format($scores['essay_total'], 1) }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-warning-100 text-warning-600 radius-4 px-8 py-4">Pending</span>
+                                    @endif
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
+
+                            {{-- Final score: Quiz + Essay aggregate --}}
+                            <td>
+                                @if($scores['final_earned'] !== null)
+                                    <span class="fw-bold text-success-600">
+                                        {{ number_format($scores['final_earned'], 1) }} / {{ number_format($scores['final_total'], 1) }}
+                                    </span>
+                                    <p class="text-xs text-secondary-light mb-0">{{ number_format($submission->percentage ?? 0, 1) }}%</p>
+                                @else
+                                    <span class="text-muted">Pending</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @php($hasIssuedCertificate = $submission->enrollment?->hasIssuedCertificate() ?? false)
+                                @php($isCertificateEligible = $submission->enrollment && !$hasIssuedCertificate && $submission->status === 'graded' && $submission->percentage !== null && (float) $submission->percentage >= 75)
+                                @if($hasIssuedCertificate)
+                                    <span class="badge bg-success-100 text-success-600 radius-4 px-8 py-4">Generated</span>
+                                @elseif($isCertificateEligible)
+                                    <form action="{{ route('admin.certificates.generate', $submission->enrollment) }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="assessment_submission_id" value="{{ $submission->id }}">
+                                        <input type="hidden" name="use_calculated_grade" value="1">
+                                        <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1"
+                                                onclick="return confirm('Generate a certificate for {{ addslashes($submission->user->name ?? 'this learner') }}?')">
+                                            <iconify-icon icon="solar:diploma-verified-outline"></iconify-icon>
+                                            Generate
+                                        </button>
+                                    </form>
+                                @elseif(!$submission->enrollment)
+                                    <span class="badge bg-danger-100 text-danger-600 radius-4 px-8 py-4">Enrollment missing</span>
+                                @elseif($submission->status !== 'graded')
+                                    <span class="badge bg-warning-100 text-warning-600 radius-4 px-8 py-4">Grade first</span>
+                                @elseif($submission->percentage === null)
+                                    <span class="badge bg-warning-100 text-warning-600 radius-4 px-8 py-4">Score pending</span>
+                                @else
+                                    <span class="badge bg-neutral-100 text-neutral-600 radius-4 px-8 py-4">Requires 75%</span>
                                 @endif
                             </td>
                             
                             {{-- Grade Column --}}
                             <td>
                                 @if(isset($submission->grade_info))
-                                    @php
-                                        $label = $submission->grade_info['label'];
-                                        $class = $submission->grade_info['class'];
-                                        $bgClass = 'bg-' . $class . '-100';
-                                        $textClass = 'text-' . $class . '-600';
-                                    @endphp
+                                    @php($label = $submission->grade_info['label'])
+                                    @php($gradeClass = $submission->grade_info['class'])
+                                    @php($bgClass = 'bg-' . $gradeClass . '-100')
+                                    @php($textClass = 'text-' . $gradeClass . '-600')
                                     <span class="badge {{ $bgClass }} {{ $textClass }} radius-4 px-8 py-4 fw-bold">
                                         {{ $label }}
                                     </span>
@@ -227,6 +270,31 @@
                                 <span class="badge bg-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-100 text-{{ $submission->status == 'graded' ? 'success' : 'warning' }}-600 radius-4 px-8 py-4">
                                     {{ ucfirst($submission->status) }}
                                 </span>
+                            </td>
+                            <td>
+                                @php($lock = $submission->quiz_lock_info ?? [])
+                                @if($lock['permanently_locked'] ?? false)
+                                    <span class="badge bg-danger-100 text-danger-600 radius-4 px-8 py-4">Permanently locked</span>
+                                    <p class="text-xs text-secondary-light mb-0 mt-1">6 failed attempts</p>
+                                @elseif(!empty($lock['locked_until']) && $lock['locked_until']->isFuture())
+                                    <span class="badge bg-warning-100 text-warning-600 radius-4 px-8 py-4">Locked until</span>
+                                    <p class="text-xs text-secondary-light mb-0 mt-1">{{ $lock['locked_until']->format('M d, Y H:i') }}</p>
+                                    <p class="text-xs text-secondary-light mb-0">Attempt {{ $lock['failed_attempts'] ?? 0 }}</p>
+                                @elseif(($lock['failed_attempts'] ?? 0) > 0)
+                                    <span class="badge bg-neutral-100 text-neutral-600 radius-4 px-8 py-4">Retry available</span>
+                                    <p class="text-xs text-secondary-light mb-0 mt-1">{{ $lock['failed_attempts'] }} failed attempt(s)</p>
+                                @else
+                                    <span class="text-muted small">—</span>
+                                @endif
+
+                                @if($submission->enrollment && (($lock['permanently_locked'] ?? false) || !empty($lock['locked_until']) || ($lock['failed_attempts'] ?? 0) > 0))
+                                    <form action="{{ route('admin.assessments.submission.reset-retry-lock', $submission) }}" method="POST" class="mt-2">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-primary py-1 px-2" onclick="return confirm('Reset this learner’s retry lock and failed attempt count? They will be able to retake the course immediately.')">
+                                            Reset retry lock
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                             <td class="text-center">
                                 <div class="d-flex align-items-center justify-content-center gap-2">
@@ -281,7 +349,7 @@
                         </tr> 
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center py-4">
+                            <td colspan="12" class="text-center py-4">
                                 <p class="text-muted mb-0">No submissions found.</p>
                             </td>
                         </tr>

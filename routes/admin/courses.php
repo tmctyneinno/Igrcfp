@@ -111,6 +111,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     ->name('assessments.submission.delete');
     Route::post('/assessments/submission/{submission}/notify-retry', [AssessmentController::class, 'notifyEssayRetry'])
     ->name('assessments.submission.notify-retry');
+    Route::post('/assessments/submission/{submission}/reset-retry-lock', [AssessmentController::class, 'resetRetryLock'])
+    ->name('assessments.submission.reset-retry-lock');
 });
 
 // Project Assessment Routes
@@ -139,4 +141,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
 });
-

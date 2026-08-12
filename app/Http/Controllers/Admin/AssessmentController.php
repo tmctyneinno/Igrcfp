@@ -41,11 +41,12 @@ class AssessmentController extends Controller
             compact('assessments', 'courses', 'statistics'));
     }
 
-        public function submissionsList(Request $request)
+    public function submissionsList(Request $request)
     {
         $query = AssessmentSubmission::with([
             'user', 
             'assessment.course', 
+            'enrollment',
             'grader',
             'assessment.questions'
         ])
@@ -83,6 +84,14 @@ class AssessmentController extends Controller
             
             // 2. Calculate Grade Label based on Score
             $submission->grade_info = $this->calculateGradeLabel($submission->percentage);
+            $submission->score_breakdown = $this->getScoreBreakdown($submission);
+
+            $enrollment = $submission->enrollment;
+            $submission->quiz_lock_info = [
+                'failed_attempts' => (int) ($enrollment?->quiz_failed_attempts ?? 0),
+                'locked_until' => $enrollment?->quiz_locked_until,
+                'permanently_locked' => (bool) ($enrollment?->quiz_permanently_locked ?? false),
+            ];
             
             return $submission;
         });
@@ -98,6 +107,29 @@ class AssessmentController extends Controller
         $courses = \App\Models\Course::orderBy('title')->get();
 
         return view('admin.courses.assessments.submissions-list', compact('submissions', 'statistics', 'courses'));
+    }
+
+    /**
+     * Allow an administrator to give a learner a fresh set of course quiz attempts.
+     */
+    public function resetRetryLock(AssessmentSubmission $submission)
+    {
+        $enrollment = $submission->enrollment;
+
+        if (!$enrollment) {
+            return back()->with('error', 'This submission is not linked to an enrollment, so its retry lock cannot be reset.');
+        }
+
+        $enrollment->update([
+            'quiz_failed_attempts' => 0,
+            'quiz_locked_until' => null,
+            'quiz_permanently_locked' => false,
+        ]);
+
+        AssessmentSubmission::where('enrollment_id', $enrollment->id)
+            ->update(['locked_until' => null]);
+
+        return back()->with('success', "Retry lock reset for {$enrollment->user->name}. The learner can retake this course now.");
     }
 
     /**
@@ -120,6 +152,16 @@ class AssessmentController extends Controller
             $submittedAnswers = $submittedAnswers->toArray();
         }
 
+        // A submission cannot progress beyond the quiz stage until it has a
+        // passing result. A score of 49% or lower is always a failed quiz.
+        $hasPassed = $submission->passed
+            && $submission->percentage !== null
+            && (float) $submission->percentage >= 50;
+
+        if (!$hasPassed) {
+            return 'Quiz Stage';
+        }
+
         $essayAnswered = false;
         foreach ($submittedAnswers as $answer) {
             $type = $answer['question_type'] ?? ($answer['type'] ?? null);
@@ -132,15 +174,19 @@ class AssessmentController extends Controller
         }
 
         if ($hasEssayQuestions && !$essayAnswered) {
-            return 'Quiz Stage';      
+            return 'Ready for Essay';
         }
         
         if ($hasEssayQuestions && $essayAnswered) {
-            return 'Essay Stage';     
+            if (in_array($submission->status, ['submitted', 'in_progress'], true)) {
+                return 'Essay Under Review';
+            }
+
+            return $submission->status === 'graded' ? 'Completed' : 'Essay Stage';
         }
         
         if ($hasMcqQuestions && !$hasEssayQuestions) {
-            return 'Quiz Only';       
+            return 'Quiz Passed';
         }
 
         return 'Completed';           
@@ -176,6 +222,55 @@ class AssessmentController extends Controller
             // Covers 0% to 39.9%
             return ['label' => 'Fail', 'class' => 'danger']; // Red
         }
+    }
+
+    /**
+     * Separate automatically graded quiz marks from manually graded essay marks.
+     * The final score is the aggregate of the two parts.
+     */
+    private function getScoreBreakdown(AssessmentSubmission $submission): array
+    {
+        $quizEarned = 0.0;
+        $quizTotal = 0.0;
+        $essayTotal = 0.0;
+        $responses = $submission->question_responses ?? [];
+
+        foreach ($submission->assessment->questions ?? [] as $question) {
+            $points = (float) ($question->points ?? 0);
+            $response = $responses[$question->id] ?? [];
+            $isManual = in_array($question->question_type, ['essay', 'case_study'], true);
+
+            if ($isManual) {
+                $essayTotal += $points;
+                continue;
+            }
+
+            $quizTotal += $points;
+            $earned = $response['points_earned'] ?? null;
+            if ($earned === null) {
+                $earned = $question->isAnswerCorrect($response['answer'] ?? null) ? $points : 0;
+            }
+            $quizEarned += (float) $earned;
+        }
+
+        $storedBreakdown = $submission->grader_comments['score_breakdown'] ?? [];
+        $finalEarned = $submission->status === 'graded' && $submission->score !== null
+            ? (float) $submission->score
+            : ($essayTotal == 0 && $submission->score !== null ? (float) $submission->score : null);
+        $essayEarned = $storedBreakdown['essay_earned'] ?? null;
+
+        if ($essayEarned === null && $finalEarned !== null && $essayTotal > 0) {
+            $essayEarned = max(0, min($essayTotal, $finalEarned - $quizEarned));
+        }
+
+        return [
+            'quiz_earned' => $quizEarned,
+            'quiz_total' => $quizTotal,
+            'essay_earned' => $essayEarned === null ? null : (float) $essayEarned,
+            'essay_total' => $essayTotal,
+            'final_earned' => $finalEarned,
+            'final_total' => (float) ($submission->assessment->total_marks ?: ($quizTotal + $essayTotal)),
+        ];
     }
 
     
@@ -693,21 +788,55 @@ class AssessmentController extends Controller
         $validated = $request->validate([
             'final_score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
             'feedback'    => 'nullable|string',
-            'essay_scores' => 'nullable|array', // Optional: if you want to save individual essay scores
+            'essay_scores' => 'nullable|array',
+            'essay_scores.*' => 'nullable|numeric|min:0',
         ]);
 
+        $submission->loadMissing('assessment.questions');
+        $breakdown = $this->getScoreBreakdown($submission);
+        $essayScores = $validated['essay_scores'] ?? [];
+        $essayEarned = 0.0;
+
+        foreach ($submission->assessment->questions as $question) {
+            if (!in_array($question->question_type, ['essay', 'case_study'], true)) {
+                continue;
+            }
+
+            $awarded = (float) ($essayScores[$question->id] ?? 0);
+            if ($awarded > (float) $question->points) {
+                return back()->withErrors([
+                    "essay_scores.{$question->id}" => 'Essay marks cannot exceed the question maximum.',
+                ])->withInput();
+            }
+            $essayEarned += $awarded;
+        }
+
+        // The final result is always the aggregate of the auto-graded quiz
+        // marks and the administrator's essay marks.
+        $finalScore = $breakdown['quiz_earned'] + $essayEarned;
+
         // Save the final score
-        $submission->score = $validated['final_score'];
+        $submission->score = $finalScore;
         
         // Recalculate percentage based on total marks
         $totalMarks = $submission->assessment->total_marks ?? 100;
-        $submission->percentage = ($validated['final_score'] / $totalMarks) * 100;
+        $submission->percentage = ($finalScore / $totalMarks) * 100;
         
         $submission->passed = $submission->percentage >= ($submission->assessment->passing_score ?? 50);
         $submission->status = 'graded';
         $submission->feedback = $validated['feedback'];
         $submission->grader_id = auth()->id();
         $submission->graded_at = now();
+        $submission->grader_comments = array_merge($submission->grader_comments ?? [], [
+            'score_breakdown' => [
+                'quiz_earned' => $breakdown['quiz_earned'],
+                'quiz_total' => $breakdown['quiz_total'],
+                'essay_earned' => $essayEarned,
+                'essay_total' => $breakdown['essay_total'],
+                'final_earned' => $finalScore,
+                'final_total' => $totalMarks,
+            ],
+        ]);
         
         // Optional: Save individual essay scores in a JSON column if you have one
         // $submission->manual_breakdown = $validated['essay_scores'];

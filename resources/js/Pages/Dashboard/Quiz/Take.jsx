@@ -50,14 +50,18 @@ export default function QuizTake({
     // Modals
     const [showCompletionModal, setShowCompletionModal] = useState(false);
     const [showLockoutModal, setShowLockoutModal] = useState(false);
+    const [lockInfo, setLockInfo] = useState(null);
     
     const [finalScore, setFinalScore] = useState(null);
     const [finalManualReview, setFinalManualReview] = useState(false);
 
     // Derived Data
     const allQuestions = courseQuestions || [];
-    const mcqQuestions = allQuestions.filter(q => q.type !== 'essay');
-    const essayQuestions = allQuestions.filter(q => q.type === 'essay');
+    const getQuestionType = (question) => String(
+        question.type ?? question.question_type ?? ''
+    ).toLowerCase();
+    const essayQuestions = allQuestions.filter(question => getQuestionType(question) === 'essay');
+    const mcqQuestions = allQuestions.filter(question => getQuestionType(question) !== 'essay');
     const currentQuestion = mcqQuestions[currentQuestionIndex];
     
     // Validation Logic
@@ -69,9 +73,12 @@ export default function QuizTake({
         : 100;
 
     const formatTime = (seconds) => {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const secs = seconds % 60;
+        const totalSeconds = Number.isFinite(Number(seconds))
+            ? Math.max(0, Math.floor(Number(seconds)))
+            : 0;
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
         if (hours > 0) {
             return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
@@ -154,6 +161,18 @@ export default function QuizTake({
         });
     };
 
+    const readJsonResponse = async (response) => {
+        const body = await response.text();
+
+        try {
+            return JSON.parse(body);
+        } catch {
+            throw new Error(
+                `The quiz could not be submitted because the server returned an unexpected response (status ${response.status}). Please refresh and try again.`
+            );
+        }
+    };
+
     // Submission Logic
     const submitPartA = async () => {
         const unanswered = mcqQuestions.filter(q => !answers[q.id]).length;
@@ -169,7 +188,7 @@ export default function QuizTake({
                 },
                 body: JSON.stringify({ answers, part_a_only: true }),
             });
-            const data = await res.json();
+            const data = await readJsonResponse(res);
             
             if (!res.ok) throw new Error(data.message);
 
@@ -182,6 +201,11 @@ export default function QuizTake({
             }
             
             if (data.score < 50) {
+                setLockInfo({
+                    failedAttempts: data.failed_attempts || 1,
+                    lockedUntil: data.locked_until || null,
+                    permanentlyLocked: Boolean(data.permanently_locked),
+                });
                 setShowLockoutModal(true);
             } else {
                 toast.success(`Part A Score: ${data.score}%. Part B is now unlocked!`);
@@ -212,7 +236,7 @@ export default function QuizTake({
                 },
                 body: JSON.stringify({ answers, essay_answers: essayAnswers }),
             });
-            const data = await res.json();
+            const data = await readJsonResponse(res);
             if (!res.ok) throw new Error(data.message);
 
             setFinalScore(data.score);
@@ -445,12 +469,18 @@ export default function QuizTake({
                             <LockClosedIcon className="w-8 h-8 text-red-600" />
                         </div>
                         
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Attempt Failed</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                            {lockInfo?.permanentlyLocked ? 'Course Permanently Locked' : 'Attempt Failed'}
+                        </h2>
                         <p className="text-gray-600 mb-2">
                             You scored <span className="font-bold text-red-600">{partAScore}%</span>.
                         </p>
                         <p className="text-gray-600 mb-6">
-                            A minimum of 50% is required to proceed. This quiz is now locked for 24 hours.
+                            {lockInfo?.permanentlyLocked
+                                ? 'You have reached the maximum of six unsuccessful quiz attempts. You can no longer retake this course.'
+                                : lockInfo?.failedAttempts === 3
+                                    ? 'A minimum of 50% is required to proceed. After three unsuccessful attempts, this course is locked for 3 days.'
+                                    : 'A minimum of 50% is required to proceed. This course is now locked for 24 hours.'}
                         </p>
                         
                         <button

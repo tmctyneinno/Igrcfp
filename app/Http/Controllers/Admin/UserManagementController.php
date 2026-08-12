@@ -116,19 +116,25 @@ class UserManagementController extends Controller
             return ['label' => 'No Assessments', 'class' => 'secondary'];
         }
 
+        // Preserve quiz progression once the learner has achieved a pass.
         $quizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
             ->where('user_id', $userId)
+            ->where('passed', true)
+            ->where('percentage', '>=', 50)
             ->latest()
             ->first();
 
-        // If no quiz attempt yet
+        // If no passing attempt exists, use the latest attempt to determine
+        // whether the learner needs a retry or has not started.
         if (!$quizSubmission) {
-            return ['label' => 'Not Started', 'class' => 'secondary'];
-        }
+            $latestQuizSubmission = AssessmentSubmission::where('assessment_id', $quiz->id)
+                ->where('user_id', $userId)
+                ->latest()
+                ->first();
 
-        // If quiz failed or in progress
-        if (!$quizSubmission->passed) {
-            return ['label' => 'Quiz (Retry)', 'class' => 'warning'];
+            return $latestQuizSubmission
+                ? ['label' => 'Quiz (Retry)', 'class' => 'warning']
+                : ['label' => 'Not Started', 'class' => 'secondary'];
         }
 
         // 2. Check for Essay/Project (Part B)
@@ -141,6 +147,18 @@ class UserManagementController extends Controller
 
         if (!$essayAssessment) {
             return ['label' => 'Quiz Passed', 'class' => 'success'];
+        }
+
+        $passedEssaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
+            ->where('user_id', $userId)
+            ->where('status', 'graded')
+            ->where('passed', true)
+            ->where('percentage', '>=', 50)
+            ->latest()
+            ->first();
+
+        if ($passedEssaySubmission) {
+            return ['label' => 'Completed', 'class' => 'success'];
         }
 
         $essaySubmission = AssessmentSubmission::where('assessment_id', $essayAssessment->id)
@@ -157,7 +175,7 @@ class UserManagementController extends Controller
         }
 
         if ($essaySubmission->status === 'graded') {
-            return ['label' => 'Completed', 'class' => 'success'];
+            return ['label' => 'Essay (Retry)', 'class' => 'warning'];
         }
 
         return ['label' => 'Quiz Passed', 'class' => 'success'];
@@ -419,4 +437,4 @@ class UserManagementController extends Controller
         }
     }
 
-} 
+}

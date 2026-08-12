@@ -143,7 +143,28 @@ class CertificateController extends Controller
             'final_grade' => 'nullable|string|max:50',
             'admin_notes' => 'nullable|string|max:500',
             'use_calculated_grade' => 'nullable|boolean',
+            'assessment_submission_id' => 'nullable|integer',
         ]);
+
+        // When generation is initiated from an assessment result, the exact
+        // final score must be graded and meet the certificate threshold.
+        if ($request->filled('assessment_submission_id')) {
+            $submission = $enrollment->assessmentSubmissions()
+                ->whereKey($request->integer('assessment_submission_id'))
+                ->first();
+
+            if (!$submission || $submission->status !== 'graded' || $submission->percentage === null) {
+                return back()->with('error', 'A graded final score is required before a certificate can be generated.');
+            }
+
+            if ((float) $submission->percentage < 75) {
+                return back()->with('error', 'A final score of at least 75% is required before a certificate can be generated.');
+            }
+        }
+
+        if ($enrollment->hasIssuedCertificate()) {
+            return back()->with('error', 'A certificate has already been generated for this enrollment.');
+        }
 
         // Get grade from assessments if not manually specified
         if ($request->boolean('use_calculated_grade', true) && !$request->filled('final_grade')) {

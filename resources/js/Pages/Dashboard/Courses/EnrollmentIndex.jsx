@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast'; 
-import { 
+import {  
     BookOpenIcon, ClipboardDocumentCheckIcon, LockClosedIcon, ClockIcon,
     DocumentTextIcon, AcademicCapIcon, CheckCircleIcon, ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
@@ -147,11 +147,17 @@ export default function EnrollmentIndex({
         const hasEssay = quiz?.has_essay_questions;
         const hasProject = !!diplomaAssessment;
         
-        const quizDone = quiz?.submitted || quiz?.passed;
+        const quizPassed = quiz?.passed === true || quiz?.passed === 1;
+        const quizFailed = quiz?.status === 'graded' && quiz?.passed === false;
+        const quizDone = quizPassed;
         const essayDone = quiz?.essay_submitted;
         const projectDone = diplomaAssessment?.submitted;
 
         if (!hasQuiz && !hasProject) return null;
+
+        if (quizFailed) {
+            return { type: 'warning', msg: 'You did not pass the quiz. Please retake the quiz.' };
+        }
 
         // Scenario: Quiz + Essay + Project
         if (hasQuiz && hasEssay && hasProject) {
@@ -170,7 +176,7 @@ export default function EnrollmentIndex({
 
         // Scenario: Quiz Only
         if (hasQuiz && !hasEssay && !hasProject) {
-            return quizDone ? { type: 'success', msg: 'Assessment Submitted' } : { type: 'neutral', msg: 'Ready to start exam.' };
+            return quizDone ? { type: 'success', msg: 'Quiz Passed' } : { type: 'neutral', msg: 'Ready to start quiz.' };
         }
 
         return null;
@@ -237,7 +243,9 @@ export default function EnrollmentIndex({
 
                             {/* QUIZ SECTION */}
                             {quizzesWithUnlockStatus.map((quiz) => {
-                                const isSubmitted = quiz.submitted === true || quiz.completed === true || quiz.passed === true;
+                                const quizPassed = quiz.passed === true || quiz.passed === 1;
+                                const quizFailed = quiz.status === 'graded' && quiz.passed === false;
+                                const isSubmitted = quizPassed;
                                 const hasEssay = quiz.has_essay_questions;
                                 const essayPending = isSubmitted && hasEssay && !quiz.essay_submitted;
                             
@@ -262,11 +270,15 @@ export default function EnrollmentIndex({
                                             </div>
                                         ) : isSubmitted ? (
                                             <button disabled className="w-full py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg cursor-default flex items-center justify-center gap-2 font-medium">
-                                                <ClipboardDocumentCheckIcon className="w-4 h-4" /> Assessment Submitted
+                                                <ClipboardDocumentCheckIcon className="w-4 h-4" /> Quiz Passed
                                             </button>
                                         ) : quiz.is_locked_out ? (
                                             <button onClick={() => setLockedQuiz(quiz)} className="w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg cursor-pointer hover:bg-red-100 flex items-center justify-center gap-2 transition">
                                                 <LockClosedIcon className="w-4 h-4" /> Locked ({quiz.lock_expires_at ? new Date(quiz.lock_expires_at).toLocaleDateString() : ''})
+                                            </button>
+                                        ) : quizFailed ? (
+                                            <button onClick={() => handleStartQuiz(quiz)} className="w-full py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition flex items-center justify-center gap-2">
+                                                📝 Retake the Quiz
                                             </button>
                                         ) : !quiz.unlocked ? (
                                             <div>

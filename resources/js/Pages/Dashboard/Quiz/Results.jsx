@@ -40,6 +40,11 @@ export default function Results({
     });
     
     const modules = Object.values(moduleQuizzesMap);
+    const failedQuizzes = quizzes.filter((quiz) => {
+        const hasPassed = quiz.attempt?.passed === true || quiz.submission?.passed === true;
+        return quiz.has_attempt && !hasPassed && !quiz.submission?.is_under_review;
+    });
+    const failedQuiz = failedQuizzes.find((quiz) => quiz.id === currentAssessment?.id) || failedQuizzes[0];
     
     const toggleQuiz = (quizId) => {
         setExpandedQuizzes(prev => ({ ...prev, [quizId]: !prev[quizId] }));
@@ -172,6 +177,26 @@ export default function Results({
                             </div>
                         </div>
                     </div>
+
+                    {failedQuiz && (
+                        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-start gap-3">
+                                <XCircleIcon className="w-6 h-6 text-red-600 mt-0.5 shrink-0" />
+                                <div>
+                                    <h2 className="font-semibold text-red-900">Quiz not passed</h2>
+                                    <p className="text-sm text-red-700 mt-1">
+                                        You did not reach the required passing score for {failedQuiz.title}. Review the course material, then retake the quiz.
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => handleRetakeQuiz(failedQuiz.id)}
+                                className="shrink-0 px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition"
+                            >
+                                Retake the Quiz
+                            </button>
+                        </div>
+                    )}
                     
                     {/* Modules and Quizzes */}
                     <div className="space-y-4">
@@ -416,8 +441,17 @@ export default function Results({
                         >
                             Back to Course
                         </button>
+
+                        {failedQuiz && (
+                            <button
+                                onClick={() => handleRetakeQuiz(failedQuiz.id)}
+                                className="flex-1 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                            >
+                                Retake the Quiz
+                            </button>
+                        )}
                         
-                        {overallStats.completed_quizzes < overallStats.total_quizzes && (
+                        {!failedQuiz && overallStats.completed_quizzes < overallStats.total_quizzes && (
                             <button
                                 onClick={handleContinueLearning}
                                 className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
