@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Assessment;
 use App\Models\AssessmentAttempt;
+use App\Models\AssessmentSubmission;
 use App\Models\CourseMaterial;
 use App\Models\CourseModuleUser;
 use App\Models\Enrollment;
@@ -745,6 +746,19 @@ class DashboardController extends Controller
     if ($combinedQuiz) {
         $submission = $combinedQuiz->submissions->first();
         $quizPassMark = 50;
+        $passingSubmission = $enrollment
+            ? AssessmentSubmission::where('assessment_id', $combinedQuiz->id)
+                ->where('user_id', auth()->id())
+                ->where('enrollment_id', $enrollment->id)
+                ->where(function ($submissionQuery) use ($quizPassMark) {
+                    $submissionQuery->where('passed', true)
+                        ->orWhere('percentage', '>=', $quizPassMark);
+                })
+                ->latest('graded_at')
+                ->latest('submitted_at')
+                ->latest('updated_at')
+                ->first()
+            : null;
         $passingAttempt = $enrollment
             ? AssessmentAttempt::where('assessment_id', $combinedQuiz->id)
                 ->where('user_id', auth()->id())
@@ -757,11 +771,8 @@ class DashboardController extends Controller
                 ->latest('updated_at')
                 ->first()
             : null;
-        $hasPassedQuiz = (bool) (
-            $submission?->passed
-            || ((float) ($submission?->percentage ?? 0) >= $quizPassMark)
-            || $passingAttempt
-        );
+        $hasPassedQuiz = (bool) ($passingSubmission || $passingAttempt);
+        $displaySubmission = $passingSubmission ?? $submission;
 
         // Clear an expired temporary lock. Permanent locks stay in effect.
         if (!$isPermanentlyLocked && $lockExpiresAt && now()->greaterThanOrEqualTo($lockExpiresAt)) {
@@ -787,10 +798,10 @@ class DashboardController extends Controller
         $hasEssayQuestions = $combinedQuiz->questions()
             ->where('question_type', 'essay')
             ->exists();
-        $partASubmitted = $hasPassedQuiz || ($submission && ($submission->percentage !== null || $submission->score !== null));
+        $partASubmitted = $hasPassedQuiz || ($displaySubmission && ($displaySubmission->percentage !== null || $displaySubmission->score !== null));
         $essaySubmitted = $hasEssayQuestions
-            && $submission
-            && in_array($submission->status, ['submitted', 'graded', 'completed'], true);
+            && $displaySubmission
+            && in_array($displaySubmission->status, ['submitted', 'graded', 'completed'], true);
 
         $quizzes = [[
             'id' => $combinedQuiz->id,
@@ -800,10 +811,10 @@ class DashboardController extends Controller
             'questions_count' => $combinedQuiz->questions()->count(),
             'total_marks' => $combinedQuiz->total_marks,
             'passing_score' => $combinedQuiz->passing_score,
-            'status' => $submission ? $submission->status : 'not_started',
+            'status' => $displaySubmission ? $displaySubmission->status : 'not_started',
             // ✅ FIX: use percentage (matches attempt->score in QuizController),
             // not submission->score which holds raw earned marks (e.g. 14 vs 70%)
-            'score' => $hasPassedQuiz ? ($passingAttempt?->score ?? $submission?->percentage) : ($submission ? $submission->percentage : null),
+            'score' => $hasPassedQuiz ? ($passingSubmission?->percentage ?? $passingAttempt?->score) : ($displaySubmission ? $displaySubmission->percentage : null),
             'passed' => $hasPassedQuiz,
             
             // NEW: Flags for UI Logic

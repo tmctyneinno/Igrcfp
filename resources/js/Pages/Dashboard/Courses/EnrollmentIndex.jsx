@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast'; 
-import {  
+import {   
     BookOpenIcon, ClipboardDocumentCheckIcon, LockClosedIcon, ClockIcon,
     DocumentTextIcon, AcademicCapIcon, CheckCircleIcon, ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
