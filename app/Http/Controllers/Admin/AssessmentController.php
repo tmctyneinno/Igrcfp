@@ -33,7 +33,7 @@ class AssessmentController extends Controller
                                       ->orWhere('description', 'LIKE', "%{$search}%"));
         }
 
-        $assessments = $query->paginate(15);
+        $assessments = $query->paginate(20);
         $courses     = Course::orderBy('title')->get();
         $statistics  = $this->getStatistics();
 
@@ -344,7 +344,7 @@ class AssessmentController extends Controller
                                       ->orWhere('description', 'LIKE', "%{$search}%"));
         }
 
-        $assessments = $query->paginate(15);
+        $assessments = $query->paginate(20);
         $courses     = Course::orderBy('title')->get();
         $statistics  = $this->getStatistics();
 
@@ -367,7 +367,7 @@ class AssessmentController extends Controller
                                       ->orWhere('description', 'LIKE', "%{$search}%"));
         }
 
-        $assessments = $query->paginate(15);
+        $assessments = $query->paginate(20);
         $courses     = Course::orderBy('title')->get();
         $statistics  = $this->getStatistics();
 
@@ -447,7 +447,7 @@ class AssessmentController extends Controller
 
         if ($request->filled('level')) $query->where('assessment_level', $request->level);
 
-        $assessments = $query->paginate(15);
+        $assessments = $query->paginate(20);
         $courses     = Course::orderBy('title')->get();
         $statistics  = $this->getStatistics($course->id);
 
