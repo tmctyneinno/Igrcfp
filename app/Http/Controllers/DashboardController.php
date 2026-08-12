@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Assessment;
+use App\Models\AssessmentAttempt;
 use App\Models\CourseMaterial;
 use App\Models\CourseModuleUser;
 use App\Models\Enrollment;
@@ -729,8 +730,10 @@ class DashboardController extends Controller
     // Get the COMBINED course quiz (one assessment that contains all module questions)
     $combinedQuiz = Assessment::where('course_id', $course->id)
         ->where('assessment_level', 'quiz')
-        ->with(['submissions' => function($query) {
-            $query->where('user_id', auth()->id());
+        ->with(['submissions' => function($query) use ($enrollment) {
+            $query->where('user_id', auth()->id())
+                ->when($enrollment, fn ($submissionQuery) => $submissionQuery->where('enrollment_id', $enrollment->id))
+                ->latest('updated_at');
         }])
         ->first();
         
@@ -741,10 +744,41 @@ class DashboardController extends Controller
     
     if ($combinedQuiz) {
         $submission = $combinedQuiz->submissions->first();
-        
+        $quizPassMark = 50;
+        $passingAttempt = $enrollment
+            ? AssessmentAttempt::where('assessment_id', $combinedQuiz->id)
+                ->where('user_id', auth()->id())
+                ->where('enrollment_id', $enrollment->id)
+                ->where(function ($attemptQuery) use ($quizPassMark) {
+                    $attemptQuery->where('passed', true)
+                        ->orWhere('score', '>=', $quizPassMark);
+                })
+                ->latest('completed_at')
+                ->latest('updated_at')
+                ->first()
+            : null;
+        $hasPassedQuiz = (bool) (
+            $submission?->passed
+            || ((float) ($submission?->percentage ?? 0) >= $quizPassMark)
+            || $passingAttempt
+        );
+
         // Clear an expired temporary lock. Permanent locks stay in effect.
         if (!$isPermanentlyLocked && $lockExpiresAt && now()->greaterThanOrEqualTo($lockExpiresAt)) {
             $enrollment->update(['quiz_locked_until' => null]);
+            $lockExpiresAt = null;
+            $isLockedOut = false;
+        }
+
+        // A later successful attempt is authoritative. It must never be
+        // hidden by an older failed submission or its retry-lock state.
+        if ($enrollment && $hasPassedQuiz && ($enrollment->quiz_failed_attempts || $enrollment->quiz_locked_until || $enrollment->quiz_permanently_locked)) {
+            $enrollment->update([
+                'quiz_failed_attempts' => 0,
+                'quiz_locked_until' => null,
+                'quiz_permanently_locked' => false,
+            ]);
+            $isPermanentlyLocked = false;
             $lockExpiresAt = null;
             $isLockedOut = false;
         }
@@ -753,6 +787,10 @@ class DashboardController extends Controller
         $hasEssayQuestions = $combinedQuiz->questions()
             ->where('question_type', 'essay')
             ->exists();
+        $partASubmitted = $hasPassedQuiz || ($submission && ($submission->percentage !== null || $submission->score !== null));
+        $essaySubmitted = $hasEssayQuestions
+            && $submission
+            && in_array($submission->status, ['submitted', 'graded', 'completed'], true);
 
         $quizzes = [[
             'id' => $combinedQuiz->id,
@@ -765,13 +803,14 @@ class DashboardController extends Controller
             'status' => $submission ? $submission->status : 'not_started',
             // ✅ FIX: use percentage (matches attempt->score in QuizController),
             // not submission->score which holds raw earned marks (e.g. 14 vs 70%)
-            'score' => $submission ? $submission->percentage : null,
-            'passed' => $submission ? $submission->passed : null,
+            'score' => $hasPassedQuiz ? ($passingAttempt?->score ?? $submission?->percentage) : ($submission ? $submission->percentage : null),
+            'passed' => $hasPassedQuiz,
             
             // NEW: Flags for UI Logic
-            'submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+            'submitted' => (bool) $partASubmitted,
+            'part_a_submitted' => (bool) $partASubmitted,
             'has_essay_questions' => $hasEssayQuestions,
-            'essay_submitted' => $submission && in_array($submission->status, ['submitted', 'graded', 'completed']),
+            'essay_submitted' => (bool) $essaySubmitted,
             
             'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
             'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',

@@ -1,6 +1,18 @@
 @extends('admin.layouts.app')
 
 @section('content')
+<style>
+    .rich-question-content ul,
+    .rich-question-content ol {
+        margin: 0 0 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .rich-question-content ul { list-style: disc; }
+    .rich-question-content ol { list-style: decimal; }
+    .rich-question-content li { display: list-item; }
+</style>
+
 <div class="dashboard-main-body">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-24">
         <h6 class="fw-semibold mb-0">{{ $assessment->title }}</h6>
@@ -219,7 +231,7 @@
                                         data-bs-toggle="collapse" data-bs-target="#collapse{{ $question->id }}">
                                     <div class="d-flex align-items-center gap-3 w-100">
                                         <span class="badge bg-primary-600 text-white">Q{{ $index + 1 }}</span>
-                                        <span class="fw-medium">{{ Str::limit($question->question_text, 80) }}</span>
+                                        <span class="fw-medium">{{ Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($question->question_text))), 80) }}</span>
                                         <span class="ms-auto me-3">{{ $question->points }} pts</span>
                                     </div>
                                 </button>
@@ -228,6 +240,11 @@
                                  data-bs-parent="#quizQuestionsAccordion">
                                 <div class="accordion-body">
                                     <p><strong>Type:</strong> {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}</p>
+                                    <div class="mb-3 rich-question-content">
+                                        <strong class="d-block mb-1">Question:</strong>
+                                        {!! $question->question_text ?: 'Not provided' !!}
+
+                                    </div>
                                     
                                     @if($question->options)
                                         <p><strong>Options:</strong></p>
@@ -241,7 +258,10 @@
                                     <p><strong>Correct Answer:</strong> {{ $question->correct_answer }}</p>
                                     
                                     @if($question->explanation)
-                                        <p><strong>Explanation:</strong> {{ $question->explanation }}</p>
+                                        <div class="mb-3 rich-question-content">
+                                            <strong class="d-block mb-1">Explanation:</strong>
+                                            {!! $question->explanation !!}
+                                        </div>
                                     @endif
                                     
                                     <p><strong>Difficulty:</strong> {{ ucfirst($question->difficulty_level) }}</p>
@@ -269,16 +289,23 @@
                                             data-bs-toggle="collapse" data-bs-target="#collapseEssay{{ $question->id }}">
                                         <div class="d-flex align-items-center gap-3 w-100">
                                             <span class="badge bg-warning-600 text-white">B{{ $index + 1 }}</span>
-                                            <span class="fw-medium">{{ Str::limit($question->question_text, 80) }}</span>
+                                            <span class="fw-medium">{{ Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($question->question_text))), 80) }}</span>
                                             <span class="ms-auto me-3">{{ $question->points }} pts</span>
                                         </div>
-                                    </button>
+                                    </button> 
                                 </h2>
                                 <div id="collapseEssay{{ $question->id }}" class="accordion-collapse collapse {{ $index == 0 ? 'show' : '' }}" 
                                      data-bs-parent="#essayQuestionsAccordion">
                                     <div class="accordion-body">
                                         <p><strong>Type:</strong> {{ ucfirst(str_replace('_', ' ', $question->question_type)) }}</p>
-                                        <p><strong>Examiner's Marking Guidance:</strong> {{ $question->explanation ?: 'Not provided' }}</p>
+                                        <div class="mb-3 rich-question-content">
+                                            <strong class="d-block mb-1">Question:</strong>
+                                            {!! $question->question_text ?: 'Not provided' !!}
+                                        </div>
+                                        <div class="mb-3 rich-question-content">
+                                            <strong class="d-block mb-1">Examiner's Marking Guidance:</strong>
+                                            {!! $question->explanation ?: 'Not provided' !!}
+                                        </div>
                                         <p><strong>Difficulty:</strong> {{ ucfirst($question->difficulty_level) }}</p>
                                     </div>
                                 </div>
@@ -428,4 +455,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

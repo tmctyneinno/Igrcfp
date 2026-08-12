@@ -398,7 +398,9 @@ class QuizController extends Controller
         }
         
         $score = $totalMarks > 0 ? round(($earnedMarks / $totalMarks) * 100) : 0;
-        $passed = !$requiresManualMarking && $score >= ($assessment->passing_score ?? 70);
+        // A learner passes Part A at 50%. This is the course-stage rule used
+        // to unlock Part B and must match the status shown in EnrollmentIndex.
+        $passed = !$requiresManualMarking && $score >= 50;
         
         // Update the attempt
         $attempt->update([

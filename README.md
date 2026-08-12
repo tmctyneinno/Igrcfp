@@ -157,3 +157,4 @@ next to the student the student series number in another color
 Attempt column (1 attempt out of 3 attempt) - 2 3days
 
 column that combine both the aggrrgiated score
+ 

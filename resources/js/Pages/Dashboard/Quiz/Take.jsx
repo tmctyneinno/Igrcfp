@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
+import DOMPurify from 'dompurify';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import toast from 'react-hot-toast';
 import RichTextEditor from '@/Components/RichTextEditor';
@@ -9,6 +10,15 @@ import {
     CheckCircleIcon, TrophyIcon, SparklesIcon, XCircleIcon, ArrowRightIcon,
     LockClosedIcon, InformationCircleIcon 
 } from '@heroicons/react/24/outline';
+
+function RichQuestionContent({ html, className = '' }) {
+    return (
+        <div
+            className={`prose prose-sm max-w-none text-gray-800 [&_p]:my-0 [&_p+p]:mt-3 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-blue-700 [&_a]:underline ${className}`}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html || '') }}
+        />
+    );
+}
 
 export default function QuizTake({ 
     course, assessment, enrollment, attempt, 
@@ -310,7 +320,10 @@ export default function QuizTake({
                                     </button>
                                 </div>
                                 
-                                <h2 className="text-lg font-medium text-gray-900 mb-6">{currentQuestion?.text}</h2>
+                                <RichQuestionContent
+                                    html={currentQuestion?.text}
+                                    className="mb-6 text-lg font-medium"
+                                />
                                 
                                 <div className="space-y-3">
                                     {currentQuestion?.options?.map((option, idx) => (
@@ -401,9 +414,10 @@ export default function QuizTake({
                                             </div>
 
                                             {/* Question Text */}
-                                            <div className="prose prose-sm max-w-none text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                                {q.text}
-                                            </div>
+                                            <RichQuestionContent
+                                                html={q.text}
+                                                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                                            />
 
                                             {/* Explanation (if available) */}
                                             {q.explanation && (
@@ -411,7 +425,7 @@ export default function QuizTake({
                                                     <InformationCircleIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                                     <div>
                                                         <p className="text-sm font-semibold text-blue-800 mb-1">Guidance:</p>
-                                                        <p className="text-sm text-blue-700">{q.explanation}</p>
+                                                        <RichQuestionContent html={q.explanation} className="text-sm text-blue-700" />
                                                     </div>
                                                 </div>
                                             )}
@@ -421,6 +435,7 @@ export default function QuizTake({
                                                 value={essayAnswers[q.id] || ''}
                                                 onChange={(html) => handleEssayChange(q.id, html)}
                                                 disabled={!canAccessPartB}
+                                                minHeight={320}
                                                 placeholder={canAccessPartB ? "Write your response here..." : "Complete Part A to unlock"}
                                             />
                                         </div>
@@ -482,7 +497,7 @@ export default function QuizTake({
                                     ? 'A minimum of 50% is required to proceed. After three unsuccessful attempts, this course is locked for 3 days.'
                                     : 'A minimum of 50% is required to proceed. This course is now locked for 24 hours.'}
                         </p>
-                        
+                         
                         <button
                             onClick={handleLockoutRedirect}
                             className="w-full py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition"

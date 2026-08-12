@@ -147,9 +147,10 @@ export default function EnrollmentIndex({
         const hasEssay = quiz?.has_essay_questions;
         const hasProject = !!diplomaAssessment;
         
+        const partASubmitted = Boolean(quiz?.part_a_submitted ?? quiz?.submitted);
         const quizPassed = quiz?.passed === true || quiz?.passed === 1;
-        const quizFailed = quiz?.status === 'graded' && quiz?.passed === false;
-        const quizDone = quizPassed;
+        const quizFailed = partASubmitted && !quizPassed;
+        const quizDone = partASubmitted;
         const essayDone = quiz?.essay_submitted;
         const projectDone = diplomaAssessment?.submitted;
 
@@ -161,16 +162,16 @@ export default function EnrollmentIndex({
 
         // Scenario: Quiz + Essay + Project
         if (hasQuiz && hasEssay && hasProject) {
-            if (!quizDone) return { type: 'warning', msg: 'Quiz not submitted yet.' };
-            if (!essayDone) return { type: 'info', msg: 'Quiz submitted. Essay pending.' };
+            if (!quizDone) return { type: 'neutral', msg: 'Quiz ready to start.' };
+            if (!essayDone) return { type: 'info', msg: 'Part A passed. Essay response pending.' };
             if (!projectDone) return { type: 'info', msg: 'Quiz & Essay submitted. Project pending.' };
             return { type: 'success', msg: 'All assessments submitted!' };
         }
 
         // Scenario: Quiz + Essay (No Project)
         if (hasQuiz && hasEssay && !hasProject) {
-            if (!quizDone) return { type: 'warning', msg: 'Quiz not submitted yet.' };
-            if (!essayDone) return { type: 'info', msg: 'Quiz submitted. Complete your essay to finish.' };
+            if (!quizDone) return { type: 'neutral', msg: 'Quiz ready to start.' };
+            if (!essayDone) return { type: 'info', msg: 'Part A passed. Complete your essay to finish.' };
             return { type: 'success', msg: 'All assessments submitted!' };
         }
 
@@ -243,11 +244,12 @@ export default function EnrollmentIndex({
 
                             {/* QUIZ SECTION */}
                             {quizzesWithUnlockStatus.map((quiz) => {
+                                const partASubmitted = Boolean(quiz.part_a_submitted ?? quiz.submitted);
                                 const quizPassed = quiz.passed === true || quiz.passed === 1;
-                                const quizFailed = quiz.status === 'graded' && quiz.passed === false;
-                                const isSubmitted = quizPassed;
+                                const quizFailed = partASubmitted && !quizPassed;
+                                const isSubmitted = partASubmitted;
                                 const hasEssay = quiz.has_essay_questions;
-                                const essayPending = isSubmitted && hasEssay && !quiz.essay_submitted;
+                                const essayPending = isSubmitted && quizPassed && hasEssay && !quiz.essay_submitted;
                             
                                 return (
                                     <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">
@@ -268,7 +270,7 @@ export default function EnrollmentIndex({
                                                     ✍️ Continue to Essay (Part B)
                                                 </button>
                                             </div>
-                                        ) : isSubmitted ? (
+                                        ) : isSubmitted && quizPassed ? (
                                             <button disabled className="w-full py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg cursor-default flex items-center justify-center gap-2 font-medium">
                                                 <ClipboardDocumentCheckIcon className="w-4 h-4" /> Quiz Passed
                                             </button>

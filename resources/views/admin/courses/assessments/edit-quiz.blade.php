@@ -329,7 +329,7 @@
                 <div class="col-12 mb-3">
                     <label class="form-label fw-semibold">Question Text</label>
                     <textarea name="questions[{idx}][text]"
-                              class="form-control question-text" rows="2" required></textarea>
+                              class="form-control question-text rich-editor" rows="2" required></textarea>
                 </div>
 
                 <div class="col-md-4 mb-3">
@@ -395,7 +395,7 @@
                 <div class="col-12 mb-3 essay-container" style="display:none;">
                     <label class="form-label fw-semibold">Examiner's Marking Guidance</label>
                     <textarea name="questions[{idx}][explanation]"
-                              class="form-control"
+                              class="form-control rich-editor"
                               rows="3"
                               placeholder="Enter guidance for the examiner or rubric notes."></textarea>
                 </div>
@@ -435,7 +435,7 @@
                 <div class="col-12 mb-3">
                     <label class="form-label fw-semibold">Question Text</label>
                     <textarea name="questions[{idx}][text]"
-                              class="form-control question-text"
+                              class="form-control question-text rich-editor"
                               rows="3" required></textarea>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -450,7 +450,7 @@
                 <div class="col-12 mb-3">
                     <label class="form-label fw-semibold">Examiner's Marking Guidance</label>
                     <textarea name="questions[{idx}][explanation]"
-                              class="form-control"
+                              class="form-control rich-editor"
                               rows="3"
                               placeholder="Enter guidance for the examiner or rubric notes."></textarea>
                 </div>
@@ -487,8 +487,60 @@
 @endpush
 
 @push('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 <script>
 let questionCount = 0;
+const questionEditors = new Map();
+
+function initializeQuestionEditors(questionElement) {
+    questionElement?.querySelectorAll('textarea.rich-editor:not([data-ck-initialized])').forEach(function (textarea) {
+        textarea.dataset.ckInitialized = 'pending';
+
+        ClassicEditor.create(textarea, {
+            toolbar: {
+                items: [
+                    'bold', 'italic', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'link', 'blockQuote', 'insertTable', '|',
+                    'undo', 'redo'
+                ]
+            }
+        })
+            .then(function (editor) {
+                textarea.dataset.ckInitialized = 'true';
+                textarea.removeAttribute('required');
+                questionEditors.set(textarea, editor);
+            })
+            .catch(function (error) {
+                delete textarea.dataset.ckInitialized;
+                console.error('CKEditor could not be initialized:', error);
+            });
+    });
+}
+
+function syncQuestionEditors() {
+    questionEditors.forEach(function (editor, textarea) {
+        textarea.value = editor.getData();
+    });
+}
+
+function destroyQuestionEditors(questionElement) {
+    questionElement?.querySelectorAll('textarea.rich-editor').forEach(function (textarea) {
+        const editor = questionEditors.get(textarea);
+        if (!editor) return;
+
+        questionEditors.delete(textarea);
+        editor.destroy().catch(function (error) {
+            console.error('CKEditor could not be removed:', error);
+        });
+    });
+}
+
+function hasQuestionContent(value) {
+    const element = document.createElement('div');
+    element.innerHTML = value || '';
+    return element.textContent.replace(/\u00a0/g, ' ').trim().length > 0;
+}
 
 // ── Confirm and submit delete ─────────────────────────────────────────────────
 function confirmDelete() {
@@ -680,6 +732,7 @@ function addQuestion(existingData) {
         }
     }
 
+    initializeQuestionEditors(questionEl);
     questionCount++;
     updateQuestionNumbers();
 }
@@ -714,6 +767,7 @@ function addEssay(existingData) {
         if (explanation) explanation.value = existingData.explanation || '';
     }
 
+    initializeQuestionEditors(questionEl);
     questionCount++;
     updateEssayNumbers();
 }
@@ -721,6 +775,7 @@ function addEssay(existingData) {
 function removeEssay(button) {
     const questionItem = button.closest('.question-item');
     if (questionItem) {
+        destroyQuestionEditors(questionItem);
         questionItem.remove();
         if (document.querySelectorAll('#essay-questions-container .question-item').length === 0) {
             const noEssayMsg = document.getElementById('no-essay-questions-message');
@@ -741,6 +796,7 @@ function updateEssayNumbers() {
 function removeQuestion(button) {
     const questionItem = button.closest('.question-item');
     if (questionItem) {
+        destroyQuestionEditors(questionItem);
         questionItem.remove();
         if (document.querySelectorAll('.question-item').length === 0) {
             document.getElementById('no-questions-message').style.display = 'block';
@@ -841,6 +897,7 @@ function removeOption(button) {
 
 // ── Form submit ───────────────────────────────────────────────────────────────
 document.getElementById('quizForm')?.addEventListener('submit', function (e) {
+    syncQuestionEditors();
     const questions = document.querySelectorAll('.question-item');
 
     if (questions.length === 0) {
@@ -855,7 +912,7 @@ document.getElementById('quizForm')?.addEventListener('submit', function (e) {
         const points       = question.querySelector('.question-points')?.value;
         const typeSelect   = question.querySelector('.question-type');
 
-        if (!questionText?.trim()) {
+        if (!hasQuestionContent(questionText)) {
             e.preventDefault();
             alert(`❌ Question ${i + 1}: Question text is required.`);
             return false;
