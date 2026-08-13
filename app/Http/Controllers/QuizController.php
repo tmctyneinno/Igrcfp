@@ -51,16 +51,36 @@ class QuizController extends Controller
                 ->with('error', 'Please read all module content before taking the quiz.');
         }
 
-        // A passed quiz cannot be restarted. Failed quizzes remain eligible for
-        // a new attempt so the learner can use the retake action from results.
+        // A passed quiz cannot be restarted once all required essay responses
+        // are complete. A passed Part A with an empty essay must resume Part B.
         $completedAttempt = AssessmentAttempt::where('user_id', $user->id)
             ->where('assessment_id', $assessment->id)
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
             ->where('passed', true)
-            ->exists();
+            ->latest('updated_at')
+            ->first();
 
-        if ($completedAttempt) {
+        // Add debug logging to help diagnose unexpected redirects to results
+        $incompleteEssay = $this->hasIncompleteEssayResponses($assessment, $user->id, $enrollment->id);
+        $latestSubmission = AssessmentSubmission::where('assessment_id', $assessment->id)
+            ->where('user_id', $user->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->latest('updated_at')
+            ->first();
+
+        \Log::info('QuizController::take debug', [
+            'user_id' => $user->id,
+            'assessment_id' => $assessment->id,
+            'completedAttempt' => (bool) $completedAttempt,
+            'completedAttempt_id' => $completedAttempt?->id ?? null,
+            'latest_submission_id' => $latestSubmission?->id ?? null,
+            'latest_submission_status' => $latestSubmission?->status ?? null,
+            'latest_submission_has_responses' => !empty($latestSubmission?->question_responses),
+            'hasIncompleteEssayResponses' => $incompleteEssay,
+        ]);
+
+        if ($completedAttempt && !$incompleteEssay) {
             return redirect()->route('dashboard.quiz.results', [
                 'course' => $course->slug,
                 'assessment' => $assessment->id,
@@ -836,6 +856,41 @@ class QuizController extends Controller
     private function findAssessment($assessmentId) {
         if (is_numeric($assessmentId)) return Assessment::find($assessmentId);
         return Assessment::where('slug', $assessmentId)->first();
+    }
+
+    /**
+     * An essay submission is only complete when every essay has text or an
+     * uploaded file. Submission status alone is not reliable because users can
+     * submit Part B with an empty editor.
+     */
+    private function hasIncompleteEssayResponses(Assessment $assessment, $userId, $enrollmentId): bool
+    {
+        $essayQuestionIds = $assessment->questions()
+            ->where('question_type', 'essay')
+            ->pluck('id');
+
+        if ($essayQuestionIds->isEmpty()) {
+            return false;
+        }
+
+        $submission = AssessmentSubmission::where('assessment_id', $assessment->id)
+            ->where('user_id', $userId)
+            ->where('enrollment_id', $enrollmentId)
+            ->latest('updated_at')
+            ->first();
+
+        if (!$submission) {
+            return true;
+        }
+
+        $responses = $submission->question_responses ?? [];
+
+        return $essayQuestionIds->contains(function ($questionId) use ($responses) {
+            $response = data_get($responses, $questionId, []);
+            $answer = trim(strip_tags((string) data_get($response, 'answer', '')));
+
+            return $answer === '' && blank(data_get($response, 'uploaded_file.path'));
+        });
     }
 
     private function getOrCreateAttempt($userId, $assessmentId, $enrollmentId) {

@@ -289,7 +289,7 @@ export default function EnrollmentIndex({
                                                 <button disabled className="w-full py-2 bg-gray-100 text-gray-400 rounded-lg cursor-not-allowed flex items-center justify-center gap-2">🔒 Start Exam</button>
                                                 <p className="mt-2 text-xs text-gray-500 text-center">{quiz.reason}</p>
                                             </div>
-                                        ) : (
+                                        ) : ( 
                                             <button onClick={() => handleStartQuiz(quiz)} className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2">
                                                 📝 Start Exam
                                             </button>
