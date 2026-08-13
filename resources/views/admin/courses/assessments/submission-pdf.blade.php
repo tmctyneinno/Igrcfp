@@ -71,12 +71,58 @@
             @php
                 $q = $item['question'];
                 $r = $item['response'] ?? [];
-                $isCorrect = $r['correct'] ?? false;
+                $isCorrect = is_array($r) ? ($r['correct'] ?? false) : (is_object($r) ? ($r->correct ?? false) : false);
+
+                // Normalize answer
+                $rawAnswer = null;
+                if (is_array($r)) {
+                    $rawAnswer = $r['answer'] ?? $r['response'] ?? $r['answers'] ?? null;
+                } elseif (is_object($r)) {
+                    $rawAnswer = $r->answer ?? $r->response ?? $r->answers ?? null;
+                }
+
+                $answerText = null;
+                $options = $q->options ?? null;
+                if (is_string($options)) {
+                    $decoded = json_decode($options, true);
+                    if (json_last_error() === JSON_ERROR_NONE) $options = $decoded;
+                }
+
+                if (!is_null($rawAnswer) && $rawAnswer !== '') {
+                    if (is_array($options) && count($options) > 0) {
+                        if (array_values($options) === $options) {
+                            if (is_numeric($rawAnswer) && isset($options[(int)$rawAnswer])) {
+                                $answerText = $options[(int)$rawAnswer];
+                            } else {
+                                foreach ($options as $opt) {
+                                    if ((string)$opt === (string)$rawAnswer) { $answerText = $opt; break; }
+                                    if (is_array($opt)) {
+                                        if ((isset($opt['id']) && (string)$opt['id'] === (string)$rawAnswer) || (isset($opt['value']) && (string)$opt['value'] === (string)$rawAnswer)) {
+                                            $answerText = $opt['label'] ?? $opt['text'] ?? $opt['value'] ?? null; break;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            if (isset($options[$rawAnswer])) $answerText = $options[$rawAnswer];
+                        }
+                    }
+
+                    if (!$answerText) {
+                        if (is_array($rawAnswer)) {
+                            $answerText = implode(', ', array_map('strval', $rawAnswer));
+                        } else {
+                            $answerText = (string) $rawAnswer;
+                        }
+                    }
+                }
+
+                $displayAnswer = $answerText ?? 'No answer provided';
             @endphp
             <div class="question-box">
                 <div class="question-text">Q{{ $loop->iteration }}: {{ $q->question_text }}</div>
                 <div>
-                    <strong>Answer:</strong> {{ $r['answer'] ?? 'N/A' }} 
+                    <strong>Answer:</strong> {{ $displayAnswer }} 
                     <span class="badge {{ $isCorrect ? 'bg-success' : 'bg-danger' }}">
                         {{ $isCorrect ? 'Correct' : 'Incorrect' }}
                     </span>

@@ -231,14 +231,43 @@
                             @php
                                 $q = $item['question'];
                                 $r = $item['response'] ?? [];
-                                $isCorrect = $r['correct'] ?? false;
+                                $isCorrect = data_get($r, 'correct', false);
+
+                                // Simple, consistent answer extraction
+                                $raw = data_get($r, 'answer') ?? data_get($r, 'response') ?? data_get($r, 'answers') ?? null;
+
+                                // Normalize options if present
+                                $options = $q->options ?? null;
+                                if (is_string($options)) {
+                                    $opts = json_decode($options, true);
+                                    if (json_last_error() === JSON_ERROR_NONE) $options = $opts;
+                                }
+
+                                $displayAnswer = null;
+                                if ($raw === null || $raw === '') {
+                                    $displayAnswer = 'No answer provided';
+                                } else {
+                                    // If options array exists and raw is an index or key, try to map to label
+                                    if (is_array($options) && count($options) > 0) {
+                                        if (is_numeric($raw) && isset($options[(int)$raw])) {
+                                            $displayAnswer = $options[(int)$raw];
+                                        } elseif (isset($options[$raw])) {
+                                            $displayAnswer = $options[$raw];
+                                        }
+                                    }
+
+                                    // Fallback to a simple stringified value
+                                    if ($displayAnswer === null) {
+                                        $displayAnswer = is_array($raw) ? implode(', ', array_map('strval', $raw)) : (string) $raw;
+                                    }
+                                }
                             @endphp
                             <div class="col-md-6">
                                 <div class="p-16 border rounded-8 {{ $isCorrect ? 'border-success-200 bg-success-50' : 'border-danger-200 bg-danger-50' }}">
                                     <p class="fw-medium mb-2 small text-uppercase text-secondary-light"><b>Question {{ $loop->iteration }}</b></p>
                                     <p class="mb-2">{!! Str::limit($q->question_text, 80) !!}</p>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <span class="small"><strong>Answer:</strong> {!! $r['answer'] ?? 'N/A' !!}</span>
+                                        <span class="small"><strong>Answer:</strong> {!! nl2br(e($displayAnswer)) !!}</span>
                                         <span class="badge {{ $isCorrect ? 'bg-success-600' : 'bg-danger-600' }} text-white">
                                             {{ $isCorrect ? 'Correct' : 'Incorrect' }}
                                         </span>
