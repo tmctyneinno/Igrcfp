@@ -854,6 +854,22 @@ class QuizController extends Controller
             $attempt->update(['status' => 'in_progress', 'started_at' => $attempt->started_at ?? now()]);
             return $attempt;
         }
+
+        // An essay may have been submitted with no response. Its attempt was
+        // previously marked completed, which caused the Continue button to
+        // open a new Part A attempt instead of resuming Part B.
+        $completedPartA = AssessmentAttempt::where('user_id', $userId)
+            ->where('assessment_id', $assessmentId)
+            ->where('enrollment_id', $enrollmentId)
+            ->where('status', 'completed')
+            ->where('score', '>=', 50)
+            ->latest('updated_at')
+            ->first();
+
+        if ($completedPartA) {
+            $completedPartA->update(['status' => 'in_progress']);
+            return $completedPartA;
+        }
         
         $lastAttempt = AssessmentAttempt::where('user_id', $userId)
             ->where('assessment_id', $assessmentId)

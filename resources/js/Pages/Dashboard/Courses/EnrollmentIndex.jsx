@@ -151,7 +151,7 @@ export default function EnrollmentIndex({
         const quizPassed = quiz?.passed === true || quiz?.passed === 1;
         const quizFailed = partASubmitted && !quizPassed;
         const quizDone = partASubmitted;
-        const essayDone = quiz?.essay_submitted;
+        const essayDone = quiz?.essay_complete;
         const projectDone = diplomaAssessment?.submitted;
 
         if (!hasQuiz && !hasProject) return null;
@@ -249,7 +249,9 @@ export default function EnrollmentIndex({
                                 const quizFailed = partASubmitted && !quizPassed;
                                 const isSubmitted = partASubmitted;
                                 const hasEssay = quiz.has_essay_questions;
-                                const essayPending = isSubmitted && quizPassed && hasEssay && !quiz.essay_submitted;
+                                // An empty essay can be recorded as submitted. Keep Part B
+                                // available until every essay response has actual content.
+                                const essayPending = isSubmitted && hasEssay && !quiz.essay_complete;
                             
                                 return (
                                     <div key={quiz.id} className="bg-white rounded-xl border border-gray-200 p-5">

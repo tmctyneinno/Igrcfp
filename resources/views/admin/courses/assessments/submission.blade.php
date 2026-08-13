@@ -268,22 +268,74 @@
                             $answerText = $r['answer'] ?? null;
                             $hasAnswer = !empty($answerText);
                             $explanation = $q->explanation ?? null;
+                            
+                            // Calculate word count for the answer
+                            $plainText = strip_tags($answerText);
+                            $wordCount = str_word_count($plainText);
+                            $charCount = strlen($plainText);
                         @endphp
                         
                         <div class="border rounded-8 p-16 mb-3 last-child-mb-0 bg-light-50">
-                            <!-- Question Prompt -->
-                            <span class="mb-2 badge bg-neutral-200 text-neutral-600 radius-4 px-8 py-4 flex-shrink-0">
-                                {{ $q->points ?? 0 }} {{ Str::plural('pt', $q->points ?? 0) }}
-                            </span>
-                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
-                                <p class="fw-semibold mb-0 text-dark">{!! $q->question_text !!}</p>
-                                
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                                <span class="fw-semibold text-dark">Essay {{ $loop->iteration }}</span>
+                                <span class="badge bg-neutral-200 text-neutral-600 radius-4 px-8 py-4 flex-shrink-0">
+                                    {{ $q->points ?? 0 }} {{ Str::plural('pt', $q->points ?? 0) }}
+                                </span>
+                            </div>
+
+                            <div class="essay-prompt mb-3">
+                                <p class="essay-section-label mb-2">
+                                    <b>Essay Question</b>
+                                </p>
+                                <div class="text-dark">{!! $q->question_text !!}</div>
                             </div>
                             
-                            <!-- Display Text Content -->
+                            <!-- Enhanced Display Text Content with White Background -->
                             @if($hasAnswer)
-                                <div class="bg-white border rounded-6 p-16 essay-content">
-                                    {!! $answerText !!}
+                                <div class="essay-answer bg-white rounded-6 p-12">
+                                    <!-- Header with badges -->
+                                    <div class="d-flex align-items-center justify-content-between mb-3 ">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="essay-answer-icon">
+                                                <iconify-icon icon="solar:pen-new-square-linear"></iconify-icon>
+                                            </span>
+                                            <p class="essay-section-label text-warning-700 mb-0 bg-warning-100">Student's response</p>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($wordCount > 50)
+                                                <span class="badge bg-success-100 text-success-600 border border-success-200">
+                                                    Detailed
+                                                </span>
+                                            @elseif($wordCount > 20)
+                                                <span class="badge bg-warning-100 text-warning-600 border border-warning-200">
+                                                    Moderate
+                                                </span>
+                                            @else
+                                                <span class="badge bg-danger-100 text-danger-600 border border-danger-200">
+                                                    Short
+                                                </span>
+                                            @endif
+                                            <span class="badge bg-primary-50 text-primary-600 border border-primary-200">
+                                                {{ $wordCount }} words
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Copy button -->
+                                    <button class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2 copy-response" 
+                                            data-content="{{ strip_tags($answerText) }}"
+                                            title="Copy response">
+                                        <iconify-icon icon="solar:copy-linear"></iconify-icon>
+                                    </button>
+
+                                    <!-- Response content with white background -->
+                                    <div class="essay-content-wrapper bg-white rounded-6 p-12">
+                                        <div class="essay-content">
+                                            {!! $answerText !!}
+                                        </div>
+                                    </div>
+                                    
+                                   
                                 </div>
                             @else
                                 <div class="alert alert-warning py-2 mb-2">
@@ -468,20 +520,205 @@ The Team</textarea>
     /* Ensure sticky works smoothly */
     .sticky-top { position: -webkit-sticky; position: sticky; }
 
-    /* Essay Content Styling */
-    .essay-content {
-        line-height: 1.6;
-        color: #333;
+    .essay-section-label {
+        color: #6b7280;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
     }
-    .essay-content p { margin-bottom: 1rem; }
-    .essay-content ul, .essay-content ol { margin-left: 1.5rem; margin-bottom: 1rem; }
-    .essay-content h1, .essay-content h2, .essay-content h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: 600; }
+
+    .essay-prompt {
+        background: #f8fafc;
+        border-left: 3px solid #cbd5e1;
+        border-radius: 0.375rem;
+        padding: 0.875rem 1rem;
+    }
+
+    /* Enhanced Essay Answer Styles with White Background */
+    .essay-answer {
+        background: #ffffff;
+        border: 2px solid #2563eb;
+        border-left: 6px solid #2563eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+        padding: 1.25rem;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+
+    .essay-answer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, transparent 50%, rgba(37, 99, 235, 0.05) 50%);
+        border-radius: 0 0 0 60px;
+        pointer-events: none;
+    }
+
+    .essay-answer:hover {
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.18);
+        transform: translateY(-1px);
+    }
+
+    .essay-answer-icon {
+        align-items: center;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        border-radius: 50%;
+        color: white;
+        display: inline-flex;
+        font-size: 1.1rem;
+        height: 2.25rem;
+        justify-content: center;
+        width: 2.25rem;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Response content wrapper with white background */
+    .essay-content-wrapper {
+        background: #ffffff;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        margin: 0 -0.25rem;
+    }
+
+    .essay-content {
+        background: #ffffff;
+        color: #1f2937;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        padding: 0.5rem;
+    }
+
+    .essay-content > :last-child { 
+        margin-bottom: 0; 
+    }
+    
+    .essay-content p { 
+        margin-bottom: 1rem; 
+    }
+    
+    .essay-content ul, 
+    .essay-content ol { 
+        margin-left: 1.5rem; 
+        margin-bottom: 1rem; 
+    }
+    
+    .essay-content h1, 
+    .essay-content h2, 
+    .essay-content h3 { 
+        margin-top: 1.5rem; 
+        margin-bottom: 0.5rem; 
+        font-weight: 600; 
+    }
+
+    .essay-content blockquote {
+        border-left: 3px solid #60a5fa;
+        color: #4b5563;
+        font-style: italic;
+        margin: 1rem 0;
+        padding: 0.5rem 1rem;
+        background: #f8fafc;
+        border-radius: 0 0.375rem 0.375rem 0;
+    }
+
+    .essay-content pre {
+        background: #f1f5f9;
+        border-radius: 0.375rem;
+        padding: 1rem;
+        overflow-x: auto;
+        font-size: 0.85rem;
+    }
+
+    .essay-content code {
+        background: #f1f5f9;
+        border-radius: 0.25rem;
+        padding: 0.1rem 0.3rem;
+        font-size: 0.85rem;
+    }
+
+    .essay-metadata {
+        border-color: #e5e7eb !important;
+        font-size: 0.8rem;
+    }
+
+    /* Copy button */
+    .copy-response {
+        z-index: 5;
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+    }
+
+    .copy-response:hover {
+        opacity: 1;
+        background: #f0f7ff;
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    .copy-response.copied {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+
+    .copy-response.copied iconify-icon {
+        transform: scale(1.1);
+    }
+
+    /* Badge styles */
+    .badge.bg-success-100 {
+        background-color: #d1fae5 !important;
+        color: #065f46 !important;
+    }
+
+    .badge.bg-warning-100 {
+        background-color: #fef3c7 !important;
+        color: #92400e !important;
+    }
+
+    .badge.bg-danger-100 {
+        background-color: #fee2e2 !important;
+        color: #991b1b !important;
+    }
+
+    .badge.bg-primary-50 {
+        background-color: #eff6ff !important;
+        color: #1e40af !important;
+    }
+
+    /* Loading animation for copy */
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    .copy-loading::after {
+        content: '...';
+        animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    /* Smooth transitions */
+    .essay-answer,
+    .copy-response,
+    .badge {
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Hover effects for response */
+    .essay-answer:hover .essay-content-wrapper {
+        background: #fafcff;
+    }
 </style>
 @endpush
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Essay score calculation
         const essayInputs = document.querySelectorAll('.essay-score-input');
         const finalScoreInput = document.getElementById('final_score_input');
         
@@ -528,6 +765,85 @@ The Team</textarea>
         
         // Initial calculation
         calculateTotal();
+
+        // Copy to clipboard functionality
+        const copyButtons = document.querySelectorAll('.copy-response');
+        
+        copyButtons.forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const content = this.getAttribute('data-content');
+                const originalIcon = this.innerHTML;
+                
+                try {
+                    // Try using the modern clipboard API
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(content);
+                    } else {
+                        // Fallback for older browsers
+                        const textarea = document.createElement('textarea');
+                        textarea.value = content;
+                        textarea.style.position = 'fixed';
+                        textarea.style.opacity = '0';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                    }
+                    
+                    // Visual feedback
+                    this.classList.add('copied');
+                    this.innerHTML = '<iconify-icon icon="solar:check-circle-linear"></iconify-icon>';
+                    
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        this.classList.remove('copied');
+                        this.innerHTML = originalIcon;
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                    
+                    // Show error feedback
+                    this.classList.add('btn-danger');
+                    this.innerHTML = '<iconify-icon icon="solar:close-circle-linear"></iconify-icon>';
+                    
+                    setTimeout(() => {
+                        this.classList.remove('btn-danger');
+                        this.innerHTML = originalIcon;
+                    }, 2000);
+                }
+            });
+        });
+
+        // Auto-resize textareas (if any)
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+
+        // Smooth scroll to grading section when clicking grade button
+        const gradeButton = document.querySelector('[href="#grade"]');
+        if (gradeButton) {
+            gradeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('#grade').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+
+        // Tooltip initialization
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        console.log('Essay response enhancements loaded successfully!');
     });
 </script>
 @endpush

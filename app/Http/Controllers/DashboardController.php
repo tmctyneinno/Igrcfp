@@ -802,6 +802,15 @@ class DashboardController extends Controller
         $essaySubmitted = $hasEssayQuestions
             && $displaySubmission
             && in_array($displaySubmission->status, ['submitted', 'graded', 'completed'], true);
+        $essayComplete = $essaySubmitted && $combinedQuiz->questions()
+            ->where('question_type', 'essay')
+            ->get()
+            ->every(function ($question) use ($displaySubmission) {
+                $response = data_get($displaySubmission->question_responses, $question->id, []);
+                $answer = trim(strip_tags((string) data_get($response, 'answer', '')));
+
+                return $answer !== '' || filled(data_get($response, 'uploaded_file.path'));
+            });
 
         $quizzes = [[
             'id' => $combinedQuiz->id,
@@ -822,6 +831,7 @@ class DashboardController extends Controller
             'part_a_submitted' => (bool) $partASubmitted,
             'has_essay_questions' => $hasEssayQuestions,
             'essay_submitted' => (bool) $essaySubmitted,
+            'essay_complete' => (bool) $essayComplete,
             
             'unlocked' => $this->isCourseQuizUnlocked($course, $enrollment),
             'reason' => $this->isCourseQuizUnlocked($course, $enrollment) ? null : 'Complete all lessons first',
