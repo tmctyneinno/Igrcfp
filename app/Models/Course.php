@@ -68,6 +68,7 @@ class Course extends Model
         });
     }
 
+
     /**
      * Relationships
      */

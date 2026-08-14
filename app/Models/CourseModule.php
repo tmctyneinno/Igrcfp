@@ -108,5 +108,18 @@ class CourseModule extends Model
     {
         return $this->hasMany(CourseModuleUser::class, 'course_module_id');
     }
+
+     public function quizzes()
+    {
+        return $this->hasMany(Assessment::class, 'module_id')->where('assessment_level', 'quiz');
+    }
+
+    /**
+     * Get all assessments for this specific module
+     */
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class, 'module_id');
+    }
     
 }
