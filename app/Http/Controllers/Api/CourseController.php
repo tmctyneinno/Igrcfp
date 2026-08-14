@@ -45,38 +45,54 @@ class CourseController extends Controller
      * Display detailed information for a specific course.
      */
     public function show(Course $course)
-    {
-        // FIXED: Load modules and their nested relationships. 
-        // (Ensure CourseModule model has quizzes() and assessments() methods defined!)
-        $course->load(['modules.quizzes', 'modules.assessments']);
+{
+    // 1. Load module-specific quizzes/assessments
+    $course->load(['modules.quizzes', 'modules.assessments']);
 
-        $courseData = [
-            'id' => $course->id,
-            'title' => $course->title,
-            'slug' => $course->slug,
-            'description' => $course->full_description,      // FIXED: Mapped to correct column
-            'short_description' => $course->short_description,
-            'banner_image' => $course->banner_image_url,     // FIXED: Use the model accessor
-            'image_url' => $course->image_url,               // FIXED: Accessor already handles the URL
-            'level' => $course->level,
-            'duration' => $course->duration,
-            'price' => $course->price,
-            'discount_price' => $course->discount_price,
-            'is_scholarship_eligible' => (bool) ($course->is_scholarship_eligible ?? false),
-            'modules' => $course->modules->map(function ($module) {
-                return [
-                    'id' => $module->id,
-                    'name' => $module->title,
-                    'order' => $module->module_number,
-                    'quizzes' => $module->quizzes ?? [],
-                    'assessments' => $module->assessments ?? [],
-                ];
-            }),
-        ];
+    // 2. Manually fetch course-level assessments (where module_id is null)
+    $courseQuizzes = \App\Models\Assessment::where('course_id', $course->id)
+        ->whereNull('module_id')
+        ->where('assessment_level', 'quiz')
+        ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $courseData
-        ]);
-    }
+    $courseAssessments = \App\Models\Assessment::where('course_id', $course->id)
+        ->whereNull('module_id')
+        ->where('assessment_level', '!=', 'quiz') // or 'module_assessment', 'final_exam', etc.
+        ->get();
+
+    $courseData = [
+        'id' => $course->id,
+        'title' => $course->title,
+        'slug' => $course->slug,
+        'description' => $course->full_description,
+        'short_description' => $course->short_description,
+        'banner_image' => $course->banner_image_url,
+        'image_url' => $course->image_url,
+        'level' => $course->level,
+        'duration' => $course->duration,
+        'price' => $course->price,
+        'discount_price' => $course->discount_price,
+        'is_scholarship_eligible' => (bool) ($course->is_scholarship_eligible ?? false),
+        
+        // 👇 NEW: Add course-level assessments here
+        'course_quizzes' => $courseQuizzes,
+        'course_assessments' => $courseAssessments,
+
+        // 👇 Module-specific assessments stay here
+        'modules' => $course->modules->map(function ($module) {
+            return [
+                'id' => $module->id,
+                'name' => $module->title,
+                'order' => $module->module_number,
+                'quizzes' => $module->quizzes ?? [],
+                'assessments' => $module->assessments ?? [],
+            ];
+        }),
+    ];
+
+    return response()->json([
+        'success' => true,
+        'data' => $courseData
+    ]);
+}
 }
