@@ -78,7 +78,7 @@
                             @if($enrollment->isCertificateRevoked() && $enrollment->certificate_revocation_reason)
                                 <p class="mb-0 small"><strong>Revocation Reason:</strong> {{ $enrollment->certificate_revocation_reason }}</p>
                             @endif
-                            <p class="mb-0 small">Last Updated: {{ $enrollment->certificate_status_updated_at?->format('F d, Y H:i') ?? 'N/A' }}</p>
+                            <p class="mb-0 small">Last Updated: {{ ($enrollment->certificate_status_updated_at ?? $enrollment->certificate_generated_date)?->format('F d, Y H:i') ?? 'N/A' }}</p>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
                                 <tr>
                                     <th class="text-muted">Verification</th>
                                     <td>
-                                        @if($enrollment->certificate_verified)
+                                        @if($enrollment->certificate_verified || ($enrollment->certificate_generated && $enrollment->certificate_status === 'active'))
                                             <span class="text-success"><i class="fas fa-check-circle"></i> Verified</span>
                                         @else
                                             <span class="text-muted">Not Verified</span>
@@ -155,16 +155,12 @@
                                     </td>
                                 </tr>
                             </table>
-                        </div>
+                        </div> 
                         <div class="col-md-6">
                             <table class="table table-borderless table-sm">
                                 <tr>
                                     <th class="text-muted" width="160">Issuing Body</th>
                                     <td>IGRCFP</td>
-                                </tr>
-                                <tr>
-                                    <th class="text-muted">Full Name</th>
-                                    <td>The Institute of Governance, Risk, Compliance & Financial Crime Prevention</td>
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Verification URL</th>
@@ -189,12 +185,17 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="text-muted">Download</th>
+                                    <th class="text-muted">Download Certificate</th>
                                     <td>
-                                        @if($enrollment->certificate_download_url)
-                                            <a href="{{ $enrollment->certificate_download_url }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-download"></i> Download PDF
-                                            </a>
+                                        @if($enrollment->certificate_generated && $enrollment->certificate_number)
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ $enrollment->certificate_preview_url }}" target="_blank" class="btn btn-sm btn-outline-info" title="View certificate in browser">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                                <a href="{{ $enrollment->certificate_download_url }}" download class="btn btn-sm btn-outline-primary" title="Download certificate as PDF">
+                                                    <i class="fas fa-download"></i> Download
+                                                </a>
+                                            </div>
                                         @else
                                             <span class="text-muted">Not Available</span>
                                         @endif

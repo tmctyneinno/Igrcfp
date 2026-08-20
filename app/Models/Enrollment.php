@@ -297,7 +297,7 @@ class Enrollment extends Model
      */
     public function generateCertificateNumber(): string
     {
-        $number = 'IGRCFP-CERT-' . date('Y') . '-' . str_pad($this->id, 6, '0', STR_PAD_LEFT) . '-' . strtoupper(substr(md5(uniqid()), 0, 6));
+        $number = 'IGRCFP-CERT-' . date('Y') . '-' . str_pad($this->id, 6, '0', STR_PAD_LEFT);
         
         $this->update(['certificate_number' => $number]);
         
@@ -320,6 +320,8 @@ class Enrollment extends Model
             'certificate_generated'      => true,
             'certificate_generated_date' => now(),
             'certificate_status'         => self::CERT_STATUS_ACTIVE,
+            'certificate_status_updated_at' => now(),
+            'certificate_verified'       => true,
             'final_grade'                => $finalGrade,
             'status'                     => 'completed',
             'completed_at'               => $this->completed_at ?? now(),
@@ -343,6 +345,7 @@ class Enrollment extends Model
             'certificate_status'             => $status,
             'certificate_status_updated_at'  => now(),
             'certificate_status_updated_by'  => $adminId,
+            'certificate_verified'           => $status === self::CERT_STATUS_ACTIVE,
             'certificate_revocation_reason'  => $status === self::CERT_STATUS_REVOKED ? $reason : null,
         ]);
 
@@ -382,7 +385,22 @@ class Enrollment extends Model
         return route('certificate.verify.public.show', $this->certificate_number);
     }
 
-   
+    /**
+     * Get the admin certificate preview URL
+     */
+    public function getCertificatePreviewUrlAttribute(): string
+    {
+        return route('admin.certificates.preview', $this);
+    }
+
+    /**
+     * Get the admin certificate download URL
+     */
+    public function getCertificateDownloadUrlAttribute(): string
+    {
+        return route('admin.certificates.download', $this);
+    }
+
     /**
      * Get all available certificate statuses
      */

@@ -11,8 +11,11 @@ use App\Models\Course;
 use App\Models\AssessmentSubmission;
 use App\Services\ActivityLoggerService;
 use App\Models\ActivityLog;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Browsershot\Browsershot;
+use Illuminate\Support\Facades\View;
 
 class CertificateController extends Controller
 {
@@ -115,6 +118,70 @@ class CertificateController extends Controller
         $certificateStatuses = Enrollment::getCertificateStatuses();
 
         return view('admin.certificates.show', compact('enrollment', 'verificationHistory', 'certificateStatuses'));
+    }
+
+    /**
+     * Preview a generated certificate as a PDF in-browser.
+     */
+    public function preview(Enrollment $enrollment)
+    {
+        return $this->renderCertificatePdf($enrollment, 'inline');
+    }
+
+    /**
+     * Download a generated certificate as a PDF.
+     */
+    public function download(Enrollment $enrollment)
+    {
+        return $this->renderCertificatePdf($enrollment, 'attachment');
+    }
+
+    
+
+    /**
+     * Build and return the certificate PDF for admin preview/download
+     */
+    protected function renderCertificatePdf(Enrollment $enrollment, string $disposition = 'inline')
+    {
+        if (!$enrollment->certificate_generated || empty($enrollment->certificate_number)) {
+            abort(404, 'Certificate not generated yet.');
+        }
+
+        $data = [
+            'student' => $enrollment->user,
+            'course' => $enrollment->course,
+            'enrollment' => $enrollment,
+            'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('jS \o\f F, Y'),
+            'certificate_number' => $enrollment->certificate_number,
+            'registration_id' => $enrollment->registration_id ?? '2026-01',
+            'instructor_name' => $enrollment->course->instructor->name ?? 'Dr. Foluso Amusa',
+            'instructor_credentials' => 'PhD · FIGRCFP · FAGRC · FICA · FIIM · FAPM',
+            'instructor_title' => 'Founder & President, IGRCFP',
+            'verification_url' => $enrollment->verification_url ?? 'igrcfp.org',
+        ];
+
+        // Render the Blade view to an HTML string
+        $html = View::make('certificates.template', $data)->render();
+
+        // Configure Browsershot for strict single-page A4 PORTRAIT
+        $pdf = Browsershot::html($html)
+            ->setChromePath('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome') // Uses your Mac's local Chrome
+            ->format('A4')
+            // ->landscape() // REMOVED: Browsershot defaults to Portrait
+            ->margins(0, 0, 0, 0) // Removes default browser print margins
+            ->showBackground()     // Ensures the seal background color renders
+            ->waitUntilNetworkIdle(); // Ensures fonts are fully loaded before generating
+
+        $filename = 'certificate-' . ($enrollment->course->slug ?? 'course') . '-' . $enrollment->certificate_number . '.pdf';
+        
+        $response = response($pdf->pdf(), 200)
+            ->header('Content-Type', 'application/pdf');
+
+        if ($disposition === 'attachment') {
+            return $response->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        }
+
+        return $response->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
 
     /**

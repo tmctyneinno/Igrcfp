@@ -1,345 +1,317 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Completion - {{ $course->title }}</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .certificate {
-            width: 100%;
-            max-width: 1000px;
-            height: auto;
-            min-height: 650px;
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            border: 15px solid #0A1F44;
-            border-radius: 4px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin: 0 auto;
-        }
-        
-        .certificate-inner {
-            border: 2px solid #D4AF37;
-            margin: 15px;
-            min-height: calc(100% - 30px);
-            position: relative;
-            padding: 30px 40px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .corner-decoration {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-        }
-        
-        .corner-tl {
-            top: 5px;
-            left: 5px;
-            border-top: 3px solid #D4AF37;
-            border-left: 3px solid #D4AF37;
-        }
-        
-        .corner-tr {
-            top: 5px;
-            right: 5px;
-            border-top: 3px solid #D4AF37;
-            border-right: 3px solid #D4AF37;
-        }
-        
-        .corner-bl {
-            bottom: 5px;
-            left: 5px;
-            border-bottom: 3px solid #D4AF37;
-            border-left: 3px solid #D4AF37;
-        }
-        
-        .corner-br {
-            bottom: 5px;
-            right: 5px;
-            border-bottom: 3px solid #D4AF37;
-            border-right: 3px solid #D4AF37;
-        }
-        
-        .certificate-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .certificate-logo {
-            height: 60px;
-            width: auto;
-        }
-        
-        .certificate-logo-placeholder {
-            height: 60px;
-            width: auto;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #0A1F44 0%, #1a3a6e 100%);
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .certificate-header-text {
-            text-align: center;
-        }
-        
-        .organization-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: #0A1F44;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-        }
-        
-        .organization-tagline {
-            font-size: 11px;
-            color: #666;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .certificate-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px;
-            font-weight: 700;
-            color: #D4AF37;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            margin: 10px 0;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .presented-to {
-            font-size: 13px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-        
-        .student-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: #0A1F44;
-            margin: 8px 0;
-            text-transform: capitalize;
-            border-bottom: 2px solid #D4AF37;
-            display: inline-block;
-            padding-bottom: 6px;
-        }
-        
-        .certificate-text {
-            font-size: 13px;
-            color: #444;
-            line-height: 1.5;
-            margin: 10px 0;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .course-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #0A1F44;
-            margin: 10px 0;
-        }
-        
-        .certificate-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 20px;
-            padding-top: 15px;
-        }
-        
-        .signature-section {
-            text-align: center;
-        }
-        
-        .signature-line {
-            width: 160px;
-            height: 1px;
-            background: #999;
-            margin: 8px 0 4px;
-        }
-        
-        .signature-name {
-            font-weight: 600;
-            font-size: 13px;
-            color: #333;
-        }
-        
-        .signature-title {
-            font-size: 10px;
-            color: #666;
-        }
-        
-        .date-section {
-            text-align: center;
-        }
-        
-        .certificate-number {
-            font-size: 10px;
-            color: #999;
-            margin-top: 15px;
-            text-align: center;
-        }
-        
-        .seal {
-            position: absolute;
-            bottom: 50px;
-            right: 70px;
-            width: 80px;
-            height: 80px;
-            border: 2px solid #D4AF37;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.6;
-            transform: rotate(-15deg);
-        }
-        
-        .seal-text {
-            font-size: 8px;
-            color: #D4AF37;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .seal-icon {
-            font-size: 20px;
-            color: #D4AF37;
-        }
-        
-        .verification-link {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 9px;
-            color: #999;
-        }
-        
-        .verification-link a {
-            color: #0A1F44;
-            text-decoration: none;
-        }
-    </style>
+<meta charset="utf-8">
+<title>Certificate - {{ $student->name ?? 'Candidate' }}</title> 
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #1a2b4c;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .page {
+        width: 100%;
+        height: 100%;
+        padding: 15mm;
+        position: relative;
+    }
+
+    .border-outer {
+        border: 2px solid #1a2b4c;
+        padding: 2.5mm;
+        height: 100%;
+    }
+
+    .border-inner {
+        border: 1px solid #1a2b4c;
+        height: 100%;
+        padding: 12mm 25mm 18mm 25mm;
+        text-align: center;
+        position: relative;
+    }
+
+    .seal {
+        width: 30mm;
+        height: 30mm;
+        margin: 0 auto 3mm auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .seal img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Prevents image distortion */
+    }
+
+    .tagline {
+        font-style: italic;
+        font-size: 15px;
+        color: #4a5b7c;
+        margin-bottom: 4mm;
+    }
+
+    .kicker {
+        font-size: 13px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #9a2b2b;
+        margin-bottom: 2mm;
+    }
+
+    .title {
+        font-size: 38px;
+        font-weight: bold;
+        letter-spacing: 4px;
+        color: #1a2b4c;
+        margin-bottom: 2mm;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #34456c;
+        margin-bottom: 4mm;
+    }
+
+    .divider {
+        width: 35mm;
+        border-bottom: 2px solid #9a2b2b;
+        margin: 0 auto 6mm auto;
+    }
+
+    .intro {
+        font-size: 15px;
+        color: #4a5b7c;
+        margin-bottom: 2mm;
+    }
+
+    .student-name {
+        font-size: 30px;
+        font-weight: bold;
+        color: #1a2b4c;
+        margin-bottom: 2mm;
+        font-family: 'Georgia', serif;
+    }
+
+    .reg-id {
+        font-size: 10px;
+        color: #6a7ba0;
+        margin-bottom: 5mm;
+    }
+
+    .body-text {
+        font-size: 12px;
+        color: #4a5b7c;
+        line-height: 1.5;
+        width: 75%;
+        margin: 0 auto 5mm auto;
+    }
+
+    .date-line {
+        font-size: 12px;
+        color: #34456c;
+        margin-bottom: 8mm;
+    }
+
+    .signature-block {
+        margin: 0 auto 2mm auto;
+        width: 70mm;
+    }
+
+    .signature-line {
+        border-bottom: 1px solid #1a2b4c;
+        height: 8mm;
+    }
+
+    .signature-name {
+        font-size: 13px;
+        font-weight: bold;
+        color: #1a2b4c;
+        margin-top: 2mm;
+    }
+
+    .signature-credentials {
+        font-size: 9px;
+        color: #6a7ba0;
+        letter-spacing: 0.5px;
+        margin-top: 1mm;
+    }
+
+    .signature-title {
+        font-size: 10px;
+        color: #34456c;
+        font-weight: bold;
+        margin-top: 1mm;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 12mm;
+        left: 25mm;
+        right: 25mm;
+        border-top: 1px solid #d3d8e4;
+        padding-top: 2mm;
+        font-size: 9px;
+        color: #6a7ba0;
+        width: calc(100% - 50mm);
+    }
+
+    .footer-left {
+        display: inline-block;
+        width: 49%;
+        text-align: left;
+    }
+
+    .footer-right {
+        display: inline-block;
+        width: 49%;
+        text-align: right;
+    }
+
+    .footer strong {
+        color: #1a2b4c;
+    }
+</style>
 </head>
 <body>
     @php
-        $logoPath = public_path('assets/images/home-three/logo/logo-main.png');
+        // 1. Handle Logo
+        $logoPath = public_path('assets/images/logo-main.png');
         $logoBase64 = '';
         if (file_exists($logoPath)) {
             $logoData = file_get_contents($logoPath);
             $logoBase64 = 'data:image/png;base64,' . base64_encode($logoData);
+        } else {
+            // Safe SVG fallback if logo is missing (prevents Chrome crash)
+            $logoBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="#eef1f7" stroke="#1a2b4c" stroke-width="3"/><text x="50" y="55" font-size="12" text-anchor="middle" fill="#1a2b4c" font-weight="bold">LOGO</text></svg>');
+        }
+
+        // 2. Handle Stamp (with dynamic MIME type detection)
+        $stampPath = public_path('assets/images/igrcfp_stamp.png'); // Check if this is .png or .jpeg on your server
+        $stampBase64 = '';
+        if (file_exists($stampPath)) {
+            $stampData = file_get_contents($stampPath);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $stampPath);
+            finfo_close($finfo);
+            $stampBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($stampData);
+        } else {
+            // Safe SVG fallback if stamp is missing
+            $stampBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">STAMP</text></svg>');
+        }
+        // 3. Handle Signature (with dynamic MIME type detection)
+        $signaturePath = public_path('assets/images/igrcfp_signature.PNG'); // Check if this is .png or .jpeg on your server
+        $signatureBase64 = '';
+        if (file_exists($signaturePath)) {
+            $signatureData = file_get_contents($signaturePath);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $signaturePath);
+            finfo_close($finfo);
+            $signatureBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($signatureData);
+        } else {
+            // Safe SVG fallback if signature is missing
+            $signatureBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">SIGNATURE</text></svg>');
+        }
+         // 4. Handle Signature (with dynamic MIME type detection)
+        $progressPath = public_path('assets/images/igrcfp_progress.png'); // Check if this is .png or .jpeg on your server
+        $progressBase64 = '';
+        if (file_exists($progressPath)) {
+            $progressData = file_get_contents($progressPath);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $progressPath);
+            finfo_close($finfo);
+            $progressBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($progressData);
+        } else {
+            // Safe SVG fallback if signature is missing
+            $progressBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">SIGNATURE</text></svg>');
         }
     @endphp
-    
-    <div class="certificate">
-        <div class="certificate-inner">
-            <div class="corner-decoration corner-tl"></div>
-            <div class="corner-decoration corner-tr"></div>
-            <div class="corner-decoration corner-bl"></div>
-            <div class="corner-decoration corner-br"></div>
-            
-            <div class="certificate-header">
-                @if($logoBase64)
-                    <img src="{{ $logoBase64 }}" alt="IGRCFP Logo" class="certificate-logo">
-                @else
-                    <div class="certificate-logo-placeholder">IGRCFP</div>
+
+    <div class="page">
+        <div class="border-outer">
+            <div class="border-inner">
+
+                <!-- Top Logo -->
+                <div class="seal">
+                    <img src="{{ $logoBase64 }}" alt="Logo">
+                </div>
+
+                <div class="tagline">Empowering Professionals, Shaping Global Standards, Safeguarding Systems.</div>
+
+                <div class="kicker">PROFESSIONAL QUALIFICATION</div>
+                <div class="title">CERTIFICATE</div>
+                <div class="subtitle">in {{ $course->title ?? 'Governance, Risk & Compliance' }}</div>
+
+                <div class="divider"></div>
+
+                <div class="intro">This is to certify that</div>
+                <div class="student-name">{{ $student->name ?? 'Candidate Name' }}</div>
+                <div class="reg-id">Registration ID: {{ $registration_id ?? '2026-01' }}</div>
+
+                <div class="body-text">
+                    has satisfied all the requirements prescribed by the Institute and is hereby awarded the above qualification.
+                </div>
+
+                <!-- Official Stamp -->
+                @if($progressPath)
+                <div class="seal" style="margin-top: -10mm; margin-bottom: -5mm;">
+                    <img src="{{ $progressBase64 }}" alt="IGRCFP Stamp" style="width: 80mm; height: auto;">
+                </div>
                 @endif
-                <div class="certificate-header-text">
-                    <div class="organization-name">{{ config('app.name', 'IGRCFP') }}</div>
-                    <div class="organization-tagline">The Institute of GRC & Financial Crime Prevention</div>
+
+                <div class="date-line">Awarded on the {{ $completion_date ?? '30th of April, 2027' }}</div>
+                <!--  Signature -->
+                @if($signatureBase64)
+                <div>
+                    <img src="{{ $signatureBase64 }}" alt="IGRCFP Signature" style="width: 60mm; height: auto;">
                 </div>
-            </div>
-            
-            <div style="text-align: center; flex: 1;">
-                <div class="certificate-title">Certificate</div>
-                <div class="presented-to">of Completion</div>
-                <div class="presented-to" style="margin-top: 15px;">This is to certify that</div>
-                <div class="student-name">{{ $student->name }}</div>
-                <div class="certificate-text">
-                    has successfully completed the requirements for
-                </div>
-                <div class="course-name">{{ $course->title }}</div>
-                <div class="certificate-text">
-                    demonstrating proficiency and understanding of the course material<br>
-                    with a completion date of
-                </div>
-                <div style="font-size: 15px; font-weight: 600; color: #0A1F44; margin: 8px 0;">
-                    {{ $completion_date }}
-                </div>
-            </div>
-            
-            <div class="certificate-footer">
-                <div class="signature-section">
+                @endif
+                <div class="signature-block" style="margin-top: -8mm;">
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ $instructor_name ?? 'Course Instructor' }}</div>
-                    <div class="signature-title">Lead Instructor</div>
+                    <div class="signature-name">{{ $instructor_name ?? 'Dr. Foluso Amusa' }}</div>
+                    <div class="signature-credentials">{{ $instructor_credentials ?? 'PhD · FIGRCFP · FAGRC · FICA · FIIM · FAPM' }}</div>
+                    <div class="signature-title">{{ $instructor_title ?? 'Founder & President, IGRCFP' }}</div>
                 </div>
-                
-                <div class="date-section">
-                    <div class="signature-line"></div>
-                    <div class="signature-name">{{ $completion_date }}</div>
-                    <div class="signature-title">Date of Completion</div>
+
+                <!-- Official Stamp -->
+                @if($stampBase64)
+                <div class="seal" style="margin-top: 5mm;">
+                    <img src="{{ $stampBase64 }}" alt="IGRCFP Stamp">
                 </div>
-                
-                <div class="signature-section">
-                    <div class="signature-line"></div>
-                    <div class="signature-name">Institute Director</div>
-                    <div class="signature-title">IGRCFP</div>
+                @endif
+
+                <div class="footer">
+                    <div class="footer-left">
+                        Certificate ID: <strong>{{ $certificate_number ?? '2026GRC-CERT01' }}</strong>
+                    </div>
+                    <div class="footer-right">
+                        Verify @ <strong>{{ $verification_url ?? 'igrcfp.org' }}</strong>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="certificate-number">
-                Certificate Number: {{ $certificate_number }}<br>
-                <div class="verification-link">
-                    Verify this certificate at: 
-                    <a href="{{ $verification_url ?? route('certificate.verify', $certificate_number) }}">
-                        {{ $verification_url ?? route('certificate.verify', $certificate_number) }}
-                    </a>
-                </div>
-            </div>
-            
-            <div class="seal">
-                <div class="seal-icon">🏆</div>
-                <div class="seal-text">IGRCFP</div>
-                <div class="seal-text">CERTIFIED</div>
+
             </div>
         </div>
     </div>

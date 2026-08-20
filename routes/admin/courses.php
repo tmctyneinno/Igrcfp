@@ -134,6 +134,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::prefix('certificates')->name('certificates.')->group(function () {
         Route::get('/', [AdminCertificateController::class, 'index'])->name('index');
         Route::get('/{enrollment}', [AdminCertificateController::class, 'show'])->name('show');
+        Route::get('/{enrollment}/preview', [AdminCertificateController::class, 'preview'])->name('preview');
+        Route::get('/{enrollment}/download', [AdminCertificateController::class, 'download'])->name('download');
         Route::get('/{enrollment}/edit', [AdminCertificateController::class, 'edit'])->name('edit');
         Route::post('/{enrollment}/generate', [AdminCertificateController::class, 'generate'])->name('generate');
         Route::post('/{enrollment}/update-status', [AdminCertificateController::class, 'updateStatus'])->name('update-status');
