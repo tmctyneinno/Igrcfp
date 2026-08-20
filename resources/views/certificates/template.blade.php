@@ -34,13 +34,13 @@
     .page {
         width: 100%;
         height: 100%;
-        padding: 15mm;
+        padding: 10mm;
         position: relative;
     }
 
     .border-outer {
         border: 2px solid #1a2b4c;
-        padding: 2.5mm;
+        padding: 2mm;
         height: 100%;
     }
 
@@ -69,7 +69,7 @@
 
     .tagline {
         font-style: italic;
-        font-size: 15px;
+        font-size: 14px;
         color: #4a5b7c;
         margin-bottom: 4mm;
     }
@@ -123,7 +123,7 @@
     }
 
     .body-text {
-        font-size: 12px;
+        font-size: 14px;
         color: #4a5b7c;
         line-height: 1.5;
         width: 75%;
@@ -138,30 +138,32 @@
 
     .signature-block {
         margin: 0 auto 2mm auto;
-        width: 70mm;
     }
 
     .signature-line {
+        margin: 0 auto 2mm auto;
         border-bottom: 1px solid #1a2b4c;
         height: 8mm;
+        width: 60mm;
+
     }
 
     .signature-name {
-        font-size: 13px;
+        font-size: 15px;
         font-weight: bold;
         color: #1a2b4c;
         margin-top: 2mm;
     }
 
     .signature-credentials {
-        font-size: 9px;
+        font-size: 11px;
         color: #6a7ba0;
         letter-spacing: 0.5px;
         margin-top: 1mm;
     }
 
     .signature-title {
-        font-size: 10px;
+        font-size: 12x;
         color: #34456c;
         font-weight: bold;
         margin-top: 1mm;
@@ -308,7 +310,7 @@
                         Certificate ID: <strong>{{ $certificate_number ?? '2026GRC-CERT01' }}</strong>
                     </div>
                     <div class="footer-right">
-                        Verify @ <strong>{{ $verification_url ?? 'igrcfp.org' }}</strong>
+                        Verify @ <strong>https://igrcfp.org</strong>
                     </div>
                 </div>
 
