@@ -136,62 +136,43 @@ class CertificateController extends Controller
         return $this->renderCertificatePdf($enrollment, 'attachment');
     }
 
-protected function renderCertificatePdf(Enrollment $enrollment, string $disposition = 'inline')
-{
-    if (!$enrollment->certificate_generated || empty($enrollment->certificate_number)) {
-        abort(404, 'Certificate not generated yet.');
+
+    protected function renderCertificatePdf(Enrollment $enrollment, string $disposition = 'inline')
+    {
+        if (!$enrollment->certificate_generated || empty($enrollment->certificate_number)) {
+            abort(404, 'Certificate not generated yet.');
+        }
+
+        $data = [
+            'student' => $enrollment->user,
+            'course' => $enrollment->course,
+            'enrollment' => $enrollment,
+            'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('F d, Y'),
+            'certificate_number' => $enrollment->certificate_number,
+            'instructor_name' => $enrollment->course->instructor->name ?? 'Course Instructor',
+            'verification_url' => $enrollment->verification_url,
+        ];
+
+        $pdf = Pdf::loadView('certificates.template', $data);
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            'dpi' => 100,
+            'defaultFont' => 'sans-serif',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'isPhpEnabled' => true,
+        ]);
+
+        $filename = 'certificate-' . ($enrollment->course->slug ?? 'course') . '.pdf';
+        $response = response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf');
+
+        if ($disposition === 'attachment') {
+            return $response->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        }
+
+        return $response->header('Content-Disposition', 'inline; filename="' . $filename . '"');
     }
-
-    $data = [
-        'student' => $enrollment->user,
-        'course' => $enrollment->course,
-        'enrollment' => $enrollment,
-        'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('jS \o\f F, Y'),
-        'certificate_number' => $enrollment->certificate_number,
-        'registration_id' => $enrollment->registration_id ?? '2026-01',
-        'instructor_name' => $enrollment->course->instructor->name ?? 'Dr. Foluso Amusa',
-        'instructor_credentials' => 'PhD · FIGRCFP · FAGRC · FICA · FIIM · FAPM',
-        'instructor_title' => 'Founder & President, IGRCFP',
-        'verification_url' => $enrollment->verification_url ?? 'igrcfp.org',
-    ];
-
-    $html = View::make('certificates.template', $data)->render();
-
-    // Determine Chrome path based on OS
-    $chromePath = '/usr/bin/google-chrome'; // Standard Linux path
-    
-    // If you are still developing on Mac, you can keep this check:
-    if (PHP_OS === 'Darwin') {
-        $chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-    }
-
-    // $pdf = Browsershot::html($html)
-    //     ->setChromePath($chromePath)
-    //     ->format('A4')
-    //     ->margins(0, 0, 0, 0)
-    //     ->showBackground()
-    //     ->waitUntilNetworkIdle();
-    $pdf = Browsershot::html($html)
-    ->setNodeBinary('/home/morganstyneside/nodevenv/igrcfp/18/bin/node')
-    ->setNpmBinary('/home/morganstyneside/nodevenv/igrcfp/18/bin/npm')
-    ->setChromePath('/usr/bin/google-chrome')
-    ->format('A4')
-    ->landscape() // or portrait, matching your template
-    ->showBackground()
-    ->margins(0, 0, 0, 0)
-    ->pdf();
-
-    $filename = 'certificate-' . ($enrollment->course->slug ?? 'course') . '-' . $enrollment->certificate_number . '.pdf';
-    
-    $response = response($pdf->pdf(), 200)
-        ->header('Content-Type', 'application/pdf');
-
-    if ($disposition === 'attachment') {
-        return $response->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
-    }
-
-    return $response->header('Content-Disposition', 'inline; filename="' . $filename . '"');
-}
 
     /**
      * Show form to generate certificate
