@@ -2,9 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Certificate - {{ $student->name ?? 'Candidate' }}</title> 
+<title>Certificate - {{ $student->name ?? 'Candidate' }}</title>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
+    /*
+     * Page size/orientation must be set in ONLY one place. This template
+     * declares A4 portrait here, so the controller must call
+     * $pdf->setPaper('A4', 'portrait') to match — mismatched orientation
+     * between the CSS @page rule and setPaper() is a common cause of
+     * dompdf emitting a stray extra page.
+     */
     @page {
         size: A4 portrait;
         margin: 0;
@@ -16,6 +23,7 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+        position: relative;
     }
 
     * {
@@ -31,17 +39,28 @@
         print-color-adjust: exact;
     }
 
+    /*
+     * KEY SAFEGUARD: the single top-level wrapper is position:absolute.
+     * This removes it (and everything inside it) from body's normal
+     * document flow, which is what dompdf measures when deciding whether
+     * to start a new page. With nothing in normal flow to overflow,
+     * dompdf has no trigger to add a second page.
+     */
     .page {
-        width: 100%;
-        height: 100%;
-        padding: 15mm;
-        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 210mm;
+        height: 297mm;
+        padding: 10mm;
+        overflow: hidden;
     }
 
     .border-outer {
         border: 2px solid #1a2b4c;
-        padding: 2.5mm;
+        padding: 2mm;
         height: 100%;
+        overflow: hidden;
     }
 
     .border-inner {
@@ -50,6 +69,7 @@
         padding: 12mm 25mm 18mm 25mm;
         text-align: center;
         position: relative;
+        overflow: hidden;
     }
 
     .seal {
@@ -69,7 +89,7 @@
 
     .tagline {
         font-style: italic;
-        font-size: 15px;
+        font-size: 14px;
         color: #4a5b7c;
         margin-bottom: 4mm;
     }
@@ -94,6 +114,9 @@
         font-size: 20px;
         color: #34456c;
         margin-bottom: 4mm;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .divider {
@@ -114,6 +137,9 @@
         color: #1a2b4c;
         margin-bottom: 2mm;
         font-family: 'Georgia', serif;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .reg-id {
@@ -123,7 +149,7 @@
     }
 
     .body-text {
-        font-size: 12px;
+        font-size: 14px;
         color: #4a5b7c;
         line-height: 1.5;
         width: 75%;
@@ -138,30 +164,31 @@
 
     .signature-block {
         margin: 0 auto 2mm auto;
-        width: 70mm;
     }
 
     .signature-line {
+        margin: 0 auto 2mm auto;
         border-bottom: 1px solid #1a2b4c;
         height: 8mm;
+        width: 60mm;
     }
 
     .signature-name {
-        font-size: 13px;
+        font-size: 15px;
         font-weight: bold;
         color: #1a2b4c;
         margin-top: 2mm;
     }
 
     .signature-credentials {
-        font-size: 9px;
+        font-size: 11px;
         color: #6a7ba0;
         letter-spacing: 0.5px;
         margin-top: 1mm;
     }
 
     .signature-title {
-        font-size: 10px;
+        font-size: 12px;
         color: #34456c;
         font-weight: bold;
         margin-top: 1mm;
@@ -183,23 +210,45 @@
         display: inline-block;
         width: 49%;
         text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .footer-right {
         display: inline-block;
         width: 49%;
         text-align: right;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .footer strong {
         color: #1a2b4c;
+    }
+
+    /* Caps for the loosely-sized decorative images so an unexpected
+       image aspect ratio can't push content past the page boundary */
+    .progress-img {
+        width: 80mm;
+        height: auto;
+        max-height: 12mm;
+        object-fit: contain;
+    }
+
+    .signature-img {
+        width: 60mm;
+        height: auto;
+        max-height: 20mm;
+        object-fit: contain;
     }
 </style>
 </head>
 <body>
     @php
         // 1. Handle Logo
-        $logoPath = public_path('assets/images/logo.png');
+        $logoPath = public_path('assets/images/logo-main.png');
         $logoBase64 = '';
         if (file_exists($logoPath)) {
             $logoData = file_get_contents($logoPath);
@@ -212,7 +261,8 @@
         // 2. Handle Stamp (with dynamic MIME type detection)
         $stampPath = public_path('assets/images/igrcfp_stamp.png'); // Check if this is .png or .jpeg on your server
         $stampBase64 = '';
-        if (file_exists($stampPath)) {
+        $stampExists = file_exists($stampPath);
+        if ($stampExists) {
             $stampData = file_get_contents($stampPath);
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $stampPath);
@@ -221,6 +271,36 @@
         } else {
             // Safe SVG fallback if stamp is missing
             $stampBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">STAMP</text></svg>');
+        }
+
+        // 3. Handle Signature (with dynamic MIME type detection)
+        $signaturePath = public_path('assets/images/igrcfp_signature.PNG'); // Check if this is .png or .jpeg on your server
+        $signatureBase64 = '';
+        $signatureExists = file_exists($signaturePath);
+        if ($signatureExists) {
+            $signatureData = file_get_contents($signaturePath);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $signaturePath);
+            finfo_close($finfo);
+            $signatureBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($signatureData);
+        } else {
+            // Safe SVG fallback if signature is missing
+            $signatureBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">SIGNATURE</text></svg>');
+        }
+
+        // 4. Handle Progress badge (with dynamic MIME type detection)
+        $progressPath = public_path('assets/images/igrcfp_progress.png'); // Check if this is .png or .jpeg on your server
+        $progressBase64 = '';
+        $progressExists = file_exists($progressPath);
+        if ($progressExists) {
+            $progressData = file_get_contents($progressPath);
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $progressPath);
+            finfo_close($finfo);
+            $progressBase64 = 'data:' . $mimeType . ';base64,' . base64_encode($progressData);
+        } else {
+            // Safe SVG fallback if progress badge is missing
+            $progressBase64 = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#9a2b2b" stroke-width="2" stroke-dasharray="4"/><text x="50" y="55" font-size="10" text-anchor="middle" fill="#9a2b2b">SIGNATURE</text></svg>');
         }
     @endphp
 
@@ -249,28 +329,42 @@
                     has satisfied all the requirements prescribed by the Institute and is hereby awarded the above qualification.
                 </div>
 
-                <!-- Official Stamp -->
-                @if($stampBase64)
-                <div class="seal" style="margin-top: 5mm;">
-                    <img src="{{ $stampBase64 }}" alt="IGRCFP Stamp">
+                <!-- Progress badge -->
+                @if($progressExists)
+                <div class="seal" style="margin-top: -10mm; margin-bottom: -5mm; width: auto; height: auto;">
+                    <img src="{{ $progressBase64 }}" alt="IGRCFP Progress" class="progress-img">
                 </div>
                 @endif
 
                 <div class="date-line">Awarded on the {{ $completion_date ?? '30th of April, 2027' }}</div>
 
-                <div class="signature-block">
+                <!-- Signature image -->
+                @if($signatureExists)
+                <div>
+                    <img src="{{ $signatureBase64 }}" alt="IGRCFP Signature" class="signature-img">
+                </div>
+                @endif
+
+                <div class="signature-block" style="margin-top: -8mm;">
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $instructor_name ?? 'Dr. Foluso Amusa' }}</div>
                     <div class="signature-credentials">{{ $instructor_credentials ?? 'PhD · FIGRCFP · FAGRC · FICA · FIIM · FAPM' }}</div>
                     <div class="signature-title">{{ $instructor_title ?? 'Founder & President, IGRCFP' }}</div>
                 </div>
 
+                <!-- Official Stamp -->
+                @if($stampExists)
+                <div class="seal" style="margin-top: 5mm;">
+                    <img src="{{ $stampBase64 }}" alt="IGRCFP Stamp">
+                </div>
+                @endif
+
                 <div class="footer">
                     <div class="footer-left">
                         Certificate ID: <strong>{{ $certificate_number ?? '2026GRC-CERT01' }}</strong>
                     </div>
                     <div class="footer-right">
-                        Verify @ <strong>{{ $verification_url ?? 'igrcfp.org' }}</strong>
+                        Verify @ <strong>https://igrcfp.org</strong>
                     </div>
                 </div>
 
