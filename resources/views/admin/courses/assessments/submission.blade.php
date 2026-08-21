@@ -167,7 +167,7 @@
                                                     <tr>
                                                         <td class="ps-0">
                                                             <small class="d-block text-truncate" style="max-width: 150px;" title="{{ $item['question']->question_text }}">
-                                                                Q{{ $index + 1 }}: {{ Str::limit($item['question']->question_text, 30) }}
+                                                                Q{{ $index + 1 }}: {!! Str::limit($item['question']->question_text, 30) !!}
                                                             </small>
                                                         </td>
                                                         <td class="text-end text-muted">{{ $item['max_points'] }}</td>

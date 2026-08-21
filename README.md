@@ -150,5 +150,6 @@ uploaded Article
 Work on the Essay score retrival 
 Work on the Examiner report ( email notification and in-app notification )
 work on the Assessment Stage,
+work on retrive Essay Scores (Manual)
 
 d-inline-flex align-items-center gap-1 text-nowrap
