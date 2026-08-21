@@ -400,8 +400,8 @@ class HomeController extends Controller
     {
         $blogs = Blog::with('user')
             ->where('status', 'published')
-            ->latest()
-            ->paginate(9)
+            ->latest() 
+            ->paginate(12)
             ->through(function ($blog) {
                 return [
                     'id' => $blog->id,
@@ -466,7 +466,7 @@ class HomeController extends Controller
                 'meta_keywords' => $blog->meta_keywords,
                 'published_at' => $blog->created_at?->toDateString(),
                 'updated_at' => $blog->updated_at?->toDateString(),
-            ],
+            ], 
             'relatedBlogs' => $relatedBlogs,
             'canonicalUrl' => route('blog.show', $blog->slug),
         ]);
