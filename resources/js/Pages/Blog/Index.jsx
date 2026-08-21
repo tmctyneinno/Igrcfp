@@ -25,8 +25,10 @@ export default function Blog({ auth, title, description, blogs }) {
         });
     }, [blogItems, searchTerm]);
 
-    const featuredBlogs = filteredBlogs.slice(0, 4);
-    const latestBlogs = filteredBlogs.slice(4);
+    const featuredBlogs = filteredBlogs.slice(0, 8);
+    const latestBlogs = searchTerm.trim() || blogs?.current_page > 1
+        ? filteredBlogs
+        : filteredBlogs.slice(8);
 
     return (
         <GuestLayout auth={auth}>
@@ -102,7 +104,7 @@ export default function Blog({ auth, title, description, blogs }) {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {(latestBlogs.length > 0 ? latestBlogs : filteredBlogs).map((blog) => (
+                            {latestBlogs.map((blog) => (
                                 <BlogCard key={blog.id} blog={blog} />
                             ))}
                         </div>

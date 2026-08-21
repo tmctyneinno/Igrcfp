@@ -166,6 +166,7 @@
                 <table class="table table-hover align-middle">
                     <thead class="bg-light">
                         <tr>
+                            <th>S/N</th>
                             <th style="width: 40px;">
                                 <input type="checkbox" id="selectAll" class="form-check-input">
                             </th>
@@ -181,6 +182,7 @@
                     <tbody>
                         @forelse($certificates as $enrollment)
                             <tr>
+                                <td>{{ $certificates->firstItem() + $loop->index }}</td>
                                 <td>
                                     @if(!$enrollment->certificate_generated && $enrollment->status === 'completed')
                                         <input type="checkbox" name="enrollment_ids[]" 
@@ -303,7 +305,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center py-5">
+                                <td colspan="9" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="fas fa-certificate fa-3x mb-3 d-block"></i>
                                         <h6>No Certificate Records Found</h6>
