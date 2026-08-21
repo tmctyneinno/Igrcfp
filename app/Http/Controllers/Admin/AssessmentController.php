@@ -8,12 +8,14 @@ use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\AssessmentQuestion; 
 use App\Models\AssessmentSubmission;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\BrevoMailService;
 use App\Mail\EssayRetryNotification;
+use App\Mail\ExaminerReportUploaded;
 use Barryvdh\DomPDF\Facade\Pdf;
 
  
@@ -783,7 +785,7 @@ class AssessmentController extends Controller
         ));
     }
 
-    public function gradeSubmission(Request $request, AssessmentSubmission $submission)
+    public function gradeSubmission(Request $request, AssessmentSubmission $submission, BrevoMailService $mailer)
     {
         $validated = $request->validate([
             'final_score' => 'required|numeric|min:0|max:' . ($submission->assessment->total_marks ?? 100),
@@ -837,6 +839,48 @@ class AssessmentController extends Controller
             $report = $request->file('examiner_report');
             $submission->examiner_report_path = $report->store('examiner-reports', 'public');
             $submission->examiner_report_name = $report->getClientOriginalName();
+
+            try {
+                Notification::create([
+                    'user_id' => $submission->user_id,
+                    'type' => 'examiner_report_uploaded',
+                    'title' => 'Examiner Report Uploaded',
+                    'message' => "An examiner report has been uploaded for your assessment: {$submission->assessment->title}.",
+                    'data' => [
+                        'submission_id' => $submission->id,
+                        'assessment_id' => $submission->assessment_id,
+                        'assessment_title' => $submission->assessment->title,
+                        'report_name' => $submission->examiner_report_name,
+                    ],
+                ]);
+            } catch (\Throwable $exception) {
+                \Log::error('Examiner report in-app notification failed', [
+                    'submission_id' => $submission->id,
+                    'user_id' => $submission->user_id,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+
+            if ($submission->user?->email) {
+                try {
+                    $mailer->sendMailable(
+                        // $submission->user->email,
+                        'eshanokpe@gmail.com',
+                        new ExaminerReportUploaded(
+                            $submission->user->name ?? 'Student',
+                            $submission->assessment->title,
+                            $submission->examiner_report_name,
+                        ),
+                        'Examiner Report Uploaded'
+                    );
+                } catch (\Throwable $exception) {
+                    \Log::error('Examiner report notification failed', [
+                        'submission_id' => $submission->id,
+                        'recipient' => $submission->user->email,
+                        'error' => $exception->getMessage(),
+                    ]);
+                }
+            }
         }
 
         $submission->grader_comments = array_merge($submission->grader_comments ?? [], [

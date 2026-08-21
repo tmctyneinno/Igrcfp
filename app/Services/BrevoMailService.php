@@ -7,7 +7,7 @@ use App\Mail\ContactFormSubmitted;
 use App\Mail\OTPMail;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
- 
+  
 class BrevoMailService
 {
     protected $apiKey;
