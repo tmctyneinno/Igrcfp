@@ -165,12 +165,21 @@ protected function renderCertificatePdf(Enrollment $enrollment, string $disposit
         $chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
     }
 
+    // $pdf = Browsershot::html($html)
+    //     ->setChromePath($chromePath)
+    //     ->format('A4')
+    //     ->margins(0, 0, 0, 0)
+    //     ->showBackground()
+    //     ->waitUntilNetworkIdle();
     $pdf = Browsershot::html($html)
-        ->setChromePath($chromePath)
-        ->format('A4')
-        ->margins(0, 0, 0, 0)
-        ->showBackground()
-        ->waitUntilNetworkIdle();
+    ->setNodeBinary('/home/morganstyneside/nodevenv/igrcfp/18/bin/node')
+    ->setNpmBinary('/home/morganstyneside/nodevenv/igrcfp/18/bin/npm')
+    ->setChromePath('/usr/bin/google-chrome')
+    ->format('A4')
+    ->landscape() // or portrait, matching your template
+    ->showBackground()
+    ->margins(0, 0, 0, 0)
+    ->pdf();
 
     $filename = 'certificate-' . ($enrollment->course->slug ?? 'course') . '-' . $enrollment->certificate_number . '.pdf';
     
