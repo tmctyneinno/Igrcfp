@@ -283,10 +283,6 @@
             </div>
 
             {{-- Assessment Grade Breakdown --}}
-            @php
-                $gradeBreakdown = $enrollment->getGradeBreakdownAttribute();
-            @endphp
-            
             @if(count($gradeBreakdown['submissions']) > 0)
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">

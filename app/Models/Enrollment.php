@@ -459,16 +459,17 @@ class Enrollment extends Model
      */
     public function getGradeBreakdownAttribute(): array
     {
-        $submissions = AssessmentSubmission::where('enrollment_id', $this->id)
-            ->where('status', 'graded')
+        $submissions = $this->assessmentSubmissions()
+            ->graded()
             ->with('assessment')
             ->get();
+        $totalSubmissions = $this->assessmentSubmissions()->count();
 
         $breakdown = [
             'submissions'        => [],
             'overall_percentage' => 0,
             'overall_grade'      => 'N/A',
-            'total_submissions'  => 0,
+            'total_submissions'  => $totalSubmissions,
             'graded_submissions' => 0,
             'passed_submissions' => 0,
         ];
@@ -493,7 +494,7 @@ class Enrollment extends Model
                 'feedback'        => $submission->feedback,
             ];
 
-            $totalPercentage += $submission->percentage;
+            $totalPercentage += (float) ($submission->percentage ?? 0);
             $gradedCount++;
             
             if ($submission->passed) {
@@ -505,7 +506,6 @@ class Enrollment extends Model
 
         $breakdown['overall_percentage'] = round($averagePercentage, 2);
         $breakdown['overall_grade'] = $this->determineGrade($averagePercentage);
-        $breakdown['total_submissions'] = AssessmentSubmission::where('enrollment_id', $this->id)->count();
         $breakdown['graded_submissions'] = $gradedCount;
         $breakdown['passed_submissions'] = $passedCount;
 

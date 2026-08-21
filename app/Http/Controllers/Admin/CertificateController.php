@@ -116,8 +116,9 @@ class CertificateController extends Controller
 
         // Get available certificate statuses
         $certificateStatuses = Enrollment::getCertificateStatuses();
+        $gradeBreakdown = $enrollment->grade_breakdown;
 
-        return view('admin.certificates.show', compact('enrollment', 'verificationHistory', 'certificateStatuses'));
+        return view('admin.certificates.show', compact('enrollment', 'verificationHistory', 'certificateStatuses', 'gradeBreakdown'));
     }
 
     /**
