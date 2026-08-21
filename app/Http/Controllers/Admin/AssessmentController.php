@@ -868,8 +868,8 @@ class AssessmentController extends Controller
             if ($submission->user?->email) {
                 try {
                     $mailer->sendMailable(
-                        // $submission->user->email,
-                        'eshanokpe@gmail.com',
+                        $submission->user->email,
+                        // 'eshanokpe@gmail.com',
                         new ExaminerReportUploaded(
                             $submission->user->name ?? 'Student',
                             $submission->assessment->title,
