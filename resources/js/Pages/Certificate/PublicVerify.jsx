@@ -170,8 +170,10 @@ export default function PublicVerify({ auth, valid = null, certificate = null, s
                                         </div>
                                         <div className="ml-auto">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                                                Valid
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentStatusStyle.badge}`}>
+                                                    <span className={`w-2 h-2 rounded-full mr-2 ${currentStatusStyle.dot}`}></span>
+                                                    {resultData.status}
+                                                </span>
                                             </span>
                                         </div>
                                     </div>
