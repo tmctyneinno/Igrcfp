@@ -150,6 +150,11 @@
                     <tbody>
                         @forelse($submissions as $submission)
                         <tr>
+                            @php
+                                $scores = $submission->score_breakdown ?? [];
+                                $hasFinalScore = array_key_exists('final_earned', $scores)
+                                    && $scores['final_earned'] !== null;
+                            @endphp
                             <td class="fw-medium text-secondary-light">{{ $loop->iteration + ($submissions->currentPage() - 1) * $submissions->perPage() }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
@@ -168,7 +173,7 @@
                             </td>
                             <td>
                                 @php
-                                    $stage = ($scores['final_earned'] ?? null) !== null
+                                    $stage = $hasFinalScore
                                         ? 'Completed'
                                         : ($submission->current_stage ?? 'Unknown');
                                     $badgeClass = 'bg-neutral-100 text-neutral-600';
@@ -189,7 +194,6 @@
                             
                             {{-- Quiz score: Part A automatically graded marks --}}
                             <td>
-                                @php($scores = $submission->score_breakdown ?? [])
                                 @if(($scores['quiz_total'] ?? 0) > 0)
                                     <span class="fw-bold text-primary-600">
                                         {{ number_format($scores['quiz_earned'], 1) }} / {{ number_format($scores['quiz_total'], 1) }}
@@ -216,7 +220,7 @@
 
                             {{-- Final score: Quiz + Essay aggregate --}}
                             <td>
-                                @if($scores['final_earned'] !== null)
+                                @if($hasFinalScore)
                                     <span class="fw-bold text-success-600">
                                         {{ number_format($scores['final_earned'], 1) }} / {{ number_format($scores['final_total'], 1) }}
                                     </span>
