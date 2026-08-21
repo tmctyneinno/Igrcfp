@@ -128,7 +128,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('admin.assessments.submission.grade', $submission->id) }}" method="POST">
+                        <form action="{{ route('admin.assessments.submission.grade', $submission->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             
                             <!-- 1. Auto-Graded Score (MCQ Only) -->
@@ -209,6 +209,30 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Feedback</label>
                                 <textarea name="feedback" class="form-control" rows="5" placeholder="Provide detailed feedback...">{{ old('feedback', $submission->feedback) }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="examiner_report" class="form-label fw-semibold">Examiner's Report</label>
+                                <input type="file" name="examiner_report" id="examiner_report" class="form-control" accept=".pdf,.doc,.docx">
+                                <small class="text-muted">PDF, DOC, or DOCX up to 10 MB.</small>
+                                @if($submission->examiner_report_path)
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3 p-2 border rounded-2 bg-light">
+                                        <div class="d-flex align-items-center gap-2 min-width-0">
+                                            <iconify-icon icon="solar:document-text-linear" class="text-primary icon-xl"></iconify-icon>
+                                            <span class="small d-block flex-grow-1" style="min-width: 0; width: 120px; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $submission->examiner_report_name }}">
+                                                {{ $submission->examiner_report_name ?: 'Examiner report' }}
+                                            </span>
+                                        </div>
+                                        <div class="d-flex gap-5">
+                                            <a href="{{ route('admin.assessments.submission.examiner-report', $submission) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 text-nowrap">
+                                                <iconify-icon icon="solar:eye-linear"></iconify-icon><span>View</span>
+                                            </a>
+                                            <a href="{{ route('admin.assessments.submission.examiner-report', [$submission, 'download' => 1]) }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 text-nowrap">
+                                                <iconify-icon icon="solar:download-linear" class="me-1"></iconify-icon> Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100">

@@ -44,6 +44,8 @@ class AssessmentSubmission extends Model
         'attempt_number',
         'locked_until', 
         'grader_id',   // <--- Add this
+        'examiner_report_path',
+        'examiner_report_name',
     ];
 
     protected $casts = [

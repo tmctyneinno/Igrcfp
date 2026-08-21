@@ -790,6 +790,7 @@ class AssessmentController extends Controller
             'feedback'    => 'nullable|string',
             'essay_scores' => 'nullable|array',
             'essay_scores.*' => 'nullable|numeric|min:0',
+            'examiner_report' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
         $submission->loadMissing('assessment.questions');
@@ -827,6 +828,17 @@ class AssessmentController extends Controller
         $submission->feedback = $validated['feedback'];
         $submission->grader_id = auth()->id();
         $submission->graded_at = now();
+
+        if ($request->hasFile('examiner_report')) {
+            if ($submission->examiner_report_path) {
+                Storage::disk('public')->delete($submission->examiner_report_path);
+            }
+
+            $report = $request->file('examiner_report');
+            $submission->examiner_report_path = $report->store('examiner-reports', 'public');
+            $submission->examiner_report_name = $report->getClientOriginalName();
+        }
+
         $submission->grader_comments = array_merge($submission->grader_comments ?? [], [
             'score_breakdown' => [
                 'quiz_earned' => $breakdown['quiz_earned'],
@@ -844,6 +856,29 @@ class AssessmentController extends Controller
         return redirect()->back()->with('success', 'Submission graded successfully!');
     }
 
+
+    public function examinerReport(Request $request, AssessmentSubmission $submission)
+    {
+        if (!$submission->examiner_report_path) {
+            abort(404, 'Examiner report not found.');
+        }
+
+        $disk = Storage::disk('public');
+        if (!$disk->exists($submission->examiner_report_path)) {
+            abort(404, 'Examiner report file not found.');
+        }
+
+        if ($request->boolean('download')) {
+            return $disk->download(
+                $submission->examiner_report_path,
+                $submission->examiner_report_name ?: 'examiner-report'
+            );
+        }
+
+        return response()->file($disk->path($submission->examiner_report_path), [
+            'Content-Type' => $disk->mimeType($submission->examiner_report_path) ?: 'application/octet-stream',
+        ]);
+    }
 
     public function exportSubmissionPdf($encodedId)
     {

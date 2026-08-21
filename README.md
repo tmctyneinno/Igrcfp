@@ -145,16 +145,9 @@ scholarships@igrcfp.org
 
 7042043220
 
+Certificate document for admin
+uploaded Article
+Work on the Essay score retrival 
+Work on the Examiner report
 
-
-column for completed the Quiz and Essay 
-column for the grade for quiz and Essay (write or attrachment)
-
-onces a student has completed both they 
-
-next to the student the student series number in another color 
- 
-Attempt column (1 attempt out of 3 attempt) - 2 3days
-
-column that combine both the aggrrgiated score
- 
+d-inline-flex align-items-center gap-1 text-nowrap
