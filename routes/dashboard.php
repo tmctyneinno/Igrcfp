@@ -231,6 +231,8 @@ Route::prefix('assessment')->name('assessment.')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/notifications/{submission}/examiner-report', [NotificationController::class, 'examinerReport'])
+        ->name('notifications.examiner-report');
     
     // ✅ POST ROUTES FIRST
     Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])

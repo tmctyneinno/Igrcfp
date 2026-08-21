@@ -17,7 +17,7 @@ export default function EnrollmentIndex({
     course, enrollment, modules: initialModules = [], candidate, 
     quizzes = [], moduleAssessments = [], finalExam = null, 
     diplomaAssessment = null, examResults = {}, certification = {}, 
-    courseMaterials = [], totalModulesCount = 0
+    courseMaterials = [], examinerReport = null, totalModulesCount = 0
 }) {
     const [expandedModules, setExpandedModules] = useState({});
     const [completingLesson, setCompletingLesson] = useState(null);
@@ -334,16 +334,47 @@ export default function EnrollmentIndex({
                                     </div>
                                 </div>
                             )}
+                            
 
                             {canShowCertificationCard && (
                                 <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} certification={certification} progress={progress} />
                             )}
 
+                            {examinerReport && <ExaminerReportCard report={examinerReport} />}
+
                             <MaterialList materials={courseMaterials} title="Course Materials" />
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </AuthenticatedLayout>
+    );
+}
+
+function ExaminerReportCard({ report }) {
+    const reportUrl = route('dashboard.notifications.examiner-report', {
+        submission: report.submission_id,
+    });
+
+    return (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                <DocumentTextIcon className="w-5 h-5 text-indigo-600" /> Examiner's Report
+            </h3>
+            <p className="text-sm text-gray-600 mb-1">
+                {report.assessment_title || 'Assessment'}
+            </p>
+            <p className="text-sm text-gray-500 truncate mb-4" title={report.report_name || 'Examiner report'}>
+                {report.report_name || 'Examiner report'}
+            </p>
+            <div className="flex gap-2">
+                <a href={reportUrl} target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm">
+                    <DocumentTextIcon className="w-4 h-4" /> View
+                </a>
+                <a href={`${reportUrl}?download=1`} className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
+                    Download
+                </a>
+            </div>
+        </div>
     );
 }

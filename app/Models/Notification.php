@@ -166,6 +166,9 @@ class Notification extends Model
             self::TYPE_PROJECT_SUBMITTED, self::TYPE_PROJECT_GRADED => route('dashboard.quiz.project-assessment', [
                 'course' => $data['course_slug'] ?? null
             ]),
+            'examiner_report_uploaded' => route('dashboard.notifications.examiner-report', [
+                'submission' => $data['submission_id'] ?? null,
+            ]),
             self::TYPE_COURSE_COMPLETED => route('dashboard.courses.show', $data['course_slug'] ?? null),
             default => null,
         };

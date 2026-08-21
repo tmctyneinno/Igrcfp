@@ -3,11 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Models\AssessmentSubmission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
+    public function examinerReport(Request $request, AssessmentSubmission $submission)
+    {
+        abort_unless($submission->user_id === $request->user()->id, 403);
+
+        if (!$submission->examiner_report_path) {
+            abort(404, 'Examiner report not found.');
+        }
+
+        $disk = Storage::disk('public');
+        abort_unless($disk->exists($submission->examiner_report_path), 404, 'Examiner report file not found.');
+
+        if ($request->boolean('download')) {
+            return $disk->download(
+                $submission->examiner_report_path,
+                $submission->examiner_report_name ?: 'examiner-report'
+            );
+        }
+
+        return response()->file($disk->path($submission->examiner_report_path), [
+            'Content-Type' => $disk->mimeType($submission->examiner_report_path) ?: 'application/octet-stream',
+        ]);
+    }
+
     /**
      * Display all notifications for the user
      */

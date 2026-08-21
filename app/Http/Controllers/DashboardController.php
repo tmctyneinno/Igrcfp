@@ -1018,6 +1018,14 @@ class DashboardController extends Controller
         ->map(fn ($material) => $this->formatCourseMaterial($material))
         ->toArray();
 
+    $examinerReport = $enrollment
+        ? AssessmentSubmission::where('user_id', auth()->id())
+            ->where('enrollment_id', $enrollment->id)
+            ->whereNotNull('examiner_report_path')
+            ->latest('updated_at')
+            ->first()
+        : null;
+
     // Prepare User Data for Frontend
     $userData = null;
     if (auth()->check()) {
@@ -1051,6 +1059,11 @@ class DashboardController extends Controller
         'enrollment' => $enrollment,
         'modules' => $modules, 
         'courseMaterials' => $courseMaterials,
+        'examinerReport' => $examinerReport ? [
+            'submission_id' => $examinerReport->id,
+            'assessment_title' => $examinerReport->assessment?->title,
+            'report_name' => $examinerReport->examiner_report_name,
+        ] : null,
         'quizzes' => $quizzes, // Updated with lockout info and essay flags
         'moduleAssessments' => $moduleAssessments,
         'finalExam' => $finalExam,

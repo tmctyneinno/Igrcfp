@@ -168,7 +168,9 @@
                             </td>
                             <td>
                                 @php
-                                    $stage = $submission->current_stage ?? 'Unknown';
+                                    $stage = ($scores['final_earned'] ?? null) !== null
+                                        ? 'Completed'
+                                        : ($submission->current_stage ?? 'Unknown');
                                     $badgeClass = 'bg-neutral-100 text-neutral-600';
                                     
                                     if ($stage === 'Quiz Stage') {
