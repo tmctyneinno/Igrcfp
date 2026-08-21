@@ -144,7 +144,7 @@
 
                             <!-- 2. Manual Essay Grading Inputs -->
                             @if($essayQuestions->isNotEmpty())
-                                <div class="mb-3">
+                                <div class="mb-3"> 
                                     <label class="form-label fw-semibold text-dark">Part B: Essay Scores (Manual)</label>
                                     <div class="table-responsive">
                                         <table class="table table-sm table-borderless mb-0">
@@ -157,6 +157,13 @@
                                             </thead>
                                             <tbody>
                                                 @foreach($essayQuestions as $index => $item)
+                                                    @php
+                                                        $savedEssayScores = data_get($submission->grader_comments, 'score_breakdown.essay_scores', []);
+                                                        $submittedEssayScore = old(
+                                                            'essay_scores.' . $item['question']->id,
+                                                            $savedEssayScores[$item['question']->id] ?? null
+                                                        );
+                                                    @endphp
                                                     <tr>
                                                         <td class="ps-0">
                                                             <small class="d-block text-truncate" style="max-width: 150px;" title="{{ $item['question']->question_text }}">
@@ -164,15 +171,16 @@
                                                             </small>
                                                         </td>
                                                         <td class="text-end text-muted">{{ $item['max_points'] }}</td>
-                                                        <td class="pe-0">
+                                                        <td class="pe-0" style="min-width: 90px;">
                                                             <input type="number" 
                                                                 name="essay_scores[{{ $item['question']->id }}]" 
-                                                                class="form-control form-control-sm text-end essay-score-input" 
+                                                            class="form-control form-control-sm text-end fw-semibold essay-score-input" 
                                                                 min="0" 
                                                                 max="{{ $item['max_points'] }}" 
                                                                 step="0.5"
-                                                                value="{{ old('essay_scores.' . $item['question']->id) }}"
-                                                                placeholder="0">
+                                                                value="{{ $submittedEssayScore }}"
+                                                            placeholder="0"
+                                                            aria-label="Awarded score for question {{ $index + 1 }}">
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -189,7 +197,7 @@
                                     <input type="number" name="final_score" id="final_score_input"
                                         class="form-control fw-bold"
                                         step="0.01" min="0" max="{{ $assessment->total_marks ?? 100 }}"
-                                        value="{{ old('final_score', $autoScore) }}"
+                                        value="{{ old('final_score', $submission->score ?? $autoScore) }}"
                                         readonly required>
                                     <span class="input-group-text bg-light">/ {{ $assessment->total_marks ?? 100 }}</span>
                                 </div>

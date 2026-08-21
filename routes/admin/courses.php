@@ -128,7 +128,7 @@ Route::prefix('admin/projects')->name('admin.projects.')->group(function () {
     Route::get('/get-modules/{courseId}', [ProjectAssessmentController::class, 'getModulesByCourse'])->name('get-modules');
      Route::get('/submission/{submission}', [ProjectAssessmentController::class, 'viewSubmission'])->name('submission.view');
     Route::post('/submission/{submission}/grade', [ProjectAssessmentController::class, 'gradeSubmission'])->name('submission.grade');
-});
+}); 
 Route::prefix('admin')->name('admin.')->group(function () {
     // Certificate Management
     Route::prefix('certificates')->name('certificates.')->group(function () {

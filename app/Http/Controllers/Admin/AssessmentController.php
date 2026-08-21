@@ -831,6 +831,7 @@ class AssessmentController extends Controller
             'score_breakdown' => [
                 'quiz_earned' => $breakdown['quiz_earned'],
                 'quiz_total' => $breakdown['quiz_total'],
+                'essay_scores' => $essayScores,
                 'essay_earned' => $essayEarned,
                 'essay_total' => $breakdown['essay_total'],
                 'final_earned' => $finalScore,
@@ -838,9 +839,6 @@ class AssessmentController extends Controller
             ],
         ]);
         
-        // Optional: Save individual essay scores in a JSON column if you have one
-        // $submission->manual_breakdown = $validated['essay_scores'];
-
         $submission->save();
 
         return redirect()->back()->with('success', 'Submission graded successfully!');
