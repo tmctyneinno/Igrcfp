@@ -63,7 +63,9 @@ class PublicCertificateController extends Controller
                     'course_title' => $enrollment->course->title,
                     'course_code' => $enrollment->course->code ?? 'N/A',
                     'grade' => $enrollment->final_grade ?? 'Pass',
-                    'status' => $enrollment->status === 'completed' ? 'Valid' : 'Pending',
+                    'status' => $enrollment->certificate_status === Enrollment::CERT_STATUS_ACTIVE
+                        ? 'Valid'
+                        : $enrollment->certificate_status_display,
                     'completion_date' => $enrollment->completed_at?->format('F d, Y'),
                     'issuing_body' => 'IGRCFP',
                     'issuing_body_full' => 'The Institute of Governance, Risk, Compliance & Financial Crime Prevention',

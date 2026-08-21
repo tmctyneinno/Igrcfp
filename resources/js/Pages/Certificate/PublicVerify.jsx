@@ -9,8 +9,16 @@ export default function PublicVerify({ auth, valid = null, certificate = null, s
         certificate_number: searched_number || '',
     });
 
-    const [verificationResult, setVerificationResult] = useState(valid !== null);
+    const [verificationResult, setVerificationResult] = useState(false);
     const [resultData, setResultData] = useState(certificate);
+    const statusStyles = {
+        valid: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-500' },
+        active: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-500' },
+        expired: { badge: 'bg-yellow-100 text-yellow-800', dot: 'bg-yellow-500' },
+        revoked: { badge: 'bg-red-100 text-red-800', dot: 'bg-red-500' },
+        suspended: { badge: 'bg-gray-100 text-gray-800', dot: 'bg-gray-500' },
+    };
+    const currentStatusStyle = statusStyles[resultData?.status?.toLowerCase()] || statusStyles.suspended;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -185,7 +193,8 @@ export default function PublicVerify({ auth, valid = null, certificate = null, s
                                                     </div>
                                                     <div>
                                                         <label className="block text-xs text-gray-500 uppercase tracking-wider">Status</label>
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${currentStatusStyle.badge}`}>
+                                                            <span className={`w-2 h-2 rounded-full mr-2 ${currentStatusStyle.dot}`}></span>
                                                             {resultData.status}
                                                         </span>
                                                     </div>

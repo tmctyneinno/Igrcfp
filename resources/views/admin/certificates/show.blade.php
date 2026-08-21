@@ -167,8 +167,8 @@
                                     <td>
                                         @if($enrollment->certificate_number)
                                             <div class="d-flex align-items-center gap-2">
-                                                <code class="small">{{ $enrollment->verification_url }}</code>
-                                                <button class="btn btn-sm btn-outline-secondary" 
+                                                <button class="btn btn-sm btn-outline-secondary"
+                                                        aria-label="Copy verification URL"
                                                         onclick="copyToClipboard('{{ $enrollment->verification_url }}')"
                                                         title="Copy URL" data-bs-toggle="tooltip">
                                                     <i class="fas fa-copy"></i>
@@ -184,7 +184,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr> 
                                     <th class="text-muted">Download Certificate</th>
                                     <td>
                                         @if($enrollment->certificate_generated && $enrollment->certificate_number)
