@@ -59,7 +59,7 @@
                             <th width="100">AI Score</th>
                             <th width="120" class="text-center">Scholarship Access</th> {{-- New Column --}}
                             <th width="110">Date</th>
-                            <th width="160" class="text-center">Actions</th>
+                            <th width="220" class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,6 +129,11 @@
                                 <div class="d-flex gap-1 justify-content-center">
                                     <a href="{{ route('admin.scholarships.show', $app->id) }}" class="btn btn-sm btn-primary">View</a>
                                     <a href="{{ route('admin.scholarships.download-pdf', $app->id) }}" class="btn btn-sm btn-outline-success" target="_blank">PDF</a>
+                                    <form action="{{ route('admin.scholarships.destroy', $app->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this application?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
