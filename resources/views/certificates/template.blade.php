@@ -322,7 +322,7 @@
                 <div class="divider"></div>
 
                 <div class="intro">This is to certify that</div>
-                <div class="student-name">{{ $student->name ?? 'Candidate Name' }}</div>
+                <div class="student-name">{{ ucwords(strtolower($student->name ?? 'Candidate Name')) }}</div>
                 <div class="reg-id">Registration ID: {{ $registration_id ?? '2026-01' }}</div>
 
                 <div class="body-text">
