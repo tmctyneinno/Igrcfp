@@ -310,6 +310,17 @@
                                         <iconify-icon icon="majesticons:eye-line"></iconify-icon>
                                     </a>
 
+                                    <form action="{{ route('admin.assessments.submission.delete', $submission) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="bg-danger-focus bg-hover-danger-200 text-danger-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle border-0"
+                                                title="Delete submission"
+                                                onclick="return confirm('Delete this submission permanently? This action cannot be undone.')">
+                                            <iconify-icon icon="solar:trash-bin-trash-outline"></iconify-icon>
+                                        </button>
+                                    </form>
+
                                     <!-- NEW: Reject Enrollment Button -->
                                     @if(!$submission->enrollment?->certificate_generated)
                                     <button type="button" class="bg-danger-focus bg-hover-danger-200 text-danger-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle border-0"

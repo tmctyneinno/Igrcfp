@@ -320,6 +320,10 @@ class AssessmentController extends Controller
                 }
             }
 
+            if ($submission->examiner_report_path) {
+                Storage::disk('public')->delete($submission->examiner_report_path);
+            }
+
             $submission->delete();
             DB::commit();
 
