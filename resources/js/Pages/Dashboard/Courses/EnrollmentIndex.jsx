@@ -64,6 +64,7 @@ export default function EnrollmentIndex({
     const certificateNumber = enrollment?.certificate_number || candidate?.certificate_id;
     const isIdentityVerified = enrollment?.identity_verified || false;
     const canShowCertificationCard = certification?.can_display_card === true;
+    const showCertificationCard = canShowCertificationCard || hasCertificate;
     const completedReadModules = localModules.filter(m => readModules[m.id]).length;
     const allModulesRead = localModules.length === 0 || completedReadModules === localModules.length;
 
@@ -328,19 +329,29 @@ export default function EnrollmentIndex({
                                     </h3>
                                     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
                                         <p className="text-sm text-blue-800 font-medium flex items-start gap-2">
-                                            <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                            <span>Your submitted application is currently under review by our team. You will be notified via email once the application process is complete.</span>
+                                            {examinerReport ? (
+                                                <DocumentTextIcon className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                            ) : (
+                                                <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            )}
+                                            <span>{examinerReport
+                                                ? 'Your application has been reviewed, and the examiner\'s report is now available for you to view or download below.'
+                                                : 'Your submitted application is currently under review by our team. You will be notified via email once the application process is complete.'}
+                                            </span>
                                         </p>
                                     </div>
                                 </div>
                             )}
                             
 
-                            {canShowCertificationCard && (
-                                <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} certification={certification} progress={progress} />
+                            {(showCertificationCard || examinerReport) && (
+                                <div className="space-y-6">
+                                    {showCertificationCard && (
+                                        <CertificationCard enrollment={enrollment} hasCertificate={hasCertificate} certificateNumber={certificateNumber} isIdentityVerified={isIdentityVerified} examResults={examResults} certification={certification} progress={progress} />
+                                    )}
+                                    {examinerReport && <ExaminerReportCard report={examinerReport} />}
+                                </div>
                             )}
-
-                            {examinerReport && <ExaminerReportCard report={examinerReport} />}
 
                             <MaterialList materials={courseMaterials} title="Course Materials" />
                         </div>

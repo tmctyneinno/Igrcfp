@@ -957,7 +957,8 @@ class DashboardController extends Controller
     ];
 
     $certification = [
-        'can_display_card' => $projectAssessmentPassed && (($quizPassed && $assessmentsPassed) || (bool) $enrollment?->certificate_generated),
+        'can_display_card' => (bool) $enrollment?->certificate_generated
+            || ($quizPassed && $assessmentsPassed),
         'project_assessment_required' => (bool) $diplomaAssessment,
         'project_assessment_completed' => $diplomaAssessment ? ($diplomaAssessment['status'] ?? null) === 'graded' : false,
         'project_assessment_passed' => $projectAssessmentPassed,
