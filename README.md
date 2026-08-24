@@ -145,8 +145,8 @@ scholarships@igrcfp.org
 
 7042043220
 
-Certificate document for admin
 uploaded Article
+Certificate document for admin
 Work on the Essay score retrival 
 Work on the Examiner report ( email notification and in-app notification )
 work on the Assessment Stage,

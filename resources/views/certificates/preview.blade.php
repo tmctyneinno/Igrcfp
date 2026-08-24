@@ -348,7 +348,7 @@
 
                 <div class="signature-block" style="margin-top: -8mm;">
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ $instructor_name ?? 'Dr. Foluso Amusa' }}</div>
+                    <div class="signature-name">Dr. Foluso Amusa</div>
                     <div class="signature-credentials">{{ $instructor_credentials ?? 'PhD · FIGRCFP · FAGRC · FICA · FIIM · FAPM' }}</div>
                     <div class="signature-title">{{ $instructor_title ?? 'Founder & President, IGRCFP' }}</div>
                 </div>
