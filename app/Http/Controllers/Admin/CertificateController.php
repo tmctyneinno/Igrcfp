@@ -215,8 +215,8 @@ class CertificateController extends Controller
                 return back()->with('error', 'A graded final score is required before a certificate can be generated.');
             }
 
-            if ((float) $submission->percentage < 75) {
-                return back()->with('error', 'A final score of at least 75% is required before a certificate can be generated.');
+            if ((float) $submission->percentage < 60) {
+                return back()->with('error', 'A final score of at least 60% is required before a certificate can be generated.');
             }
         }
 
