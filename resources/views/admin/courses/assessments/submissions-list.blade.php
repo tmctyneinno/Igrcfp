@@ -232,7 +232,7 @@
 
                             <td>
                                 @php($hasIssuedCertificate = $submission->enrollment?->hasIssuedCertificate() ?? false)
-                                @php($isCertificateEligible = $submission->enrollment && !$hasIssuedCertificate && $submission->status === 'graded' && $submission->percentage !== null && (float) $submission->percentage >= 75)
+                                @php($isCertificateEligible = $submission->enrollment && !$hasIssuedCertificate && $submission->status === 'graded' && $submission->percentage !== null && (float) $submission->percentage >= 60)
                                 @if($hasIssuedCertificate)
                                     <span class="badge bg-success-100 text-success-600 radius-4 px-8 py-4">Generated</span>
                                 @elseif($isCertificateEligible)

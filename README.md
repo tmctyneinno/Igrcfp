@@ -153,3 +153,7 @@ work on the Assessment Stage,
 work on retrive Essay Scores (Manual)
 
 d-inline-flex align-items-center gap-1 text-nowrap
+
+
+php artisan config:clear
+php artisan cache:clear
