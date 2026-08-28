@@ -323,10 +323,10 @@
                 <div class="subtitle">in {{ $course->title ?? 'Governance, Risk & Compliance' }}</div>
 
                 <div class="divider"></div>
-
+ 
                 <div class="intro">This is to certify that</div>
                 <div class="student-name">{{ ucwords(strtolower($student->name ?? 'Candidate Name')) }}</div>
-                <div class="reg-id">Registration ID: {{ $registration_id ?? '2026-01' }}</div>
+                <div class="reg-id">Registration ID: {{ ucwords(strtolower($student->created_at->format('F d, Y') ?? 'Candidate Name')) }}</div>
 
                 <div class="body-text">
                     has satisfied all the requirements prescribed by the Institute and is hereby awarded the above qualification.

@@ -147,6 +147,7 @@ class CertificateController extends Controller
         $data = [
             'student' => $enrollment->user,
             'course' => $enrollment->course,
+            'issued_' => $enrollment->user,
             'enrollment' => $enrollment,
             'completion_date' => ($enrollment->certificate_generated_date ?? now())->format('F d, Y'),
             'certificate_number' => $enrollment->certificate_number,
@@ -214,7 +215,7 @@ class CertificateController extends Controller
             if (!$submission || $submission->status !== 'graded' || $submission->percentage === null) {
                 return back()->with('error', 'A graded final score is required before a certificate can be generated.');
             }
-
+ 
             if ((float) $submission->percentage < 60) {
                 return back()->with('error', 'A final score of at least 60% is required before a certificate can be generated.');
             }
