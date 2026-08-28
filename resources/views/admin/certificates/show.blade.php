@@ -281,7 +281,7 @@
                     </a>
                 </div>
             </div>
-
+ 
             {{-- Assessment Grade Breakdown --}}
             @if(count($gradeBreakdown['submissions']) > 0)
                 <div class="card shadow mb-4">

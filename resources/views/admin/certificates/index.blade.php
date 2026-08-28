@@ -19,7 +19,7 @@
     }
 </style>
 @endpush
-
+  
 @section('content')
 <div class="container-fluid">
     {{-- Page Header --}}
@@ -302,7 +302,7 @@
                                         </td>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> 
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center py-5">
