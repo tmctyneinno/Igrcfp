@@ -199,6 +199,13 @@ class HomeController extends Controller
         ]);
     }
 
+    public function OurStoryVision(){
+        return Inertia::render('About/OurStoryVision/Index', [
+            'title' => 'Our Story & Vision',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+        ]);
+    }
+
     public function whyIgrcfp(){
         return Inertia::render('About/WhyIgrcfp/Index');
     }

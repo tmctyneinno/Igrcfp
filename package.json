@@ -5,7 +5,7 @@
         "build": "vite build",
         "dev": "vite",
         "serve": "concurrently \"php artisan serve\" \"vite\""
-    },
+    }, 
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
         "@inertiajs/react": "^2.3.8",
