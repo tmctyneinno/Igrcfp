@@ -198,18 +198,26 @@ export default function Index({ auth, title, description }) {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8"
+                        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
                     >
-                        <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Story</h2>
-                        <p className="text-gray-700 leading-relaxed mb-4">
-                            The Institute of Governance, Risk, Compliance & Financial Crime Prevention was created around a simple but important idea: professionals working in governance, risk, compliance and financial crime prevention need more than isolated training. They need a structured professional home.
-                        </p>
-                        <p className="text-gray-700 leading-relaxed mb-4">
-                            As regulation becomes more complex, technology reshapes risk, financial crime becomes more sophisticated, and organisations face increasing pressure to demonstrate resilience, accountability and ethical leadership, the role of GRC and financial crime professionals has never been more important.
-                        </p>
-                        <p className="text-gray-700 leading-relaxed">
-                            What began as a commitment to strengthening professional knowledge is now developing into a much broader institution focused on building capability, recognising experience, connecting practitioners and contributing to higher professional standards across industries and borders.
-                        </p>
+                        <div
+                            className="h-48 bg-cover bg-center relative"
+                            style={{ backgroundImage: "url('/assets/images/our-story-path.png')" }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        </div>
+                        <div className="p-8">
+                            <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Story</h2>
+                            <p className="text-gray-700 leading-relaxed mb-4">
+                                The Institute of Governance, Risk, Compliance & Financial Crime Prevention was created around a simple but important idea: professionals working in governance, risk, compliance and financial crime prevention need more than isolated training. They need a structured professional home.
+                            </p>
+                            <p className="text-gray-700 leading-relaxed mb-4">
+                                As regulation becomes more complex, technology reshapes risk, financial crime becomes more sophisticated, and organisations face increasing pressure to demonstrate resilience, accountability and ethical leadership, the role of GRC and financial crime professionals has never been more important.
+                            </p>
+                            <p className="text-gray-700 leading-relaxed">
+                                What began as a commitment to strengthening professional knowledge is now developing into a much broader institution focused on building capability, recognising experience, connecting practitioners and contributing to higher professional standards across industries and borders.
+                            </p>
+                        </div>
                     </motion.div>
 
                     <motion.div
@@ -218,24 +226,32 @@ export default function Index({ auth, title, description }) {
                         whileInView="visible"
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8"
+                        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
                     >
-                        <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Vision</h2>
-                        <p className="text-gray-700 leading-relaxed mb-6">
-                            To become a globally respected professional institute for Governance, Risk, Compliance and Financial Crime Prevention, recognised for developing capable professionals, strengthening institutions and advancing responsible professional practice.
-                        </p>
-                        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                            A place where professionals can
-                        </p>
-                        <div className="grid grid-cols-5 gap-3 text-center">
-                            {["Learn", "Qualify", "Connect", "Progress", "Contribute"].map((w) => (
-                                <div key={w} className="flex flex-col items-center gap-2">
-                                    <div className="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-900">
-                                        <span className="text-xs font-bold">{w.charAt(0)}</span>
+                        <div
+                            className="h-48 bg-cover bg-center relative"
+                            style={{ backgroundImage: "url('/assets/images/our-vision-globe.jpg')" }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        </div>
+                        <div className="p-8">
+                            <h2 className="text-2xl font-bold text-blue-900 mb-4">Our Vision</h2>
+                            <p className="text-gray-700 leading-relaxed mb-6">
+                                To become a globally respected professional institute for Governance, Risk, Compliance and Financial Crime Prevention, recognised for developing capable professionals, strengthening institutions and advancing responsible professional practice.
+                            </p>
+                            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                                A place where professionals can
+                            </p>
+                            <div className="grid grid-cols-5 gap-3 text-center">
+                                {["Learn", "Qualify", "Connect", "Progress", "Contribute"].map((w) => (
+                                    <div key={w} className="flex flex-col items-center gap-2">
+                                        <div className="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center text-blue-900">
+                                            <span className="text-xs font-bold">{w.charAt(0)}</span>
+                                        </div>
+                                        <span className="text-xs text-gray-600">{w}</span>
                                     </div>
-                                    <span className="text-xs text-gray-600">{w}</span>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 </div>
@@ -283,8 +299,16 @@ export default function Index({ auth, title, description }) {
             </section>
 
             {/* Global Professional Cohorts */}
-            <section className="bg-blue-900 py-16">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <section className="relative py-16 overflow-hidden">
+                {/* Background image */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('/assets/images/professionals-global-team.jpg')" }}
+                />
+                {/* Navy overlay for readability */}
+                <div className="absolute inset-0 bg-blue-900/90" />
+
+                <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
                     <motion.div
                         variants={fadeIn}
                         initial="hidden"
@@ -299,7 +323,7 @@ export default function Index({ auth, title, description }) {
                     </motion.div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {intakes.map((intake) => (
-                            <div key={intake.month} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                            <div key={intake.month} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center">
                                 <span className="inline-block text-xs font-bold tracking-wide text-amber-400 uppercase mb-3">
                                     {intake.month} Intake
                                 </span>
@@ -427,8 +451,16 @@ export default function Index({ auth, title, description }) {
             </section>
 
             {/* Impact band */}
-            <section className="bg-[#0A1A2F] py-16">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <section className="relative py-16 overflow-hidden">
+                {/* Background image */}
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('/assets/images/professionals-silhouette.avif')" }}
+                />
+                {/* Dark navy overlay for contrast */}
+                <div className="absolute inset-0 bg-[#0A1A2F]/95" />
+
+                <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
                     <motion.h2
                         variants={fadeIn}
                         initial="hidden"
@@ -441,7 +473,7 @@ export default function Index({ auth, title, description }) {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
                         {impactStats.map((stat) => (
                             <div key={stat} className="text-center">
-                                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 flex items-center justify-center">
+                                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
                                     <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M5 13l4 4L19 7" />
                                     </svg>
