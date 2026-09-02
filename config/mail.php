@@ -108,9 +108,16 @@ return [
     |
     */
 
-    'from' => [
+'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
+
+    'support' => [
+        'address' => env('MAIL_SUPPORT_ADDRESS', 'enquiries@igrcfp.org'),
+        'phone' => env('MAIL_SUPPORT_PHONE', '+234 700 000 0000'),
+    ],
+
+    'admissions_address' => env('MAIL_ADMISSIONS_ADDRESS', 'enquiries@igrcfp.org'),
 
 ];

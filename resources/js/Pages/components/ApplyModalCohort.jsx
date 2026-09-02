@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -37,7 +37,9 @@ function FieldError({ message }) {
 }
 
 export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" }) {
-    const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
+    const [submissionComplete, setSubmissionComplete] = useState(false);
+
+    const { data, setData, post, processing, errors, reset } = useForm({
         full_name: "",
         email: "",
         phone: "",
@@ -67,15 +69,23 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // NOTE: adjust the route name below to match your actual backend route
-        // for handling cohort applications, e.g. route('applications.store')
+        setSubmissionComplete(false);
+
         post(route("cohort-applications.store"), {
             preserveScroll: true,
-            onSuccess: () => reset("full_name", "email", "phone", "country", "level", "discipline", "message"),
+            onSuccess: () => {
+                reset("full_name", "email", "phone", "country", "level", "discipline", "message");
+                setSubmissionComplete(true);
+            },
+            onError: () => {
+                setSubmissionComplete(false);
+            },
         });
     };
 
     const handleClose = () => {
+        setSubmissionComplete(false);
+        reset("full_name", "email", "phone", "country", "level", "discipline", "message");
         onClose();
     };
 
@@ -126,20 +136,20 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
                         </div>
 
                         {/* Body */}
-                        {recentlySuccessful ? (
+                        {submissionComplete ? (
                             <div className="px-6 md:px-8 py-12 text-center">
-                                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-green-50 flex items-center justify-center">
-                                    <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-emerald-100 flex items-center justify-center shadow-sm">
+                                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <h3 className="text-lg font-bold text-blue-900 mb-2">Application received</h3>
-                                <p className="text-sm text-gray-600 max-w-sm mx-auto mb-6">
-                                    Thank you for applying to the {cohort} Global Professional Cohort. A member of our admissions team will be in touch by email shortly with your next steps.
+                                <h3 className="text-xl font-bold text-blue-900 mb-2">Application received</h3>
+                                <p className="text-sm text-gray-600 max-w-sm mx-auto mb-6 leading-6">
+                                    Thank you for applying to the {cohort} Global Professional Cohort. A member of our admissions team will be in touch by email shortly with the next steps.
                                 </p>
                                 <button
                                     onClick={handleClose}
-                                    className="bg-blue-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-blue-800 transition"
+                                    className="inline-flex items-center justify-center bg-gradient-to-r from-blue-900 to-blue-700 text-white text-sm font-semibold px-6 py-2.75 rounded-full shadow-lg shadow-blue-900/20 hover:from-blue-800 hover:to-blue-600 transition-all duration-200"
                                 >
                                     Done
                                 </button>
@@ -247,9 +257,24 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="w-full sm:w-auto bg-blue-900 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-blue-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white text-sm font-semibold px-6 py-2.75 rounded-full shadow-lg shadow-blue-900/20 hover:shadow-blue-800/30 hover:scale-[1.01] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
                                     >
-                                        {processing ? "Submitting…" : "Submit Application"}
+                                        {processing ? (
+                                            <>
+                                                <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeOpacity="0.25" />
+                                                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                                </svg>
+                                                Submitting…
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9-11 0 0M3 8l9 11 9-11" />
+                                                </svg>
+                                                Submit Application
+                                            </>
+                                        )}
                                     </button>
                                     <p className="text-xs text-gray-400 text-center sm:text-left">
                                         By applying you agree to be contacted by IGRCFP admissions regarding your application.

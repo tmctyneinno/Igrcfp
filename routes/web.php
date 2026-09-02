@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgrammesController;
 use App\Http\Controllers\ScholarshipController;
+use App\Http\Controllers\CohortApplicationController;
 use App\Http\Controllers\PublicCertificateController;
 use App\Http\Controllers\Admin\EventController;
 use Illuminate\Foundation\Application;
@@ -117,6 +118,9 @@ Route::get('/qualifications-pack', [HomeController::class, 'qualificationsPack']
  
 Route::get('/global-professional-cohort', [HomeController::class, 'globalProfessionalCohort'])
     ->name('global-professional-cohort.index');
+    
+Route::post('/cohort-applications', [CohortApplicationController::class, 'store'])
+    ->name('cohort-applications.store');
 
 Route::get('/course-equivalency', [HomeController::class, 'courseEquivalency'])
     ->name('course-equivalency.index');
