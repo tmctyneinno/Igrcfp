@@ -206,6 +206,14 @@ class HomeController extends Controller
         ]);
     }
 
+    public function globalProfessionalCohort()
+    {
+        return Inertia::render('GlobalProfessionalCohort/Index', [
+            'title' => 'Global Professional Cohort',
+            'description' => 'Learn about the  Institute of Governance, Risk & Compliance & Financial Crime Prevention (IGRCFP)  Professionals body.',
+        ]);
+    }
+
     public function whyIgrcfp(){
         return Inertia::render('About/WhyIgrcfp/Index');
     }

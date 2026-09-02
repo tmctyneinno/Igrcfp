@@ -17,6 +17,7 @@ import JoinIGRCFP from "@/Pages/components/JoinIGRCFP";
 import WhatWeOffer from "@/Pages/components/WhatWeOffer";
 import CourseCatalogue from "@/Pages/components/CourseCatalogue";
 import PartnersSlider from '@/Pages/About/PartnersSlider'; 
+import CohortBanner from "@/Pages/components/CohortBanner";
     
  
 export default function Welcome({ auth, courses, latestArticles = [], featuredArticles = [], homepageEvents = [], latestBlogs = [] }) {
@@ -77,7 +78,9 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
             
             {/* Hero Section with AOS effects */}
             <SplitHeroSlider auth={auth} /> 
-            
+
+            {/* Cohort Banner - next intake, links through to the Candidate Welcome Pack / cohort page */}
+            <CohortBanner />
 
             {/* Scholarship Banner - Add this right after the hero */}
             {/* <section className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500" data-aos="fade-up">
@@ -135,4 +138,3 @@ export default function Welcome({ auth, courses, latestArticles = [], featuredAr
         </GuestLayout>
     );
 }
- 

@@ -196,12 +196,15 @@ function NavBar({ auth }) {
                                                 <div>
                                                     <h3 className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-4">Academic Partnerships</h3>
                                                     <div className="space-y-1">
-                                                        <Link href={route('qualifications.pack')} onClick={() => setOpenMegaMenu(false)} className="block px-3 py-2.5 rounded-lg hover:bg-blue-50">
+                                                        <Link href={route('qualifications.pack')} onClick={() => setOpenMegaMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-blue-50">
                                                             <p className="text-sm text-gray-800">Qualification Framework</p>
                                                         </Link>
-                                                        <Link href={route('course-equivalency.index')} onClick={() => setOpenMegaMenu(false)} className="block px-3 py-2.5 rounded-lg hover:bg-blue-50">
+                                                        <Link href={route('course-equivalency.index')} onClick={() => setOpenMegaMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-blue-50">
                                                             <p className="text-sm text-gray-800">Course Equivalency Framework</p>
                                                             <p className="text-xs text-gray-500">20-200+ Professional Hours</p>
+                                                        </Link>
+                                                        <Link href={route('global-professional-cohort.index')} onClick={() => setOpenMegaMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-blue-50">
+                                                            <p className="text-sm text-gray-800">Global Professional Cohort</p>
                                                         </Link>
                                                     </div>
                                                 </div>

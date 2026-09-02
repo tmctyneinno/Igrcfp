@@ -103,6 +103,11 @@ function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href={route('global-professional-cohort.index')} className="hover:text-white transition-colors">
+                                    Global Professional Cohort
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href={route('contact')} className="hover:text-white transition-colors">
                                     Contact
                                 </Link>

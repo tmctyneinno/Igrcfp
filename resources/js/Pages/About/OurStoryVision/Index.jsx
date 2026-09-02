@@ -494,7 +494,7 @@ export default function Index({ auth, title, description }) {
             </section>
 
             {/* CTA */}
-             <CallToAction />
+            <CallToAction />
         </GuestLayout>
     );
 }

@@ -114,6 +114,9 @@ Route::get('/igrcfp-fellowship', [HomeController::class, 'showIgrcfpProgramme'])
 
 Route::get('/qualifications-pack', [HomeController::class, 'qualificationsPack'])
     ->name('qualifications.pack');
+ 
+Route::get('/global-professional-cohort', [HomeController::class, 'globalProfessionalCohort'])
+    ->name('global-professional-cohort.index');
 
 Route::get('/course-equivalency', [HomeController::class, 'courseEquivalency'])
     ->name('course-equivalency.index');
