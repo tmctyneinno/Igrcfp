@@ -32,6 +32,12 @@
             margin: 0;
             color: #333;
         }
+        .logo {
+            display: block;
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 18px;
+        }
         .content {
             font-size: 16px;
             color: #555;

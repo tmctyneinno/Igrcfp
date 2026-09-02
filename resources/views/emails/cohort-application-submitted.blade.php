@@ -29,6 +29,12 @@
             padding: 32px 30px;
             color: #ffffff;
         }
+        .logo {
+            display: block;
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 18px;
+        }
         .brand {
             font-size: 22px;
             font-weight: 700;

@@ -20,6 +20,12 @@
             text-align: center;
             border-radius: 8px 8px 0 0;
         }
+        .logo {
+            display: block;
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 18px;
+        }
         .content {
             background: #f9f9f9;
             padding: 30px;

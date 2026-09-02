@@ -37,6 +37,12 @@
             font-size: 28px;
             line-height: 1.3;
         }
+        .logo {
+            display: block;
+            max-width: 80px;
+            height: auto;
+            margin-bottom: 18px;
+        }
         .content {
             padding: 28px 30px 10px;
         }
@@ -97,7 +103,7 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <img src="{{ asset('assets/images/logo-main.png') }}" alt="IGRCFP Logo" class="logo">
+            <img src="{{ asset('assets/images/logo-main.png') }}"  alt="IGRCFP Logo" class="logo">
             <div class="eyebrow">New Submission</div>
             <h1 class="heading">Cohort Application Received</h1>
         </div>

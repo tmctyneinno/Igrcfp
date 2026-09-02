@@ -27,7 +27,7 @@
             text-align: center;
         }
         .email-logo {
-            max-width: 200px;
+            max-width: 100px;
             height: auto;
             margin-bottom: 15px;
         }
