@@ -65,6 +65,13 @@
                     </li>
                 </ul>
             </li>
+            <li>
+                <a href="{{ route('admin.cohort-applications.index') }}">
+                    <iconify-icon icon="mdi:clipboard-check-multiple-outline" class="menu-icon"></iconify-icon>
+                    <span>Cohort Applications</span>
+                </a>
+            </li>
+
             {{-- Scholarship Applications - NEW --}}
             <li class="sidebar-separator">
                 <hr class="my-2 mx-3 opacity-25">

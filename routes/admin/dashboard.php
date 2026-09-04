@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ChapterController;
 use App\Http\Controllers\Admin\ScholarshipController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\CohortApplicationController as AdminCohortApplicationController;
 use Illuminate\Support\Facades\Route; 
  
 // Admin Dashboard Routes (Protected)
@@ -118,6 +119,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
         Route::delete('/{lesson}', [LessonController::class, 'destroy'])->name('destroy');
         Route::post('/reorder', [LessonController::class, 'reorder'])->name('reorder');
     }); 
+
+    // Cohort Applications
+    Route::get('/cohort-applications', [AdminCohortApplicationController::class, 'index'])->name('cohort-applications.index');
+    Route::get('/cohort-applications/{application}', [AdminCohortApplicationController::class, 'show'])->name('cohort-applications.show');
+    Route::patch('/cohort-applications/{application}/status', [AdminCohortApplicationController::class, 'updateStatus'])->name('cohort-applications.update-status');
 
     // Scholarship Applications
     Route::get('/scholarships', [ScholarshipController::class, 'index'])->name('scholarships.index');
