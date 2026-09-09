@@ -123,6 +123,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth.admin'])->group(functi
     // Cohort Applications
     Route::get('/cohort-applications', [AdminCohortApplicationController::class, 'index'])->name('cohort-applications.index');
     Route::get('/cohort-applications/{application}', [AdminCohortApplicationController::class, 'show'])->name('cohort-applications.show');
+    Route::get('/cohort-applications/{application}/document', [AdminCohortApplicationController::class, 'document'])->name('cohort-applications.document');
     Route::patch('/cohort-applications/{application}/status', [AdminCohortApplicationController::class, 'updateStatus'])->name('cohort-applications.update-status');
 
     // Scholarship Applications

@@ -47,6 +47,7 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
         level: "",
         discipline: "",
         message: "",
+        document: null,
         cohort,
     });
 
@@ -74,7 +75,7 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
         post(route("cohort-applications.store"), {
             preserveScroll: true,
             onSuccess: () => {
-                reset("full_name", "email", "phone", "country", "level", "discipline", "message");
+                reset("full_name", "email", "phone", "country", "level", "discipline", "message", "document");
                 setSubmissionComplete(true);
             },
             onError: () => {
@@ -85,7 +86,7 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
 
     const handleClose = () => {
         setSubmissionComplete(false);
-        reset("full_name", "email", "phone", "country", "level", "discipline", "message");
+        reset("full_name", "email", "phone", "country", "level", "discipline", "message", "document");
         onClose();
     };
 
@@ -251,6 +252,18 @@ export default function ApplyModal({ isOpen, onClose, cohort = "October 2026" })
                                         placeholder="Optional — your background, goals, or any questions for admissions."
                                     />
                                     <FieldError message={errors.message} />
+                                </div>
+
+                                <div>
+                                    <FieldLabel>Certification document</FieldLabel>
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={(e) => setData("document", e.target.files[0] || null)}
+                                        className="w-full rounded-lg border border-gray-200 px-3.5 py-2 text-sm text-gray-800 file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900"
+                                    />
+                                    <p className="text-xs text-gray-400 mt-1">PDF, DOC or DOCX, up to 10 MB.</p>
+                                    <FieldError message={errors.document} />
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">

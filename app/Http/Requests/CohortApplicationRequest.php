@@ -27,6 +27,7 @@ class CohortApplicationRequest extends FormRequest
             'level' => ['required', 'string', 'max:150'],
             'discipline' => ['nullable', 'string', 'max:150'],
             'message' => ['nullable', 'string', 'max:2000'],
+            'document' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
             'cohort' => ['required', 'string', 'max:50'],
         ];
     }
@@ -43,6 +44,8 @@ class CohortApplicationRequest extends FormRequest
             'country.required' => 'Please let us know which country you\'re applying from.',
             'level.required' => 'Please select the level you\'re applying for.',
             'cohort.required' => 'Missing cohort reference — please refresh the page and try again.',
+            'document.mimes' => 'Please upload a PDF, DOC or DOCX file.',
+            'document.max' => 'The supporting document must not be larger than 10 MB.',
         ];
     }
 }

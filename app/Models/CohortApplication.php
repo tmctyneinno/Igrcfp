@@ -17,6 +17,7 @@ class CohortApplication extends Model
         'level',
         'discipline',
         'message',
+        'document_path',
         'cohort',
         'status',
         'ip_address',

@@ -154,6 +154,20 @@ export default function CandidateWelcomePack({ auth, title }) {
                         <p className="text-lg md:text-xl text-gray-300 max-w-3xl">
                             Please read this before the Global Student Orientation on Friday 2 October 2026.
                         </p>
+
+                        <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsApplyOpen(true)}
+                                className="inline-flex items-center justify-center gap-2 bg-amber-400 text-blue-950 text-sm font-semibold px-6 py-3 rounded-full shadow-lg shadow-black/20 hover:bg-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-[#0A1A2F] transition"
+                            >
+                                Apply for October 2026
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </button>
+                            <span className="text-sm text-gray-300">Applications close 25 September 2026</span>
+                        </div>
                     </motion.div>
 
                     <motion.div

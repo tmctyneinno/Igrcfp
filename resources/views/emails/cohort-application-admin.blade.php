@@ -161,6 +161,13 @@
                     </div>
                 </div>
             @endif
+
+            @if($application->document_path)
+                <div class="panel">
+                    <h3 style="margin: 0 0 14px; color: #0f172a; font-size: 18px;">Supporting Document</h3>
+                    <p style="margin: 0; color: #475569;">The applicant's document is attached to this email.</p>
+                </div>
+            @endif
         </div>
 
         <div class="footer">

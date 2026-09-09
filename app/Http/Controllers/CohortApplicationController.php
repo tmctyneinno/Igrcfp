@@ -16,8 +16,13 @@ class CohortApplicationController extends Controller
      */
     public function store(CohortApplicationRequest $request, BrevoMailService $brevoMailService)
     {
+        $validated = $request->validated();
+        $documentPath = $request->file('document')?->store('cohort-applications', 'local');
+        unset($validated['document']);
+
         $application = CohortApplication::create([
-            ...$request->validated(),
+            ...$validated,
+            'document_path' => $documentPath,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);

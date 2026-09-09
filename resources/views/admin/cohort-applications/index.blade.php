@@ -57,7 +57,7 @@
                     <tbody>
                         @forelse($applications as $application)
                             <tr>
-                                <td>{{ $application->id }}</td>
+                                <td>{{ $applications->firstItem() + $loop->index }}</td>
                                 <td>{{ $application->full_name }}</td>
                                 <td>{{ $application->email }}</td>
                                 <td>{{ $application->cohort }}</td>

@@ -50,6 +50,13 @@ class BrevoMailService
                 'subject' => $subject,
                 'htmlContent' => $htmlContent,
             ];
+
+            if (method_exists($mailable, 'brevoAttachments')) {
+                $attachments = $mailable->brevoAttachments();
+                if ($attachments) {
+                    $payload['attachment'] = $attachments;
+                }
+            }
             
             return $this->sendPayload($payload);
             

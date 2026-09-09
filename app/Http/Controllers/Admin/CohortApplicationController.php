@@ -8,6 +8,7 @@ use App\Models\CohortApplication;
 use App\Services\BrevoMailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CohortApplicationController extends Controller
 {
@@ -37,6 +38,18 @@ class CohortApplicationController extends Controller
     public function show(CohortApplication $application)
     {
         return view('admin.cohort-applications.show', compact('application'));
+    }
+
+    public function document(CohortApplication $application)
+    {
+        abort_unless($application->document_path, 404);
+
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($application->document_path), 404);
+
+        return response()->file($disk->path($application->document_path), [
+            'Content-Disposition' => 'inline; filename="' . basename($application->document_path) . '"',
+        ]);
     }
 
     public function updateStatus(Request $request, CohortApplication $application, BrevoMailService $mailService)

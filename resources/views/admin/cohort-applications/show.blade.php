@@ -84,6 +84,20 @@
                             <div class="bg-light border rounded p-3">{{ $application->message }}</div>
                         </div>
                     @endif
+
+                    @if($application->document_path)
+                        <div class="mt-4">
+                            <h6 class="mb-2">Certification Document</h6>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="{{ route('admin.cohort-applications.document', $application) }}"
+                                   target="_blank"
+                                   rel="noopener"
+                                   class="btn btn-sm btn-outline-primary">
+                                    View document
+                                </a>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

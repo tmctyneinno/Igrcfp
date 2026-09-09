@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 
 class CohortApplicationAdminNotification extends Mailable
 {
@@ -38,5 +39,17 @@ class CohortApplicationAdminNotification extends Mailable
                 'referenceId' => 'COHORT-' . str_pad((string) $this->application->id, 6, '0', STR_PAD_LEFT),
             ],
         );
+    }
+
+    public function brevoAttachments(): array
+    {
+        if (!$this->application->document_path || !Storage::disk('local')->exists($this->application->document_path)) {
+            return [];
+        }
+
+        return [[
+            'name' => basename($this->application->document_path),
+            'content' => base64_encode(Storage::disk('local')->get($this->application->document_path)),
+        ]];
     }
 }
