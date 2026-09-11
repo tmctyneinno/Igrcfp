@@ -45,20 +45,22 @@ class CourseController extends Controller
      * Display detailed information for a specific course.
      */
     public function show(Course $course)
-{
-    // 1. Load module-specific quizzes/assessments
-    $course->load(['modules.quizzes', 'modules.assessments']);
+    {
+        $course->load([
+            'quizzes.questions',
+            'assessments.questions',
+            'modules.quizzes.questions',
+            'modules.assessments.questions',
+        ]);
 
-    // 2. Manually fetch course-level assessments (where module_id is null)
-    $courseQuizzes = \App\Models\Assessment::where('course_id', $course->id)
-        ->whereNull('module_id')
-        ->where('assessment_level', 'quiz')
-        ->get();
+        $courseQuizzes = $course->quizzes
+            ->whereNull('module_id')
+            ->values();
 
-    $courseAssessments = \App\Models\Assessment::where('course_id', $course->id)
-        ->whereNull('module_id')
-        ->where('assessment_level', '!=', 'quiz') // or 'module_assessment', 'final_exam', etc.
-        ->get();
+        $courseAssessments = $course->assessments
+            ->whereNull('module_id')
+            ->where('assessment_level', '!=', 'quiz')
+            ->values();
 
     $courseData = [
         'id' => $course->id,
@@ -74,20 +76,18 @@ class CourseController extends Controller
         'discount_price' => $course->discount_price,
         'is_scholarship_eligible' => (bool) ($course->is_scholarship_eligible ?? false),
         
-        // 👇 NEW: Add course-level assessments here
-        'course_quizzes' => $courseQuizzes,
-        'course_assessments' => $courseAssessments,
+        'course_quizzes' => $courseQuizzes->all(),
+        'course_assessments' => $courseAssessments->all(),
 
-        // 👇 Module-specific assessments stay here
         'modules' => $course->modules->map(function ($module) {
             return [
                 'id' => $module->id,
                 'name' => $module->title,
                 'order' => $module->module_number,
-                'quizzes' => $module->quizzes ?? [],
-                'assessments' => $module->assessments ?? [],
+                'quizzes' => $module->quizzes->values()->all(),
+                'assessments' => $module->assessments->values()->all(),
             ];
-        }),
+        })->values()->all(),
     ];
 
     return response()->json([
