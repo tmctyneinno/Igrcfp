@@ -177,10 +177,10 @@
                                         ? 'Completed'
                                         : ($submission->current_stage ?? 'Unknown');
                                     $badgeClass = 'bg-neutral-100 text-neutral-600';
-                                    
+                                     
                                     if ($stage === 'Quiz Stage') {
                                         $badgeClass = 'bg-primary-100 text-primary-600';
-                                    } elseif (in_array($stage, ['Ready for Essay', 'Essay Stage', 'Essay Under Review'])) {
+                                    } elseif (in_array($stage, ['Ready for Essay', 'Essay Stage', 'Essay Under Review', 'Submitted for Review'])) {
                                         $badgeClass = 'bg-info-100 text-info-600';
                                     } elseif (in_array($stage, ['Quiz Passed', 'Completed'])) {
                                         $badgeClass = 'bg-success-100 text-success-600';

@@ -157,3 +157,5 @@ d-inline-flex align-items-center gap-1 text-nowrap
 
 php artisan config:clear
 php artisan cache:clear
+
+caertificate courser to 795

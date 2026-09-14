@@ -154,17 +154,33 @@ class AssessmentController extends Controller
             $submittedAnswers = $submittedAnswers->toArray();
         }
 
-        // A submission cannot progress beyond the quiz stage until it has a
-        // passing result. A score of 49% or lower is always a failed quiz.
-        $hasPassed = $submission->passed
-            && $submission->percentage !== null
-            && (float) $submission->percentage >= 50;
+        $scoreBreakdown = $this->getScoreBreakdown($submission);
+        $hasPassed = $scoreBreakdown['quiz_total'] > 0
+            && ($scoreBreakdown['quiz_earned'] / $scoreBreakdown['quiz_total']) >= 0.5;
 
         if (!$hasPassed) {
             return 'Quiz Stage';
         }
 
+        $submittedResponses = $submission->question_responses ?? [];
         $essayAnswered = false;
+
+        foreach ($questions->where('question_type', 'essay') as $question) {
+            $response = $submittedResponses[$question->id] ?? [];
+            $content = is_array($response)
+                ? ($response['answer'] ?? ($response['response'] ?? ''))
+                : $response;
+
+            if (!empty(trim(strip_tags((string) $content)))) {
+                $essayAnswered = true;
+                break;
+            }
+        }
+
+        if ($essayAnswered) {
+            $submittedAnswers = [];
+        }
+
         foreach ($submittedAnswers as $answer) {
             $type = $answer['question_type'] ?? ($answer['type'] ?? null);
             $content = $answer['answer'] ?? ($answer['response'] ?? '');
@@ -181,7 +197,7 @@ class AssessmentController extends Controller
         
         if ($hasEssayQuestions && $essayAnswered) {
             if (in_array($submission->status, ['submitted', 'in_progress'], true)) {
-                return 'Essay Under Review';
+                return 'Submitted for Review';
             }
 
             return $submission->status === 'graded' ? 'Completed' : 'Essay Stage';

@@ -172,7 +172,7 @@
                                                         </td>
                                                         <td class="text-end text-muted">{{ $item['max_points'] }}</td>
                                                         <td class="pe-0" style="min-width: 90px;">
-                                                            <input type="number" 
+                                                            <input type="number"  
                                                                 name="essay_scores[{{ $item['question']->id }}]" 
                                                             class="form-control form-control-sm text-end fw-semibold essay-score-input" 
                                                                 min="0" 
