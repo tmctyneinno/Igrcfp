@@ -21,6 +21,7 @@ class AssessmentAttempt extends Model
         'total_marks',
         'correct_answers',
         'passed',
+        'submission_id',
     ];
 
     protected $casts = [

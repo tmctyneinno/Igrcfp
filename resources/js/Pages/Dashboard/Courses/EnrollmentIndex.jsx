@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import {   
     BookOpenIcon, ClipboardDocumentCheckIcon, LockClosedIcon, ClockIcon,
     DocumentTextIcon, AcademicCapIcon, CheckCircleIcon, ExclamationCircleIcon
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
 import Breadcrumb from './components/Breadcrumb';
 import CandidateBanner from './components/CandidateBanner';
 import CourseHeader from './components/CourseHeader';

@@ -316,7 +316,7 @@
                                         <button type="submit"
                                                 class="bg-danger-focus bg-hover-danger-200 text-danger-600 w-32-px h-32-px d-inline-flex justify-content-center align-items-center rounded-circle border-0"
                                                 title="Delete submission"
-                                                onclick="return confirm('Delete this submission permanently? This action cannot be undone.')">
+                                                onclick="return confirm('Delete this submission and all attempts for this learner and quiz? They will be able to start a fresh attempt.')">
                                             <iconify-icon icon="solar:trash-bin-trash-outline"></iconify-icon>
                                         </button>
                                     </form>

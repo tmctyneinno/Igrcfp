@@ -130,7 +130,7 @@ export default function QuizTake({
 
     // Timer countdown effect
     useEffect(() => {
-        if (!isRecording || partASubmitted) return;
+        if (!isRecording || showCompletionModal || showLockoutModal) return;
         if (timeRemaining <= 0) {
             submitCurrentAttemptRef.current?.({ timedOut: true });
             return;
@@ -153,7 +153,7 @@ export default function QuizTake({
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [isRecording, partASubmitted, timeRemaining, attempt?.id]);
+    }, [isRecording, timeRemaining, attempt?.id, showCompletionModal, showLockoutModal]);
 
     // Cleanup localStorage
     useEffect(() => {
@@ -205,7 +205,16 @@ export default function QuizTake({
         }
 
         try {
-            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { displaySurface: 'monitor' },
+                audio: false,
+            });
+            const videoTrack = stream.getVideoTracks()[0];
+            if (videoTrack?.getSettings().displaySurface !== 'monitor') {
+                stream.getTracks().forEach(track => track.stop());
+                setRecordingError('Choose Entire Screen in the browser sharing window. Sharing a tab or app window is not allowed.');
+                return;
+            }
             const supportedTypes = [
                 'video/webm;codecs=vp9,opus',
                 'video/webm;codecs=vp8,opus',
@@ -218,11 +227,21 @@ export default function QuizTake({
             recordingChunksRef.current = [];
             mediaStreamRef.current = stream;
             mediaRecorderRef.current = recorder;
+            let nonMonitorSubmissionStarted = false;
+            const enforceEntireScreen = () => {
+                if (videoTrack.getSettings().displaySurface === 'monitor' || nonMonitorSubmissionStarted) return;
+                nonMonitorSubmissionStarted = true;
+                toast.error('Screen sharing changed from Entire Screen. Submitting your quiz now.');
+                submitCurrentAttemptRef.current?.({ timedOut: true, recordingEnded: true });
+            };
+
             recorder.addEventListener('dataavailable', event => {
+                enforceEntireScreen();
                 if (event.data?.size) recordingChunksRef.current.push(event.data);
             });
             recorder.addEventListener('stop', () => setIsRecording(false));
-            stream.getVideoTracks()[0]?.addEventListener('ended', () => {
+            videoTrack.addEventListener('configurationchange', enforceEntireScreen);
+            videoTrack.addEventListener('ended', () => {
                 if (stoppingRecordingRef.current) return;
                 toast.error('Screen sharing stopped. Your current quiz answers are being submitted.');
                 submitCurrentAttemptRef.current?.({ timedOut: true, recordingEnded: true });
@@ -346,7 +365,7 @@ export default function QuizTake({
             setPartAScore(data.score);
             setHasUnsavedChanges(false);
             
-            if (attempt?.id) {
+            if (attempt?.id && (!continuesToPartB || data.score < 50)) {
                 localStorage.removeItem(`quiz_timer_${attempt.id}`);
             }
             
@@ -432,7 +451,7 @@ export default function QuizTake({
                                 Screen recording
                             </span>
                         )}
-                        {!partASubmitted && (
+                        {!showCompletionModal && !showLockoutModal && (
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${timeRemaining < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
                                 <ClockIcon className="w-5 h-5" />
                                 <span className="font-mono font-bold">{formatTime(timeRemaining)}</span>
@@ -615,11 +634,14 @@ export default function QuizTake({
                     <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl">
                         <h2 className="text-2xl font-bold text-gray-900">Start quiz and share your screen</h2>
                         <p className="mt-3 text-gray-600">
-                            Your screen will be recorded and submitted with your answers. Select the screen or quiz window in your browser prompt, and keep sharing until you submit.
+                            Your entire screen will be recorded and submitted with your answers. Keep sharing until you submit.
                         </p>
                         {recordingError && (
                             <p role="alert" className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{recordingError}</p>
                         )}
+                        <p className="mt-4 text-sm text-gray-500">
+                            Select <strong>Entire Screen</strong> in the browser sharing window. Tabs and individual app windows are not accepted.
+                        </p>
                         <button
                             type="button"
                             onClick={startScreenRecording}

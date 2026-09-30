@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\AssessmentQuestion; 
 use App\Models\AssessmentSubmission;
+use App\Models\AssessmentAttempt;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -328,6 +329,13 @@ class AssessmentController extends Controller
     {
         DB::beginTransaction();
         try {
+            $assessment = $submission->assessment;
+            $enrollment = $submission->enrollment;
+            $attempts = AssessmentAttempt::where('assessment_id', $submission->assessment_id)
+                ->where('user_id', $submission->user_id)
+                ->where('enrollment_id', $submission->enrollment_id);
+            $attemptIds = $attempts->pluck('id');
+
             // If submissions can have uploaded files, clean those up too
             $responses = $submission->question_responses ?? [];
             foreach ($responses as $response) {
@@ -340,10 +348,28 @@ class AssessmentController extends Controller
                 Storage::disk('public')->delete($submission->examiner_report_path);
             }
 
+            $recordingDisk = Storage::disk('local');
+            if ($submission->screen_recording_path) {
+                $recordingDisk->delete($submission->screen_recording_path);
+            }
+            foreach ($attemptIds as $attemptId) {
+                $recordingDisk->deleteDirectory("quiz-recordings/chunks/{$submission->user_id}/{$attemptId}");
+            }
+
+            $attempts->delete();
+            if ($enrollment) {
+                $enrollment->update([
+                    'quiz_failed_attempts' => 0,
+                    'quiz_locked_until' => null,
+                    'quiz_permanently_locked' => false,
+                ]);
+            }
+
             $submission->delete();
+            $assessment?->calculateStatistics();
             DB::commit();
 
-            return redirect()->back()->with('success', 'Submission deleted successfully!');
+            return redirect()->back()->with('success', 'Submission and quiz attempts deleted. The learner can start a fresh attempt.');
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Submission deletion failed: ' . $e->getMessage());

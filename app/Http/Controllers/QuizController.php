@@ -51,15 +51,21 @@ class QuizController extends Controller
                 ->with('error', 'Please read all module content before taking the quiz.');
         }
 
+        // Only a still-existing submission makes a passing attempt authoritative.
+        $hasSubmission = AssessmentSubmission::where('assessment_id', $assessment->id)
+            ->where('user_id', $user->id)
+            ->where('enrollment_id', $enrollment->id)
+            ->exists();
+
         // A passed quiz cannot be restarted once all required essay responses
         // are complete. A passed Part A with an empty essay must resume Part B.
-        $completedAttempt = AssessmentAttempt::where('user_id', $user->id)
+        $completedAttempt = $hasSubmission ? AssessmentAttempt::where('user_id', $user->id)
             ->where('assessment_id', $assessment->id)
             ->where('enrollment_id', $enrollment->id)
             ->where('status', 'completed')
             ->where('passed', true)
             ->latest('updated_at')
-            ->first();
+            ->first() : null;
 
         // Add debug logging to help diagnose unexpected redirects to results
         $incompleteEssay = $this->hasIncompleteEssayResponses($assessment, $user->id, $enrollment->id);
@@ -975,12 +981,22 @@ class QuizController extends Controller
     }
 
     private function getOrCreateAttempt($userId, $assessmentId, $enrollmentId) {
+        $hasSubmission = AssessmentSubmission::where('user_id', $userId)
+            ->where('assessment_id', $assessmentId)
+            ->where('enrollment_id', $enrollmentId)
+            ->exists();
+
         $attempt = AssessmentAttempt::where('user_id', $userId)
             ->where('assessment_id', $assessmentId)
             ->where('enrollment_id', $enrollmentId)
             ->whereIn('status', ['not_started', 'in_progress'])
             ->latest()
             ->first();
+
+        if ($attempt && $attempt->score !== null && !$hasSubmission) {
+            $attempt->delete();
+            $attempt = null;
+        }
         
         // Resume an untouched quiz or a passed Part A so the learner can
         // continue to Part B. A scored failure must start a fresh attempt;
@@ -994,13 +1010,13 @@ class QuizController extends Controller
         // An essay may have been submitted with no response. Its attempt was
         // previously marked completed, which caused the Continue button to
         // open a new Part A attempt instead of resuming Part B.
-        $completedPartA = AssessmentAttempt::where('user_id', $userId)
+        $completedPartA = $hasSubmission ? AssessmentAttempt::where('user_id', $userId)
             ->where('assessment_id', $assessmentId)
             ->where('enrollment_id', $enrollmentId)
             ->where('status', 'completed')
             ->where('score', '>=', 50)
             ->latest('updated_at')
-            ->first();
+            ->first() : null;
 
         if ($completedPartA) {
             $completedPartA->update(['status' => 'in_progress']);
