@@ -237,6 +237,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     // ✅ POST ROUTES FIRST
     Route::post('/courses/{course:slug}/quiz/{assessment}/submit', [QuizController::class, 'submit'])
         ->name('quiz.submit');
+    Route::post('/quiz/{attempt}/recording-chunk', [QuizController::class, 'uploadRecordingChunk'])
+        ->name('quiz.recording-chunk');
     Route::post('/quiz/check-ai-score', [QuizController::class, 'checkAiScore'])->name('quiz.check-ai-score');
     Route::post('/quiz/{attempt}/save', [QuizController::class, 'saveProgress'])->name('quiz.save');
     

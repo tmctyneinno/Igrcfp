@@ -209,6 +209,77 @@ class QuizController extends Controller
         }
     }
 
+    public function uploadRecordingChunk(Request $request, AssessmentAttempt $attempt)
+    {
+        abort_unless($attempt->user_id === auth()->id() && $attempt->status === 'in_progress', 403);
+
+        $validated = $request->validate([
+            'upload_id' => ['required', 'uuid'],
+            'chunk_index' => ['required', 'integer', 'min:0', 'max:1023'],
+            'chunk' => ['required', 'file', 'max:1536'],
+        ]);
+
+        $directory = "quiz-recordings/chunks/{$attempt->user_id}/{$attempt->id}/{$validated['upload_id']}";
+        $request->file('chunk')->storeAs(
+            $directory,
+            sprintf('%04d.part', $validated['chunk_index']),
+            'local'
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    private function assembleScreenRecording(Request $request, AssessmentAttempt $attempt): ?array
+    {
+        $uploadId = $request->input('screen_recording_upload_id');
+        if (!$uploadId) return null;
+
+        $chunkCount = (int) $request->input('screen_recording_chunk_count');
+        $mimeType = $request->input('screen_recording_mime_type');
+        $disk = Storage::disk('local');
+        $chunkDirectory = "quiz-recordings/chunks/{$attempt->user_id}/{$attempt->id}/{$uploadId}";
+        $extension = $mimeType === 'video/mp4' ? 'mp4' : 'webm';
+        $recordingPath = "quiz-recordings/submissions/{$attempt->id}.{$extension}";
+
+        $disk->makeDirectory(dirname($recordingPath));
+        $output = fopen($disk->path($recordingPath), 'wb');
+        if (!$output) {
+            throw new \RuntimeException('Unable to create the screen recording file.');
+        }
+
+        try {
+            for ($chunkIndex = 0; $chunkIndex < $chunkCount; $chunkIndex++) {
+                $chunkPath = "{$chunkDirectory}/".sprintf('%04d.part', $chunkIndex);
+                if (!$disk->exists($chunkPath)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'screen_recording' => 'A screen recording upload chunk is missing. Please submit again.',
+                    ]);
+                }
+
+                $input = $disk->readStream($chunkPath);
+                if (!is_resource($input)) {
+                    throw new \RuntimeException('Unable to read a screen recording upload chunk.');
+                }
+
+                stream_copy_to_stream($input, $output);
+                fclose($input);
+            }
+        } catch (\Throwable $exception) {
+            fclose($output);
+            $disk->delete($recordingPath);
+            throw $exception;
+        }
+
+        fclose($output);
+        $disk->deleteDirectory($chunkDirectory);
+
+        return [
+            'path' => $recordingPath,
+            'size' => $disk->size($recordingPath),
+            'mime_type' => $mimeType,
+        ];
+    }
+
     /**
      * Auto-save quiz progress
      */
@@ -273,6 +344,9 @@ class QuizController extends Controller
         $request->validate([
             'essay_files' => ['nullable', 'array'],
             'essay_files.*' => ['file', 'mimes:pdf,doc,docx,txt,rtf', 'max:20480'],
+            'screen_recording_upload_id' => ['nullable', 'required_with:screen_recording_chunk_count', 'uuid'],
+            'screen_recording_chunk_count' => ['nullable', 'required_with:screen_recording_upload_id', 'integer', 'min:1', 'max:1024'],
+            'screen_recording_mime_type' => ['nullable', 'required_with:screen_recording_upload_id', 'in:video/webm,video/mp4'],
         ]);
         
         // Find or create attempt
@@ -421,6 +495,7 @@ class QuizController extends Controller
         // A learner passes Part A at 50%. This is the course-stage rule used
         // to unlock Part B and must match the status shown in EnrollmentIndex.
         $passed = !$requiresManualMarking && $score >= 50;
+        $recording = $this->assembleScreenRecording($request, $attempt);
         
         // Update the attempt
         $attempt->update([
@@ -488,6 +563,12 @@ class QuizController extends Controller
         $submission->time_spent = $timeSpent;
         $submission->ip_address = $request->ip();
         $submission->user_agent = $request->userAgent();
+
+        if ($recording) {
+            $submission->screen_recording_path = $recording['path'];
+            $submission->screen_recording_mime_type = $recording['mime_type'];
+            $submission->screen_recording_size = $recording['size'];
+        }
 
         if (!empty($uploadedEssayFiles)) {
             $primaryEssayFile = $uploadedEssayFiles[0];

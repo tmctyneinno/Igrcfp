@@ -104,6 +104,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/assessments/course/{course}/upload', [AssessmentController::class, 'upload'])->name('assessments.upload');
     Route::get('/assessments/{assessment}/submissions', [AssessmentController::class, 'submissions'])->name('assessments.submissions');
     Route::get('/assessments/submission/{submission}', [AssessmentController::class, 'viewSubmission'])->name('assessments.submission.view');
+    Route::get('/assessments/submission/{submission}/screen-recording', [AssessmentController::class, 'screenRecording'])
+        ->middleware(['auth.admin', 'admin.role:admin,super_admin'])
+        ->name('assessments.submission.screen-recording');
     Route::get('/assessments/submission/{submission}/examiner-report', [AssessmentController::class, 'examinerReport'])
         ->middleware(['auth.admin', 'admin.role:admin,super_admin'])
         ->name('assessments.submission.examiner-report');

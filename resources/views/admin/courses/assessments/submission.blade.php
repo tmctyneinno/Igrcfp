@@ -14,7 +14,7 @@
                 <iconify-icon icon="solar:user-remove-linear"></iconify-icon>
                 Reject Enrollment
             </button>
-            @endif
+            @endif 
 
             <!-- Export Button -->
             <a href="{{ route('admin.assessments.submission.export', $submission->encoded_id) }}" 
@@ -481,14 +481,29 @@ The Team</textarea>
             @endif
 
             <!-- Part C: Project / Case Study -->
-            @if((isset($projectQuestions) && $projectQuestions->isNotEmpty()) || (isset($uploadedFiles) && $uploadedFiles->isNotEmpty()))
+            @if((isset($projectQuestions) && $projectQuestions->isNotEmpty()) || (isset($uploadedFiles) && $uploadedFiles->isNotEmpty()) || $submission->screen_recording_path)
             <div class="card mb-24">
                 <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
                     <h6 class="card-title mb-0 text-warning-600">
-                        <iconify-icon icon="solar:document-text-linear" class="me-2"></iconify-icon> Project / Case Study Submission
+                        <iconify-icon icon="solar:document-text-linear" class="me-2"></iconify-icon>
+                        @if($submission->screen_recording_path && (!isset($projectQuestions) || $projectQuestions->isEmpty()) && (!isset($uploadedFiles) || $uploadedFiles->isEmpty()))
+                            Quiz Screen Recording
+                        @else
+                            Project / Case Study Submission
+                        @endif
                     </h6>
                 </div>
                 <div class="card-body p-24">
+                    @if($submission->screen_recording_path)
+                        <div class="mb-4">
+                            <h6 class="fw-semibold mb-2">Quiz Screen Recording</h6>
+                            <video controls preload="metadata" class="w-100 rounded border" style="max-height: 480px">
+                                <source src="{{ route('admin.assessments.submission.screen-recording', $submission->encoded_id) }}" type="{{ $submission->screen_recording_mime_type ?? 'video/webm' }}">
+                            </video>
+                            <a href="{{ route('admin.assessments.submission.screen-recording', $submission->encoded_id) }}" download class="btn btn-outline-primary btn-sm mt-2">Download recording</a>
+                        </div>
+                    @endif
+
                     @if(isset($uploadedFiles) && $uploadedFiles->isNotEmpty())
                         @foreach($uploadedFiles as $file)
                             <div class="d-flex align-items-center gap-3 p-16 bg-light rounded-8 mb-3">

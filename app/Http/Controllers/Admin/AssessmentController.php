@@ -734,7 +734,23 @@ class AssessmentController extends Controller
             compact('assessment', 'submissions'));
     }
  
-       public function viewSubmission($encodedId)
+    public function screenRecording($encodedId)
+    {
+        $id = AssessmentSubmission::decodeId($encodedId);
+        if (!$id) abort(404);
+
+        $submission = AssessmentSubmission::findOrFail($id);
+        $path = $submission->screen_recording_path;
+        $disk = Storage::disk('local');
+        abort_unless($path && $disk->exists($path), 404);
+
+        $extension = $submission->screen_recording_mime_type === 'video/mp4' ? 'mp4' : 'webm';
+        return $disk->response($path, "screen-recording.{$extension}", [
+            'Content-Type' => $submission->screen_recording_mime_type ?: 'video/webm',
+        ], 'inline');
+    }
+
+    public function viewSubmission($encodedId)
     {
         // 1. Decode the ID using the Hashids trait
         $id = AssessmentSubmission::decodeId($encodedId);

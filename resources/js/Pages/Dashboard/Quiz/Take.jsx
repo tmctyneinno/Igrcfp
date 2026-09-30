@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DOMPurify from 'dompurify';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -9,7 +9,7 @@ import {
     ClockIcon, ChevronLeftIcon, ChevronRightIcon, FlagIcon, 
     CheckCircleIcon, TrophyIcon, SparklesIcon, XCircleIcon, ArrowRightIcon,
     LockClosedIcon, InformationCircleIcon 
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'; 
 
 function RichQuestionContent({ html, className = '' }) {
     return (
@@ -46,8 +46,17 @@ export default function QuizTake({
     });
     
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [hasStartedQuiz, setHasStartedQuiz] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingError, setRecordingError] = useState('');
     const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+    const mediaRecorderRef = useRef(null);
+    const mediaStreamRef = useRef(null);
+    const recordingChunksRef = useRef([]);
+    const stoppingRecordingRef = useRef(false);
+    const submissionInProgressRef = useRef(false);
+    const submitCurrentAttemptRef = useRef(null);
     
     // Part A/B Logic State
     const [partASubmitted, setPartASubmitted] = useState(() => {
@@ -121,7 +130,11 @@ export default function QuizTake({
 
     // Timer countdown effect
     useEffect(() => {
-        if (partASubmitted || timeRemaining <= 0) return;
+        if (!isRecording || partASubmitted) return;
+        if (timeRemaining <= 0) {
+            submitCurrentAttemptRef.current?.({ timedOut: true });
+            return;
+        }
 
         const timer = setInterval(() => {
             setTimeRemaining(prev => {
@@ -132,7 +145,7 @@ export default function QuizTake({
                 if (newTime <= 0) {
                     clearInterval(timer);
                     toast.error('Time is up! Submitting your answers...');
-                    submitPartA();
+                    submitCurrentAttemptRef.current?.({ timedOut: true });
                     return 0;
                 }
                 return newTime;
@@ -140,7 +153,7 @@ export default function QuizTake({
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [partASubmitted, timeRemaining, attempt?.id]);
+    }, [isRecording, partASubmitted, timeRemaining, attempt?.id]);
 
     // Cleanup localStorage
     useEffect(() => {
@@ -183,24 +196,151 @@ export default function QuizTake({
         }
     };
 
-    // Submission Logic
-    const submitPartA = async () => {
-        const unanswered = mcqQuestions.filter(q => !answers[q.id]).length;
-        if (unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) return;
+    const startScreenRecording = async () => {
+        setRecordingError('');
 
-        setIsSubmitting(true);
+        if (!navigator.mediaDevices?.getDisplayMedia || !window.MediaRecorder) {
+            setRecordingError('Screen recording is not supported by this browser. Please use a current version of Chrome, Edge, or Firefox.');
+            return;
+        }
+
         try {
-            const res = await fetch(route('dashboard.quiz.submit', { course: course.slug, assessment: assessment.id }), {
+            const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+            const supportedTypes = [
+                'video/webm;codecs=vp9,opus',
+                'video/webm;codecs=vp8,opus',
+                'video/webm',
+                'video/mp4',
+            ];
+            const mimeType = supportedTypes.find(type => MediaRecorder.isTypeSupported(type));
+            const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+
+            recordingChunksRef.current = [];
+            mediaStreamRef.current = stream;
+            mediaRecorderRef.current = recorder;
+            recorder.addEventListener('dataavailable', event => {
+                if (event.data?.size) recordingChunksRef.current.push(event.data);
+            });
+            recorder.addEventListener('stop', () => setIsRecording(false));
+            stream.getVideoTracks()[0]?.addEventListener('ended', () => {
+                if (stoppingRecordingRef.current) return;
+                toast.error('Screen sharing stopped. Your current quiz answers are being submitted.');
+                submitCurrentAttemptRef.current?.({ timedOut: true, recordingEnded: true });
+            });
+
+            recorder.start(1000);
+            setIsRecording(true);
+            setHasStartedQuiz(true);
+        } catch (error) {
+            setRecordingError(error.name === 'NotAllowedError'
+                ? 'Screen sharing is required to start this quiz. Allow screen sharing and try again.'
+                : 'Unable to start screen recording. Please check your browser permissions and try again.');
+        }
+    };
+
+    const getRecordingBlob = async (stopRecording) => {
+        const recorder = mediaRecorderRef.current;
+
+        if (recorder?.state === 'recording') {
+            const dataAvailable = new Promise(resolve => {
+                recorder.addEventListener('dataavailable', resolve, { once: true });
+            });
+            recorder.requestData();
+            await dataAvailable;
+        }
+
+        if (stopRecording && recorder && recorder.state !== 'inactive') {
+            stoppingRecordingRef.current = true;
+            const stopped = new Promise(resolve => recorder.addEventListener('stop', resolve, { once: true }));
+            recorder.stop();
+            await stopped;
+            mediaStreamRef.current?.getTracks().forEach(track => track.stop());
+            stoppingRecordingRef.current = false;
+        }
+
+        const mimeType = recorder?.mimeType || recordingChunksRef.current[0]?.type || 'video/webm';
+        return new Blob(recordingChunksRef.current, { type: mimeType });
+    };
+
+    const uploadScreenRecording = async (blob) => {
+        if (!blob.size) throw new Error('No screen recording data was captured. Please restart the quiz and try again.');
+
+        const chunkSize = 1024 * 1024;
+        const chunkCount = Math.ceil(blob.size / chunkSize);
+        const uploadId = crypto.randomUUID();
+        const mimeType = (blob.type || 'video/webm').split(';')[0];
+
+        for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex += 1) {
+            const chunk = blob.slice(chunkIndex * chunkSize, Math.min((chunkIndex + 1) * chunkSize, blob.size), mimeType);
+            const formData = new FormData();
+            formData.append('upload_id', uploadId);
+            formData.append('chunk_index', String(chunkIndex));
+            formData.append('chunk', chunk, `recording-${chunkIndex}.${mimeType === 'video/mp4' ? 'mp4' : 'webm'}`);
+
+            const response = await fetch(route('dashboard.quiz.recording-chunk', attempt.id), {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                 },
-                body: JSON.stringify({ answers, part_a_only: true }),
+                body: formData,
             });
-            const data = await readJsonResponse(res);
-            
-            if (!res.ok) throw new Error(data.message);
+            const data = await readJsonResponse(response);
+            if (!response.ok) throw new Error(data.message || 'The screen recording could not be uploaded. Please try again.');
+        }
+
+        return { uploadId, chunkCount, mimeType };
+    };
+
+    const sendQuizSubmission = async (payload, { stopRecording }) => {
+        const blob = await getRecordingBlob(stopRecording);
+        const recording = await uploadScreenRecording(blob);
+        const formData = new FormData();
+        formData.append('answers', JSON.stringify(payload.answers || {}));
+        if (payload.essay_answers) formData.append('essay_answers', JSON.stringify(payload.essay_answers));
+        if (payload.part_a_only) formData.append('part_a_only', '1');
+        formData.append('screen_recording_upload_id', recording.uploadId);
+        formData.append('screen_recording_chunk_count', String(recording.chunkCount));
+        formData.append('screen_recording_mime_type', recording.mimeType);
+
+        const response = await fetch(route('dashboard.quiz.submit', { course: course.slug, assessment: assessment.id }), {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+            },
+            body: formData,
+        });
+        const data = await readJsonResponse(response);
+        if (!response.ok) throw new Error(data.message || data.error || 'The quiz could not be submitted. Please try again.');
+        return data;
+    };
+
+    // Submission Logic
+    const submitPartA = async ({ timedOut = false, recordingEnded = false } = {}) => {
+        if (submissionInProgressRef.current) return;
+        const unanswered = mcqQuestions.filter(q => !answers[q.id]).length;
+        if (!timedOut && !recordingEnded && unanswered > 0 && !confirm(`You have ${unanswered} unanswered questions. Submit anyway?`)) return;
+
+        submissionInProgressRef.current = true;
+        setIsSubmitting(true);
+        try {
+            const continuesToPartB = essayQuestions.length > 0 && !recordingEnded && !timedOut;
+            const payload = { answers };
+            if (continuesToPartB || (!timedOut && !recordingEnded && essayQuestions.length === 0)) payload.part_a_only = true;
+            if (recordingEnded) payload.essay_answers = essayAnswers;
+
+            const data = await sendQuizSubmission(payload, {
+                stopRecording: !continuesToPartB,
+            });
+
+            if (!data.part_a_submitted) {
+                setFinalScore(data.score);
+                setFinalManualReview(Boolean(data.manual_review));
+                setShowCompletionModal(true);
+                if (attempt?.id) localStorage.removeItem(`quiz_timer_${attempt.id}`);
+                return;
+            }
 
             setPartASubmitted(true);
             setPartAScore(data.score);
@@ -223,31 +363,27 @@ export default function QuizTake({
         } catch (err) {
             toast.error(err.message);
         } finally {
+            submissionInProgressRef.current = false;
             setIsSubmitting(false);
         }
     };
 
-    const submitPartB = async () => {
+    const submitPartB = async ({ timedOut = false } = {}) => {
+        if (submissionInProgressRef.current) return;
         if (!canAccessPartB) {
             toast.error("You must score at least 50% in Part A to submit Part B.");
             return;
         } 
 
         const emptyEssays = essayQuestions.filter(q => !essayAnswers[q.id] || essayAnswers[q.id].length < 10).length;
-        if (emptyEssays > 0 && !confirm(`${emptyEssays} essays are empty. Submit anyway?`)) return;
+        if (!timedOut && emptyEssays > 0 && !confirm(`${emptyEssays} essays are empty. Submit anyway?`)) return;
 
+        submissionInProgressRef.current = true;
         setIsSubmitting(true);
         try {
-            const res = await fetch(route('dashboard.quiz.submit', { course: course.slug, assessment: assessment.id }), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-                body: JSON.stringify({ answers, essay_answers: essayAnswers }),
+            const data = await sendQuizSubmission({ answers, essay_answers: essayAnswers }, {
+                stopRecording: true,
             });
-            const data = await readJsonResponse(res);
-            if (!res.ok) throw new Error(data.message);
 
             setFinalScore(data.score);
             setFinalManualReview(Boolean(data.manual_review));
@@ -259,9 +395,20 @@ export default function QuizTake({
         } catch (err) {
             toast.error(err.message);
         } finally {
+            submissionInProgressRef.current = false;
             setIsSubmitting(false);
         }
     };
+
+    submitCurrentAttemptRef.current = options => partASubmitted
+        ? submitPartB({ timedOut: Boolean(options?.timedOut || options?.recordingEnded) })
+        : submitPartA(options);
+
+    useEffect(() => () => {
+        stoppingRecordingRef.current = true;
+        if (mediaRecorderRef.current?.state !== 'inactive') mediaRecorderRef.current?.stop();
+        mediaStreamRef.current?.getTracks().forEach(track => track.stop());
+    }, []);
 
     const handleLockoutRedirect = () => {
         router.visit(route('dashboard.courses.show', course.slug));
@@ -279,6 +426,12 @@ export default function QuizTake({
                         <h1 className="text-xl font-bold text-gray-900">{assessment.title}</h1>
                     </div>
                     <div className="flex items-center gap-4">
+                        {isRecording && (
+                            <span className="inline-flex items-center gap-2 text-sm font-medium text-red-700">
+                                <span className="h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
+                                Screen recording
+                            </span>
+                        )}
                         {!partASubmitted && (
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${timeRemaining < 300 ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
                                 <ClockIcon className="w-5 h-5" />
@@ -456,6 +609,27 @@ export default function QuizTake({
                     </div>
                 </div>
             </div>
+
+            {!hasStartedQuiz && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 p-4">
+                    <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-2xl">
+                        <h2 className="text-2xl font-bold text-gray-900">Start quiz and share your screen</h2>
+                        <p className="mt-3 text-gray-600">
+                            Your screen will be recorded and submitted with your answers. Select the screen or quiz window in your browser prompt, and keep sharing until you submit.
+                        </p>
+                        {recordingError && (
+                            <p role="alert" className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{recordingError}</p>
+                        )}
+                        <button
+                            type="button"
+                            onClick={startScreenRecording}
+                            className="mt-6 w-full rounded-md bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+                        >
+                            Start quiz and share screen
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Completion Modal */}
             {showCompletionModal && (
