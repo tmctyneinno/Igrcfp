@@ -143,16 +143,6 @@ training@igrcfp.org
 scholarships@igrcfp.org
 }u_^naWj}]Ti
 
-7042043220
-
-uploaded Article
-Certificate document for admin
-Work on the Essay score retrival 
-Work on the Examiner report ( email notification and in-app notification )
-work on the Assessment Stage,
-work on retrive Essay Scores (Manual)
-
-d-inline-flex align-items-center gap-1 text-nowrap
 
 
 php artisan config:clear

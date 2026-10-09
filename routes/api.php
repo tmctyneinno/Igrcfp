@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\ApplicantProgressController;
-
+ 
 Route::prefix('v1')->group(function () {
 
     // --- PUBLIC ENDPOINTS ---
